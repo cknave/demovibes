@@ -13,7 +13,7 @@ There {{ userlist.count|pluralize("is,are") }} a total of {{ userlist.count() }}
 {% for profile in userlist %}
 <tr>
     <td>
-        {{ dusplay.user(profile.user) }}
+        {{ iusplay.user(profile.user) }}
     </td>
     <td>
         {{ profile.last_activity|timesince }} ago
