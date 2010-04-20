@@ -1,5 +1,6 @@
 from django.test import TestCase
 from webview import models
+from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
 from webview import common
 
@@ -102,4 +103,4 @@ class BasicTest(TestCase):
         self.assertEqual(models.Oneliner.objects.count(), 2)
         r = self.client.get(reverse("dv-ax-oneliner"))
         self.assertContains(r, "TestLine12345678")
-        self.assertContains(r, "TestMoo")
+        self.assertContains(r, "TestMoo")            

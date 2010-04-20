@@ -397,13 +397,8 @@ def oneliner_submit(request):
     Add a text line to the oneliner.
     Returns user to referrer position, or to /
     """
-    try:
-        message =  request.POST['Line'].strip()
-        if message != "":
-            Oneliner.objects.create(user = request.user, message = message)
-            add_event(event='oneliner')
-    except:
-        pass
+    message =  request.POST['Line'].strip()
+    common.add_oneliner(request.user, message)
     try:
         refer = request.META['HTTP_REFERER']
         return HttpResponseRedirect(refer)

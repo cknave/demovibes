@@ -11,8 +11,8 @@ def dummy(dummystuff):
     return "Dummy for %s" % dummystuff
 
 def mkstr(*args):
-    args = [str(x) for x in args]
-    return ''.join(args)
+    args = [unicode(x) for x in args]
+    return u''.join(args)
 
 def url(view_name, *args, **kwargs):
     from django.core.urlresolvers import reverse, NoReverseMatch

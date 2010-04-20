@@ -70,11 +70,7 @@ def oneliner_submit(request):
     if not request.user.is_authenticated():
         return HttpResponse("NoAuth")
     message = request.POST['Line'].strip()
-    if message != "":
-        Oneliner.objects.create(user = request.user, message = message)
-        request.path = reverse('dv-ax-oneliner')
-        f = get_oneliner(True)
-        add_event(event='oneliner')
+    add_oneliner(request.user, message)
     return HttpResponse("OK")
 
 @cache_control(must_revalidate=True, max_age=30)

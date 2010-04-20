@@ -125,7 +125,7 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
 
 {% if remix.count() != 0 %}
 <br /><strong>Remixes Based On This Song:</strong><br /><br />
-{% for mix in remix.all() %}{{ dv.get_song_queue_tag(mix) }}<br />{% endfor %}
+{% for mix in remix.all() %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
 <h2>

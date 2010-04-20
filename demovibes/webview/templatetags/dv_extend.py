@@ -550,8 +550,8 @@ class IsFavoriteNode(template.Node):
             pass
         return ''
     
-def get_song_queue_tag(remix_id):
-    origsong = Song.objects.get(id = song.remix_of_id)
+def get_song_queue_tag_j(origsong):
+    #origsong = Song.objects.get(id = song.remix_of_id)
     artists = origsong.artists
     return js.r2s('webview/queue_tag.html', { 'song' : origsong, 'artists' : artists })
 

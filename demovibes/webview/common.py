@@ -164,6 +164,14 @@ def log_debug(area, text, level=1):
         F.close()
 
 
+def add_oneliner(user, message):
+    message = message.strip()
+    can_post = user.is_superuser or not user.has_perm('webview.mute_oneliner')
+    if message and can_post:
+        models.Oneliner.objects.create(user = user, message = message)
+        f = get_oneliner(True)
+        models.add_event(event='oneliner')
+
 def get_event_key(key):
     event = get_latest_event()
     return "%sevent%s" % (key, event)

@@ -793,6 +793,9 @@ class Oneliner(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering = ['-added']
+        permissions = (
+            ('mute_oneliner',"Muted from oneliner"),
+        )
 
     def save(self, force_insert=False, force_update=False):
         return super(Oneliner, self).save(force_insert, force_update)
