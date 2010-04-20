@@ -1,0 +1,24 @@
+{% import "macro/display.html" as display -%}
+<tr class="{{ row_class.next() }}">{# {% cache 3600 qlist req.id %} #}
+ <td align="left">
+  {% if req.priority %}*{% endif %}{{ display.song(req.song) }}
+ </td>
+ <td align="left">
+  {% for artist in req.song.artists.all() -%}
+   {{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}
+  {%- endfor %}
+ </td>
+ <td align="center">
+  {{ req.song.length() }}
+ </td>
+ <td align="center">
+  {{ req.requested|time("H:i") }}{% if req.playtime %} [{{ req.playtime|time("H:i") }}]{% endif %}
+ </td>
+ <td align="center">
+  {{ req.eta|time("H:i") }}
+ </td>
+ <td align="left">
+  {{ display.user(req.requested_by) }}
+ </td>
+{# {% endcache %} #}
+</tr>

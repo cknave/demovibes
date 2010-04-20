@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+
+{% block main %}
+<h2><img class="icon_header" src="{{ MEDIA_URL }}user_edit.png" alt="" />New User Registration</h2>
+<form action="." method="post">
+<table>
+{{ form.as_table }}
+</table>
+<input type="submit" value="Register" />
+</form>
+{% endblock %}
+

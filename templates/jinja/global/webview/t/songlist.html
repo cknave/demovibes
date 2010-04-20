@@ -1,0 +1,31 @@
+{% import "macro/display.html" as display -%}
+{% cache 43200 mkstr("song_row", song.id, song.last_changed) %}
+ <td>
+  {{ display.song(song) }}
+ </td>
+ <td>
+  {% for artist in song.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+  {% for group in song.groups.all() %}{{ display.group(group) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+ </td>
+ <td align="center">
+  {{ song.length() }}
+ </td>
+ <td align="center">
+  {{ song.get_status_display() }}
+ </td>
+ <td>
+  {{ song.rating|floatformat(1) }}
+ </td>
+ {% endcache %}
+ <td>
+  <span name="a_queue_{{ song.id }}">
+   {% if user.is_authenticated() %}
+    {% include "webview/t/songlist_span.html" %}
+   {% else %}
+    <img class="song_head" src="/static/lock.png" title="Song Locked" />
+   {% endif %}
+  </span>
+ </td>
+ <td>
+   <span class="lastreqdate">{% if song.last_queued != "Never" %}{{ song.last_queued()|date("Y-m-d") }}{% else %}Never!{% endif %}</span>
+ </td>

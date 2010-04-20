@@ -1,0 +1,23 @@
+{% import "macro/display.html" as display -%}
+<tr class="{{ row_class.next() }}">{# {% cache 3600 hilist req.id %} #}
+ <td align="left">
+  {{ display.song(req.song) }}
+ </td>
+ <td align="left">
+  {% for artist in req.song.artists.all() %}
+   {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}
+  {% endfor %}
+ </td>
+ <td align="center">
+  {{ req.song.length() }}
+ </td>
+ <td align="center">
+  {{ req.requested|time("H:i") }}
+ </td>
+ <td align="center">
+  {{ req.time_played|time("H:i") }}
+ </td>
+ <td align="left">
+  {{ display.user(req.requested_by) }}
+ </td>{# {% endcache %} #}
+</tr>

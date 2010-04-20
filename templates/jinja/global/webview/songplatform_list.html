@@ -1,0 +1,12 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}Platforms{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" src="/static/sound.png" alt="" />Song Platforms</h2>
+{% for p in object_list %}
+ {% if p.song_set.count() != 0 %}
+  {{ display.platform(p) }} ({{ p.song_set.count() }} Songs)<br />
+ {% endif %}
+{% endfor%}
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+
+{% import "macro/display.html" as display %}
+
+{% block title %}{{ object.artist()|e }} - {{ object.title|e }}{% endblock %} 
+ 
+{% block main %}
+
+<h2>
+ <img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Song Information
+{% if user.is_staff %}
+ [<a href="/admin/webview/song/{{ object.id }}/">Edit Info</a>] <em>Admin Preview:</em> {% set song = object %}{% include "webview/t/flash_playsong.html" %}
+{% endif %}
+</h2>
+
+{{ display.song(object) }}
+ 
+<p>
+Author: 
+{% for artist in object.artists.all() %}
+ {{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} 
+{% endfor %}
+{% for group in object.groups.all() %}
+ {{ display.group(group) }}
+{% endfor %}
+</p>
+
+{% if object.labels.count() != 0 %}
+ Production Label: {% for label in object.labels.all() %}{{ display.label(label) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if object.uploader %}
+Uploaded By: {{ display.user(object.uploader) }}
+{% endif %}
+
+<p>
+ Last Queued : 
+ {% if object.last_queued != "Never" %}
+  {{ object.last_queued()|timesince }} ago
+ {% else %}
+  Never Been Queued!
+ {% endif %}
+</p>
+
+Extra Resources: {{ display.songicons(object) }}
+<br />
+
+<p>
+Song Length: {{ object.length() }}<br />
+{% if object.release_year %}Release Year: {{ object.release_year }}<br />{% endif %}
+Song Status: {{ object.get_status_display() }}
+{% if object.bitrate %}<br />Song Bitrate: {{ object.bitrate }} kbps{% endif %}
+{% if object.type %}<br />Song Source: {{ object.type|e }}{% endif %}
+{% if object.platform %}<br />Song Platform: {% set P = object.platform %}{% include "webview/t/platformname.html" %}{% endif %}
+</p>
+
+{% if object.info %}
+<br />Additional Information:<br /><i>{{ object.info|urlize|bbcode|linebreaks }}</i>
+{% endif %}
+
+
+
+{% if user.is_authenticated() %}
+  <p>
+ {% if object.is_locked() %}
+  <img class="song_head" src="/static/lock.png" title="Song Locked" /> <i>Song is currently locked for queuing. It will be available for request in {{ object.locked_until|timeuntil }}</i>
+ {% else %}
+  <img class="song_head" src="{{ MEDIA_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url() }}queue/">Add To Queue</a>
+ {% endif %}<br />
+ {% if object.is_favorite(user) %}
+  <img class="song_head" src="{{ MEDIA_URL }}heart.png" title="Already Loved!" /> Already In Your Favourites List!
+ {% else %}
+  <img class="song_head" src="{{ MEDIA_URL }}heart_add.png" title="Add To Faves" /> <a href="{{ url ("dv-add_fav", object.id) }}/">Add To Favorites</a>
+ {% endif %}
+ </p>
+{% endif %}
+
+<p>
+This song has been played {{ object.times_played }} times. [<a href="{{object.get_absolute_url()}}queue_history">See Request History</a>]<br />
+It was added {{ object.added|timesince }} ago.
+</p>
+{% cache 86400 mkstr(object.title, object.pouetid) %}
+ {% if object.pouetid %}
+  {{ object.get_pouet_screenshot() }}
+  {{ object.get_pouet_download() }}
+ {% endif %}
+{% endcache %}
+
+{% if object.songdownload_set.all()  %}
+ <h2>Download Links</h2>
+ <ul>
+ {% for dl in object.songdownload_set.all() %}
+  <li><a href="{{ dl.download_url|e }}">{{ dl.title|e }}</a></li>
+ {% endfor %}
+ </ul>
+{% endif %}
+
+<h2><img class="icon_header" src="{{ MEDIA_URL }}star.png" alt="" />Song Rating</h2>
+{% if object.rating_votes %}
+  Song Rating: {{ object.rating|floatformat }} - Votes Placed: {{ object.rating_votes }} <a href="{{ object.get_absolute_url() }}votes/">View Voting History</a><br />
+{% else %}
+ No Votes Yet :( <br />
+{% endif %}
+
+{% if user.is_authenticated() %}
+{% set vote_value = object.get_vote(user) %}
+ Your Vote : {{ vote_value|default("You have not voted yet!!") }} <br/>
+  <form action="{{ url ("dv-vote", object.id) }}" method="post">
+ {% for v in vote_range %}
+   <input type="radio" name="Rating" value="{{ v }}" {% if vote_value == v %}checked{% endif %} />{{ v }}
+ {% endfor %}
+  <input type="submit" /> 
+  </form> 
+{% endif %}
+
+A total of {{ object.num_favorited }} users have this song on their favourites list.<br />
+
+<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Compilation / Remix Information</h2>
+{% if object.remix_of_id %}This song is a remix of: {{ dv.get_song_queue_tag(object.remix_of_id) }}<br />{% endif %}
+{% if comps.count() != 0 %}
+ <p><strong>This Song Is Listed In The Following Compilations:</strong><br /><br />
+ {% for comp in comps.all() %}{{ display.compilation(comp) }}<br />{% endfor %}
+ </p>
+{% endif %}
+
+{% if remix.count() != 0 %}
+<br /><strong>Remixes Based On This Song:</strong><br /><br />
+{% for mix in remix.all() %}{{ dv.get_song_queue_tag(mix) }}<br />{% endfor %}
+{% endif %}
+
+<h2>
+<img class="icon_header" src="{{ MEDIA_URL }}comment.png" alt="" />User Comments
+</h2>
+
+<p>
+{% if object.songcomment_set.count() > 5 %}
+ Displaying Last 5 User Comments.
+ There are a total of {{ object.songcomment_set.all()|length }} comments for this song.
+ <a href="{{ url ("dv-song_comment", object.id) }}">See All Comments For This Song</a>
+{% endif %}
+</p>
+
+<table id="djangoForumThreadPosts">
+ <tr>
+  <th>User</th>
+  <th>Song Comment</th>
+ </tr>
+ {% for comment in object.songcomment_set.all()[:5] %}
+ {% include "webview/t/song_comment.html" %}
+ {% endfor %}
+</table>
+
+{% if user.is_authenticated() %}
+ Add New Song Comment :<br />
+ <form action="{{ url ("dv-addcomment", object.id) }}" method="post">
+  <textarea name="Comment" rows='8' cols='50' class="input"></textarea><br />
+  <input type="submit" value="Add New Comment" />
+ </form>
+{% endif %}
+
+{% endblock %}
+

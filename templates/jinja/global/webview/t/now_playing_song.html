@@ -1,0 +1,18 @@
+{% import "macro/display.html" as display -%}
+{% if now_playing.song %}
+ {{ display.song(now_playing.song) }} by{% for artist in now_playing.song.artists.all() %} {{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
+
+ Requested By: {{ display.user(now_playing.requested_by) }}<br />
+ {% if now_playing.song.labels.count() %}{% set piper = joiner() %}
+  Production Labels: {% for label in now_playing.song.labels.all %}{{ display.label(label) }} {% endfor %}<br />
+ {% endif %}
+ {% if comps.count() %}
+  In Compilations: {% for comp in comps.all() %}{{ display.compilation(comp) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
+ {% endif %}
+ {{ display.songicons(now_playing.song) }}<br />
+ 
+ <p>Time Left: <span name="counter" sec="%s" inc="-1">{{ now_playing.song.length() }}</span></p>
+ 
+{% else %}
+ No Song Playing!!
+{% endif %}

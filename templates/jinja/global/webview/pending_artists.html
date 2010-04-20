@@ -1,0 +1,33 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}Pending Artist Approvals{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" src="/static/user_green.png" alt="" />Pending Artist Approvals</h2>
+<p>The following artists have their status as 'Uploaded'. Moderators should verify the information for each entry to make sure it's ok.</p>
+<br />
+{% for artist in artists.all() %}
+    <table>
+    <tr>
+    <td valign="top">
+    {% if artist.artist_pic %}<img class="artist_logo" src="{{ artist.artist_pic.url }}" title="{{ artist.handle|e }}" alt="{{ artist.handle|e }}" align="left" width="100" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" title="No Picture" alt="No Picture" align="left" width="100" />{% endif %}
+    </td>
+    <td valign="top">
+    Artist: {{ display.artist(artist) }}<br />
+    Location:{% if artist.home_location %} {{ artist.home_location|e }}{% endif %} {{ dv.flag(artist.home_country) }}<br />
+    {% if artist.webpage %}Website: <a href="{{ artist.webpage|e }}">{{ artist.webpage|e }}</a><br />{% endif %}
+    {% if artist.wiki_link %}Wiki Link: <a href="{{ artist.wiki_link|e }}" target="_new">{{ artist.wiki_link|e }}</a><br />{% endif %}
+    {% if artist.groups.count != 0 %}Groups: {% for group in artist.groups.all() %} {{ display.group(group) }}{% endfor %}<br />{% endif %}
+    {% if artist.created_by %}Created By: {{ display.user(artist.created_by) }}<br />{% endif %}
+    
+    {% if artist.info %}<p><i>{{ artist.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
+
+    <a href="{{ url("dv-newartists") }}?artist={{ artist.id }}&status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> Approve</a> or <a href="{{ url("dv-newartists") }}?artist={{ artist.id }}&status=R"><img src="/static/thumb_down.png" title="reject" alt="Reject" /> Reject</a>
+    </td>
+    </tr>
+    </table>
+    <br />
+{% endfor %}
+<br />
+{% endblock %}
+

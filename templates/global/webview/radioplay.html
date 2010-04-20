@@ -1,0 +1,6 @@
+<html><head><title>Mini Player</title></head><body>
+<object type="application/x-shockwave-flash" data="{{ MEDIA_URL }}flash/player_mp3_multi.swf" width="150" height="100">
+     <param name="movie" value="{{ MEDIA_URL }}flash/player_mp3_multi.swf" />
+     <param name="bgcolor" value="#ffffff" />
+     <param name="FlashVars" value="playlist={% url dv-streams.txt %}&showslider=0&showvolume=1&autoplay=1&showplaylistnumbers=0&shuffle=1&width=150&volume=60&volumewidth=40&byteslimit=2048" />
+</object></body></html>

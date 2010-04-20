@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}History For {{ display.song(song) }}{% endblock %}
+
+{% block main %}
+<h2>{{ song.title }} - History</h2>
+<table>
+<tr>
+ <th>
+  Requester
+ </th>
+ <th>
+  Date
+ </th>
+</tr>
+{% for request in requests %}
+<tr>
+<td>{{ display.user(request.requested_by) }}</td>
+<td>{{ request.requested|date("j.N Y G:i")}}</td>
+</tr>
+{% endfor %}
+</table>
+Pages : 
+{% for p in page_range %}
+{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url ("dv-song_history", song.id) }}?page={{ p }}">{{ p }}</a> {% endif %}
+{% endfor %}
+{% endblock %}
+

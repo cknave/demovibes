@@ -1,0 +1,51 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}Recent Song Approvals{% endblock %}
+
+{% block main %}
+ <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Recently Approved Songs</h2>
+Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><br />
+
+ <table class="recent-approvals">
+ <tr>
+  <th>Song Title</th>
+  <th>Artist</th>
+  <th>Added</th>
+  <th>Length</th>
+  <th>Uploader</th>
+  <th>Status</th>
+</tr>
+{% if songs %}
+    {% for songr in songs %}{% cache 604800 mkstr(recsongs, song.id) %}
+        <tr>
+            <td>
+                {{ display.song(songr.song) }}
+            </td>
+            <td>
+                {% for artist in songr.song.artists.all() %} {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
+                {% for group in songr.song.groups.all() %} {{ display.group(group) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
+            </td>
+            <td>
+                {{ songr.approved|date("d M Y") }}
+            </td>
+            <td align="center">
+                {{ songr.song.length() }}
+            </td>
+	    <td align="center">
+    		{{ display.user(songr.uploaded_by) }}
+	    </td>
+	    {% endcache %} {# Otherwise, Locked/Unlocked State Is Cached #}
+            <td align="center">
+                <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span>
+                {% include "webview/t/fav_icon.html" %}
+            </td>
+        </tr>
+    {% endfor %}
+{% else %}
+   <tr><td>No Entries!!</td><td></td><td></td><td></td><td></td><td></td></tr>
+{% endif %}
+ </table>
+
+{% endblock %}
+
+

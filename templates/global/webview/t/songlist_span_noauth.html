@@ -1,0 +1,1 @@
+{% if song.is_locked %}<img class="song_tail" src="/static/lock.png" title="Locked" />{% else %}<a href="{% url dv-add_queue song.id %}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="/static/add.png" title="Add To Queue" /></a>{% endif %}

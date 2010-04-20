@@ -1,0 +1,48 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}Production / Label Info For {{ object.name|e }}{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" {% if object.label_icon %}src="{{ object.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} alt="" />Label / Production Information For {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/label/{{ object.id }}/">Edit Info</a>]{% endif %}</h2>
+
+<table>
+<tr>
+<td class="label_summary" valign="top">
+{% if object.logo %}<img class="label_logo" src="{{ object.logo.url }}" />{% else %}<img class="label_logo" src="/static/no_picture.png" />{% endif %}
+<br /><strong>{{ object.name|e }}</strong><br />
+{% if object.found_date %}(Founded On: {{object.found_date|date("F j, Y") }})<br />{% endif %}
+{% if object.cease_date %}Shutdown Date: {{ object.cease_date }}<br />{% endif %}
+
+Links:{% if object.webpage %} <a href="{{ object.webpage|e }}" target="_new">[Website]</a>{% endif %}
+{% if object.wiki_link %} <a href="{{ object.wiki_link|e }}" target="_new">[Wiki]</a>{% endif %}
+{% if object.hol_id %} <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ object.hol_id }}" target="_new">[HOL]</a>{% endif %}
+{% if object.pouetid %} <a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">[Pouet]</a>{% endif %}
+<br />
+
+{% if object.last_updated %}Last Updated: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.created_by %}Added By: {% set U = object.created_by %}{% include "webview/t/user.html" %}<br />{% endif %}
+</td>
+<td class="label_description" valign="top">
+{% if object.info %}
+<p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
+{% endif %}<br />
+
+{% if object.artist_set.count() != 0 %}
+ <b>Associated Artists:</b><br />
+ {% for artist in object.artist_set.all() %}
+  {{ display.artist(artist) }}<br />
+ {% endfor %}<br />
+{% endif %}
+
+{% if object.song_set.count() != 0 %}
+ <b>Associated Songs:</b><br />
+ {% for song in object.song_set.all() %}
+  {{ display.song(song) }} by {% for artist in song.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} {% endfor %}
+  <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+ {% endfor %}<br />
+{% endif %}
+</td>
+</tr>
+</table>
+{% endblock %}
+

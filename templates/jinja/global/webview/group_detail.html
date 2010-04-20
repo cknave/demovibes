@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+
+{% block title %}Group Info For {{ object.name|e }}{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" {% if object.group_icon %}src="{{ object.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} alt="" />Group Information For {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/group/{{ object.id }}/">Edit Info</a>]{% endif %}</h2>
+
+<table>
+<tr>
+<td class="group_summary" valign="top">
+{% if object.group_logo %}<img class="group_logo" src="{{ object.group_logo.url }}">{% else %}<img class="group_logo" src="/static/no_picture.png" />{% endif %}
+<br /><strong>{{ object.name|e }}</strong><br />{% if object.found_date %}(Founded On: {{object.found_date|date("F j, Y") }}){% endif %}<br />
+
+{% if object.webpage %}<a href="{{ object.webpage|e }}" target="_new">Visit Group's Website</a><br />{% endif %}
+{% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">Pouet Link</a><br />{% endif %}
+{% if object.last_updated %}Last Updated: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.created_by %}Added By: {% set U = object.created_by %}{% include "webview/t/user.html" %}<br />{% endif %}
+</td>
+<td class="group_description" valign="top">
+{% if object.info %}
+<p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
+{% endif %}<br />
+
+{% if object.artist_set.count() != 0 %}
+ <b>Active Group Members:</b><br />
+ {% for artist in object.artist_set.all() %}
+  {% set A = artist %}{% include "webview/t/artist.html" %}<br />
+ {% endfor %}<br />
+{% endif %}
+
+{% if object.song_set.count() != 0 %}
+ <b>Active Group Songs:</b><br />
+ {% for song in object.song_set.all() %}
+  {% include "webview/t/songname.html" %} by {% for artist in song.artists.all() %}{% set A = artist %}{% include "webview/t/artist.html" %}{% if loop.last %} {% else %}, {% endif %} {% endfor %}
+  <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+ {% endfor %}<br />
+{% endif %}
+</td>
+</tr>
+</table>
+{% endblock %}
+

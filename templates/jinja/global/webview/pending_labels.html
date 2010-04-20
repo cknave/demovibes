@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}Pending Label Approvals{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" src="/static/transmit_blue.png" alt="" />Pending Label Approvals</h2>
+<p>The following labels have their status as 'Uploaded'. Moderators should verify the information for each entry to make sure it's ok.</p>
+<br />
+{% for label in labels.all() %}
+    <table>
+    <tr>
+    <td valign="top">
+    {% if label.logo %}<img class="label_logo" src="{{ label.logo.url }}" title="{{ label.name|e }} alt="{{ label.name|e }}" align="left" />{% else %}<img class="label_logo" src="/static/no_picture.png" height="100" title="No Picture" alt="No Picture" align="left" />{% endif %}
+    </td>
+    <td valign="top">
+    Label: {{ display.label(label) }}<br />
+    {% if label.webpage %}Website: <a href="{{ label.webpage|e }}" target="_new">{{ label.webpage|e }}</a><br />{% endif %}
+    {% if label.wiki_link %}Wiki Link: <a href="{{ label.wiki_link|e }}" target="_new">{{ label.wiki_link|e }}</a><br />{% endif %}
+    {% if label.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ label.pouetid }}" target="_new"">Pouet Link</a><br />{% endif %}
+    {% if label.hol_id %}H.O.L. Link: <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ label.hol_id }}" target="_new">.all() of Light Developer Entry</a><br />{% endif %}
+    {% if label.found_date %}Founding Date: {{ label.found_date|date("F j, Y") }}<br />{% endif %}
+    {% if label.created_by %}Created By: {{ display.user(label.created_by) }}<br />{% endif %}
+   
+    {% if label.info %}<p><i>{{ label.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
+
+    <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> Approve</a> or <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> Reject</a>
+    </td>
+    </tr>
+    </table>
+    <br />
+{% endfor %}
+<br />
+{% endblock %}
+
