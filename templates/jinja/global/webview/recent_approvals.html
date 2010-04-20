@@ -16,10 +16,10 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
   <th>Status</th>
 </tr>
 {% if songs %}
-    {% for songr in songs %}{% cache 604800 mkstr(recsongs, song.id) %}
+    {% for songr in songs %}
         <tr>
             <td>
-                {{ display.song(songr.song) }}
+                {{ display.song(songr.song) }}
             </td>
             <td>
                 {% for artist in songr.song.artists.all() %} {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
@@ -34,10 +34,9 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
 	    <td align="center">
     		{{ display.user(songr.uploaded_by) }}
 	    </td>
-	    {% endcache %} {# Otherwise, Locked/Unlocked State Is Cached #}
             <td align="center">
-                <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span>
-                {% include "webview/t/fav_icon.html" %}
+                <span name="a_queue_{{ songr.song.id }}">{{ display.songspan_noauth(songr.song) }}</span>
+                {{ display.favorite(songr.song, user) }}
             </td>
         </tr>
     {% endfor %}
