@@ -1,14 +1,13 @@
-{% load dv_extend %}
 <tr class='postmain'>
 	<td class='djangoForumThreadPostDetail'>
-		{% with comment.user as U%}{% include "webview/t/user.html" %}{% endwith %}<br />
-		{% if comment.user.get_profile.avatar %}
-		<img src="{{ comment.user.get_profile.avatar.url }}" alt="avatar" /><br />
+        {{ display.user(comment.user) }}<br/>
+		{% if comment.user.get_profile().avatar %}
+		<img src="{{ comment.user.get_profile().avatar.url }}" alt="avatar" /><br />
 		{% endif %}
-		{{ comment.user.get_profile.infoline }}
+		{{ comment.user.get_profile().infoline }}
 	</td>
 	<td class="post">
-		{{ comment.comment|force_escape|linebreaks|bbcode|wordwrap:"100"|smileys }}
+		{{ comment.comment|mksafe|linebreaks|bbcode|smileys }}
 	</td>
 </tr>
 <tr class='postfooter'>

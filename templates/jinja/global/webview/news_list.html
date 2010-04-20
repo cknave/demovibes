@@ -5,18 +5,18 @@
 
 {% for news in object_list %}{% if news.status == "S" %}{# Sticky ones first! #}
  <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span></h2>
- {{ news.text|safe|bbcode }}
+ {{ news.text|bbcode }}
 {% endif %}{% endfor %}
 
 {% for news in object_list %}{% if news.status == "A" %}{# Then the rest. All active #}
  {# {% cache 600 "mainnews_a" news.id news.last_updated %} #}
  <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span><span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
- {{ news.text|safe|bbcode }}
+ {{ news.text|bbcode }}
  {# {% endcache %} #}
 {% endif %}{% if user.is_authenticated() %}{% if news.status == "L" %}{# Then the rest. Logged in filter #}
  {# {% cache 600 "mainnews_l" news.id news.last_updated %} #}
  <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span><span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
- {{ news.text|safe|bbcode }}
+ {{ news.text|bbcode }}
  {# {% endcache %} #}
 {% endif %}{% endif %}{% endfor %}
 

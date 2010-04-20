@@ -35,7 +35,7 @@ Uploaded By: {{ display.user(object.uploader) }}
 
 <p>
  Last Queued : 
- {% if object.last_queued != "Never" %}
+ {% if object.last_queued() != "Never" %}
   {{ object.last_queued()|timesince }} ago
  {% else %}
   Never Been Queued!
