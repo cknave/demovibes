@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 import socket
+import subprocess
+import re
+import os.path
 from django.conf import settings
 from django.core.mail import EmailMessage
 #from django.core.urlresolvers import reverse
@@ -417,6 +420,39 @@ class Song(models.Model):
         if self.song_length:
             return "%d:%02d" % ( self.song_length/60, self.song_length % 60 )
         return "Not set"
+
+    def set_song_data(self):
+        program = getattr(settings, 'DEMOSAUCE_SCAN', False)    
+        if program:
+            self.get_song_data_demosauce()
+        else:
+            self.get_song_data_pymad()
+
+
+    def set_song_data_demosauce(self):
+        program = getattr(settings, 'DEMOSAUCE_SCAN', False)
+        if program:
+            path = os.path.dirname(program)
+            p = subprocess.Popen([program, self.file.path], stdout=subprocess.PIPE, cwd = path)
+            output = p.communicate()[0]
+            if p.returncode == 0:
+                bitrate = re.compile(r'bitrate:(\d+)')
+                length = re.compile(r'length:(\d+)')
+                repgain = re.compile(r'replay gain:(.+)')
+                samplerate = re.compile(r'samplerate:(\d+)')
+                self.bitrate = bitrate.search(output).group(1)
+                self.song_length = length.search(output).group(1)
+                self.samplerate = samplerate.search(output).group(1)
+                self.replay_gain = float(repgain.search(output).group(1))
+        
+    def set_song_data_pymad(self):
+        mf = mad.MadFile(self.file.path)
+        seconds = mf.total_time() / 1000
+        bitrate = mf.bitrate() / 1000
+        samplerate = mf.samplerate()
+        self.song_length = seconds
+        self.bitrate = bitrate
+        self.samplerate = samplerate
 
     def get_pouet_screenshot(self):
         """

@@ -1,6 +1,6 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display -%}
-{% block title %}History For {{ display.song(song) }}{% endblock %}
+{% block title %}History For {{ song|e }}{% endblock %}
 
 {% block main %}
 <h2>{{ song.title }} - History</h2>

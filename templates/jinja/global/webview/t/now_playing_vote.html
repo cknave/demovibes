@@ -27,4 +27,4 @@
 </table>
 Your Vote: {{ myvote }}<br />
 {% endif %}
-Rating: {{ song.rating|default("No votes", true) }} ({{ song.rating_votes }} Votes)<br /> 
+Rating: {{ song.rating|floatformat|default("No votes", true) }} ({{ song.rating_votes }} Votes)<br /> 

@@ -4,7 +4,7 @@
 
  Requested By: {{ display.user(now_playing.requested_by) }}<br />
  {% if now_playing.song.labels.count() %}{% set piper = joiner() %}
-  Production Labels: {% for label in now_playing.song.labels.all %}{{ display.label(label) }} {% endfor %}<br />
+  Production Labels: {% for label in now_playing.song.labels.all() %}{{ display.label(label) }} {% endfor %}<br />
  {% endif %}
  {% if comps.count() %}
   In Compilations: {% for comp in comps.all() %}{{ display.compilation(comp) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />

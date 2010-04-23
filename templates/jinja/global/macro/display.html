@@ -49,11 +49,11 @@
 {%- endmacro %}
 
 {% macro label(L) -%}
-    <img class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url }}">{{ L.name|e }}</a>
+    <img class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>
 {%- endmacro %}
 
 {% macro group(G) -%}
-    <img class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url }}">{{ G.name|e }}</a>
+    <img class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>
 {% endmacro %}
 
 {% macro platform(P) -%}
