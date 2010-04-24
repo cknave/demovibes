@@ -260,14 +260,14 @@ hr {
 /* All the top right and left menu images */
 #home 		{background-image: url("/static/house.png");}
 #songs		{background-image: url("/static/music.png");}
-#song-platform	{background-image: url("nectarine-preview/joystick.png");}
+#song-platform	{background-image: url("images/joystick.png");}
 #artists	{background-image: url("/static/user_green.png");}
 #compilations   {background-image: url("/static/recplay_ico.png");}
 #recent	        {background-image: url("/static/new.png");}
 #menuqueue	{background-image: url("/static/script.png");}
 #search		{background-image: url("/static/find.png");}
 #forum		{background-image: url("/static/user_comment.png");}
-#profile	{background-image: url("nectarine-preview/vcard_edit.png");}
+#profile	{background-image: url("images/vcard_edit.png");}
 #favorites	{background-image: url("/static/heart.png");}
 #register	{background-image: url("/static/page_white_edit.png");}
 #logout		{background-image: url("/static/door_out.png");}
@@ -281,8 +281,8 @@ hr {
 #groups         {background-image: url("/static/group.png");} 
 #labels		{background-image: url("/static/transmit_blue.png");}
 #links		{background-image: url("/static/link.png");}
-#faq		{background-image: url("nectarine-preview/help.png");}
-#song-source		{background-image: url("nectarine-preview/server_connect.png");}
+#faq		{background-image: url("images/help.png");}
+#song-source		{background-image: url("images/server_connect.png");}
 
 #main {
 	margin-left: 265px;
