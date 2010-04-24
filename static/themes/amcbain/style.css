@@ -57,6 +57,16 @@ div[name=nowplaying] a[href*=vote]:after {
 }
 
 /*
+   Centers the "explicit content" image, which appears after the song title, and thus on the next line
+   after the line-break inserted above ... best fix for the moment for this, as they re-used a CSS class
+   (something you really shouldn't do like this, makes things hard to style)
+ */
+div[name="nowplaying"] .text-link {
+	display: block;
+	margin: 0 auto !important;
+}
+
+/*
    Allows us to make items inside table as large as possible (tables on demovibes appear "full width"
    even if they're not declared that way, so this doesn't hurt anything)
  */
@@ -124,7 +134,7 @@ hr {
 
 /*
    This is one reason I dislike browser prefixes wrt "experimental" support for CSS styles. Also, what happens to
-   those developers that forgot to put in the standard declaration when the browser deprecates (and removes the
+   those developers that forgot to put in the standard declaration when the browser deprecates (and removes) the
    experimental style? Interestingly enough, I'm with IE on this one, as they don't follow this trend. Thank you IE!
    
    Don't worry, I won't write this rant each time :P
@@ -332,7 +342,7 @@ hr {
 }
 
 /*
-   At smaller screen resolutions, there isn't enough room in the middle for a 600px width logo. This overrides
+   At smaller screen resolutions, there isn't enough room in the middle for a 600px wide logo. This overrides
    the inline style to hide the overflow and adds a scrollbar when needed
  */
 #main > div[style^="overflow"] {
@@ -342,7 +352,7 @@ hr {
 
 #logo {
 	display: block;
-	width: 600px;
+	/*width: 600px;*/
 	margin: 0 auto;
 }
 
@@ -461,9 +471,16 @@ hr {
 	margin-right: 1ex;
 }
 
+.songlist .text-link {
+	margin-left: 3px;
+	margin-right: 0;
+}
+
 /* Make the labels for adding a new thread on the forums right aligned and bold, to match other forms */
 .label {
+	vertical-align: top;
 	padding-right: 3px;
+	padding-top: 4px;
 	font-weight: bold;
 	text-align: right;
 }
@@ -723,18 +740,9 @@ table#djangoForumThreadPosts tr.postfooter td {
 	background-color: #e7e6e6;
 }
 
-/*
-   This sets the width of the first column of a post footer, and forces any text in the
-   first column not to wrap, so it overflows into the next column. This is so that on
-   song comments, the age of the comment doesn't wrap, making the footer smaller
- */
 table#djangoForumThreadPosts tr.postfooter td:first-child {
-	width: 112px;
-	max-width: 112px;
-	overflow: visible;
 	padding-top: .25em;
 	padding-left: .5em;
-	white-space: nowrap;
 }
 
 /* Right align text in the second post footer column ("Quote", "Edit Post" text) */
@@ -742,6 +750,10 @@ table#djangoForumThreadPosts tr.postfooter td:last-child {
 	padding-right: .5em;
 	text-align: right;
 	border-right: 1px solid #aaa;
+}
+
+table#djangoForumThreadPosts tr.postfooter td:only-child {
+	text-align: left;
 }
 
 /* Post content area padding, border, and alignment (to counter the table cell content centering) */
@@ -782,6 +794,8 @@ table#djangoForumThreadPosts .post {
 	color: #210;
 }
 
+
+/* Not sure what this is for */
 .bubbleInfo {
         position: relative;
 }
