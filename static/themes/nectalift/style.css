@@ -260,7 +260,7 @@ hr {
 /* All the top right and left menu images */
 #home 		{background-image: url("/static/house.png");}
 #songs		{background-image: url("/static/music.png");}
-#song-platform	{background-image: url("images/joystick.png");}
+#song-platform	{background-image: url("theme-images/joystick.png");}
 #artists	{background-image: url("/static/user_green.png");}
 #compilations   {background-image: url("/static/recplay_ico.png");}
 #recent	        {background-image: url("/static/new.png");}
@@ -281,8 +281,8 @@ hr {
 #groups         {background-image: url("/static/group.png");} 
 #labels		{background-image: url("/static/transmit_blue.png");}
 #links		{background-image: url("/static/link.png");}
-#faq		{background-image: url("images/help.png");}
-#song-source		{background-image: url("images/server_connect.png");}
+#faq		{background-image: url("theme-images/help.png");}
+#song-source		{background-image: url("theme-images/server_connect.png");}
 
 #main {
 	margin-left: 265px;
