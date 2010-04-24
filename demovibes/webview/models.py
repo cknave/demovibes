@@ -17,6 +17,8 @@ from django.template import RequestContext, Context, loader
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
+import tagging
+
 #from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
 
 def add_event(event, user = None):
@@ -134,6 +136,7 @@ class Userprofile(models.Model):
     token = models.CharField(blank = True, max_length=32)
     twitter_id = models.CharField(blank = True, max_length = 32, verbose_name = "Twitter ID", help_text="Enter your Twitter account name, without the Twitter URL (optional)")
     user = models.ForeignKey(User, unique = True)
+    use_tags = models.BooleanField(verbose_name="Show tags", default = True)
     visible_to = models.CharField(max_length=1, default = "A", choices = VISIBLE_TO)
     web_page = models.URLField(blank = True, verbose_name="Website", help_text="Your personal website address. Must be a valid URL")
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
@@ -631,6 +634,16 @@ class Song(models.Model):
             add_event(event='a_queue_%i' % self.id)
         Queue.objects.unlock()
         return result
+try:
+    tagging.register(Song)
+except tagging.AlreadyRegistered:
+    pass
+
+class TagHistory(models.Model):
+    song = models.ForeignKey(Song)
+    tags = models.TextField(blank=True)
+    user = models.ForeignKey(User)
+    added = models.DateTimeField(auto_now_add=True)
 
 class SongVote(models.Model):
     song = models.ForeignKey(Song)

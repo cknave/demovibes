@@ -267,7 +267,7 @@ hr {
 #menuqueue	{background-image: url("/static/script.png");}
 #search		{background-image: url("/static/find.png");}
 #forum		{background-image: url("/static/user_comment.png");}
-#profile	{background-image: url("images/vcard_edit.png");}
+#profile	{background-image: url("theme-images/vcard_edit.png");}
 #favorites	{background-image: url("/static/heart.png");}
 #register	{background-image: url("/static/page_white_edit.png");}
 #logout		{background-image: url("/static/door_out.png");}

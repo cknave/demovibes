@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+
+{% import "macro/display.html" as display %}
+
+{% block title %}Edit tags for {{ song|e }}{% endblock %}
+ 
+{% block main %}
+<h2>Edit tags for {{ song|e }}</h2>
+<form method="post" action=".">
+<input type="text" name="tags" value="{{ tags|e }}">
+<input type="submit" value="update">
+</form>
+<h3>Latest changes:</h3>
+<table>
+<tr>
+<th>User</th>
+<th>Time</th>
+<th>Tags</th>
+</tr>
+{% for change in changes %}
+<tr>
+    <td>{{ display.user(change.user) }}</td>
+    <td>{{ change.added }}</td>
+    <td>{{ change.tags|e }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

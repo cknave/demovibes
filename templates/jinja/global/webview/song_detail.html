@@ -13,8 +13,28 @@
 {% endif %}
 </h2>
 
+{% if not user.is_authenticated() or user.get_profile().use_tags %}
+<div class="taglist">
+
+    {% if object.tags %}
+        Tags for song<br/>
+        {% for tag in object.tags %}
+            {{ display.tag(tag) }}
+        {% endfor %}
+    {% endif %}
+    <p><a href="{{ url('dv-songtags', object.id) }}">Edit tags</a></p>
+    {% if related %}
+        <p>Related songs:</p>
+        {% for S in related[:5] %}
+            {{ display.song(S) }} by {{ display.artists(S) }}{% if not loop.last %}<br/> {% endif%}
+        {% endfor %}
+    {% endif %}
+    <br/>
+</div>
+{% endif %}
+
 {{ display.song(object) }}
- 
+
 <p>
 Author: 
 {% for artist in object.artists.all() %}
@@ -86,6 +106,8 @@ It was added {{ object.added|timesince }} ago.
  {% endif %}
 {% endcache %}
 
+
+
 {% if object.songdownload_set.all()  %}
  <h2>Download Links</h2>
  <ul>
@@ -127,6 +149,7 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
 <br /><strong>Remixes Based On This Song:</strong><br /><br />
 {% for mix in remix.all() %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
+
 
 <h2>
 <img class="icon_header" src="{{ MEDIA_URL }}comment.png" alt="" />User Comments

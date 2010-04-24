@@ -1,0 +1,32 @@
+span.tagview_1 {
+    font-size:0.8em;
+}
+
+span.tagview_2 {
+    font-size:0.95em;
+}
+
+span.tagview_3 {
+    font-size:1.1em;
+}
+
+span.tagview_4 {
+    font-size:1.25em;
+}
+#main h2 {
+clear:both;
+}
+div.taglist {
+    background:#eee;
+    float: right;
+    width: 40%;
+    border: 1px solid #E6CEA8;
+    padding:6px;
+    margin-left:6px;
+    overflow: hidden;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-top-left-radius:10px;
+}
+
+#tagcloud	{background-image: url("/static/comment.png");}

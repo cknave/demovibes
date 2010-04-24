@@ -2,6 +2,9 @@ from webview.models import *
 from webview.forms import *
 from webview import common
 
+from tagging.models import TaggedItem
+import tagging.utils
+
 from django import forms
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponseBadRequest, HttpResponse
 
@@ -135,9 +138,10 @@ def list_song(request, song_id):
     
     # Has this song been remixed?
     remix = Song.objects.filter(remix_of_id = song.id)
+    related = Song.tagged.related_to(song)
     
     return j2shim.r2r('webview/song_detail.html', \
-        { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix }\
+        { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related }\
         , request)
 
 def view_user_favs(request, user):
@@ -559,6 +563,29 @@ def song_statistics(request, stattype):
                       {'songs': songs, 'title': title, 'numsongs': numsongs, 'stat': stat},
                       request)    
 
+def tag_cloud(request):
+    tags = Song.tags.cloud()
+    c = {'tags': tags}
+    return j2shim.r2r('webview/tag_cloud.html', c, request)
+
+def tag_detail(request, tag):
+    songs = TaggedItem.objects.get_by_model(Song, tag)
+    related = Song.tags.related(tag)
+    c = {'songs': songs, 'related': related, 'tag':tag}
+    return j2shim.r2r('webview/tag_detail.html', c, request)
+
+@login_required
+def tag_edit(request, song_id):
+    song = get_object_or_404(Song, pk = song_id)
+    if request.method == "POST":
+        song.tags = request.POST['tags']
+        TagHistory.objects.create(user=request.user, song=song, tags = request.POST['tags'])
+        return HttpResponseRedirect(song.get_absolute_url())
+    tags = tagging.utils.edit_string_for_tags(song.tags)
+    changes = TagHistory.objects.filter(song=song).order_by('-id')[:5]
+    c = {'tags': tags, 'song': song, 'changes': changes}
+    return j2shim.r2r('webview/tag_edit.html', c, request)
+    
 @login_required
 def create_artist(request):
     """

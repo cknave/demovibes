@@ -399,8 +399,8 @@ p.pmtitle {
 
 #main h1, #main h2
 {
-	margin-left: -9px;
-	margin-right: -9px;
+	margin-left: 0px;
+	margin-right: 0px;
 	margin-bottom: 1ex;
 	padding-left: 12px;
 	padding-right: 12px;
