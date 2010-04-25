@@ -3,6 +3,23 @@
 {% import "macro/display.html" as display %}
 
 {% block title %}Edit tags for {{ song|e }}{% endblock %}
+
+{% block headblock %}
+
+  <link rel="stylesheet" href="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.css" type="text/css" />
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
+  <script>
+  $(document).ready(function(){
+    $("#tagfield").autocomplete("http://{{ dv.site_url() }}{{ url("dv-ax-taglist") }}", 
+    {multiple:true, 
+    formatResult: function(data, value) {
+			return value.split(" ")[0];
+		},
+    multipleSeparator:" "});
+  });
+  </script>
+
+{% endblock %}
  
 {% block main %}
 <h2>Edit tags for {{ song|e }}</h2>
@@ -12,7 +29,7 @@
 Please input tags with space between to seperate them.
 <h2>Change tags</h2>
 <form method="post" action=".">
-Tags : <input type="text" name="tags" value="{{ tags|e }}" />
+Tags : <input type="text" name="tags" value="{{ tags|e }}"  id="tagfield" />
 <input type="submit" value="Update tags" />
 </form>
 <h3>Latest changes:</h3>

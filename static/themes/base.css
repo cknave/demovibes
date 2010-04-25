@@ -1,5 +1,5 @@
 .tagview_1 a {
-    font-size:0.75em;
+    font-size:0.7em;
 }
 
 .tagview_2 a {
@@ -7,7 +7,7 @@
 }
 
 .tagview_3 a {
-    font-size:1.1em;
+    font-size:1.12em;
 }
 
 .tagview_4 a {
@@ -32,5 +32,7 @@ div.taglist {
 }
 
 div.taglist p:first-child { margin-top: 0; } 
+
+#tagfield { width:90%;}
 
 #tagcloud	{background-image: url("/static/comment.png");}

@@ -7,6 +7,9 @@ from django.views.decorators.cache import cache_control
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 import socket
+
+from tagging.models import Tag
+
 from django.template import RequestContext
 from django.conf import settings
 from django.db.models import Q
@@ -72,6 +75,17 @@ def oneliner_submit(request):
     message = request.POST['Line'].strip()
     add_oneliner(request.user, message)
     return HttpResponse("OK")
+
+def get_tags(request):
+    q = request.GET['q']
+    if q:
+        l = []
+        t = Tag.objects.filter(name__istartswith=q)[:20]
+        for tag in t:
+            if tag.items.count():
+                l.append("%s - %s song(s)" % (tag.name, tag.items.count()))
+        return HttpResponse('\n'.join(l))
+    return HttpResponse()
 
 @cache_control(must_revalidate=True, max_age=30)
 def oneliner(request):
