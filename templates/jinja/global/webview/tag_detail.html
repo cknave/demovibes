@@ -8,7 +8,13 @@
 <h2>Info for tag(s) "{{ tag|e }}"</h2>
 <p>Related tags:</p>
 {% for tagd in related %}
-   <a href="{{ url("dv-tagdetail", mkstr(tag|e,",",tagd|e)) }}" title='Add tag "{{ tagd|e }}" to filter' class="tag_add">[+]</a><span title="{{ tagd.count }} song(s) tagged">{{ display.tag(tagd) }}</span>{% if not loop.last %}, {% endif %}
+    <span class="tagview_{{ tagd.font_size }}">
+        <a href="{{ url("dv-tagdetail", mkstr(tag|e,",",tagd|e)) }}" title='Add tag "{{ tagd|e }}" to filter' class="tag_add">[+]</a>
+        <span title="{{ tagd.count }} song(s) tagged">
+            {{ display.tag(tagd) }}
+        </span>
+        {% if not loop.last %}, {% endif %}
+    </span>
 {% endfor %}
 <h2>Songs connected to tags</h2>
 

@@ -139,9 +139,15 @@ def list_song(request, song_id):
     # Has this song been remixed?
     remix = Song.objects.filter(remix_of_id = song.id)
     related = Song.tagged.related_to(song)
+    tags = song.tags
+    t2 = []
+    for tag in tags:
+        tag.count = tag.items.count()
+        t2.append(tag)
+    tags = tagging.utils.calculate_cloud(t2)
     
     return j2shim.r2r('webview/song_detail.html', \
-        { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related }\
+        { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related, 'tags': tags }\
         , request)
 
 def view_user_favs(request, user):
@@ -571,6 +577,7 @@ def tag_cloud(request):
 def tag_detail(request, tag):
     songs = TaggedItem.objects.get_by_model(Song, tag)
     related = Song.tags.related(tag, counts=True)
+    related = tagging.utils.calculate_cloud(related)
     c = {'songs': songs, 'related': related, 'tag':tag}
     return j2shim.r2r('webview/tag_detail.html', c, request)
 

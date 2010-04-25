@@ -21,17 +21,21 @@ compilation_dict = {
     'template_name': 'webview/xml/compilation.xml',
 }
 
+artist_dict = {
+    'queryset': Artist.objects.all(),
+    'mimetype': "application/xml",
+    'template_name': 'webview/xml/artist.xml',
+}
+
 group_dict = {
     'queryset': Group.objects.all(),
     'mimetype': "application/xml",
     'template_name': 'webview/xml/group.xml',
 }
 
-@cache_output
 def cached_object_list(*args, **kwargs):
     return object_list(*args, **kwargs)
 
-@cache_output
 def cached_object_detail(*args, **kwargs):
     return object_detail(*args, **kwargs)
 
@@ -42,6 +46,7 @@ urlpatterns = patterns('',
     (r'^song/(?P<object_id>\d+)/$', cached_object_detail , song_dict),
     (r'^compilation/(?P<object_id>\d+)/$', cached_object_detail , compilation_dict),
     (r'^group/(?P<object_id>\d+)/$', cached_object_detail , group_dict), 
+    (r'^artist/(?P<object_id>\d+)/$', cached_object_detail, artist_dict),     
     (r'^streams/$',                 cached_object_list, stream_dict),
     #(r'^artist/$', 	'demovibes.webview.xml_views.artist'),
     #(r'^user/$',  	'demovibes.webview.xml_views.user'),

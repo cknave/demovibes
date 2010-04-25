@@ -17,9 +17,9 @@
 <div class="taglist">
 
     <p>Tags for song:</p>
-    {% if object.tags %}
-        {% for tag in object.tags %}
-            {{ display.tag(tag) }}
+    {% if tags %}
+        {% for tag in tags %}
+            <span title="{{ tag.count }} song(s)">{{ display.tag(tag) }}</span>
         {% endfor %}
     {% else %}
         <em>No tags</em>

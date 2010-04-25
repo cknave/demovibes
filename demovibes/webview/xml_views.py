@@ -5,7 +5,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.conf import settings
 
-@cache_output
 def queue(request):
 	try :
 		now_playing = Queue.objects.select_related(depth=2).filter(played=True).order_by('-id')[0]
@@ -17,7 +16,6 @@ def queue(request):
 		{'now_playing': now_playing, 'history': history, 'queue': queue}, \
 		context_instance=RequestContext(request), mimetype = "application/xml")
 
-@cache_output
 def oneliner(request):
     try:
         oneliner_data = Oneliner.objects.select_related(depth=1).order_by('-id')[:20]
@@ -28,7 +26,6 @@ def oneliner(request):
         {'oneliner_data' : oneliner_data}, \
         context_instance=RequestContext(request), mimetype = "application/xml")
 
-@cache_output
 def online(request):
     try:
 	timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)

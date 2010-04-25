@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artist id="{{ object.id }}">
+    <handle>{{ object.handle }}</handle>
+    <status v="{{ object.status }}">{{ object.get_status_display }}</status>
+    <name>{{ object.name }}</name>
+    <website>{{ object.website }}</website>
+    <country>{{ object.home_country }}</country>
+    <location>{{ object.home_location }}</location>
+    <info>{{ object.info }}</info>
+    <twitter>{{ object.twitter_id }}</twitter>
+    <lastfm>{{ object.last_fm_id }}</lastfm>
+    <aliasof id="{{ object.alias_of.id }}">{{ object.alias_of.handle }}</aliasof>
+    <aliases>
+        {% for alias in object.aliases.all %}<alias id="{{ alias.id }}">{{ alias.handle }}</alias>{% endfor %}
+    </aliases>
+    <groups>
+        {% for group in object.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
+    </groups>
+    <songs>
+        {% for song in object.song_set.all %}<song id="{{ song.id }}">{{ song.title }}</song>{% endfor %}
+    </songs>
+</artist>
