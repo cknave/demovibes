@@ -1,9 +1,10 @@
 {% extends "base/base.html" %}
-
-{% block title %}Votes for {{ song.title }}{% endblock %}
+{% import "macro/display.html" as display %}
+{% block title %}Votes for {{ song.title|e }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/song.png" alt="" />Song Voting History</h2>
+<h2><img class="icon_header" src="/static/song.png" alt="" />Song Voting History for {{ song.title|e }}</h2>
+<p>List over votes for the song {{ display.song(song) }}</p>
 {% for vote in votelist %}
  <img src="{{ MEDIA_URL }}rating_{{ vote.vote }}.gif" title="Rated {{ vote.vote }} Stars" alt="Rated {{ vote.vote }} Stars" /> - Voted By: {% set U = vote.user %}{% include "webview/t/user.html" %} ({{ vote.added|timesince }} Ago)  
 <br />

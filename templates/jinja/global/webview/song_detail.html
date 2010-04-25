@@ -16,11 +16,13 @@
 {% if not user.is_authenticated() or user.get_profile().use_tags %}
 <div class="taglist">
 
+    Tags for song:<br/>
     {% if object.tags %}
-        Tags for song<br/>
         {% for tag in object.tags %}
             {{ display.tag(tag) }}
         {% endfor %}
+    {% else %}
+        <em>No tags</em>
     {% endif %}
     <p><a href="{{ url('dv-songtags', object.id) }}">Edit tags</a></p>
     {% if related %}

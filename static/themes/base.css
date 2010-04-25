@@ -1,21 +1,23 @@
-span.tagview_1 {
+span.tagview_1 a {
     font-size:0.8em;
 }
 
-span.tagview_2 {
+span.tagview_2 a {
     font-size:0.95em;
 }
 
-span.tagview_3 {
+span.tagview_3 a {
     font-size:1.1em;
 }
 
-span.tagview_4 {
+span.tagview_4 a {
     font-size:1.25em;
 }
+
 #main h2 {
-clear:both;
+    clear:both;
 }
+
 div.taglist {
     background:#eee;
     float: right;
