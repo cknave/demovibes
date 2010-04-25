@@ -9,16 +9,7 @@
 
 <p>Please try to keep the style and words that's already in use.</p>
 
-How tag input gets treated:
-<table>
-<tr><th>Tag input string</th><th>Resulting tags</th><th>Notes</th></tr>
-<tr><td>apple ball cat</td><td>[apple], [ball], [cat]</td><td>No commas, so space delimited</td></tr>
-<tr><td>apple, ball cat</td><td>[apple], [ball cat]</td><td>Comma present, so comma delimited</td></tr>
-<tr><td>"apple, ball" cat dog</td><td>[apple, ball], [cat], [dog]</td><td>All commas are quoted, so space delimited</td></tr>
-<tr><td>"apple, ball", cat dog</td><td>[apple, ball], [cat dog]</td><td>Contains an unquoted comma, so comma delimited</td></tr>
-<tr><td>apple "ball cat" dog</td><td>[apple], [ball cat], [dog]</td><td>No commas, so space delimited</td></tr>
-<tr><td>"apple" "ball dog</td><td>[apple], [ball], [dog]</td><td>Unclosed double quote is ignored</td></tr>
-</table>
+Please input tags with space between to seperate them.
 <h2>Change tags</h2>
 <form method="post" action=".">
 Tags : <input type="text" name="tags" value="{{ tags|e }}" />

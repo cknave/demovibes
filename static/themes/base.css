@@ -1,16 +1,16 @@
-span.tagview_1 a {
-    font-size:0.8em;
+.tagview_1 a {
+    font-size:0.75em;
 }
 
-span.tagview_2 a {
+.tagview_2 a {
     font-size:0.95em;
 }
 
-span.tagview_3 a {
+.tagview_3 a {
     font-size:1.1em;
 }
 
-span.tagview_4 a {
+.tagview_4 a {
     font-size:1.25em;
 }
 
@@ -30,5 +30,7 @@ div.taglist {
     -moz-border-radius:10px;
     -webkit-border-top-left-radius:10px;
 }
+
+div.taglist p:first-child { margin-top: 0; } 
 
 #tagcloud	{background-image: url("/static/comment.png");}

@@ -570,7 +570,7 @@ def tag_cloud(request):
 
 def tag_detail(request, tag):
     songs = TaggedItem.objects.get_by_model(Song, tag)
-    related = Song.tags.related(tag)
+    related = Song.tags.related(tag, counts=True)
     c = {'songs': songs, 'related': related, 'tag':tag}
     return j2shim.r2r('webview/tag_detail.html', c, request)
 
@@ -578,7 +578,8 @@ def tag_detail(request, tag):
 def tag_edit(request, song_id):
     song = get_object_or_404(Song, pk = song_id)
     if request.method == "POST":
-        song.tags = request.POST['tags']
+        t = request.POST['tags']
+        song.tags = re.sub(r'[^a-zA-Z0-9!_\-?& ]+', '', t)
         TagHistory.objects.create(user=request.user, song=song, tags = request.POST['tags'])
         return HttpResponseRedirect(song.get_absolute_url())
     tags = tagging.utils.edit_string_for_tags(song.tags)
