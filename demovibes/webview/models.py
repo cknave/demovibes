@@ -912,7 +912,7 @@ class PrivateMessage(models.Model):
         ordering = ['-sent']
 
     def __unicode__(self):
-        return self.title
+        return self.subject
 
     @models.permalink
     def get_absolute_url(self):
