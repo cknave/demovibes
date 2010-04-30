@@ -1000,6 +1000,34 @@ def flag(value):
     return "<img src='%sflags/nectaflag.png' class='countryflag' alt='flag' />" % (settings.MEDIA_URL)
 
 @register.filter
+def getattrs (obj, args):
+    """ Try to get an attribute from an object.
+
+    Example: {% if block|getattr:"editable,True" %}
+
+    Beware that the default is always a string, if you want this
+    to return False, pass an empty second argument:
+    {% if block|getattr:"editable," %}
+    """
+    splitargs = args.split(',')
+    try:
+      (attribute, default) = splitargs
+    except ValueError:
+      (attribute, default) = args, ''
+
+    try:
+      attr = obj.__getattribute__(attribute)
+    except AttributeError:
+      attr = obj.__dict__.get(attribute, default)
+    except:
+      attr = default
+
+    if hasattr(attr, '__call__'):
+        return attr.__call__()
+    else:
+        return attr
+
+@register.filter
 def dv_urlize(text):
     """
     Simplified replacement of the urlize filter in Django, which at present offers no option

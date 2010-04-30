@@ -1,0 +1,1 @@
+<img src="/static/music.png" /><a href="{{ object.get_absolute_url }}">{{ object.title }}</a> by {% for artist in object.artists.all %}{{ artist }} {% endfor %}

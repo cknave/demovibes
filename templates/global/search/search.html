@@ -1,6 +1,9 @@
 {% extends "base/base.html" %}
+
+{% load dv_extend %}
+
 {% block main %}
-    <h2>Search</h2>
+    <h2>Search (BETA!!!)</h2>
 
     <form method="get" action=".">
         <table>
@@ -15,10 +18,9 @@
 
         {% if query %}
             <h3>Results</h3>
-
             {% for result in page.object_list %}
                 <p>
-                    <a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}{{ result.object.thread }}</a>
+                    {{ result.render|safe }}
                 </p>
             {% empty %}
                 <p>No results found.</p>
