@@ -10,4 +10,7 @@ class PostIndex(SearchIndex):
     def get_queryset(self):
         return M.Post.objects.filter(thread__forum__is_private=False)
 
+    def get_updated_field(self):
+        return "edited"
+
 site.register(M.Post, PostIndex)

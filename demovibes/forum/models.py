@@ -208,8 +208,8 @@ class Post(models.Model):
         new_post = False
         if not self.id:
             self.time = datetime.datetime.now()
-        else:
-            self.edited = datetime.datetime.now()
+        
+        self.edited = datetime.datetime.now()
             
         super(Post, self).save(force_insert, force_update)
 

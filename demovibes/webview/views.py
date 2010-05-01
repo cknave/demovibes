@@ -587,6 +587,7 @@ def tag_edit(request, song_id):
     if request.method == "POST":
         t = request.POST['tags']
         song.tags = re.sub(r'[^a-zA-Z0-9!_\-?& ]+', '', t)
+        song.save() # For updating the "last changed" value
         TagHistory.objects.create(user=request.user, song=song, tags = request.POST['tags'])
         return HttpResponseRedirect(song.get_absolute_url())
     tags = tagging.utils.edit_string_for_tags(song.tags)

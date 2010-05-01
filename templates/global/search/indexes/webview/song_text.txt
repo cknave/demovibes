@@ -1,5 +1,5 @@
 {{ object.title }}
-{{ object.info }}
+{{ object.title }}
 {% for artist in object.artists.all %}
 {{ artist.handle }}
 {{ artist.name }}
@@ -9,10 +9,11 @@
 {% endfor %}
 {% for label in labels %}
 {% endfor %}
+{% for tag in object.tags %}
+{{ tag.name }}
+{% endfor %}
 {{ object.platform.title }}
 {{ object.release_year }}
 {{ object.type.title }}
 {{ object.uploader.username }}
-{% for tag in object.tags %}
-{{ tag.name }}
-{% endfor %}
+{{ object.info }}

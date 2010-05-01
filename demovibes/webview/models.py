@@ -127,6 +127,7 @@ class Userprofile(models.Model):
     infoline = models.CharField(blank = True, max_length = 50)
     info = models.TextField(blank = True, verbose_name="Profile Info", help_text="Enter a little bit about yourself. No HTML. BBCode tags allowed")
     last_active = models.DateTimeField(blank = True, null = True)
+    last_changed = models.DateTimeField(default=datetime.datetime.now())
     last_activity = models.DateTimeField(blank = True, null = True)
     location = models.CharField(blank = True, max_length=40, verbose_name="Hometown Location")
     paginate_favorites = models.BooleanField(default = True)
@@ -140,6 +141,10 @@ class Userprofile(models.Model):
     visible_to = models.CharField(max_length=1, default = "A", choices = VISIBLE_TO)
     web_page = models.URLField(blank = True, verbose_name="Website", help_text="Your personal website address. Must be a valid URL")
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
+
+    def save(self, *args, **kwargs):
+        self.last_changed = datetime.datetime.now()
+        return super(Userprofile, self).save(*args, **kwargs)
 
     def have_artist(self):
         try:
@@ -480,12 +485,6 @@ class Song(models.Model):
 
             except:
                 return "Couldn't pull Pouet info!"
-
-    def get_scan_info(self):
-        scantool = getattr(settings, 'SCAN_PATH', False)
-        if scantool:
-            pass
-            #Dummy holder for now
 
     def get_pouet_download(self):
         """

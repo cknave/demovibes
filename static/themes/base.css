@@ -2,6 +2,22 @@
     font-size:0.8em;
 }
 
+.searchpostpreview {
+    margin-left:1.5em;
+    padding:2px;
+    background:#f5f5f5;
+    border: 1px solid #E6CEA8;
+}
+
+.searchpostpreview p {
+    margin-top: 0;
+    margin-bottom: 3px;
+}
+
+.searchinfo {
+    font-style:italic;
+}
+
 .tagview_2 a {
     font-size:0.95em;
 }
