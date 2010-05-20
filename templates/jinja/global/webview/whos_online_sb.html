@@ -3,12 +3,8 @@ There {{ userlist.count()|pluralize("is,are") }} a total of {{ userlist.count() 
 
 {% if userlist.count() != 0 %}
  <div id="whosonline" class="whosonline">
- <table>
-    <tr><td>
-     {% for U in userlist.all() %}
-      {{ display.user(U.user) }}{% if loop.last %} {% else %}, {% endif %}{{ loop.cycle('', '<br />') }}
-     {% endfor %}
-    </td></tr>
- </table>
+    {% for U in userlist.all() %}
+     {{ display.user(U.user) }}{% if loop.last %} {% else %}, {% endif %}
+    {% endfor %}
  </div>
 {% endif %}

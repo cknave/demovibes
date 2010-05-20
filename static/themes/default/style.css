@@ -800,8 +800,12 @@ table.songlist tr.row2 td {
 
 }
 
-.whosonline {
+#whosonline {
 	line-height: 135%;
+}
+
+#whosonline span {
+	white-space: nowrap;
 }
 
 .bubbleInfo {

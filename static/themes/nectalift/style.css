@@ -403,6 +403,10 @@ hr {
 	text-align: center;
 }
 
+#whosonline span {
+	white-space: nowrap;
+}
+
 /* Textarea for editing forum posts. Make it as wide as possible */
 #id_body {
 	width: 99%;
