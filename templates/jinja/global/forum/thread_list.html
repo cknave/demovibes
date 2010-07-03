@@ -50,7 +50,7 @@
 	<td>{{ t.posts }}</td>
 	<td>{{ t.views }}</td>
 {% set latest_post = t.thread_latest_post %}
-<td class='djangoForumThreadLastPost'>{{ latest_post.time|timesince }} ago by {% set U = latest_post.author %}{% include "webview/t/user.html" %} (<a href='{{ latest_post.get_absolute_url() }}'>View Thread</a>)</td>
+{% if latest_post %}<td class='djangoForumThreadLastPost'>{{ latest_post.time|timesince }} ago by {% set U = latest_post.author %}{% include "webview/t/user.html" %} (<a href='{{ latest_post.get_absolute_url() }}'>View Thread</a>)</td>{% endif %}
 
 </tr>
 {% endfor %}
