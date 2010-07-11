@@ -17,7 +17,7 @@
     {% if group.webpage %}Website: <a href="{{ group.webpage }}">{{ group.webpage|e }}</a><br />{% endif %}
     {% if group.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ group.pouetid }}" target="_new"">Pouet Link</a><br />{% endif %}
     {% if group.found_date %}Founding Date: {{ group.found_date|date("F j, Y") }}<br />{% endif %}
-    {% if group.created_by %}Created By: {{ display.user(user) }}<br />{% endif %}
+    {% if group.created_by %}Created By: {{ display.user(group.created_by) }}<br />{% endif %}
    
     {% if group.info %}<p><i>{{ group.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
 

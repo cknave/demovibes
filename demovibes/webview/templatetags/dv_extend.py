@@ -954,7 +954,7 @@ def bbcode_oneliner(value):
     """
     Replace BBCode tags with HTML equivalents. Purposely placed into seperate
     Function for Oneliner purposes, as over time the tags may truncate or change
-    For use specifically within the oneliner & it's limitations. AAK.
+    or use specifically within the oneliner & it's limitations. AAK.
     """
 
     for bbset in bbdata_oneliner:
@@ -1135,8 +1135,8 @@ bbdata_full = [
         (r'\[url=(.+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
-        (r'\[img\](.+?)\[/img\]', r'<img src="\1" alt="" />'),
-        (r'\[img=(.+?)\](.+?)\[/img\]', r'<a href="\1" target="_new"><b>\2</b><br /><img src="\1" alt="" /></a>'),
+        (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
+        (r'\[img=(.+?)\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<a href="\1" target="_new"><b>\2</b><br /><img src="\1" alt="" /></a>'),
         
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
         (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),
@@ -1202,7 +1202,7 @@ bbdata_full = [
 def reify(bblist):
     templist = []
     for x in bblist:
-        res = re.compile(x[0], re.DOTALL)
+        res = re.compile(x[0], re.DOTALL & re.IGNORECASE)
         templist.append((res, x[1]))
     return templist
 
