@@ -13,7 +13,7 @@
     <td>
     {% if song.is_favorite(user) %} 
     {% else %}
-        <a href="/demovibes/favorites/add/{{ song.id }}//">
+        <a href="/demovibes/favorites/add/{{ song.id }}/">
             <img class="song_head" src="/static/heart_add.png" title="Add As Fave" />
         </a>    
     {% endif %}
