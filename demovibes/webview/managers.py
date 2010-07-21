@@ -44,21 +44,27 @@ class LockingManager(models.Manager):
         
         See http://dev.mysql.com/doc/refman/5.0/en/lock-tables.html
         """
-        cursor = connection.cursor()
-        table = self.model._meta.db_table
-        for T in tables:
-            table = table + " WRITE , %s" % T._meta.db_table
-        cursor.execute("LOCK TABLES %s WRITE" % table)
-        row = cursor.fetchone()
-        return row
+        try:
+            cursor = connection.cursor()
+            table = self.model._meta.db_table
+            for T in tables:
+                table = table + " WRITE , %s" % T._meta.db_table
+            cursor.execute("LOCK TABLES %s WRITE" % table)
+            row = cursor.fetchone()
+            return row
+        except:
+            self.has_lock = False
         
     def unlock(self):
-        """ Unlock the table. """
-        cursor = connection.cursor()
-        table = self.model._meta.db_table
-        cursor.execute("UNLOCK TABLES")
-        row = cursor.fetchone()
-        return row       
+        try:
+            """ Unlock the table. """
+            cursor = connection.cursor()
+            table = self.model._meta.db_table
+            cursor.execute("UNLOCK TABLES")
+            row = cursor.fetchone()
+            return row   
+        except:
+            self.has_unlock = False
 
 class ActiveSongManager(models.Manager):
     """
