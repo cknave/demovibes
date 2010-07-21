@@ -69,13 +69,13 @@ class Group(models.Model):
     class Meta:
         ordering = ['name']
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         S = self.name[0].lower()
         if not S in alphalist:
             S = '#'
         self.startswith = S
         self.last_updated = datetime.datetime.now()
-        return super(Group, self).save(force_insert, force_update)
+        return super(Group, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -232,13 +232,13 @@ class Label(models.Model):
     class Meta:
         ordering = ['name']
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         S = self.name[0].lower()
         if not S in alphalist:
             S = '#'
         self.startswith = S
         self.last_updated = datetime.datetime.now()
-        return super(Label, self).save(force_insert, force_update)
+        return super(Label, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -283,13 +283,13 @@ class Artist(models.Model):
     class Meta:
         ordering = ['handle']
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         S = self.handle[0].lower() #Stores the first character in the DB, for easier lookup
         if not S in alphalist:
                 S = '#'
         self.startswith = S
         self.last_updated = datetime.datetime.now()
-        return super(Artist, self).save(force_insert, force_update)
+        return super(Artist, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -509,7 +509,7 @@ class Song(models.Model):
             except:
                 pass
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         if not self.id or self.song_length == None:
             try:
                 mf = mad.MadFile(self.file.path)
@@ -534,7 +534,7 @@ class Song(models.Model):
         if not S in alphalist:
             S = '#'
         self.startswith = S
-        return super(Song, self).save(force_insert, force_update)
+        return super(Song, self).save(*args, **kwargs)
 
     def artist(self):
         """
@@ -707,12 +707,12 @@ class Compilation(models.Model):
             return "%d:%02d" % ( self.running_time/60, self.running_time % 60 )
         return "Not set"
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         S = self.name[0].lower() #Stores the first character in the DB, for easier lookup
         if not S in alphalist:
                 S = '#'
         self.startswith = S
-        return super(Compilation, self).save(force_insert, force_update)
+        return super(Compilation, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
@@ -824,11 +824,11 @@ class Favorite(models.Model):
         unique_together = ("user", "song")
         ordering = ['song']
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         if not self.id:
             self.song.num_favorited += 1
             self.song.save()
-        return super(Favorite, self).save(force_insert, force_update)
+        return super(Favorite, self).save(*args, **kwargs)
 
     def delete(self):
         self.song.num_favorited -= 1
@@ -845,8 +845,8 @@ class Oneliner(models.Model):
             ('mute_oneliner',"Muted from oneliner"),
         )
 
-    def save(self, force_insert=False, force_update=False):
-        return super(Oneliner, self).save(force_insert, force_update)
+    def save(self, *args, **kwargs):
+        return super(Oneliner, self).save(*args, **kwargs)
 
 class AjaxEvent(models.Model):
     event = models.CharField(max_length=100)
@@ -870,9 +870,9 @@ class News(models.Model):
     def __unicode__(self):
         return self.title
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         self.last_updated = datetime.datetime.now()
-        return super(News, self).save(force_insert, force_update)
+        return super(News, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = 'News'
@@ -917,7 +917,7 @@ class PrivateMessage(models.Model):
     def get_absolute_url(self):
         return ("dv-read_pm", [str(self.id)])
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         #Check if user have send pm on, and if its a new message
         profile = self.to.get_profile()
         if self.pk == None and profile.email_on_pm:
@@ -938,7 +938,7 @@ class PrivateMessage(models.Model):
                 to=[self.to.email])
             email.send(fail_silently=True)
         #Call real save
-        return super(PrivateMessage, self).save(force_insert, force_update)
+        return super(PrivateMessage, self).save(*args, **kwargs)
 
 class UploadTicket(models.Model):
     ticket = models.CharField(max_length=20)
@@ -1004,9 +1004,9 @@ class Link(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         self.last_updated = datetime.datetime.now()
-        return super(Link, self).save(force_insert, force_update)
+        return super(Link, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -1024,9 +1024,9 @@ class Faq(models.Model):
     def __unicode__(self):
         return self.question
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         self.last_updated = datetime.datetime.now()
-        return super(Faq, self).save(force_insert, force_update)
+        return super(Faq, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['priority']
@@ -1049,14 +1049,14 @@ class Screenshot(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         # Eventually, we will add a screenshot browser
         S = self.name[0].lower()
         if not S in alphalist:
             S = '#'
         self.startswith = S
         self.last_updated = datetime.datetime.now()
-        return super(Screenshot, self).save(force_insert, force_update)
+        return super(Screenshot, self).save(*args, **kwargs)
 
 def create_profile(sender, **kwargs):
     if kwargs["created"]:

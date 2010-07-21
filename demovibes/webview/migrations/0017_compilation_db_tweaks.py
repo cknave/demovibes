@@ -1,4 +1,4 @@
-
+import datetime
 from south.db import db
 from django.db import models
 from demovibes.webview.models import *
@@ -8,7 +8,7 @@ class Migration:
     def forwards(self, orm):
         
         # Adding field 'Compilation.date_added'
-        db.add_column('webview_compilation', 'date_added', models.DateTimeField(auto_now_add=True))
+        db.add_column('webview_compilation', 'date_added', models.DateTimeField(auto_now_add=True, default=datetime.datetime.now()))
         
         # Changing field 'Compilation.label'
         db.alter_column('webview_compilation', 'label', models.CharField(max_length=30, blank=True))

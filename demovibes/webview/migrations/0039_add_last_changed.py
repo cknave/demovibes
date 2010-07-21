@@ -1,4 +1,4 @@
-
+import datetime
 from south.db import db
 from django.db import models
 from demovibes.webview.models import *
@@ -8,7 +8,7 @@ class Migration:
     def forwards(self, orm):
         
         # Adding field 'Song.last_changed'
-        db.add_column('webview_song', 'last_changed', models.DateTimeField(auto_now=True))
+        db.add_column('webview_song', 'last_changed', models.DateTimeField(auto_now=True, default=datetime.datetime.now()))
         
     
     
