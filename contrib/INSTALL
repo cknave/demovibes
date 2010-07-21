@@ -1,0 +1,45 @@
+
+Packages needed:
+ libboost + limbsamplerate + lame = demosauce
+ libmad = pymad - must be installed manually - http://spacepants.org/src/pymad/
+
+ pil (python imaging library) - check that libjpeg and libzlib is installed, otherwise you will miss jpeg / png support
+
+Create python virtual environment:
+ Install pip (python package install program)
+ Install virtualenv (can use "pip install virtualenv" if you want)
+ To ceate virtual env : pip install -E demovibesenv -r demovibes/contrib/requirements.txt
+  - Note that it might fail on pymad - activate the environment, download and install that manually, then rerun the command
+ To activate virt env : source demovibesenv/bin/activate
+  - If pymad is yet not installed, download and install it.
+
+Look over / change settings
+ -Check settings.py
+ -please add local settings / overrides in "settings_local.py"
+  -Override secret key
+  -check mail settings
+  -Complete django setting reference : http://docs.djangoproject.com/en/1.2/ref/settings/
+
+Initialize database:
+ -change directory to demovibes/demovibes
+ -run "python manage.py syncdb" - do not create a superuser yet
+ -run "python manage.py migrate"
+ -run "python manage.py createsuperuser"
+
+web config:
+ -directory /static/ -> to demovibes/static folder
+ -directory /media/ -> to django/contrib/admin/media folder (depends on where django was installed)
+ -(easiest) "python manage.py runfcgi host=127.0.0.1 port=9999" and point / to fastcgi server in webserver.
+  -Increase timeout for fastcgi to 500s at least.. (for event system)
+
+streaming:
+ -install icecast2
+ -change demosauce.conf
+ -add "djrandom" user
+ -start sockulf.py
+ -start demosauce
+
+Other stuff:
+ -for mysql support you need to have mysql dev packages installed, and run "pip install MySQL-python"
+ -Similar for postgresql, the pip package is called "psycopg2"
+ -Installing memcached and set it up as a cache for django is highly recommended
