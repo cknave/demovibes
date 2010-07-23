@@ -26,6 +26,18 @@ DATABASE_PASSWORD = '__PASS__'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+# path to demosauce scan tool
+DEMOSAUCE_SCAN = '../demosauce/scan'
+
+# maximum time a song is looped in seconds
+MAX_LOOP_LENGTH = 150
+
+# maximum time a song will be played in seconds
+MAX_SONG_LENGTH = 480
+
+# a value that decides if a module is likely to be loopded. 0.1 seems to be good for starters
+LOOPINESS_THRESHOLD = 0.1
+
 # Use fulltext search on song title, artist handle and group name. Only supported on mysql, 
 # and full-text have to be manually added to the DB
 USE_FULLTEXT_SEARCH = False
