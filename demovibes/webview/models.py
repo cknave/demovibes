@@ -448,27 +448,27 @@ class Song(models.Model):
                 length = re.compile(r'length:(\d*\.?\d+))')
                 repgain = re.compile(r'replaygain:(-?\d*\.?\d+))')
                 samplerate = re.compile(r'samplerate:(\d*\.?\d+))')
-				loopiness = re.compile(r'loopiness:(\d*\.?\d+))')
+                loopiness = re.compile(r'loopiness:(\d*\.?\d+))')
 
-				#only repalygain and length are always present, modules don't have bitrate & samplerate
-				self.song_length = int(length.search(output).group(1))
-				self.replay_gain = float(repgain.search(output).group(1))
-				
-				samplerate_match = samplerate.search(output)
-				bitrate_match = bitrate.search(output)
-				loop_match = loopiness.search(output)
-				
-				if samplerate_match:
-					self.samplerate = samplerate_match.group(1)
-				if bitrate_match:
-					self.bitrate = bitrate_match.group(1)
-				if loop_match and float(loop_match.group(1)) > LOOPINESS_THRESHOLD:
-					self.loopfade_time = max(MAX_LOOP_LENGTH, self.song_length)
-					
-				# this will fade out knucklebusters & co.:D
-				if self.song_length > MAX_SONG_LENGTH:
-					self.loopfade_time = MAX_SONG_LENGTH
-					        
+                #only repalygain and length are always present, modules don't have bitrate & samplerate
+                self.song_length = int(length.search(output).group(1))
+                self.replay_gain = float(repgain.search(output).group(1))
+
+                samplerate_match = samplerate.search(output)
+                bitrate_match = bitrate.search(output)
+                loop_match = loopiness.search(output)
+
+                if samplerate_match:
+                    self.samplerate = samplerate_match.group(1)
+		if bitrate_match:
+                    self.bitrate = bitrate_match.group(1)
+                if loop_match and float(loop_match.group(1)) > LOOPINESS_THRESHOLD:
+                    self.loopfade_time = max(MAX_LOOP_LENGTH, self.song_length)
+
+                # this will fade out knucklebusters & co.:D
+                if self.song_length > MAX_SONG_LENGTH:
+                    self.loopfade_time = MAX_SONG_LENGTH
+			        
     def set_song_data_pymad(self):
         mf = mad.MadFile(self.file.path)
         seconds = mf.total_time() / 1000
