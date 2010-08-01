@@ -556,12 +556,15 @@ def get_song_queue_tag_j(origsong):
     return js.r2s('webview/queue_tag.html', { 'song' : origsong, 'artists' : artists })
 
 def get_song_queue_tag(song_id):
-    song_obj = Song.objects.get(id = song_id)
-    artists = song_obj.artists
+    try:
+        song_obj = Song.objects.get(id = song_id)
+        artists = song_obj.artists
 
-    T = loader.get_template('webview/queue_tag.html')
-    C = Context({ 'song' : song_obj, 'artists' : artists })
-    return T.render(C)
+        T = loader.get_template('webview/queue_tag.html')
+        C = Context({ 'song' : song_obj, 'artists' : artists })
+        return T.render(C)
+    except:
+        return unicode(song_id)
 
 class GetSongQueueTag(template.Node):
     def __init__(self, song):
