@@ -16,6 +16,13 @@ from smileys import SMILEYS
 DEBUG = True
 TEMPLATE_DEBUG = False
 
+#To make this work you need:
+#  1. uWSGI
+#  2. start the uwsgi_eventhandler module
+#  3. Point /demovibes/ajax/monitor/* urls to it
+#UWSGI_EVENT_SERVER = ("127.0.0.1", 3032)
+
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )

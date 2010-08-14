@@ -21,18 +21,20 @@ import tagging
 
 #from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
 
+uwsgi_event_server = getattr(settings, 'UWSGI_EVENT_SERVER', False)
+
+try:
+    import uwsgi
+except:
+    uwsgi_event_server = False
+
 def add_event(event, user = None):
-    use_eventful = getattr(settings, 'USE_EVENTFUL', False)
-    if use_eventful:
-        host = getattr(settings, 'EVENTFUL_HOST', "127.0.0.1")
-        port = getattr(settings, 'EVENTFUL_PORT', 9911)
-        userid = user and user.id or ""
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
-        s.send("set:%s:%s" % (userid, event))
-        s.close()
-    else:
-        AjaxEvent.objects.create(event = event, user = user)
+    ae = AjaxEvent.objects.create(event = event, user = user)
+    if uwsgi_event_server:
+        R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:10] #Should have time based limit here..
+        R = [(x.id, x.event) for x in R]
+        data = (R, ae.id+1)
+        uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)
 
 from managers import *
 
@@ -796,6 +798,7 @@ class Queue(models.Model):
                 for q in baseq_lt.filter(priority = True):
                     playtime = playtime + q.song.song_length
                 return datetime.datetime.now() + datetime.timedelta(seconds=playtime)
+
             else:
                 for q in baseq_lt.filter(priority = True):
                     #Not quite sure how to do this right now, returning self.playtime for now

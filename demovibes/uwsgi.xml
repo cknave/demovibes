@@ -1,0 +1,10 @@
+<uwsgi>
+  <socket>127.0.0.1:3031</socket>
+  <module>uwsgi-launcher</module>
+  <processes>3</processes>
+  <master/>
+  <disable-logging/>
+  <daemonize>/tmp/demovibes-uwsgi.log</daemonize>
+  <pidfile>/tmp/demovibes-uwsgi.pid</pidfile>
+  <harakiri>60</harakiri>
+</uwsgi>
