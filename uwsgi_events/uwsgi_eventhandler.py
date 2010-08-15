@@ -1,22 +1,28 @@
 import uwsgi
+import bottle
+#from bottle import route, default_app, request, post, get
+import pickle
 
 try:
     import local_config
     allowed_ips = local_config.allowed_ips
+    debug = getattr(local_config, "debug", False)
 except:
+    debug = False
     allowed_ips = ["127.0.0.1"]
 
-from bottle import route, default_app, request, post, get
-import pickle
+bottle.debug(debug)
+
 
 event = None
 
-@route('/demovibes/ajax/monitor/new/')
+@bottle.post('/demovibes/ajax/monitor/new/')
+@bottle.route('/demovibes/ajax/monitor/new/')
 def http_event_receiver():
-    ip = request.environ.get('REMOTE_ADDR')
+    ip = bottle.request.environ.get('REMOTE_ADDR')
     if ip not in allowed_ips:
         return ip
-    data = request.forms.get('data')
+    data = bottle.request.forms.get('data')
     data = pickle.loads(data)
     event_receiver(data, 0)   
     return "OK"
@@ -28,7 +34,7 @@ def event_receiver(obj, id):
 
 uwsgi.message_manager_marshal = event_receiver
 
-@get('/demovibes/ajax/monitor/:id#[0-9]+#/')
+@bottle.get('/demovibes/ajax/monitor/:id#[0-9]+#/')
 def handler(id):
     id = int(id)
     yield ""
@@ -40,4 +46,4 @@ def handler(id):
     yield "\n".join(levent)
     yield "\n!%s" % event[1]
         
-application = default_app()
+application = bottle.default_app()
