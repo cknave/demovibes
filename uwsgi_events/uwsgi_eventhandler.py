@@ -22,7 +22,10 @@ def http_event_receiver():
     ip = bottle.request.environ.get('REMOTE_ADDR')
     if ip not in allowed_ips:
         return ip
-    data = bottle.request.forms.get('data')
+    try:
+        data = bottle.request.forms.get('data')
+    except:
+        data = bottle.request.GET.get('data')
     data = pickle.loads(data)
     event_receiver(data, 0)   
     return "OK"
