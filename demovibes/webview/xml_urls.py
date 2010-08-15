@@ -33,6 +33,12 @@ group_dict = {
     'template_name': 'webview/xml/group.xml',
 }
 
+user_dict = {
+    'queryset': User.objects.all(),
+    'mimetype': "application/xml",
+    'template_name': 'webview/xml/user.xml',
+}
+
 def cached_object_list(*args, **kwargs):
     return object_list(*args, **kwargs)
 
@@ -49,5 +55,5 @@ urlpatterns = patterns('',
     (r'^artist/(?P<object_id>\d+)/$', cached_object_detail, artist_dict),     
     (r'^streams/$',                 cached_object_list, stream_dict),
     #(r'^artist/$', 	'demovibes.webview.xml_views.artist'),
-    #(r'^user/$',  	'demovibes.webview.xml_views.user'),
+    (r'^user/(?P<username>\w+)/$', 'demovibes.webview.xml_views.user'),
 )

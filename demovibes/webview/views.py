@@ -20,6 +20,8 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.files.base import File
 from django.core.cache import cache
 
+from django.views.decorators.cache import cache_page
+
 from random import choice
 
 import j2shim
@@ -453,9 +455,11 @@ def del_favorite(request, id): # XXX Fix to POST
     Q = Favorite.objects.filter(user = request.user, song = S)
     if Q:
         Q[0].delete()
-    #return HttpResponseRedirect(reverse('dv-favorites'))
-    refer = request.META['HTTP_REFERER']
-    return HttpResponseRedirect(refer)
+    try:
+        refer = request.META['HTTP_REFERER']
+        return HttpResponseRedirect(refer)
+    except:
+        return HttpResponseRedirect(reverse('dv-favorites'))
 
 
     
@@ -463,6 +467,7 @@ def del_favorite(request, id): # XXX Fix to POST
 def upload_song(request, artist_id):
     artist = get_object_or_404(Artist, id=artist_id)
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_UPLOADS', 0)
+    artist_auto_approve = getattr(settings, 'ARTIST_AUTO_APPROVE_UPLOADS', 1)
     
     # Quick test to see if the artist is currently active. If not, bounce
     # To the current queue!
@@ -470,7 +475,7 @@ def upload_song(request, artist_id):
         return HttpResponseRedirect(reverse('dv-queue'))
         
     if request.method == 'POST':
-        if artist.link_to_user == request.user:
+        if artist_auto_approve and artist.link_to_user == request.user:
             # Auto Approved Song. Set Active, Add to Recent Uploads list
             status = 'A'
         else:
@@ -548,6 +553,7 @@ def activate_upload(request):
     songs = Song.objects.filter(status = "U").order_by('added')
     return j2shim.r2r('webview/uploaded_songs.html', {'songs' : songs}, request=request)
 
+@cache_page(60*15)
 def song_statistics(request, stattype):
     songs = None
     title = "Mu"
@@ -569,8 +575,10 @@ def song_statistics(request, stattype):
                       {'songs': songs, 'title': title, 'numsongs': numsongs, 'stat': stat},
                       request)    
 
+@cache_page(60*15)
 def tag_cloud(request):
-    tags = Song.tags.cloud()
+    min_count = getattr(settings, 'TAG_CLOUD_MIN_COUNT', 1)
+    tags = Song.tags.cloud(min_count=min_count)
     c = {'tags': tags}
     return j2shim.r2r('webview/tag_cloud.html', c, request)
 
@@ -784,61 +792,11 @@ def activate_labels(request):
     labels = Label.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_labels.html', { 'labels': labels }, request=request)
 
-    
-def save_flash(request):
-    # verify ticket + user
-    ticket_id = request.GET['ticket']
-    ticket = get_object_or_404(UploadTicket, ticket = ticket_id)
-    if ticket.user != request.user:
-        return HttpResponseBadRequest("")
-    # save file to /tmp/
-    tempfile = "/tmp/djutmp-%s" % ticket_id
-    f = request.FILES['file']
-    destination = open(tempfile, 'wb+')
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
-    # update ticket
-    ticket.tempfile = tempfile
-    ticket.filename = os.path.basename(f.name)
-    ticket.save()
-    # return "ok" to the flash app
-    return HttpResponse("OK")
-
+@cache_page(60*5)
 def users_online(request):
     timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
     userlist = Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')
     return j2shim.r2r('webview/online_users.html', {'userlist' : userlist}, request=request)
-    
-@login_required
-def upload_flash(request):
-    entropy = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-    ticket_id = ""
-    for x in range(20):
-        ticket_id += choice(entropy)
-    if request.method == 'POST':
-        ticket_id = request.POST['ticket']
-        ticket = get_object_or_404(UploadTicket, ticket = ticket_id)
-        if ticket.user != request.user or ticket.tempfile == "":
-            HttpResponse("Invalid ticket!")
-        a = Song(uploader = request.user, status = 'U')
-        form = FlashUploadForm(request.POST, instance = a)
-        if form.is_valid():
-            F = File(open(ticket.tempfile, 'rb+'))
-            new_song = form.save(commit=False)
-            new_song.file.save(ticket.filename, F)
-            new_song.save()
-            new_song.artists.add(artist)
-            form.save_m2m()
-            return HttpResponseRedirect(new_song.get_absolute_url())
-    else:
-        #Not a post, generate new ticket
-        ticket = Ticket(ticket=ticket_id, user = request.user)
-        ticket.save()
-        form = FlashUploadForm()
-    return j2shim.r2r('webview/flash_upload.html', \
-        {'ticket' : ticket_id, 'form': form}, \
-        request=request)
 
 @login_required
 def set_rating_autovote(request, song_id, user_rating):

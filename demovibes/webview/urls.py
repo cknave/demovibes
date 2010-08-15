@@ -87,11 +87,13 @@ faq_dict = {
 platforms = {
     'queryset' : SongPlatform.objects.all(),
     'template_loader': djangojinja2._jinja_env,
+    'paginate_by': 500,
 }
 
 sources = {
     'queryset' : SongType.objects.all(),
     'template_loader': djangojinja2._jinja_env,
+    'paginate_by': 500,
 }
 
 urlpatterns = patterns('',

@@ -16,6 +16,14 @@ def queue(request):
 		{'now_playing': now_playing, 'history': history, 'queue': queue}, \
 		context_instance=RequestContext(request), mimetype = "application/xml")
 
+def user(request, username):
+    user = get_object_or_404(User, username = username)
+    if user.get_profile().visible_to != "A":
+        user = None
+    return render_to_response('webview/xml/user.xml', \
+        {'user' : user}, \
+        context_instance=RequestContext(request), mimetype = "application/xml")
+
 def oneliner(request):
     try:
         oneliner_data = Oneliner.objects.select_related(depth=1).order_by('-id')[:20]

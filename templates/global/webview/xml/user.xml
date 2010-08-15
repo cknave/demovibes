@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+    {% if user %}
+    {% with user.get_profile as profile %}
+    <avatar>{% if profile.avatar %}{{ profile.avatar.url }}{% endif %}</avatar>
+    <country>{{ profile.country }}</country>
+    <group>{{ profile.group.id }}</group>
+    <infoline>{{ profile.infoline }}</infoline>
+    <location>{{ profile.location }}</location>
+    <realname>{{ profile.real_name }}</realname>
+    <twitterid>{{ profile.twitter_id }}</twitterid>
+    <webpage>{{ profile.web_page }}</webpage>
+    {% endwith %}
+    {% else %}
+    <hidden/>
+    {% endif %}
+</user>

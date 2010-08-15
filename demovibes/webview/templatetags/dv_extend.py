@@ -25,19 +25,22 @@ def site_url():
 
 @register.simple_tag
 def get_online_users():
+    result = cache.get("online_users")
     # This is designed specifically for Sidebar use. Its mostly a copy
     # Of Terrasque's original code
-    timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
-    userlist = Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')
+    if not result:
+        timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
+        userlist = Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')
     
-    # Stuff this into an object
-    result = js.r2s('webview/whos_online_sb.html', { 'userlist' : userlist })
+        # Stuff this into an object
+        result = js.r2s('webview/whos_online_sb.html', { 'userlist' : userlist })
+        cache.set("online_users", result, 60)
     return result
 
 @register.tag
 def get_rating_stars_song_avg(parser, token):
     """
-    Attempt to get a rating for the tong, in formatted stars. Value is based
+    Attempt to get a rating for the song, in formatted stars. Value is based
     From average vote value, and code will ater star shapes. Makes use of the
     GetSongRatingStarsAvgNode() class.
     """

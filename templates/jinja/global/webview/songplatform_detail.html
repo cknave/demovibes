@@ -18,4 +18,11 @@
 {% endfor %}
 </table>
 
+<div class="olh_pages">
+<p>Pages:
+{% for p in page_range %}
+{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url("dv-platform") }}?page={{ p }}">{{ p }}</a> {% endif %}
+{% endfor %}</p>
+</div>
+
 {% endblock %}
