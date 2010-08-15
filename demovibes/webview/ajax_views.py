@@ -19,7 +19,8 @@ import j2shim
 
 use_eventful = getattr(settings, 'USE_EVENTFUL', False)
 
-def monitor(request, event_id):
+#For updating last_active field before sending to (external?) event handler
+def ping(request, event_id):
     if request.user.is_authenticated():
         key = "uonli_%s" % request.user.id
         get = cache.get(key)
@@ -28,32 +29,21 @@ def monitor(request, event_id):
             P.last_activity = datetime.datetime.now()
             P.save()
             cache.set(key, "1", 100)
-    if use_eventful:
-        host = getattr(settings, 'EVENTFUL_HOST', "127.0.0.1")
-        port = getattr(settings, 'EVENTFUL_PORT', 9911)
-        userid = request.user and request.user.id or ""
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(240)
-        try:
-            s.connect((host, port))
-            s.send("get:%s:%s" % (userid, event_id))
-            result = s.recv(1024)
-        except:
-            result = ""
-        return HttpResponse(result)
-    else:
-        for x in range(120):
-            R = AjaxEvent.objects.filter(id__gt=event_id).order_by('id')
-            if R:
-                entries = list()
-                for event in R:
-                    if event.user == None or event.user == request.user:
-                        if not str(event.event) in entries:
-                            entries.append(str(event.event))
-                ajaxid = R.order_by('-id')[0].id
-                return render_to_response('webview/js/manager.html', \
-                    { 'events' : entries, 'id' : ajaxid },  context_instance=RequestContext(request))
-            time.sleep(2)
+    return HttpResponseRedirect("/demovibes/ajax/monitor/%s/" % event_id)
+
+def monitor(request, event_id):
+    for x in range(120):
+        R = AjaxEvent.objects.filter(id__gt=event_id).order_by('id')
+        if R:
+            entries = list()
+            for event in R:
+                if event.user == None or event.user == request.user:
+                    if not str(event.event) in entries:
+                        entries.append(str(event.event))
+            ajaxid = R.order_by('-id')[0].id
+            return render_to_response('webview/js/manager.html', \
+                { 'events' : entries, 'id' : ajaxid },  context_instance=RequestContext(request))
+        time.sleep(2)
     return HttpResponse("")
 
 

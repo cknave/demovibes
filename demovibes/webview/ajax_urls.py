@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from demovibes.webview.models import *
 
 urlpatterns = patterns('',
+    (r'^ping/(?P<event_id>\d+)/$',   'demovibes.webview.ajax_views.ping'),
     (r'^monitor/(?P<event_id>\d+)/$',   'demovibes.webview.ajax_views.monitor'),
     (r'^nowplaying/$',          'demovibes.webview.ajax_views.nowplaying'),
     (r'^queue/$',               'demovibes.webview.ajax_views.queue'),

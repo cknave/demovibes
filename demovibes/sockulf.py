@@ -42,7 +42,7 @@ class pyWhisperer:
                                 result = self.COMMANDS[data]()
                                 Log.debug("Returning data : %s" % result)
                                 while i < len(result):
-                                        i = i + self.conn.send(result)
+                                        i = i + self.conn.send(result.encode("utf8"))
                         else:
                                 Log.debug("Unknown command!")
                 else:

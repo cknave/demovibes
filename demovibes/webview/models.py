@@ -23,10 +23,12 @@ import tagging
 
 uwsgi_event_server = getattr(settings, 'UWSGI_EVENT_SERVER', False)
 
-try:
-    import uwsgi
-except:
-    uwsgi_event_server = False
+if uwsgi_event_server:
+    try:
+        import uwsgi
+    except:
+        import pickle
+        uwsgi_event_server = "HTTP"
 
 def add_event(event, user = None):
     ae = AjaxEvent.objects.create(event = event, user = user)
@@ -34,7 +36,14 @@ def add_event(event, user = None):
         R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:10] #Should have time based limit here..
         R = [(x.id, x.event) for x in R]
         data = (R, ae.id+1)
-        uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)
+        if uwsgi_event_server:
+            if uwsgi_event_server == "HTTP":
+                data = {'data': pickle.dumps(data)}
+                data = urllib.urlencode(data)
+                r = urllib.urlopen("http://127.0.0.1/demovibes/ajax/monitor/new/", data)
+                return r.read()
+            else:
+                uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)
 
 from managers import *
 

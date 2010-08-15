@@ -10,7 +10,7 @@ function apf(url, form) {
 
 function ajaxmonitorspawn() {
     // resceive monitor events for objects on the page
-    var url=ajaxurl+'monitor/'+ajaxeventid+'/';
+    var url=ajaxurl+'ping/'+ajaxeventid+'/';
     debug=url;
     // alert('Monitor for '+url);
     // old version: http://code.google.com/p/demovibes/issues/detail?id=47

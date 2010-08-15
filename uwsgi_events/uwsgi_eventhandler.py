@@ -1,8 +1,19 @@
 import uwsgi
 
-from bottle import route, default_app
+from bottle import route, default_app, request, post, get
+import pickle
 
 event = None
+
+@post('/demovibes/ajax/monitor/new/')
+def http_event_receiver():
+    ip = request.environ.get('REMOTE_ADDR')
+    if ip != "127.0.0.1":
+        return ip
+    data = request.forms.get('data')
+    data = pickle.loads(data)
+    event_receiver(data, 0)   
+    return "OK"
 
 def event_receiver(obj, id):
     global event
@@ -11,7 +22,7 @@ def event_receiver(obj, id):
 
 uwsgi.message_manager_marshal = event_receiver
 
-@route('/demovibes/ajax/monitor/:id/')
+@get('/demovibes/ajax/monitor/:id/')
 def handler(id):
     id = int(id)
     yield ""
