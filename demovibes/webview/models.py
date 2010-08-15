@@ -40,6 +40,7 @@ def add_event(event, user = None):
             if uwsgi_event_server == "HTTP":
                 data = {'data': pickle.dumps(data)}
                 data = urllib.urlencode(data)
+                logging.debug("Event data via http: %s" % data)
                 r = urllib.urlopen("http://127.0.0.1/demovibes/ajax/monitor/new/", data)
                 return r.read()
             else:

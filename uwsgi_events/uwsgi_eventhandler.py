@@ -22,7 +22,7 @@ def event_receiver(obj, id):
 
 uwsgi.message_manager_marshal = event_receiver
 
-@get('/demovibes/ajax/monitor/:id/')
+@get('/demovibes/ajax/monitor/:id#[0-9]+#/')
 def handler(id):
     id = int(id)
     yield ""
