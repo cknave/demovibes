@@ -1,14 +1,20 @@
 import uwsgi
 
+try:
+    import local_config
+    allowed_ips = local_config.allowed_ips
+except:
+    allowed_ips = ["127.0.0.1"]
+
 from bottle import route, default_app, request, post, get
 import pickle
 
 event = None
 
-@post('/demovibes/ajax/monitor/new/')
+@route('/demovibes/ajax/monitor/new/')
 def http_event_receiver():
     ip = request.environ.get('REMOTE_ADDR')
-    if ip != "127.0.0.1":
+    if ip not in allowed_ips:
         return ip
     data = request.forms.get('data')
     data = pickle.loads(data)
