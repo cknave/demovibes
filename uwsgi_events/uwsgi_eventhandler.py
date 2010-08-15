@@ -17,15 +17,11 @@ bottle.debug(debug)
 event = None
 
 @bottle.post('/demovibes/ajax/monitor/new/')
-@bottle.route('/demovibes/ajax/monitor/new/')
 def http_event_receiver():
     ip = bottle.request.environ.get('REMOTE_ADDR')
     if ip not in allowed_ips:
         return ip
-    try:
-        data = bottle.request.forms.get('data')
-    except:
-        data = bottle.request.GET.get('data')
+    data = bottle.request.forms.get('data')
     data = pickle.loads(data)
     event_receiver(data, 0)   
     return "OK"

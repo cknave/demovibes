@@ -24,6 +24,7 @@ import tagging
 uwsgi_event_server = getattr(settings, 'UWSGI_EVENT_SERVER', False)
 
 if uwsgi_event_server:
+    uwsgi_event_server_http = getattr(settings, 'UWSGI_EVENT_SERVER_HTTP', False)
     try:
         import uwsgi
     except:
@@ -41,7 +42,8 @@ def add_event(event, user = None):
                 data = {'data': pickle.dumps(data)}
                 data = urllib.urlencode(data)
                 logging.debug("Event data via http: %s" % data)
-                r = urllib.urlopen("http://127.0.0.1/demovibes/ajax/monitor/new/", data)
+                url = uwsgi_event_server_http or "http://127.0.0.1/demovibes/ajax/monitor/new/"
+                r = urllib.urlopen(url, data)
                 return r.read()
             else:
                 uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)
