@@ -36,7 +36,10 @@ Links:{% if object.webpage %} <a href="{{ object.webpage|e }}" target="_new">[We
 
 {% if object.song_set.count() != 0 %}
  <b>Associated Songs:</b><br />
- {% for song in object.song_set.all() %}
+ 
+ {% set objs, paging = dv.paginate(object.song_set.all()) %}
+ 
+ {% for song in objs %}
   {{ display.song(song) }} by {% for artist in song.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} {% endfor %}
   <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}<br />
@@ -44,5 +47,6 @@ Links:{% if object.webpage %} <a href="{{ object.webpage|e }}" target="_new">[We
 </td>
 </tr>
 </table>
+{{ paging }}
 {% endblock %}
 

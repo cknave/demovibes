@@ -9,19 +9,16 @@
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Songs</h2>
 
+{% set objs, paging = dv.paginate(object.song_set.all()) %}
+
 {% include "webview/t/songheader.html" %}
-{% for song in object.song_set.all() %}
+{% for song in objs %}
  <tr class="{{ loop.cycle('row1', 'row2') }}">
  {% include "webview/t/songlist.html" %}
  </tr>
 {% endfor %}
 </table>
 
-<div class="olh_pages">
-<p>Pages:
-{% for p in page_range %}
-{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url("dv-source") }}?page={{ p }}">{{ p }}</a> {% endif %}
-{% endfor %}</p>
-</div>
+{{ paging }}
 
 {% endblock %}

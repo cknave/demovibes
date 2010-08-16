@@ -235,15 +235,9 @@ def list_artists(request, letter):
     if not letter in alphalist or letter == '-':
         letter = '#'
     artists = Artist.objects.filter(startswith=letter)
-    paginator = Paginator(artists, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        artistic = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        artistic = paginator.page(paginator.num_pages)
+
     return j2shim.r2r('webview/artist_list.html', \
-        {'object_list' : artistic.object_list, 'page_range' : paginator.page_range, \
-            'page' : page, 'letter' : letter, 'al': alphalist}, \
+        {'object_list' : artists, 'letter' : letter, 'al': alphalist}, \
         request=request)
 
 def list_groups(request, letter):
@@ -253,15 +247,9 @@ def list_groups(request, letter):
     if not letter in alphalist or letter == '-':
         letter = '#'
     groups = Group.objects.filter(startswith=letter).filter(status="A")
-    paginator = Paginator(groups, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        groupic = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        groupic = paginator.page(paginator.num_pages)
+
     return j2shim.r2r('webview/group_list.html', \
-        {'object_list' : groupic.object_list, 'page_range' : paginator.page_range, \
-            'page' : page, 'letter' : letter, 'al': alphalist}, \
+        {'object_list' : groups, 'letter' : letter, 'al': alphalist}, \
         request=request)
     
 def list_labels(request, letter):
@@ -271,15 +259,9 @@ def list_labels(request, letter):
     if not letter in alphalist or letter == '-':
         letter = '#'
     labels = Label.objects.filter(startswith=letter).filter(status="A")
-    paginator = Paginator(labels, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        labelic = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        labelic = paginator.page(paginator.num_pages)
+
     return j2shim.r2r('webview/label_list.html', \
-        {'object_list' : labelic.object_list, 'page_range' : paginator.page_range, \
-            'page' : page, 'letter' : letter, 'al': alphalist}, \
+        {'object_list' : labels, 'letter' : letter, 'al': alphalist}, \
         request=request)
 
 def list_compilations(request, letter):
@@ -289,15 +271,9 @@ def list_compilations(request, letter):
     if not letter in alphalist or letter == '-':
         letter = '#'
     compilations = Compilation.objects.filter(startswith=letter)
-    paginator = Paginator(compilations, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        complist = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        complist = paginator.page(paginator.num_pages)
+
     return j2shim.r2r('webview/compilation_list.html', \
-        {'object_list' : complist.object_list, 'page_range' : paginator.page_range, \
-            'page' : page, 'letter' : letter, 'al': alphalist}, \
+        {'object_list' : compilations, 'letter' : letter, 'al': alphalist}, \
         request=request)
 
 @login_required
@@ -317,15 +293,8 @@ def list_songs(request, letter):
     if not letter in alphalist or letter == '-':
         letter = '#'
     songs = Song.objects.select_related(depth=1).filter(startswith=letter)
-    paginator = Paginator(songs, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        songlist = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        songlist = paginator.page(paginator.num_pages)
     return j2shim.r2r('webview/song_list.html', \
-        {'object_list' : songlist.object_list, 'page_range' : paginator.page_range, \
-         'page' : page, 'letter' : letter, 'al' : alphalist}, \
+        {'object_list' : songs, 'letter' : letter, 'al' : alphalist}, \
         request)
 
 def list_song_history(request, song_id):
@@ -334,14 +303,8 @@ def list_song_history(request, song_id):
     """
     song = get_object_or_404(Song, id=song_id)
     history = song.queue_set.all()
-    paginator = Paginator(history, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        historylist = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        historylist = paginator.page(paginator.num_pages)
     return j2shim.r2r('webview/song_history.html', \
-        { 'requests' : historylist.object_list, 'song' : song, 'page' : page, 'page_range' : paginator.page_range  },\
+        { 'requests' : history, 'song' : song },\
         request=request)
 
 def list_song_votes(request, song_id):
@@ -350,14 +313,8 @@ def list_song_votes(request, song_id):
     """
     song = get_object_or_404(Song, id=song_id)
     votes = song.songvote_set.all()
-    paginator = Paginator(votes, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        votelist = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        votelist = paginator.page(paginator.num_pages)
     return j2shim.r2r('webview/song_votes.html', \
-        { 'votelist' : votelist.object_list, 'song' : song, 'page' : page, 'page_range' : paginator.page_range  },\
+        { 'votelist' : votes, 'song' : song },\
         request=request)
 
 def list_song_comments(request, song_id):
@@ -366,14 +323,8 @@ def list_song_comments(request, song_id):
     """
     song = get_object_or_404(Song, id=song_id)
     comments = song.songcomment_set.all()
-    paginator = Paginator(comments, settings.PAGINATE)
-    page = int(request.GET.get('page', '1'))
-    try:
-        commentlist = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        commentlist = paginator.page(paginator.num_pages)
     return j2shim.r2r('webview/song_comments.html', \
-        { 'commentlist' : commentlist.object_list, 'song' : song, 'page' : page, 'page_range' : paginator.page_range  },\
+        { 'commentlist' : comments, 'song' : song },\
         request=request)
 
 def view_compilation(request, comp_id):
@@ -575,10 +526,12 @@ def song_statistics(request, stattype):
                       {'songs': songs, 'title': title, 'numsongs': numsongs, 'stat': stat},
                       request)    
 
-@cache_page(60*15)
 def tag_cloud(request):
-    min_count = getattr(settings, 'TAG_CLOUD_MIN_COUNT', 1)
-    tags = Song.tags.cloud(min_count=min_count)
+    tags = cache.get("tagcloud")
+    if not tags:
+        min_count = getattr(settings, 'TAG_CLOUD_MIN_COUNT', 1)
+        tags = Song.tags.cloud(min_count=min_count)
+        cache.set("tagcloud", tags, 15*60)
     c = {'tags': tags}
     return j2shim.r2r('webview/tag_cloud.html', c, request)
 

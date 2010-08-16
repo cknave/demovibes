@@ -4,10 +4,15 @@
 
 {% block main %}
 <h2><img class="icon_header" src="{{ MEDIA_URL }}email.png" alt="" />Inbox - {{ pms|e }} Private Messages</h2>
+
 {% if pms != "sent" %}<a href="{{ url("dv-inbox") }}?type=sent">View Sent Messages</a>{% endif %}
+
+{% set objs, paging = dv.paginate(mails) %}
+
 <table class="songlist">
+
 <tr><th>Subject</th><th>From</th><th>To</th><th>Sent Date</th></tr>
-{% for mail in mails %}
+{% for mail in objs %}
 <tr class="{{ loop.cycle('row1', 'row2') }}">
  <td><a href="{{ mail.get_absolute_url() }}">{{ mail.subject|e }}</a>{% if mail.unread %} <img src="{{ MEDIA_URL }}new.png" alt="[New Message]" />{% endif %}</td>
  <td>{{ display.user(mail.sender) }}</td>
@@ -17,5 +22,8 @@
 </tr>
 {% endfor %}
 </table>
+
+{{ paging }}
+
 {% endblock %}
 

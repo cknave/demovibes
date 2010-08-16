@@ -81,7 +81,7 @@ def get_now_playing(create_new=False):
         R = j2shim.r2s('webview/t/now_playing_song.html', { 'now_playing' : songtype, 'comps' : comps })
         cache.set(key, R, 300)
         logging.debug("Now playing generated")
-    R = R % songtype.timeleft()
+    R = R.replace("((%timeleft%))", str(songtype.timeleft()))
     return R
 
 def get_history(create_new=False):

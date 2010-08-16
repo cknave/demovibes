@@ -9,15 +9,15 @@
 	<th>User</th>
 	<th>Comment</th>
 </tr>
-{% for comment in commentlist %}
+
+{% set objs, paging = dv.paginate(commentlist) %}
+
+{% for comment in objs %}
  {% include "webview/t/song_comment.html" %}
 {% endfor %}
 
 </table>
 
-Pages : 
-{% for p in page_range %}
-{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url ("dv-song_comment", song.id) }}?page={{ p }}">{{ p }}</a> {% endif %}
-{% endfor %}
+{{ paging }}
 {% endblock %}
 

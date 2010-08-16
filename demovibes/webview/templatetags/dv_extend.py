@@ -1,4 +1,5 @@
 import re, textwrap
+from django.core.paginator import Paginator
 from django import template
 from demovibes.webview.models import *
 from demovibes.webview import common
@@ -10,8 +11,78 @@ from django.template.loader import get_template
 from forum.models import Forum, Thread, Post, Subscription
 import os.path, random
 import j2shim as js
+from jinja2 import contextfunction
 
 register = template.Library()
+
+class BetterPaginator(Paginator):
+    """
+    An enhanced version of the QuerySetPaginator.
+
+    >>> my_objects = BetterPaginator(queryset, 25)
+    >>> page = 1
+    >>> context = {
+    >>>     'my_objects': my_objects.get_context(page),
+    >>> }
+    """
+    def get_context(self, page, range_gap=5):
+        try:
+            page = int(page)
+        except (ValueError, TypeError), exc:
+            raise InvalidPage, exc
+
+        paginator = self.page(page)
+
+        if page > 5:
+            start = page-range_gap
+        else:
+            start = 1
+
+        if page < self.num_pages-range_gap:
+            end = page+range_gap+1
+        else:
+            end = self.num_pages+1
+
+        context = {
+            'page_range': range(start, end),
+            'objects': paginator.object_list,
+            'num_pages': self.num_pages,
+            'page': page,
+            'has_pages': self.num_pages > 1,
+            'has_previous': paginator.has_previous(),
+            'has_next': paginator.has_next(),
+            'previous_page': paginator.previous_page_number(),
+            'next_page': paginator.next_page_number(),
+            'is_first': page == 1,
+            'is_last': page == self.num_pages,
+        }
+
+        return context
+
+@contextfunction
+def paginate(context, obj, limit=None, maxpages=None):
+
+  
+    if not limit:
+        limit = settings.PAGINATE
+        
+    if maxpages:
+        totlimit = limit * maxpages
+        obj = obj[:totlimit]
+        
+    pager = BetterPaginator(obj, limit)
+    query_dict = context['request'].GET.copy()
+    
+    if 'p' in query_dict:
+        del query_dict['p']
+    
+    cntxt = {
+        'query_string': query_dict.urlencode(),
+        'paginator': pager.get_context(context['request'].GET.get('p', 1)),
+    }
+        
+    paging = js.r2s('webview/t/paginate.html', cntxt)
+    return (cntxt['paginator']['objects'], paging)
 
 @register.simple_tag
 def site_name():
@@ -91,16 +162,20 @@ def logo():
     """
     Returns a random logo
     """
-    try:
-        numLogos = Logo.objects.filter(active=True).count()
-        rand = random.randint(0, numLogos - 1)
-        L = Logo.objects.filter(active=True)[rand]
-        logo = L.file.url
-        alt = "#%s - By %s" % (L.id, L.creator)
-    except:
-        logo = "%slogos/default.png" % settings.MEDIA_URL
-        alt = "Logo"
-    return '<img id="logo" src="%s" title="%s" alt="%s" />' % (logo, alt, alt)
+    randlogo = cache.get("current_logo")
+    if not randlogo:
+        try:
+            numLogos = Logo.objects.filter(active=True).count()
+            rand = random.randint(0, numLogos - 1)
+            L = Logo.objects.filter(active=True)[rand]
+            logo = L.file.url
+            alt = "#%s - By %s" % (L.id, L.creator)
+        except:
+            logo = "%slogos/default.png" % settings.MEDIA_URL
+            alt = "Logo"
+        randlogo = '<img id="logo" src="%s" title="%s" alt="%s" />' % (logo, alt, alt)
+        cache.set("current_logo", randlogo, 60*15)
+    return randlogo
 
 def current_song(user = None):
     """

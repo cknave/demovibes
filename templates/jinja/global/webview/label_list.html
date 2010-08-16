@@ -5,14 +5,15 @@
 {% block main %}
 <h2><img class="icon_header" src="/static/transmit_blue.png" alt="" />Producers / Labels List</h2>
 {% for l in al %}<a href="{{ url ("dv-labels_letter", l) }}">{{ l|upper }}</a> {% endfor %} [<a href="{{ url("dv-labels") }}">All Labels</a>]<br /><br />
-{% for label in object_list %}
+
+{% set objs, paging = dv.paginate(object_list) %}
+
+{% for label in objs %}
     {{ display.label(label) }}<br />
 {% endfor %}
 <br />
-Page Number:
-{% for p in page_range %}
-{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{% if letter %}{{ url ("dv-labels_letter", letter) }}{% else %}{{ url("dv-labels") }}{% endif %}?page={{ p }}">{{ p }}</a> {% endif %}
-{% endfor %}<br />
+{{ paging }}
+<br />
 Not Finding What You're Looking For? <a href="{{ url("dv-createlabel") }}">Suggest A New Label!</a><br />
 
 {% endblock %}

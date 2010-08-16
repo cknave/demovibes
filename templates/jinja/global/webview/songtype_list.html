@@ -3,18 +3,16 @@
 {% block title %}Song sources{% endblock %}
 
 {% block main %}
+
+{% set objs, paging = dv.paginate(object_list) %}
+
 <h2><img class="icon_header" src="/static/sound.png" alt="" />Song Sources/Types</h2>
-{% for p in object_list %}
+{% for p in objs %}
  {% if p.song_set.count() != 0 %}
   {% set P = p %}{% include "webview/t/songtypename.html" %} ({{ p.song_set.count() }} Songs)<br />
  {% endif %}
 {% endfor%}
 
-<div class="olh_pages">
-<p>Pages:
-{% for p in page_range %}
-{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url("dv-sources") }}?page={{ p }}">{{ p }}</a> {% endif %}
-{% endfor %}</p>
-</div>
+{{ paging }}
 
 {% endblock %}

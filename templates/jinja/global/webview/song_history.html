@@ -4,6 +4,9 @@
 
 {% block main %}
 <h2>{{ song.title|e }} - History</h2>
+
+{% set objs, paging = dv.paginate(requests) %}
+
 <p>A history of play requests for song {{ display.song(song) }}</p>
 <table>
 <tr>
@@ -14,15 +17,12 @@
   Date
  </th>
 </tr>
-{% for request in requests %}
+{% for request in objs %}
 <tr>
 <td>{{ display.user(request.requested_by) }}</td>
 <td>{{ request.requested|date("j.N Y G:i")}}</td>
 </tr>
 {% endfor %}
 </table>
-Pages : 
-{% for p in page_range %}
-{% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url ("dv-song_history", song.id) }}?page={{ p }}">{{ p }}</a> {% endif %}
-{% endfor %}
+{{ paging }}
 {% endblock %}

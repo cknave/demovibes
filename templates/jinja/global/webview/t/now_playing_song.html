@@ -11,7 +11,7 @@
  {% endif %}
  {{ display.songicons(now_playing.song) }}<br />
  
- <p>Time Left: <span name="counter" sec="%s" inc="-1">{{ now_playing.song.length() }}</span></p>
+ <p>Time Left: <span name="counter" sec="((%timeleft%))" inc="-1">{{ now_playing.song.length() }}</span></p>
  
 {% else %}
  No Song Playing!!

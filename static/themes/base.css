@@ -1,3 +1,8 @@
+#main .paging li {
+    display: inline;
+    list-style-type: none;
+}
+
 .tagview_1 a {
     font-size:0.8em;
 }

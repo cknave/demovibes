@@ -110,7 +110,7 @@ urlpatterns = patterns('',
     url(r'^streams/streams.txt$',                  'django.views.generic.list_detail.object_list',     streams_dict_txt, name = "dv-streams.txt"),
     url(r'^streams/$',                             'django.views.generic.list_detail.object_list',     streams_dict, name = "dv-streams"),
     url(r'^oneliner/$',                            'django.views.generic.list_detail.object_list', \
-                dict(oneliner_dict, paginate_by=settings.PAGINATE), name = "dv-oneliner"),
+                dict(oneliner_dict), name = "dv-oneliner"),
     url(r'^search/$',                              'demovibes.webview.views.search', name = "dv-search"),
     url(r'^recent/$',                              'demovibes.webview.views.show_approvals', name = "dv-recent"),
     url(r'^platform/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', platforms, name = "dv-platform"),
@@ -121,7 +121,7 @@ urlpatterns = patterns('',
     
     #Song views
     url(r'^songs/$',                               'django.views.generic.list_detail.object_list', \
-                dict(song_dict, paginate_by=settings.PAGINATE, extra_context = { 'al' : alphalist }), name = "dv-songs"),
+                dict(song_dict, extra_context = { 'al' : alphalist }), name = "dv-songs"),
     url(r'^songs/(?P<letter>.)/$',                 'demovibes.webview.views.list_songs', name = "dv-songs_letter"),
     url(r'^song/(?P<song_id>\d+)/$',             'demovibes.webview.views.list_song',   name = "dv-song"),
     url(r'^song/(?P<song_id>\d+)/comments/$',      'demovibes.webview.views.list_song_comments', name = "dv-song_comment"),
@@ -129,14 +129,14 @@ urlpatterns = patterns('',
     url(r'^song/(?P<song_id>\d+)/queue_history/$', 'demovibes.webview.views.list_song_history', name = "dv-song_history"),
     
     url(r'^groups/$',                             'django.views.generic.list_detail.object_list', \
-                dict(group_dict, paginate_by=settings.PAGINATE, extra_context = { 'al' : alphalist }), name = "dv-groups"),
+                dict(group_dict, extra_context = { 'al' : alphalist }), name = "dv-groups"),
     url(r'^groups/(?P<letter>.)/$',               'demovibes.webview.views.list_groups', name = "dv-groups_letter"),
     url(r'^group/(?P<object_id>\d+)/$',            'django.views.generic.list_detail.object_detail',       group_a_dict, name = "dv-group"),
 
     url(r'^statistics/(?P<stattype>\w+)/$',                 'demovibes.webview.views.song_statistics', name = "dv-stats"),
 
     url(r'^artists/$',                             'django.views.generic.list_detail.object_list', \
-            dict(artist_dict, paginate_by=settings.PAGINATE, extra_context = { 'al' : alphalist }), name = "dv-artists"),
+            dict(artist_dict, extra_context = { 'al' : alphalist }), name = "dv-artists"),
     url(r'^artists/(?P<letter>.)/$',               'demovibes.webview.views.list_artists', name = "dv-artists_letter"),
     url(r'^artist/(?P<object_id>\d+)/$',           'django.views.generic.list_detail.object_detail',       artist_a_dict, name = "dv-artist"),
     url(r'^artist/(?P<artist_id>\d+)/upload/$',    'demovibes.webview.views.upload_song', name = "dv-upload"),
@@ -151,7 +151,7 @@ urlpatterns = patterns('',
 
     # Add support for displaying all compilations
     url(r'^compilations/$',                             'django.views.generic.list_detail.object_list', \
-                dict(comp_dict, paginate_by=settings.PAGINATE, extra_context = { 'al' : alphalist }), name = "dv-compilations"),
+                dict(comp_dict, extra_context = { 'al' : alphalist }), name = "dv-compilations"),
      url(r'^compilations/(?P<letter>.)/$',               'demovibes.webview.views.list_compilations', name = "dv-compilations_letter"),
 
     url(r'^user/$',                                'demovibes.webview.views.my_profile', name = "dv-my_profile"),
@@ -183,7 +183,7 @@ urlpatterns = patterns('',
     
     # Production label URL's (Labels/Producers Specific)
     url(r'^labels/$',                             'django.views.generic.list_detail.object_list', \
-                dict(labels_all_dict, paginate_by=settings.PAGINATE, extra_context = { 'al' : alphalist }), name = "dv-labels"),
+                dict(labels_all_dict, extra_context = { 'al' : alphalist }), name = "dv-labels"),
     url(r'^label/(?P<object_id>\d+)/$',            'django.views.generic.list_detail.object_detail',       labels_a_dict, name = "dv-label"),
     url(r'^labels/(?P<letter>.)/$',               'demovibes.webview.views.list_labels', name = "dv-labels_letter"),
     url(r'^label/create/$',                    'demovibes.webview.views.create_label', name = "dv-createlabel"),
