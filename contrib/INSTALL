@@ -1,6 +1,6 @@
 
 Packages needed:
- libboost + limbsamplerate + lame = demosauce
+ lame libboost-dev libsamplerate-dev libicu-dev = demosauce
  libmad = pymad - must be installed manually - http://spacepants.org/src/pymad/
 
  pil (python imaging library) - check that libjpeg and libzlib is installed, otherwise you will miss jpeg / png support
