@@ -4,7 +4,6 @@ from django.conf import settings
 from PIL import Image
 #import mimetypes
 import dscan
-import os
 import logging
 
 try:
@@ -26,11 +25,11 @@ class UploadForm(forms.ModelForm):
             #~ mimetype, not_used = mimetypes.guess_type(F)
         #~ else:
             #~ mimetype = data.content_type
-            
-        if dscan.is_configured():
-            if not hasattr(data, 'temporary_file_path'):
-                logging.error("uploaded file was kept in memory")
-                
+
+        if not hasattr(data, 'temporary_file_path'):
+            logging.error("uploaded file was kept in memory")
+
+        if dscan.is_configured() and hasattr(data, 'temporary_file_path'):
             file = data.temporary_file_path()    
             df = dscan.ScanFile(file)
             if not df.readable:
