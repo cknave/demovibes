@@ -2,13 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 import socket
-import subprocess
 import re
 import os.path
 from django.conf import settings
 from django.core.mail import EmailMessage
 #from django.core.urlresolvers import reverse
-import mad, logging
+import mad
+import dscan
+import logging
 import xml.dom.minidom, urllib # Needed for XML processing
 from django.core.cache import cache
 from django.template.defaultfilters import striptags
@@ -443,45 +444,34 @@ class Song(models.Model):
             return "%d:%02d" % ( self.song_length/60, self.song_length % 60 )
         return "Not set"
 
+    def set_song_data_lazy(self):
+        #use length or replaygain as indicator if song has had a propper scan yet
+        #this avoids unnessessary multiple passes
+        if (not self.song_length) or self.song_length == 0 \
+            or (not self.replay_gain) or self.replay_gain == 0:
+            self.set_song_data()
+        
     def set_song_data(self):
-        program = getattr(settings, 'DEMOSAUCE_SCAN', False)    
-        if program:
-            self.get_song_data_demosauce()
+        if dscan.is_configured():
+            self.set_song_data_demosauce()
         else:
-            self.get_song_data_pymad()
-
+            self.set_song_data_pymad()
 
     def set_song_data_demosauce(self):
-        program = getattr(settings, 'DEMOSAUCE_SCAN', False)
-        if program:
-            path = os.path.dirname(program)
-            p = subprocess.Popen([program, self.file.path], stdout=subprocess.PIPE, cwd = path)
-            output = p.communicate()[0]
-            if p.returncode == 0:
-                bitrate = re.compile(r'bitrate:(\d*\.?\d+)')
-                length = re.compile(r'length:(\d*\.?\d+))')
-                repgain = re.compile(r'replaygain:(-?\d*\.?\d+))')
-                samplerate = re.compile(r'samplerate:(\d*\.?\d+))')
-                loopiness = re.compile(r'loopiness:(\d*\.?\d+))')
-
-                #only repalygain and length are always present, modules don't have bitrate & samplerate
-                self.song_length = int(length.search(output).group(1))
-                self.replay_gain = float(repgain.search(output).group(1))
-
-                samplerate_match = samplerate.search(output)
-                bitrate_match = bitrate.search(output)
-                loop_match = loopiness.search(output)
-
-                if samplerate_match:
-                    self.samplerate = samplerate_match.group(1)
-		if bitrate_match:
-                    self.bitrate = bitrate_match.group(1)
-                if loop_match and float(loop_match.group(1)) > LOOPINESS_THRESHOLD:
-                    self.loopfade_time = max(MAX_LOOP_LENGTH, self.song_length)
-
-                # this will fade out knucklebusters & co.:D
-                if self.song_length > MAX_SONG_LENGTH:
-                    self.loopfade_time = MAX_SONG_LENGTH
+        df = dscan.ScanFile(self.file.path)
+        if not df.readable:
+            return            
+        threshold = getattr(settings, 'LOOPINESS_THRESHOLD', False)
+        looplength = getattr(settings, 'LOOP_LENGTH', False)
+        
+        self.song_length = df.length
+        self.replay_gain = df.replaygain()
+        self.samplerate = df.samplerate
+        self.bitrate = df.bitrate  
+        if not looplength:
+            looplength = 120
+        if threshold and threshold > 0 and df.loopiness > threshold:
+            self.loopfade_time = max(looplength, self.song_length)
 			        
     def set_song_data_pymad(self):
         mf = mad.MadFile(self.file.path)
@@ -540,26 +530,21 @@ class Song(models.Model):
                 pass
 
     def save(self, *args, **kwargs):
-        if not self.id or self.song_length == None:
-            try:
-                mf = mad.MadFile(self.file.path)
-                seconds = mf.total_time() / 1000
-                bitrate = mf.bitrate() / 1000
-                samplerate = mf.samplerate()
-                self.song_length = seconds
-                self.bitrate = bitrate
-                self.samplerate = samplerate
-            except:
-                # This causes the record to not contain anything until the
-                # 'Not Set' bug is fixed. The result; Admins can Edit/Save
-                # Song faster to re-set song time. AAK.
-                self.song_length = None
-                self.bitrate = None
-                self.samplerate = None
-            try:
-                del mf
-            except:
-                pass
+        #I don't think this is still needed
+        #~ if not self.id or self.song_length == None:
+            #~ try:
+                #~ self.set_song_data_lazy()
+            #~ except:
+                #~ # This causes the record to not contain anything until the
+                #~ # 'Not Set' bug is fixed. The result; Admins can Edit/Save
+                #~ # Song faster to re-set song time. AAK.
+                #~ self.song_length = None
+                #~ self.bitrate = None
+                #~ self.samplerate = None
+            #~ try:
+                #~ del mf
+            #~ except:
+                #~ pass
         S = self.title[0].lower()
         if not S in alphalist:
             S = '#'
@@ -1102,12 +1087,8 @@ def set_song_values(sender, **kwargs):
     if kwargs["created"]:
         try:
             song = kwargs["instance"]
-            mf = mad.MadFile(song.file.path)
-            song.song_length = mf.total_time() / 1000
-            song.bitrate = mf.bitrate() / 1000
-            song.samplerate = mf.samplerate()
+            song.set_song_data_lazy()
             song.save()
-            del mf
         except:
             pass
 post_save.connect(set_song_values, sender = Song)

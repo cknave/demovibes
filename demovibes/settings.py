@@ -83,6 +83,23 @@ ACCOUNT_ACTIVATION_DAYS = 7
 
 # END SMTP Configuration
 
+# maximum time a song will be played in seconds
+# only used when demosauce streamer is used
+# default fadeout is right before knucklebusters gets ugly
+MAX_SONG_LENGTH = 480
+
+#location of demosauce scan tool
+DEMOSAUCE_SCAN = '../demosauce/scan'
+
+# a value that decides if a module is likely to be loopded. 0.1 seems to be good for starters
+# only required if demosauce scan is used
+LOOPINESS_THRESHOLD = 0.1
+
+# time a song is looped in seconds
+# this ONLY applies to modules (.mod, .xm, etc...) AND if a loop has been detected
+# only required if demosauce scan is used
+LOOP_LENGTH = 150
+
 # Customize the dimensions on the avatars used on the site. AVATAR_SIZE is a value in
 # Bytes that the image file cannot exceed. Reccomend no less than 40Kb so users can have
 # Some pretty AnimGIF files to use. HEIGHT and WIDTH are specified in pixels.
@@ -216,6 +233,11 @@ INSTALLED_APPS = (
     'haystack',
     'openid_provider',
 )
+
+# demosauce scan requires this. terra said there were problems...
+# but when I tested it I didn't see any
+# in django it looks like that: if content_length > settings.FILE_UPLOAD_MAX_MEMORY_SIZE
+FILE_UPLOAD_MAX_MEMORY_SIZE = -1
 
 try:
     from settings_local import *

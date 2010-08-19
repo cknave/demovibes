@@ -2,7 +2,11 @@ from webview.models import *
 from django import forms
 from django.conf import settings
 from PIL import Image
-import mimetypes
+#import mimetypes
+import dscan
+import os
+import logging
+
 try:
     import cStringIO as StringIO
 except ImportError:
@@ -15,16 +19,36 @@ class UploadForm(forms.ModelForm):
         
     def clean_file(self):
         data = self.cleaned_data['file']
-        mf = mad.MadFile(data)
-        bitrate = mf.bitrate() / 1000
-        layer = mf.layer()
-        if hasattr(data, 'temporary_file_path'):
-            F = data.temporary_file_path()
-            mimetype, not_used = mimetypes.guess_type(F)
-        else:
-            mimetype = data.content_type
-        if bitrate < 128 or layer != 3:
-            raise forms.ValidationError("We only accept mpeg layer 3 (MP3) encoded files with bitrate of 128 kbps or higher")
+            
+        # I didn't see this being used - remove?
+        #~ if hasattr(data, 'temporary_file_path'):
+            #~ F = data.temporary_file_path()
+            #~ mimetype, not_used = mimetypes.guess_type(F)
+        #~ else:
+            #~ mimetype = data.content_type
+            
+        if dscan.is_configured():
+            if not hasattr(data, 'temporary_file_path'):
+                logging.error("uploaded file was kept in memory")
+                
+            file = data.temporary_file_path()    
+            df = dscan.ScanFile(file)
+            if not df.readable:
+                raise forms.ValidationError("Unsupported audio format! Check the FAQ to see what's accepted")
+
+            #I dropped the bitrate requirement. nothing keeps people from reencoding shitty files
+            # which will further reduce quality. also with ogg and aac, lower bitrates are more common
+            #if df.bitrate < 128 and df.bitrate != 0:
+            #    raise forms.ValidationError("We only accept audio with a bitrate of 128 kbps or higher")
+        
+        #how the hell pymand finds the file without path is a mystery to me
+        if not dscan.is_configured():
+            mf = mad.MadFile(data)
+            bitrate = mf.bitrate() / 1000
+            layer = mf.layer()
+            if bitrate < 128 or layer != 3:
+                raise forms.ValidationError("We only accept mpeg layer 3 (MP3) encoded files with bitrate of 128 kbps or higher")
+        
         return data
 
 class CreateArtistForm(forms.ModelForm):
