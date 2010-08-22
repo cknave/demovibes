@@ -7,7 +7,6 @@ import os.path
 from django.conf import settings
 from django.core.mail import EmailMessage
 #from django.core.urlresolvers import reverse
-import mad
 import dscan
 import logging
 import xml.dom.minidom, urllib # Needed for XML processing
@@ -424,6 +423,10 @@ class Song(models.Model):
     type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source')
     uploader = models.ForeignKey(User,  null = True, blank = True)
     wos_id = models.CharField(max_length=8, blank=True, null = True, verbose_name="W.O.S. ID", help_text="World of Spectrum ID Number (Spectrum) such as 0003478 (leading 0's are IMPORTANT!) - See http://www.worldofspectrum.org")
+    pouetlink = models.CharField(max_length=100, blank = True)
+    pouetss = models.CharField(max_length=100, blank = True)
+    pouetgroup = models.CharField(max_length=100, blank = True)
+    pouettitle = models.CharField(max_length=100, blank = True)
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
     objects = models.Manager()
@@ -474,13 +477,40 @@ class Song(models.Model):
             self.loopfade_time = max(looplength, self.song_length)
 			        
     def set_song_data_pymad(self):
-        mf = mad.MadFile(self.file.path)
-        seconds = mf.total_time() / 1000
-        bitrate = mf.bitrate() / 1000
-        samplerate = mf.samplerate()
-        self.song_length = seconds
-        self.bitrate = bitrate
-        self.samplerate = samplerate
+        try:
+            import mad
+            mf = mad.MadFile(self.file.path)
+            seconds = mf.total_time() / 1000
+            bitrate = mf.bitrate() / 1000
+            samplerate = mf.samplerate()
+            self.song_length = seconds
+            self.bitrate = bitrate
+            self.samplerate = samplerate
+        except:
+            logging.warning("Missing pyMAD, and scan not configured")
+
+    def grab_pouet_info(self, tag, subtag = True):
+        if not self.pouetid:
+            return False
+        try:
+            key = "pouetxml%s" % self.id
+            xmldata = cache.get(key)
+            if not xmldata:
+                pouetlink = "http://www.pouet.net/export/prod.xnfo.php?which=%d" % (self.pouetid)
+                usock = urllib.urlopen(pouetlink)
+                xmldata = usock.read()
+                usock.close()
+                cache.set(key, xmldata, 30)
+            
+            xmldoc = xml.dom.minidom.parseString(xmldata)
+            
+            node = xmldoc.getElementsByTagName(tag)[0]
+            if subtag:
+                node = node.childNodes[1]
+            data = node.firstChild.nodeValue
+            return data
+        except:
+            return False
 
     def get_pouet_screenshot(self):
         """
@@ -489,18 +519,14 @@ class Song(models.Model):
         """
         if self.pouetid:
             try:
-                pouetlink = "http://www.pouet.net/export/prod.xnfo.php?which=%d" % (self.pouetid)
-                usock = urllib.urlopen(pouetlink)
-                xmldoc = xml.dom.minidom.parse(usock)
-                usock.close()
-
-                # Parse the <screenshot> tag out of the doc, if it exists
-                screen = xmldoc.getElementsByTagName('screenshot')[0].childNodes[1]
-                imglink = screen.firstChild.nodeValue
+                if not self.pouetss:
+                    imglink = self.grab_pouet_info("screenshot")
+                    self.pouetss = imglink
+                    self.save()
 
                 t = loader.get_template('webview/t/pouet_screenshot.html')
                 c = Context ( { 'object' : self,
-                               'imglink' : imglink } )
+                               'imglink' : self.pouetss } )
                 return t.render(c)
 
             except:
@@ -512,18 +538,14 @@ class Song(models.Model):
         """
         if self.pouetid:
             try:
-                pouetlink = "http://www.pouet.net/export/prod.xnfo.php?which=%d" % (self.pouetid)
-                usock = urllib.urlopen(pouetlink)
-                xmldoc = xml.dom.minidom.parse(usock)
-                usock.close()
-
-                # Parse the <screenshot> tag out of the doc, if it exists
-                screen = xmldoc.getElementsByTagName('download')[0].childNodes[1]
-                dllink = screen.firstChild.nodeValue
+                if not self.pouetlink:
+                    link = self.grab_pouet_info("screenshot")
+                    self.pouetlink = link
+                    self.save()
 
                 t = loader.get_template('webview/t/pouet_download.html')
                 c = Context ( { 'object' : self,
-                               'dllink' : dllink } )
+                               'dllink' : self.pouetlink } )
                 return t.render(c)
 
             except:
@@ -545,6 +567,7 @@ class Song(models.Model):
                 #~ del mf
             #~ except:
                 #~ pass
+        self.calc_votes()
         S = self.title[0].lower()
         if not S in alphalist:
             S = '#'
@@ -607,21 +630,24 @@ class Song(models.Model):
             return True
         return False
 
+    def calc_votes(self):
+        votes = SongVote.objects.filter(song=self)
+        if votes:
+            data = votes.aggregate(models.Avg('vote'), models.Sum('vote'), models.Count('vote'))
+            self.rating_total = data['vote__sum']
+            self.rating_votes = data['vote__count']
+            self.rating = data['vote__avg']
+            
+
     def set_vote(self, vote, user):
         if vote < 1:
             return False
-        if not SongVote.objects.filter(song=self, user=user):
-            #New vote
-            self.rating_total += vote
-            self.rating_votes += 1
-            vt = SongVote(user = user, song = self, vote = vote)
-        else:
-            #Change existing vote
-            vt = SongVote.objects.get(user=user, song = self)
-            self.rating_total = (self.rating_total - vt.vote) + vote
-            vt.vote = vote
-        vt.save()
-        self.rating = float(self.rating_total) / self.rating_votes
+ 
+        obj, created = SongVote.objects.get_or_create(song = self, user=user, defaults = {'vote': vote})
+        if not created:
+            obj.vote = vote
+            obj.save()
+
         self.save()
         return True
 
@@ -854,7 +880,7 @@ class Favorite(models.Model):
 class Oneliner(models.Model):
     message = models.CharField(max_length=256)
     user = models.ForeignKey(User)
-    added = models.DateTimeField(auto_now_add=True)
+    added = models.DateTimeField(auto_now_add=True, db_index=True)
     class Meta:
         ordering = ['-added']
         permissions = (

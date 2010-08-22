@@ -101,12 +101,13 @@ Song Status: {{ object.get_status_display() }}
 This song has been played {{ object.times_played }} times. [<a href="{{object.get_absolute_url()}}queue_history">See Request History</a>]<br />
 It was added {{ object.added|timesince }} ago.
 </p>
-{% cache 86400 mkstr(object.title, object.pouetid) %}
  {% if object.pouetid %}
+{% cache 86400 mkstr(object.id, object.pouetid) %} 
   {{ object.get_pouet_screenshot() }}
   {{ object.get_pouet_download() }}
- {% endif %}
 {% endcache %}
+ {% endif %}
+
 
 
 

@@ -40,9 +40,11 @@ class pyWhisperer:
                         Log.debug("Got message : %s" % data)
                         if data in self.COMMANDS.keys():
                                 result = self.COMMANDS[data]()
+                                #result = unicode(result).encode("utf8")
+                                print result
                                 Log.debug("Returning data : %s" % result)
                                 while i < len(result):
-                                        i = i + self.conn.send(result.encode("utf8"))
+                                        i = i + self.conn.send(result)
                         else:
                                 Log.debug("Unknown command!")
                 else:
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     TIMEOUT = None
 
     logging.basicConfig(level=logging.WARNING)
-    Log.setLevel(logging.DEBUG)
+    Log.setLevel(logging.INFO)
     server = pyWhisperer(HOST, PORT, TIMEOUT)
     server.listen()
 

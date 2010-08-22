@@ -1,5 +1,6 @@
 from jinja2 import nodes
 from jinja2.ext import Extension
+import hashlib
 
 class FragmentCacheExtension(Extension):
     # a set of names that trigger the extension.
@@ -45,13 +46,13 @@ class FragmentCacheExtension(Extension):
     def _cache_support(self, name, timeout, caller):
         """Helper callback."""
         key = self.environment.fragment_cache_prefix + ''.join(name)
-
+        key = hashlib.md5(key).hexdigest()
         # try to load the block from the cache
         # if there is no fragment in the cache, render it and store
         # it in the cache.
         rv = self.environment.fragment_cache.get(key)
         if rv is not None:
-            return rv
+            return rv.decode('utf8')
         rv = caller()
-        self.environment.fragment_cache.add(key, rv, timeout)
+        self.environment.fragment_cache.add(key, rv.encode('utf8'), timeout)
         return rv

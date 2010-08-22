@@ -97,14 +97,14 @@ class song_finder:
         self.song = song
     
         try:
-            filepath = song.file.path.decode('utf8').encode(self.sysenc)
+            filepath = song.file.path.encode(self.fsenc)
         except:
             try:
-                filepath = song.file.path.decode('utf8').encode(self.fsenc)
+                filepath = song.file.path.encode(self.sysenc)
             except:
                 filepath = song.file.path
         self.log.debug("Returning path %s" % filepath)
-        return filepath        
+        return filepath     
     
     def get_site_url(self):
         current_site = Site.objects.get_current()
@@ -118,7 +118,7 @@ class song_finder:
     def select_random(self, qs):
         nr = qs.count()
         rand = random.randint(0,nr-1)
-        entry = qs[rand]
+        entry = qs.order_by('id')[rand]
         return entry
 
     def getRandom(self):
