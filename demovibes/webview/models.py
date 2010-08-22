@@ -143,7 +143,7 @@ class Userprofile(models.Model):
     info = models.TextField(blank = True, verbose_name="Profile Info", help_text="Enter a little bit about yourself. No HTML. BBCode tags allowed")
     last_active = models.DateTimeField(blank = True, null = True)
     last_changed = models.DateTimeField(default=datetime.datetime.now())
-    last_activity = models.DateTimeField(blank = True, null = True)
+    last_activity = models.DateTimeField(blank = True, null = True, db_index=True)
     location = models.CharField(blank = True, max_length=40, verbose_name="Hometown Location")
     paginate_favorites = models.BooleanField(default = True)
     pm_accepted_upload = models.BooleanField(default=True, verbose_name = "Send PM on accepted upload")
@@ -414,7 +414,7 @@ class Song(models.Model):
     rating_votes = models.IntegerField(default = 0)
     replay_gain = models.FloatField(default = 0, verbose_name = _("Replay gain"))
     release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True)
-    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.")
+    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
     samplerate = models.IntegerField(blank = True, null = True)
     song_length = models.IntegerField(blank = True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
@@ -694,7 +694,7 @@ class Compilation(models.Model):
     label = models.CharField(verbose_name="Prod. Label", help_text="Production label/Distributor of this compilation. Will appear as [name] by [label]", max_length=30, blank = True) # Record label produced under, if applicable (Not always tied to a specific group/artist)
     last_updated = models.DateTimeField(blank = True, null = True)
     media_format = models.CharField(help_text="Usually CD/DVD/FLAC/MP3/OGG etc.", max_length=30, blank = True) # Optional media format, such as CD/DVD/FLAC/MP3 etc.
-    name = models.CharField(max_length=60, unique = True, db_index = True, verbose_name="* Name", help_text="Name of the compilation, as you want it to appear on the site") # Name of the compilation
+    name = models.CharField(max_length=80, unique = True, db_index = True, verbose_name="* Name", help_text="Name of the compilation, as you want it to appear on the site") # Name of the compilation
     num_discs = models.IntegerField(help_text="If this is a media format like CD, you can specify the number of disks", blank=True, null = True) # Number of discs in the compilation
     pouet = models.IntegerField(help_text="Pouet ID for compilation", blank=True, null = True) # If the production has a pouet ID
     prod_artists = models.ManyToManyField(Artist, verbose_name="Production Artists", help_text="Artists associated with the production of this compilation (not necessarily the same as the tracks)", null = True, blank = True) # Internal artists involved in the production
