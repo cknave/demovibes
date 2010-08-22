@@ -31,7 +31,7 @@ def queue_song(song, user, event = True, force = False):
     Q = False
     time = datetime.timedelta(hours = sl['hours'], days = sl['days'], minutes = sl['minutes'])
     result = True
-    models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent)
+    models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
     if not force:
         requests = models.Queue.objects.filter(played=False, requested_by = user).count()
         if requests >= settings.SONGS_IN_QUEUE:
