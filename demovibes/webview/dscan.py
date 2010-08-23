@@ -34,13 +34,15 @@ class ScanFile:
                 L.error("ScanFile got called without being enabled in configuration")
                 return
             if not os.path.isfile(program):
-                L.error("ScanFile can't find scan tool at %s. check your config" % program) 
+                L.error("ScanFile can't find scan tool at %s. check your config" % program)
+                return
             if not file: 
                 L.error("ScanFile got called with no file which indicates a bug in our code")
                 return
             if not os.path.isfile(file):
                 L.error("ScanFile can't find %s. this is likely our fault" % str(file)) 
                 return
+                
             self.file = file.encode(fsenc)
             path = os.path.dirname(program)
             p = subprocess.Popen([program, '--no-replaygain', self.file], stdout = subprocess.PIPE, cwd = path)
@@ -48,8 +50,6 @@ class ScanFile:
             if p.returncode != 0:
                 L.warn("scan doesn't like %s" % self.file)
                 return
-                
-            self.readable = True	
             
             bitrate = re.compile(r'bitrate:(\d*\.?\d+)')
             length = re.compile(r'length:(\d*\.?\d+)')
@@ -69,6 +69,8 @@ class ScanFile:
             loop_match = loopiness.search(output)
             if loop_match:
                 self.loopiness = float(loop_match.group(1))
+                
+            self.readable = True
         except:
             import traceback
             trace = traceback.format_exc()
@@ -77,14 +79,18 @@ class ScanFile:
     def replaygain(self):
         if not self.readable:
             return 0
-            
-        if not self.__replaygain:        
-            program = getattr(settings, 'DEMOSAUCE_SCAN', False)
-            path = os.path.dirname(program)
-            p = subprocess.Popen([program, self.file], stdout=subprocess.PIPE, cwd = path)
-            output = p.communicate()[0]
-            repgain = re.compile(r'replaygain:(-?\d*\.?\d+)')
-            self.__replaygain = float(repgain.search(output).group(1))
+
+        if not self.__replaygain:
+            try:
+                path = os.path.dirname(program)
+                p = subprocess.Popen([program, self.file], stdout = subprocess.PIPE, cwd = path)
+                output = p.communicate()[0]
+                repgain = re.compile(r'replaygain:(-?\d*\.?\d+)')
+                self.__replaygain = float(repgain.search(output).group(1))
+            except:
+                import traceback
+                trace = traceback.format_exc()
+                L.error("Error occurred. Printing traceback.\n%s" % trace)
         
         return self.__replaygain
         
