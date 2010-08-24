@@ -43,7 +43,10 @@ def add_event(event, user = None):
                 data = urllib.urlencode(data)
                 logging.debug("Event data via http: %s" % data)
                 url = uwsgi_event_server_http or "http://127.0.0.1/demovibes/ajax/monitor/new/"
-                r = urllib.urlopen(url, data)
+                try:
+                    r = urllib.urlopen(url, data)
+                except:
+                    return False
                 return r.read()
             else:
                 uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)

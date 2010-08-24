@@ -9,7 +9,7 @@
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Songs</h2>
 
-{% set objs, paging = dv.paginate(object.song_set.all()) %}
+{% set objs, paging = dv.paginate(object.song_set.all(), 500) %}
 
 {% include "webview/t/songheader.html" %}
 {% for song in objs %}
