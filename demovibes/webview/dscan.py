@@ -18,7 +18,7 @@ def is_configured():
         L.debug("Scan not configured")
         return False
 
-class ScanFile:
+class ScanFile(object):
     file = ''
     bitrate = 0
     length = 0
@@ -49,7 +49,7 @@ class ScanFile:
             output = p.communicate()[0]
             if p.returncode != 0:
                 L.warn("scan doesn't like %s" % self.file)
-                return
+                return False
             
             bitrate = re.compile(r'bitrate:(\d*\.?\d+)')
             length = re.compile(r'length:(\d*\.?\d+)')

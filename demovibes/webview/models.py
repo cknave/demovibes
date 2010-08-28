@@ -398,7 +398,7 @@ class Song(models.Model):
     cvgm_id = models.IntegerField(blank = True, null = True, verbose_name = "CVGM SongID", help_text="SongID on CVGM (Link will be provided)")
     dtv_id = models.IntegerField(blank=True, null = True, help_text="Demoscene TV number (id_prod= number) from Demoscene.tv", verbose_name="Demoscene.TV")
     explicit = models.BooleanField(default=False, verbose_name = "Explicit Lyrics?", help_text="Place a checkmark in the box to flag this song as having explicit lyrics/content")
-    file = models.FileField(upload_to='media/music', verbose_name="File", help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
+    file = models.FileField(upload_to='media/music', verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
     groups = models.ManyToManyField(Group, null = True, blank = True)
     hol_id = models.IntegerField(blank=True, null = True, verbose_name="H.O.L. ID", help_text="Hall of Light ID number (Amiga) - See http://hol.abime.net")
     hvsc_url = models.URLField(blank=True, verbose_name="HVSC Link", help_text="Link to HVSC SID file as a complete URL (C64) - See HVSC or alt. mirror (such as www.andykellett.com/music )")
@@ -461,14 +461,14 @@ class Song(models.Model):
         
     def set_song_data(self):
         if dscan.is_configured():
-            self.set_song_data_demosauce()
+            return self.set_song_data_demosauce()
         else:
-            self.set_song_data_pymad()
+            return self.set_song_data_pymad()
 
     def set_song_data_demosauce(self):
         df = dscan.ScanFile(self.file.path)
         if not df.readable:
-            return            
+            return False      
         threshold = getattr(settings, 'LOOPINESS_THRESHOLD', False)
         looplength = getattr(settings, 'LOOP_LENGTH', False)
         
@@ -480,6 +480,7 @@ class Song(models.Model):
             looplength = 120
         if threshold and threshold > 0 and df.loopiness > threshold:
             self.loopfade_time = max(looplength, self.song_length)
+        return True
 			        
     def set_song_data_pymad(self):
         try:
@@ -491,8 +492,11 @@ class Song(models.Model):
             self.song_length = seconds
             self.bitrate = bitrate
             self.samplerate = samplerate
+            result = True
         except:
             logging.warning("Missing pyMAD, and scan not configured")
+            result = False
+        return result
 
     def grab_pouet_info(self, tag, subtag = True):
         if not self.pouetid:
