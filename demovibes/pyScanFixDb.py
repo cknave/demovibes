@@ -1,15 +1,38 @@
 #!/usr/bin/env python
-from django.core.management import setup_environ
-import settings
-setup_environ(settings)
 import logging
 import os
 import sys
-from webview.models import *
-from webview import dscan
 #problem: I don't rally know when to convert to fsencoding :D
 #problem: file fild might need to be extended to something that makes sense (255)
 #problem: can't find logger
+
+import optparse
+parser = optparse.OptionParser()
+parser.add_option("-a", "--all", action="store_true", default=False, dest="all", help="Scan all songs")
+parser.add_option("-d", "--debug", action="store_true", default=False, dest="debug", help="Debug output")
+parser.add_option("--logfile", dest="logfile", default=None, metavar="FILE", help="Also write log to logfile")
+parser.add_option("-s", "--status", dest="status", default="K", metavar="STATUS", help="Set borked files to given status. Default: K")
+(options, args) = parser.parse_args()
+
+#filename=options.logfile
+
+if options.debug:
+    logging.basicConfig(level=logging.DEBUG, datefmt='%H:%M', format='[%(asctime)s] %(message)s')
+else:
+    logging.basicConfig(level=logging.INFO, datefmt='%H:%M', format='[%(asctime)s] %(message)s')
+
+if options.logfile:
+    fhandler = logging.FileHandler(options.logfile)
+    fhandler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+    fhandler.setFormatter(formatter)
+    logging.getLogger('').addHandler(fhandler)
+
+from django.core.management import setup_environ
+import settings
+setup_environ(settings)
+from webview.models import *
+from webview import dscan
 
 L = logging.getLogger('DbFix')
 fsenc = sys.getfilesystemencoding()
@@ -19,11 +42,21 @@ if not media_dir:
     print "set MEDIA_ROOT"
     exit
 
-songs = Song.objects.filter(replay_gain=0)
+if options.all:
+    songs = Song.objects.all()
+else:
+    songs = Song.objects.filter(replay_gain=0)
+
+numsongs = songs.count()
+currsong = 0
 
 for song in songs:
-    F = song.file.path
+    currsong += 1
+    F = song.file.path.encode(fsenc)
+    L.info(u"""(%5d/%5d) Checking %5d : "%s" by "%s" """ % (currsong, numsongs, song.id, song.title, song.artist()))
+    
     if not os.path.isfile(F):
+        L.debug("Song %s seem to have incomplete path. Trying to fix")
         dir, prefix = os.path.split(song.file.path)
         found_one_match = False
         
@@ -39,19 +72,19 @@ for song in songs:
         if found_one_match:
             print "REPLACE %s -> %s" % (F, path)
             #problem right here: it works but database will contain absolute path
-            song.file = path.lstrip(media_dir)
+            sf = path.replace(media_dir, "", 1).lstrip("/\\")
+            L.debug(u"Song %s : Setting path to %s" % (song.id, sf))
+            song.file = sf
             song.save()
         else:
-            print "can't find replacement for %s" % F
-            #L.error("can't find %s or replacement " % prefix) 
-            song.status = 'K' # K = Kaput = file missing...
+            L.warning("can't find %s or replacement " % prefix)
+            song.status = options.status
             song.save()
     if os.path.isfile(song.file.path):
-        print "scanning", song, song.file.path
-        
         r = song.set_song_data()
         
         if not r:
-            song.status = "K"
+            L.debug(u"Song #%s - Could not parse file" % song.id)
+            song.status = options.status
 
         song.save()

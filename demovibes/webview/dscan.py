@@ -12,10 +12,8 @@ L.debug("Filesystem enc = %s" % fsenc)
 
 def is_configured():
     if program:
-        L.debug("Scan configured")
         return True
     else:
-        L.debug("Scan not configured")
         return False
 
 class ScanFile(object):

@@ -4,7 +4,7 @@
 
 {% block main %}
 
-{% set objs, paging = dv.paginate(object_list) %}
+{% set objs, paging = dv.paginate(object_list, 300) %}
 
 <h2><img class="icon_header" src="/static/sound.png" alt="" />Song Platforms</h2>
 {% for p in objs %}

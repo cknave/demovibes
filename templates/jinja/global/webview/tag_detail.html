@@ -18,7 +18,7 @@
 {% endfor %}
 <h2>Songs connected to tags</h2>
 
-{% set objs, paging = dv.paginate(songs) %}
+{% set objs, paging = dv.paginate(songs, 300) %}
 
 {% include "webview/t/songheader.html" %}
 {% for song in objs  %}

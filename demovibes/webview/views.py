@@ -27,7 +27,6 @@ from random import choice
 import j2shim
 
 import time
-#import mad
 import mimetypes
 import os
 import re
@@ -212,6 +211,7 @@ def search(request):
             groups = Group.objects.filter(name__icontains = searchterm)[:result_limit]
             compilations = Compilation.objects.filter(name__icontains = searchterm)[:result_limit]
             labels = Label.objects.filter(name__icontains = searchterm)[:result_limit]
+
 
         return j2shim.r2r('webview/search.html', \
             { 'songs' : songs, 'artists' : artists, 'groups' : groups, 'users' : users, 'compilations' : compilations, 'labels' : labels }, \
