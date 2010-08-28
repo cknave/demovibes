@@ -387,7 +387,9 @@ class Song(models.Model):
             ('M', 'Moved'), # Moved to CVGM/Necta (Depending on content, see [thread]286[/thread] on Necta)
             ('N', 'Needs Re-Encoding'), # Technically, this track can still play even though it needs re-encoded. AAK
             ('C', 'Removed By Request'), # If we are asked to remove a track. AAK
-            ('R', 'Rejected')
+            ('R', 'Rejected'),
+            ('K', 'Kaput') # file doesn't exist, scanner didn't like the song
+            
         )
     added = models.DateTimeField(auto_now_add=True)
     al_id = models.IntegerField(blank=True, null = True, verbose_name="Atari Legends ID", help_text="Atari Legends ID Number (Atari) - See http://www.atarilegend.com")

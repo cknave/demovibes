@@ -2,6 +2,12 @@ import socket
 import logging
 import queuefetcher
 
+from django.core.management import setup_environ
+import settings
+
+setup_environ(settings)
+max_length = getattr(settings, 'MAX_SONG_LENGTH', False)
+
 Log = logging.getLogger("Sockulf")
 
 class pyWhisperer:
@@ -62,6 +68,8 @@ class pyWhisperer:
         return self.player.get_next_song()
 
     def command_getloop(self):
+        if maxlength and self.player.song.song_length > max_length:
+            return str(maxlength)
         return str(self.player.song.loopfade_time)
 
     def command_getgain(self):
