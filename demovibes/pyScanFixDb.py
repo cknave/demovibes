@@ -61,10 +61,18 @@ currsong = 0
 
 for song in songs:
     currsong += 1
-    F = song.file.path.encode(fsenc)
+    
     L.info(u"""(%5d/%5d) Checking %5d : "%s" by "%s" """ % (currsong, numsongs, song.id, song.title, song.artist()))
     
-    if not os.path.isfile(F):
+    try:
+        F = song.file.path
+    except:
+        L.warning("%s : Aii Caramba! Could not get file path! Outside allowed file path?" % song.id)
+        F = False
+        
+    F = F and F.encode(fsenc) or False
+    
+    if F and not os.path.isfile(F):
         L.debug("Song %s seem to have incomplete path. Trying to fix")
         dir, prefix = os.path.split(song.file.path)
         found_one_match = False
@@ -89,7 +97,7 @@ for song in songs:
             L.warning("can't find %s or replacement " % prefix)
             song.status = options.status
             song.save()
-    if os.path.isfile(song.file.path):
+    if F and os.path.isfile(song.file.path):
         r = song.set_song_data()
         
         if not r:
