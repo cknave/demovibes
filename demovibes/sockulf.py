@@ -68,7 +68,7 @@ class pyWhisperer:
         return self.player.get_next_song()
 
     def command_getloop(self):
-        if maxlength and self.player.song.song_length > max_length:
+        if max_length and self.player.song.song_length > max_length:
             return str(maxlength)
         return str(self.player.song.loopfade_time)
 
