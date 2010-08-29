@@ -1,5 +1,5 @@
 <entry request_time="{{ entry.requested }}">
-   {% for artist in entry.song.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
+   {% for artist in entry.song.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country|safe }}">{{ artist.handle }}</artist>{% endfor %}
    <song id="{{ entry.song.id }}" length="{{ entry.song.length }}">{{ entry.song.title }}</song>
-   <requester id="{{ entry.requested_by.id }}">{{ entry.requested_by }}</requester>
+   <requester flag="{{ entry.requested_by.get_profile.country|safe }}">{{ entry.requested_by }}</requester>
   </entry>

@@ -20,7 +20,7 @@
     {% endfor %}</prod_groups>{% endifnotequal %}
 
     {% ifnotequal object.prod_artists.count 0 %}<prod_artists>{% for artist in object.prod_artists.all %}
-     <artist id="{{ artist.id }}">{{ artist.handle }}</artist>
+     <artist id="{{ artist.id }}" flag="{{ artist.home_country }}|safe }}">{{ artist.handle }}</artist>
     {% endfor %}</prod_artists>{% endifnotequal %}
 
     {% ifnotequal object.songs.count 0 %}<prod_songs>{% for song in object.songs.all %}
@@ -34,7 +34,7 @@
          {% if song.pouetid %}<pouetid>{{ song.pouetid }}</pouetid>{% endif %}
          
           <artists>
-          {% for artist in song.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
+          {% for artist in song.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country }}|safe }}">{{ artist.handle }}</artist>{% endfor %}
          </artists>
          <groups>
           {% for group in song.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
