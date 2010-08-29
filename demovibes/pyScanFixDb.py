@@ -8,10 +8,12 @@ import sys
 
 import optparse
 parser = optparse.OptionParser()
-parser.add_option("-a", "--all", action="store_true", default=False, dest="all", help="Scan all songs")
+parser.add_option("-a", "--all", action="store_true", default=False, dest="all", help="Scan all songs. Default : only scans songs with replaygain=0")
 parser.add_option("-d", "--debug", action="store_true", default=False, dest="debug", help="Debug output")
-parser.add_option("--logfile", dest="logfile", default=None, metavar="FILE", help="Also write log to logfile")
 parser.add_option("-s", "--status", dest="status", default="K", metavar="STATUS", help="Set borked files to given status. Default: K")
+parser.add_option("--logfile", dest="logfile", default=None, metavar="FILE", help="Also write log to logfile")
+parser.add_option("--scan-status", dest="scanstatus", default=False, metavar="STATUS", help="Only scan files with this status")
+parser.add_option("--scan-only", dest="scanonly", default=False, metavar="ID,ID", help="Only scan songs with given id's")
 (options, args) = parser.parse_args()
 
 #filename=options.logfile
@@ -46,6 +48,13 @@ if options.all:
     songs = Song.objects.all()
 else:
     songs = Song.objects.filter(replay_gain=0)
+
+if options.scanstatus: 
+    songs = songs.filter(status=options.scanstatus)
+
+if options.scanonly:
+    ids = [int(x) for x in options.scanonly.split(",")]
+    songs = songs.filter(id__in=ids)
 
 numsongs = songs.count()
 currsong = 0

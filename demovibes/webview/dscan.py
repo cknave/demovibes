@@ -47,7 +47,7 @@ class ScanFile(object):
             output = p.communicate()[0]
             if p.returncode != 0:
                 L.warn("scan doesn't like %s" % self.file)
-                return False
+                return 
             
             bitrate = re.compile(r'bitrate:(\d*\.?\d+)')
             length = re.compile(r'length:(\d*\.?\d+)')
