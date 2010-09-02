@@ -21,6 +21,10 @@ TEMPLATE_DEBUG = False
 #  2. start the uwsgi_eventhandler module
 #  3. Point /demovibes/ajax/monitor/* urls to it
 #UWSGI_EVENT_SERVER = ("127.0.0.1", 3032)
+#
+#If you have vserver that need a specific url, use this:
+#UWSGI_EVENT_SERVER_HTTP = "http://<hostname>/demovibes/ajax/monitor/new/"
+# Remember to also add ip to allowed_ips in uwsgi_eventhandler local_settings
 
 
 ADMINS = (

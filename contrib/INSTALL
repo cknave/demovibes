@@ -8,7 +8,7 @@ Packages needed:
 Create python virtual environment:
  Install pip (python package install program)
  Install virtualenv (can use "pip install virtualenv" if you want)
- To ceate virtual env : pip install -E demovibesenv -r demovibes/contrib/requirements.txt
+ To ceate virtual env : pip install -E demovibesenv -U -r demovibes/contrib/requirements.txt
   - Note that it might fail on pymad - activate the environment, download and install that manually, then rerun the command
  To activate virt env : source demovibesenv/bin/activate
   - If pymad is yet not installed, download and install it.
@@ -43,3 +43,5 @@ Other stuff:
  -for mysql support you need to have mysql dev packages installed, and run "pip install MySQL-python"
  -Similar for postgresql, the pip package is called "psycopg2"
  -Installing memcached and set it up as a cache for django is highly recommended
+ 
+uWSGI : Use version 0.9.5 for now
