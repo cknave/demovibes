@@ -115,7 +115,10 @@ def thread(request, thread):
     """
     t = get_object_or_404(Thread, pk=thread)
     p = t.post_set.all().order_by('time')
-    s = t.subscription_set.filter(author=request.user)
+    if request.user.is_authenticated():
+        s = t.subscription_set.filter(author=request.user)
+    else:
+        s = False
 
     # If the user is not authorized to view, we redirect them
     if t.forum.is_private and request.user.is_staff != True:

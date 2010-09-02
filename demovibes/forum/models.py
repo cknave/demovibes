@@ -109,11 +109,11 @@ class Forum(models.Model):
         verbose_name = _('Forum')
         verbose_name_plural = _('Forums')
 
-    def save(self):
+    def save(self, *args, **kwargs):
         p_list = self._recurse_for_parents_name(self)
         if (self.title) in p_list:
             raise validators.ValidationError(_("You must not save a forum in itself!"))
-        super(Forum, self).save()
+        super(Forum, self).save(*args, **kwargs)
 
     def _flatten(self, L):
         """
@@ -171,13 +171,13 @@ class Thread(models.Model):
         verbose_name = _('Thread')
         verbose_name_plural = _('Threads')
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         f = self.forum
         f.threads = f.thread_set.count()
         f.save()
         if not self.sticky:
             self.sticky = False
-        super(Thread, self).save(force_insert, force_update)
+        super(Thread, self).save(*args, **kwargs)
 
     def delete(self):
         super(Thread, self).delete()
@@ -204,14 +204,14 @@ class Post(models.Model):
     time = models.DateTimeField(_("Time"), blank=True, null=True)
     edited = models.DateTimeField(blank = True, null = True)
 
-    def save(self, force_insert = False, force_update = False):
+    def save(self, *args, **kwargs):
         new_post = False
         if not self.id:
             self.time = datetime.datetime.now()
         
         self.edited = datetime.datetime.now()
             
-        super(Post, self).save(force_insert, force_update)
+        super(Post, self).save(*args, **kwargs)
 
         t = self.thread
         t.latest_post_time = t.post_set.latest('time').time
