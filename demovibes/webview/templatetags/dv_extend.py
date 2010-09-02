@@ -62,7 +62,6 @@ class BetterPaginator(Paginator):
 @contextfunction
 def paginate(context, obj, limit=None, maxpages=None):
 
-  
     if not limit:
         limit = settings.PAGINATE
         
@@ -76,9 +75,14 @@ def paginate(context, obj, limit=None, maxpages=None):
     if 'p' in query_dict:
         del query_dict['p']
     
+    try:
+        pag = pager.get_context(context['request'].GET.get('p', 1), 10)
+    except:
+        return ([], "") # FIXME should raise 404 here, actually
+    
     cntxt = {
         'query_string': query_dict.urlencode(),
-        'paginator': pager.get_context(context['request'].GET.get('p', 1)),
+        'paginator': pag,
     }
         
     paging = js.r2s('webview/t/paginate.html', cntxt)

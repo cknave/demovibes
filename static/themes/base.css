@@ -1,3 +1,12 @@
+#main .paging li.active {
+    font-size:1.2em;
+}
+
+#main .paging li.prev,li.next {
+    margin-left:0.5em;
+    margin-right:0.5em;
+}
+
 #main .paging li {
     display: inline;
     list-style-type: none;
