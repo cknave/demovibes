@@ -6,5 +6,4 @@
   <disable-logging/>
   <daemonize>/tmp/demovibes-uwsgi.log</daemonize>
   <pidfile>/tmp/demovibes-uwsgi.pid</pidfile>
-  <harakiri>60</harakiri>
 </uwsgi>
