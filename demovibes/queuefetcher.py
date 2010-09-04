@@ -86,13 +86,13 @@ class song_finder(object):
         if self.timestamp:
             delta = datetime.datetime.now() - self.timestamp
             if delta < timedelta(seconds=3):
-                self.log.warning("Song '%s' stopped playing after less than 3 seconds for some reason!" % self.meta)
+                self.log.warning(u"Song '%s' stopped playing after less than 3 seconds for some reason!" % self.meta)
                 time.sleep(3)
         self.timestamp = datetime.datetime.now()
         
         song = self.findQueued()
     
-        self.meta = "%s - %s" % (song.artist(), song.title)
+        self.meta = u"%s - %s" % (song.artist(), song.title)
         self.log.debug("Now playing \"%s\" [ID %s]" % (song.title, song.id))
         self.song = song
     
