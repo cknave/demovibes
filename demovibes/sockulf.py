@@ -10,7 +10,7 @@ max_length = getattr(settings, 'MAX_SONG_LENGTH', False)
 
 Log = logging.getLogger("Sockulf")
 
-class pyWhisperer:
+class pyWhisperer(object):
     def __init__(self, host, port, timeout):
         Log.debug("Initiating listener with values HOST='%s', PORT='%s'." % (host, port))
         self.COMMANDS = {
