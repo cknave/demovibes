@@ -548,7 +548,7 @@ class Song(models.Model):
         if self.pouetid:
             try:
                 if not self.pouetlink:
-                    link = self.grab_pouet_info("screenshot")
+                    link = self.grab_pouet_info("download")
                     self.pouetlink = link
                     self.save()
 
