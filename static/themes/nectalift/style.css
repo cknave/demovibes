@@ -263,6 +263,7 @@ hr {
 #song-platform	{background-image: url("theme-images/joystick.png");}
 #artists	{background-image: url("/static/user_green.png");}
 #compilations   {background-image: url("/static/recplay_ico.png");}
+#tagcloud        {background-image: url("theme-images/tag_yellow.png");}
 #recent	        {background-image: url("/static/new.png");}
 #menuqueue	{background-image: url("/static/script.png");}
 #search		{background-image: url("/static/find.png");}
