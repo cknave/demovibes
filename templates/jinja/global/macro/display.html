@@ -68,6 +68,53 @@
     <a href="{{ P.get_absolute_url() }}">{{P.title|e}}</a>
 {%- endmacro %}
 
+{% macro linksform(lo) %}
+    {% if lo.links %}
+        <h3>External resources</h3>
+        {% if errors %}
+            <p class="errorinfo">There was an error with the following entries<br /><ul class="errors">
+                {% for x in errors %}
+                
+                 <li>{{ x.l.name }} - value "{{ x.v }}"</li>
+                {% endfor %}</ul>
+                Please fix or remove them, and try again.
+            </p>
+        {% endif %}
+        <table>
+        {% for ll in lo.links %}
+            <tr>
+             <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" />{% endif %}{{ ll.link.name }} link</label></th> 
+             <td>
+                <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
+                {% if ll.error %}
+                    <p class="errorinfo">{{ ll.error }}</p>
+                {% endif %}
+            </td>
+             {% if ll.link.inputinfo %}
+                <td title="{{ ll.link.inputinfo }}">
+                    <span class="formq">
+                        <img src="/static/question.gif" alt="?"/>
+                    </span>
+                </td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+{% endmacro %}
+
+{% macro links(Obj) -%}
+    {% for L in Obj.links.all() %}
+        <a href="{{ L.get_link() }}" target="_new">
+            {% if L.icon %}
+                <img class="song-resource" src="{{ L.icon.url }}" title="[{{ L.link.name }}]" />
+            {% else %}
+                [{{ L.link.name }}]
+            {% endif %}
+        </a>
+    {% endfor %}
+{%- endmacro %}
+
 {% macro songicons(S) -%}
     {% if S.pouetid -%}
         <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>

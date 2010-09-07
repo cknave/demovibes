@@ -1,5 +1,9 @@
 from demovibes.webview.models import *
 from django.contrib import admin
+from django.contrib.contenttypes import generic
+
+class LinkInline(generic.GenericTabularInline):
+    model = GenericLink
 
 class UserprofileAdmin(admin.ModelAdmin):
 	search_fields = ['user']
@@ -20,7 +24,7 @@ class SongAdmin(admin.ModelAdmin):
 		("Reference Info"	,{ 'fields' : ['pouetid', 'dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url', 'type', 'platform', 'status', 'info']}),
 		("Technical Stuff"	,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
 	]
-	inlines = [DownloadInline]
+	inlines = [DownloadInline, LinkInline]
 
 class QueueAdmin(admin.ModelAdmin):
 	list_display = ('song', 'requested', 'played', 'requested_by', 'priority', 'playtime')
@@ -89,6 +93,7 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Userprofile, UserprofileAdmin)
 admin.site.register(SongPlatform)
 admin.site.register(Logo)
+admin.site.register(GenericBaseLink)
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(SongComment, SongCommentAdmin)
 admin.site.register(Compilation, CompilationAdmin)

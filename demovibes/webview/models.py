@@ -17,6 +17,9 @@ from django.template import RequestContext, Context, loader
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 import tagging
 
 #from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
@@ -80,6 +83,8 @@ class Group(models.Model):
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Add the website address for this group, if one exists.")
     wiki_link = models.URLField(blank=True, help_text="URL to wikipedia entry (if available)")
 
+    links = generic.GenericRelation("GenericLink")
+
     def __unicode__(self):
         return self.name
 
@@ -97,6 +102,35 @@ class Group(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('dv-group', [str(self.id)])
+
+class GenericBaseLink(models.Model):
+    name = models.CharField(max_length = 20)
+    link = models.CharField(max_length = 200, help_text="%linkval% for Link Value")
+    description = models.TextField(blank=True)
+    icon = models.ImageField(upload_to = 'media/linkicons', blank = True, null = True)
+    inputinfo = models.TextField(blank=True)
+    regex = models.TextField(help_text="Regex to check input value")
+    LINKTYPE = (
+        ("A", "Artists"),
+        ("U", "Users"),
+        ("S", "Songs"),
+        ("G", "Groups"),
+        ("L", "Labels")
+    )
+    linktype = models.CharField(max_length=1, choices=LINKTYPE)
+    
+    def __unicode__(self):
+        return u"%s link for %s" % (self.name, self.get_linktype_display())
+    
+class GenericLink(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField(db_index=True)
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    link = models.ForeignKey(GenericBaseLink)
+    value = models.CharField(max_length = 20)
+    
+    def get_link(self):
+        return self.link.link.replace("%linkval%", self.value)
 
 class GroupVote(models.Model):
     """
@@ -158,6 +192,8 @@ class Userprofile(models.Model):
     visible_to = models.CharField(max_length=1, default = "A", choices = VISIBLE_TO)
     web_page = models.URLField(blank = True, verbose_name="Website", help_text="Your personal website address. Must be a valid URL")
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
+
+    links = generic.GenericRelation(GenericLink)
 
     def save(self, *args, **kwargs):
         self.last_changed = datetime.datetime.now()
@@ -243,6 +279,8 @@ class Label(models.Model):
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Website for this label, if available")
     wiki_link = models.URLField(blank=True, help_text="Full URL to wikipedia entry (if available)")
 
+    links = generic.GenericRelation(GenericLink)
+
     def __unicode__(self):
         return self.name
 
@@ -293,6 +331,8 @@ class Artist(models.Model):
     twitter_id = models.CharField(blank = True, max_length = 32, verbose_name = "Twitter ID", help_text="Enter the Twitter account name of the artist, if known (without the Twitter URL)")
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Website for this artist. Must exist on the web.")
     wiki_link = models.URLField(blank=True, help_text="URL to Wikipedia entry (if available)")
+
+    links = generic.GenericRelation(GenericLink)
 
     def __unicode__(self):
         return self.handle
@@ -436,6 +476,8 @@ class Song(models.Model):
 
     objects = models.Manager()
     active = ActiveSongManager()
+
+    links = generic.GenericRelation(GenericLink)
 
     class Meta:
         ordering = ['title']

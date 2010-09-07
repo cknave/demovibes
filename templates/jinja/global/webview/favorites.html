@@ -11,7 +11,7 @@
 <tr class="{{ loop.cycle('row1', 'row2') }}">
  {% include "webview/t/songlist.html" %}
  <td>
-  <a href="{{ url ("dv-del_fav", fav.song.id) }}">
+  <a href="{{ url ("dv-del_fav", song.id) }}">
    <img class="song_tail" src="{{ MEDIA_URL }}heart_delete.png" alt="Remove From Favorites" title="Remove From Favorites" />
   </a>
  </td>

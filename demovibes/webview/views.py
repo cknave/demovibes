@@ -23,6 +23,7 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 from random import choice
+import logging
 
 import j2shim
 
@@ -31,6 +32,8 @@ import mimetypes
 import os
 import re
 # Create your views here.
+
+L = logging.getLogger('webview.views')
 
 def about_pages(request, page):
     try:
@@ -412,13 +415,49 @@ def del_favorite(request, id): # XXX Fix to POST
     except:
         return HttpResponseRedirect(reverse('dv-favorites'))
 
-
+class LinkCheck(object):
+    def __init__(self, linktype):
+        self.type = linktype
+        self.verified = []
+        self.valid = False
+        self.get_list()
     
+    def get_list(self):
+        self.linklist = GenericBaseLink.objects.filter(linktype = self.type)
+        r = []
+        for x in self.linklist:
+            r.append({'link': x, 'value': "", "error": ""})
+        self.links = r
+        return self.linklist
+    
+    def is_valid(self, postdict):
+        self.valid = True
+        for entry in self.links:
+            l = entry['link']
+            key = "LL_%s" % l.id
+            if postdict.has_key(key):
+                val = postdict[key].strip()
+                if val:
+                    entry['value'] = val
+                    if re.match(l.regex, val):
+                        self.verified.append((l, val))
+                    else:
+                        self.valid = False
+                        entry['error'] = "The input did not match expected value"
+        return self.valid
+        
+    def save(self, obj):
+        if self.verified and self.valid:
+            for l, val in self.verified:
+                GenericLink.objects.create(content_object=obj, value=val, link=l)
+
 @login_required
 def upload_song(request, artist_id):
     artist = get_object_or_404(Artist, id=artist_id)
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_UPLOADS', 0)
     artist_auto_approve = getattr(settings, 'ARTIST_AUTO_APPROVE_UPLOADS', 1)
+    
+    links = LinkCheck("S")
     
     # Quick test to see if the artist is currently active. If not, bounce
     # To the current queue!
@@ -439,11 +478,14 @@ def upload_song(request, artist_id):
         
         a = Song(uploader = request.user, status = status)
         form = UploadForm(request.POST, request.FILES, instance = a)
-        if form.is_valid():
+
+        if links.is_valid(request.POST) and form.is_valid():
             new_song = form.save(commit=False)
             new_song.save()
             new_song.artists.add(artist)
             form.save_m2m()
+
+            links.save(new_song)
             
             if(new_song.status == 'A'):
                 # Auto Approved!
@@ -460,7 +502,7 @@ def upload_song(request, artist_id):
     else:
         form = UploadForm()
     return j2shim.r2r('webview/upload.html', \
-        {'form' : form, 'artist' : artist }, \
+        {'form' : form, 'artist' : artist, 'links': links }, \
         request=request)
 
 @permission_required('webview.change_song')
