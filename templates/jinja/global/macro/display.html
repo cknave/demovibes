@@ -106,8 +106,8 @@
 {% macro links(Obj) -%}
     {% for L in Obj.links.all() %}
         <a href="{{ L.get_link() }}" target="_new">
-            {% if L.icon %}
-                <img class="song-resource" src="{{ L.icon.url }}" title="[{{ L.link.name }}]" />
+            {% if L.link.icon %}
+                <img class="song-resource" src="{{ L.link.icon.url }}" title="[{{ L.link.name }}]" />
             {% else %}
                 [{{ L.link.name }}]
             {% endif %}
