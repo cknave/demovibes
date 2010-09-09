@@ -170,15 +170,19 @@ def my_profile(request):
     Display the logged in user's profile.
     """
     user = request.user
+    
+    links = LinkCheck("U")
+    
     profile = common.get_profile(user)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance = profile)
-        if form.is_valid():
+        if form.is_valid() and links.is_valid(request.POST):
             form.save()
+            links.save(profile)
             return HttpResponseRedirect(reverse('dv-my_profile')) # To hinder re-post on refresh
     else:
         form = ProfileForm(instance=profile)
-    return j2shim.r2r('webview/my_profile.html', {'profile' : profile, 'form' : form}, request=request)
+    return j2shim.r2r('webview/my_profile.html', {'profile' : profile, 'form' : form, 'links': links}, request=request)
 
 
 def view_profile(request, user):

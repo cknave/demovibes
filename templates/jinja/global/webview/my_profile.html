@@ -16,6 +16,9 @@ http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/>
 <table>
 {{ form.as_table() }}
 </table>
+
+{{ links }}
+
 <input type="submit" value="Update" />
 </form>
 {% endblock %}

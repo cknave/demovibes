@@ -11,12 +11,16 @@ class SongLinkInline(generic.GenericTabularInline):
             kwargs["queryset"] = GenericBaseLink.objects.filter(linktype = self.qs_key)
         return super(SongLinkInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
+class UserLinkInline(SongLinkInline):
+    qs_key = "U"
+
 class ArtistLinkInline(SongLinkInline):
     qs_key = "A"
 
 class UserprofileAdmin(admin.ModelAdmin):
     search_fields = ['user']
     list_display = ['user', 'country', 'custom_css']
+    inlines = [UserLinkInline]
 
 class DownloadInline(admin.TabularInline):
     model = SongDownload

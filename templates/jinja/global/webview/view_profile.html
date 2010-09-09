@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% block title %}User Profile Of {{profile.user}}{% endblock %}
+{% import "macro/display.html" as display -%}
 
 {% block main %}
 
@@ -29,6 +30,8 @@ Last Login: {{ profile.user.last_login|date("F j, Y") }}<br />
 {% if profile.hol_id %}
  <a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ profile.hol_id|e }}" target="_new">See User's H.O.L. Details</a><br />
 {% endif %}
+
+{{ display.links(profile) }}
 
 {% if profile.fave_id %}
  <font color="blue">{{ profile.user|e }}'s <em>Ultimate</em> Song:</font> {{ dv.get_song_queue_tag(profile.fave_id) }}
