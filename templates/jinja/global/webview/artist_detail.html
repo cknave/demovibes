@@ -8,13 +8,16 @@
 <table>
 <tr>
 <td class="artist_details" valign="top">
-{% if object.artist_pic %}<img class="artist_logo" src="{{ object.artist_pic.url }}" title="{{ object.handle|e }}'s Picture" align="left" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" alt="No Picture" align="left" />{% endif %}
-<br /><img src="/static/spacer.gif" /><br />
-{% if object.wiki_link %}
- <a href="{{ object.wiki_link|e }}" target="_new"><img src="/static/wiki-icon.png" title="{{ object.handle|e }} on Wikipedia" /></a>{% endif %}
-{% if object.hol_id %}<a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ object.hol_id }}" target="_new"><img src="/static/hol-icon.png" title="{{ object.handle|e }} at Hall of Light" /></a>{% endif %}
-{% if object.twitter_id %}<a href="http://www.twitter.com/{{ object.twitter_id|e }}" target="_new"><img src="/static/twitter-icon.png" title="{{ object.handle|e }} on Twitter!" /></a>{% endif %}
-{% if object.last_fm_id %}<a href="http://www.last.fm/music/{{ object.last_fm_id|e }}" target="_new"><img src="/static/lastfm-icon.png" title="{{ object.handle|e }} on Last.FM" /></a>{% endif %}
+    {% if object.artist_pic %}<img class="artist_logo" src="{{ object.artist_pic.url }}" title="{{ object.handle|e }}'s Picture" align="left" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" alt="No Picture" align="left" />{% endif %}
+    <br /><img src="/static/spacer.gif" /><br />
+    {% if object.wiki_link %}
+     <a href="{{ object.wiki_link|e }}" target="_new"><img src="/static/wiki-icon.png" title="{{ object.handle|e }} on Wikipedia" /></a>{% endif %}
+    {% if object.hol_id %}<a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ object.hol_id }}" target="_new"><img src="/static/hol-icon.png" title="{{ object.handle|e }} at Hall of Light" /></a>{% endif %}
+    {% if object.twitter_id %}<a href="http://www.twitter.com/{{ object.twitter_id|e }}" target="_new"><img src="/static/twitter-icon.png" title="{{ object.handle|e }} on Twitter!" /></a>{% endif %}
+    {% if object.last_fm_id %}<a href="http://www.last.fm/music/{{ object.last_fm_id|e }}" target="_new"><img src="/static/lastfm-icon.png" title="{{ object.handle|e }} on Last.FM" /></a>{% endif %}
+
+    {{ display.links(object) }}
+
 </td>
 <td class="artist_information" valign="top">
 <strong>{{ object.handle|e }}</strong> {% if object.is_deceased %}<img src="/static/deceased.png" class="countryflag" alt="Deceased {% if object.deceased_date %}[On {{ object.deceased_date|date("F j, Y") }}]{% endif %}" />{% endif %}

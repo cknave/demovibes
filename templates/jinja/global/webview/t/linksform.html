@@ -1,0 +1,23 @@
+{% if links %}
+    <h3>{{ title }}</h3>
+    <table>
+    {% for ll in links %}
+        <tr>
+         <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" /> {% endif %}{{ ll.link.name }} link</label></th> 
+         <td>
+            <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
+            {% if ll.error %}
+                <p class="errorinfo">{{ ll.error }}</p>
+            {% endif %}
+        </td>
+         {% if ll.link.inputinfo %}
+            <td title="{{ ll.link.inputinfo }}">
+                <span class="formq">
+                    <img src="/static/question.gif" alt="?"/>
+                </span>
+            </td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </table>
+{% endif %}

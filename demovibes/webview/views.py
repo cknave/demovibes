@@ -421,6 +421,7 @@ class LinkCheck(object):
         self.verified = []
         self.valid = False
         self.get_list()
+        self.title = "External Resources"
     
     def get_list(self):
         self.linklist = GenericBaseLink.objects.filter(linktype = self.type)
@@ -429,6 +430,13 @@ class LinkCheck(object):
             r.append({'link': x, 'value': "", "error": ""})
         self.links = r
         return self.linklist
+    
+    def __unicode__(self):
+        return self.as_table()
+    
+    def as_table(self):
+        return j2shim.r2s('webview/t/linksform.html', \
+            {'links': self.links, 'title': self.title })
     
     def is_valid(self, postdict):
         self.valid = True
@@ -604,7 +612,9 @@ def create_artist(request):
     Simple form to allow registereed users to create a new artist entry.
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_ARTIST', 0)
-    
+
+    links = LinkCheck("A")
+
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
@@ -615,15 +625,18 @@ def create_artist(request):
             
         a = Artist(created_by = request.user, status = status)
         form = CreateArtistForm(request.POST, request.FILES, instance = a)
-        if form.is_valid():
+        if form.is_valid() and links.is_valid(request.POST):
             new_artist = form.save(commit=False)
             new_artist.save()
             form.save_m2m()
+            
+            links.save(new_artist)
+            
             return HttpResponseRedirect(new_artist.get_absolute_url())
     else:
         form = CreateArtistForm()
     return j2shim.r2r('webview/create_artist.html', \
-        {'form' : form }, \
+        {'form' : form, 'links': links }, \
         request=request)
 
 @permission_required('webview.change_artist')
