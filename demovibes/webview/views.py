@@ -21,6 +21,7 @@ from django.core.files.base import File
 from django.core.cache import cache
 
 from django.views.decorators.cache import cache_page
+from django.contrib.contenttypes.models import ContentType
 
 from random import choice
 import logging
@@ -171,9 +172,8 @@ def my_profile(request):
     """
     user = request.user
     
-    links = LinkCheck("U")
-    
     profile = common.get_profile(user)
+    links = LinkCheck("U", object = profile)
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance = profile)
         if form.is_valid() and links.is_valid(request.POST):
@@ -420,18 +420,28 @@ def del_favorite(request, id): # XXX Fix to POST
         return HttpResponseRedirect(reverse('dv-favorites'))
 
 class LinkCheck(object):
-    def __init__(self, linktype):
+    def __init__(self, linktype, object = None):
         self.type = linktype
         self.verified = []
+        self.object = object
         self.valid = False
         self.get_list()
         self.title = "External Resources"
+    
+    def get_link_for(self, o, generic):
+        if not o or not generic:
+            return None
+        bla = ContentType.objects.get_for_model(o)
+        r = GenericLink.objects.filter(content_type__pk=bla.id, object_id=o.id, link=generic)
+        return r and r[0] or None
     
     def get_list(self):
         self.linklist = GenericBaseLink.objects.filter(linktype = self.type)
         r = []
         for x in self.linklist:
-            r.append({'link': x, 'value': "", "error": ""})
+            val = self.get_link_for(self.object, x)
+            value=val and val.value or ""
+            r.append({'link': x, 'value': value, "error": ""})
         self.links = r
         return self.linklist
     
@@ -456,12 +466,23 @@ class LinkCheck(object):
                     else:
                         self.valid = False
                         entry['error'] = "The input did not match expected value"
+                else:
+                    self.verified.append((l, ""))
         return self.valid
         
     def save(self, obj):
         if self.verified and self.valid:
             for l, val in self.verified:
-                GenericLink.objects.create(content_object=obj, value=val, link=l)
+                r = self.get_link_for(obj, l)
+                if val:
+                    if r:
+                        r.value = val
+                        r.save()
+                    else:
+                        GenericLink.objects.create(content_object=obj, value=val, link=l)
+                else:
+                    if r:
+                        r.delete()                
 
 @login_required
 def upload_song(request, artist_id):
