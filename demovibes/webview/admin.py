@@ -97,6 +97,11 @@ class RadioStreamAdmin(admin.ModelAdmin):
     list_editable = ['active']
     list_filter = ['active', 'streamtype']
 
+class GBLAdmin(admin.ModelAdmin):
+    list_display = ['name', 'linktype', 'link']
+    list_filter = ['linktype']
+    search_fields = ['name', 'link']
+
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Song, SongAdmin)
 admin.site.register(SongType)
@@ -107,7 +112,7 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Userprofile, UserprofileAdmin)
 admin.site.register(SongPlatform)
 admin.site.register(Logo)
-admin.site.register(GenericBaseLink)
+admin.site.register(GenericBaseLink, GBLAdmin)
 admin.site.register(Queue, QueueAdmin)
 admin.site.register(SongComment, SongCommentAdmin)
 admin.site.register(Compilation, CompilationAdmin)

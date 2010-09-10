@@ -2,7 +2,7 @@
     <h3>{{ title }}</h3>
     <table>
     {% for ll in links %}
-        <tr>
+      <tr>
          <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" /> {% endif %}{{ ll.link.name }} link</label></th> 
          <td>
             <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
@@ -16,8 +16,13 @@
                     <img src="/static/question.gif" alt="?"/>
                 </span>
             </td>
+        {% else %}
+            <td>&nbsp;</td>
         {% endif %}
-        </tr>
+        <td class="linkdesc">
+            {{ ll.link.description }}
+        </td>
+      </tr>
     {% endfor %}
     </table>
 {% endif %}
