@@ -127,7 +127,7 @@ class GenericLink(models.Model):
     object_id = models.PositiveIntegerField(db_index=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     link = models.ForeignKey(GenericBaseLink)
-    value = models.CharField(max_length = 20)
+    value = models.CharField(max_length = 80)
     
     def __unicode__(self):
         return u"%s for %s" % (self.link, self.content_object)
