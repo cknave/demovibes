@@ -90,7 +90,8 @@ ACCOUNT_ACTIVATION_DAYS = 7
 # maximum time a song will be played in seconds
 # only used when demosauce streamer is used
 # default fadeout is right before knucklebusters gets ugly
-MAX_SONG_LENGTH = 480
+# comment out or set to zero to disable
+#MAX_SONG_LENGTH = 480
 
 #location of demosauce scan tool
 DEMOSAUCE_SCAN = '../demosauce/scan'

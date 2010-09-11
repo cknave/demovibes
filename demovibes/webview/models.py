@@ -431,8 +431,7 @@ class Song(models.Model):
             ('N', 'Needs Re-Encoding'), # Technically, this track can still play even though it needs re-encoded. AAK
             ('C', 'Removed By Request'), # If we are asked to remove a track. AAK
             ('R', 'Rejected'),
-            ('K', 'Kaput') # file doesn't exist, scanner didn't like the song
-            
+            ('K', 'Kaput') # file doesn't exist or scanner didn't like the song
         )
     added = models.DateTimeField(auto_now_add=True)
     al_id = models.IntegerField(blank=True, null = True, verbose_name="Atari Legends ID", help_text="Atari Legends ID Number (Atari) - See http://www.atarilegend.com")
@@ -481,7 +480,7 @@ class Song(models.Model):
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
-
+    
     class Meta:
         ordering = ['title']
 
@@ -604,23 +603,15 @@ class Song(models.Model):
 
             except:
                 pass
-
-    def save(self, *args, **kwargs):
-        #I don't think this is still needed
-        #~ if not self.id or self.song_length == None:
-            #~ try:
-                #~ self.set_song_data_lazy()
-            #~ except:
-                #~ # This causes the record to not contain anything until the
-                #~ # 'Not Set' bug is fixed. The result; Admins can Edit/Save
-                #~ # Song faster to re-set song time. AAK.
-                #~ self.song_length = None
-                #~ self.bitrate = None
-                #~ self.samplerate = None
-            #~ try:
-                #~ del mf
-            #~ except:
-                #~ pass
+                
+    def save(self, *args, **kwargs):           
+        if not os.path.isfile(self.file.path):
+            self.song_length = None
+            self.bitrate = None
+            self.samplerate = None
+            self.replay_gain = 0
+            self.loopfade_time = 0
+        
         self.calc_votes()
         S = self.title[0].lower()
         if not S in alphalist:
@@ -1164,11 +1155,12 @@ def create_profile(sender, **kwargs):
 post_save.connect(create_profile, sender=User)
 
 def set_song_values(sender, **kwargs):
-    if kwargs["created"]:
+    song = kwargs["instance"]
+    if (not song.song_length) and song.status != 'K' and os.path.isfile(song.file.path):
         try:
-            song = kwargs["instance"]
-            song.set_song_data_lazy()
-            song.save()
+            song.set_song_data()
         except:
+            song.status = 'K'
             pass
+        song.save()
 post_save.connect(set_song_values, sender = Song)

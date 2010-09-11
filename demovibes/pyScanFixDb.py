@@ -1,10 +1,8 @@
 #!/usr/bin/env python
+# this is a helper script to rescan songs in the database
 import logging
 import os
 import sys
-#problem: I don't rally know when to convert to fsencoding :D
-#problem: file fild might need to be extended to something that makes sense (255)
-#problem: can't find logger
 
 import optparse
 parser = optparse.OptionParser()
