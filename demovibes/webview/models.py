@@ -129,6 +129,9 @@ class GenericLink(models.Model):
     link = models.ForeignKey(GenericBaseLink)
     value = models.CharField(max_length = 20)
     
+    def __unicode__(self):
+        return u"%s for %s" % (self.link, self.content_object)
+    
     def get_link(self):
         return self.link.link.replace("%linkval%", self.value)
 
