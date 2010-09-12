@@ -706,6 +706,8 @@ def create_group(request):
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_GROUP', 0)
     
+    links = LinkCheck("G")
+    
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
@@ -717,15 +719,18 @@ def create_group(request):
     if request.method == 'POST':
         g = Group(created_by = request.user, status = status)
         form = CreateGroupForm(request.POST, request.FILES, instance = g)
-        if form.is_valid():
+        if form.is_valid() and links.is_valid(request.POST):
             new_group = form.save(commit=False)
             new_group.save()
             form.save_m2m()
+            
+            links.save(new_group)
+            
             return HttpResponseRedirect(new_group.get_absolute_url())
     else:
         form = CreateGroupForm()
     return j2shim.r2r('webview/create_group.html', \
-        {'form' : form }, \
+        {'form' : form, 'links': links }, \
         request=request)
 
 @permission_required('webview.change_group')

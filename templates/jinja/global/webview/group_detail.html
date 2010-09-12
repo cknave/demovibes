@@ -1,5 +1,7 @@
 {% extends "base/base.html" %}
 
+{% import "macro/display.html" as display -%}
+
 {% block title %}Group Info For {{ object.name|e }}{% endblock %}
 
 {% block main %}
@@ -15,6 +17,7 @@
 {% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">Pouet Link</a><br />{% endif %}
 {% if object.last_updated %}Last Updated: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
 {% if object.created_by %}Added By: {% set U = object.created_by %}{% include "webview/t/user.html" %}<br />{% endif %}
+{{ display.links(object) }}
 </td>
 <td class="group_description" valign="top">
 {% if object.info %}

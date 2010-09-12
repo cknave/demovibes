@@ -11,6 +11,9 @@ class SongLinkInline(generic.GenericTabularInline):
             kwargs["queryset"] = GenericBaseLink.objects.filter(linktype = self.qs_key)
         return super(SongLinkInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
+class GroupLinkInline(SongLinkInline):
+    qs_key = "G"
+
 class UserLinkInline(SongLinkInline):
     qs_key = "U"
 
@@ -50,6 +53,7 @@ class SongCommentAdmin(admin.ModelAdmin):
 
 class GroupAdmin(admin.ModelAdmin):
     search_fields = ['name']
+    inlines = [GroupLinkInline]
 
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'status', 'added')
