@@ -17,6 +17,9 @@ class GroupLinkInline(SongLinkInline):
 class UserLinkInline(SongLinkInline):
     qs_key = "U"
 
+class LabelLinkInline(SongLinkInline):
+    qs_key = "L"
+
 class ArtistLinkInline(SongLinkInline):
     qs_key = "A"
 
@@ -81,6 +84,7 @@ class CompilationAdmin(admin.ModelAdmin):
 
 class LabelAdmin(admin.ModelAdmin):
     search_fields =  ['name']
+    inlines = [LabelLinkInline]
     list_display = ('name', 'found_date', 'last_updated', 'created_by')
 
 class LinkAdmin(admin.ModelAdmin):
