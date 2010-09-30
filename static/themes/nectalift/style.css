@@ -486,6 +486,11 @@ hr {
 	margin-right: 0;
 }
 
+/* Limits the size of cover images on compilations for browsers supporting max-width */
+.compilation_screenshot {
+	max-width: 400px;
+}
+
 /* Tag block shown on a song's info page */
 .taglist {
 	overflow: auto;
