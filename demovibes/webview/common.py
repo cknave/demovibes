@@ -38,7 +38,7 @@ def queue_song(song, user, event = True, force = False):
         lowrate = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
         if lowrate and song.rating and song.rating <= lowrate['lowvote']:
             try:
-                if Q.filter(song__rating__lte = lowrate['lowvote']).count() > lowrate['limit']:
+                if Q.filter(song__rating__lte = lowrate['lowvote']).count() >= lowrate['limit']:
                     lowrate = True
                 else:
                     lowrate = False

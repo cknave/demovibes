@@ -250,7 +250,7 @@ def current_song(user = None):
             'user': user,
         }
         voteinfo = js.r2s("webview/t/now_playing_vote.html", c)
-        if not user or not user.is_authenticated() or user.get_profile().show_youtube:
+        if not user or not user.is_authenticated() or user.get_profile().show_youtube and Q.song.ytvidid:
             ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
         else:
             ytinfo = ""

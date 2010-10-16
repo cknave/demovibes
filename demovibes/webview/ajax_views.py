@@ -47,10 +47,10 @@ def monitor(request, event_id):
     return HttpResponse("")
 
 
-@cache_control(must_revalidate=True, max_age=30)
+@cache_control(must_revalidate=True, max_age=10)
 def nowplaying(request):
     song = Queue.objects.select_related(depth=2).filter(played=True).order_by('-time_played')[0]
-    return j2shim.r2r('webview/js/now_playing.html', { 'now_playing' : song },  request)
+    return j2shim.r2r('webview/js/now_playing.html', { 'now_playing' : song, 'user':request.user },  request)
 
 @cache_control(must_revalidate=True, max_age=30)
 def history(request):

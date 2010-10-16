@@ -133,7 +133,7 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
 </h2>
 
 <p>
- Displaying Last 5 User Comments.
+ Displaying Last 10 User Comments.
  There are a total of {{ object.songcomment_set.all|length }} comments for this song.
  <a href="{% url dv-song_comment object.id %}">See All Comments For This Song</a>
 </p>
@@ -143,7 +143,7 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
   <th>User</th>
   <th>Song Comment</th>
  </tr>
- {% for comment in object.songcomment_set.all|slice:":5" %}
+ {% for comment in object.songcomment_set.all|slice:":10" %}
  {% include "webview/t/song_comment.html" %}
  {% endfor %}
 </table>
