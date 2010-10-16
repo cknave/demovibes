@@ -90,17 +90,21 @@ class BasicTest(TestCase):
         
         r = self.client.post(reverse("dv-oneliner_submit"), {'Line': "TestMoo"})
         self.assertEqual(models.Oneliner.objects.count(), 1)
-        r = self.client.post(reverse("dv-oneliner_submit"), {'Line': ""})
         
+        r = self.client.post(reverse("dv-oneliner_submit"), {'Line': ""})
         self.assertEqual(models.Oneliner.objects.count(), 1)
+
         r = self.client.get(reverse("dv-oneliner"))
         self.assertContains(r, "TestMoo")
         self.assertContains(r, "testuser")
         
         r = self.client.post(reverse("dv-ax-oneliner_submit"), 
             {'Line': "TestLine12345678"})
+        self.assertEqual(models.Oneliner.objects.count(), 2)
+            
         r = self.client.post(reverse("dv-ax-oneliner_submit"), {'Line': ""})
         self.assertEqual(models.Oneliner.objects.count(), 2)
+
         r = self.client.get(reverse("dv-ax-oneliner"))
         self.assertContains(r, "TestLine12345678")
-        self.assertContains(r, "TestMoo")            
+        self.assertContains(r, "TestMoo")

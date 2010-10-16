@@ -13,7 +13,7 @@ http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/>
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}page_white_edit.png" alt="" />Profile Settings</h2>
 <form action="." method="post" enctype="multipart/form-data">
-<table>
+<table id="profileform">
 {{ form.as_table() }}
 </table>
 

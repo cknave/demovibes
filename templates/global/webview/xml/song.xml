@@ -13,8 +13,7 @@
  {% if object.platform %}<platform id="{{ object.platform.id }}">{{ object.platform }}</platform>{% endif %}
  {% if object.type %}<type id="{{ object.type.id }}">{{ object.type }}</type>{% endif %}
  {% if object.pouetid %}<pouetid>{{ object.pouetid }}</pouetid>{% endif %}
- 
-  <artists>
+ <artists>
   {% for artist in object.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
  </artists>
  <groups>

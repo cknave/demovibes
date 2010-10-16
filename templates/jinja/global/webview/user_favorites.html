@@ -2,8 +2,6 @@
 
 {% block title %}{{ favuser.username|e }}'s Favourite Songs{% endblock %}
 
-
-
 {% block main %}
 <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ favuser.username|e }}'s Favourite Songs</h2>
 {% set U = favuser %}{% include "webview/t/user.html" %} Has The Following Favourite Songs:

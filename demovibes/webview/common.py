@@ -33,8 +33,20 @@ def queue_song(song, user, event = True, force = False):
     result = True
     models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
     if not force:
-        requests = models.Queue.objects.filter(played=False, requested_by = user).count()
-        if requests >= settings.SONGS_IN_QUEUE:
+        Q = models.Queue.objects.filter(played=False, requested_by = user)
+        requests = Q.count()
+        lowrate = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
+        if lowrate and song.rating and song.rating <= lowrate['lowvote']:
+            try:
+                if Q.filter(song__rating__lte = lowrate['lowvote']).count() > lowrate['limit']:
+                    lowrate = True
+                else:
+                    lowrate = False
+            except:
+                lowrate = False
+        else:
+            lowrate = False
+        if requests >= settings.SONGS_IN_QUEUE or lowrate:
             models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user)
             result = False
         if result and song.is_locked():

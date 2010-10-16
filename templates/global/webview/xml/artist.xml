@@ -17,6 +17,6 @@
         {% for group in object.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
     </groups>
     <songs>
-        {% for song in object.song_set.all %}<song id="{{ song.id }}">{{ song.title }}</song>{% endfor %}
+        {% for song in object.song_set.all %}<song id="{{ song.id }}" locked="{{ song.is_locked }}">{{ song.title }}</song>{% endfor %}
     </songs>
 </artist>

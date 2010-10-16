@@ -35,6 +35,13 @@ if uwsgi_event_server:
         uwsgi_event_server = "HTTP"
 
 def add_event(event, user = None):
+    """
+    Add event to the event handler(s)
+    
+    Keywords:
+    event -- string that will be sent to clients
+    user -- optional -- User to receive the event
+    """
     ae = AjaxEvent.objects.create(event = event, user = user)
     if uwsgi_event_server:
         R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:10] #Should have time based limit here..
@@ -133,6 +140,9 @@ class GenericLink(models.Model):
         return u"%s for %s" % (self.link, self.content_object)
     
     def get_link(self):
+        """
+        Return complete link
+        """
         return self.link.link.replace("%linkval%", self.value)
 
 class GroupVote(models.Model):
@@ -187,6 +197,7 @@ class Userprofile(models.Model):
     paginate_favorites = models.BooleanField(default = True)
     pm_accepted_upload = models.BooleanField(default=True, verbose_name = "Send PM on accepted upload")
     real_name = models.CharField(blank = True, max_length = 40, verbose_name = "Real Name", help_text="Your real name (optional)")
+    show_youtube = models.BooleanField(default=True, verbose_name="Show YouTube videoes in Currently Playing")
     theme = models.ForeignKey(Theme, blank = True, null = True)
     token = models.CharField(blank = True, max_length=32)
     twitter_id = models.CharField(blank = True, max_length = 32, verbose_name = "Twitter ID", help_text="Enter your Twitter account name, without the Twitter URL (optional)")
@@ -203,6 +214,11 @@ class Userprofile(models.Model):
         return super(Userprofile, self).save(*args, **kwargs)
 
     def have_artist(self):
+        """
+        Check if user have artist connected to it
+        
+        Return artist or False
+        """
         try:
             return self.user.artist
         except:
@@ -212,6 +228,12 @@ class Userprofile(models.Model):
         return self.user.username
 
     def get_token(self):
+        """
+        Return unique token for user.
+        
+        Can be used for various identification purposes, 
+        and generate unique urls for users (like queue)
+        """
         if not self.token:
             import md5
             self.token = md5.new(self.user.username + settings.SECRET_KEY).hexdigest()
@@ -219,17 +241,26 @@ class Userprofile(models.Model):
         return self.token
 
     def viewable_by(self, user):
+        """
+        Check if a user is allowed to view this user's profile
+        """
         if (self.visible_to == 'A') or ((self.visible_to == 'R') and (user.is_authenticated())):
             return True
         return False
 
     def get_littleman(self):
+        """
+        Return icon according to user status
+        """
         stat, image = self.get_status()
         if(image == ""):
             return "user.png"
         return image
 
     def get_css(self):
+        """
+        Return custom user CSS url or site default CSS url
+        """
         if self.custom_css:
             return self.custom_css
         if self.theme:
@@ -237,10 +268,16 @@ class Userprofile(models.Model):
         return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % settings.MEDIA_URL)
 
     def get_stat(self):
+        """
+        Return user status
+        """
         stat, image = self.get_status()
         return stat
 
     def get_status(self):
+        """
+        Find and return user status and icon
+        """
         if self.user.is_superuser:
             return ("Admin","user_gray.png")
         if self.user.is_staff:
@@ -474,12 +511,20 @@ class Song(models.Model):
     pouetss = models.CharField(max_length=100, blank = True)
     pouetgroup = models.CharField(max_length=100, blank = True)
     pouettitle = models.CharField(max_length=100, blank = True)
+    ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing")
+    ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset")
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
     objects = models.Manager()
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
+    
+    def is_active(self):
+        """
+        Check if song is considered active.
+        """
+        return self.status == "A" or self.status == "N"
     
     class Meta:
         ordering = ['title']
@@ -543,6 +588,13 @@ class Song(models.Model):
         return result
 
     def grab_pouet_info(self, tag, subtag = True):
+        """
+        Query Pouet XML for information defined by tag.
+        
+        Takes two arguments
+          tag -- string - Name of tag to find
+          subtag -- boolean - Return value of the subtag under tag instead of value of tag - default True
+        """
         if not self.pouetid:
             return False
         try:
@@ -621,9 +673,9 @@ class Song(models.Model):
 
     def artist(self):
         """
-        Returns the artists connected to the song as a string.
+        Return the artists connected to the song as a string
 
-        Format: Artist1, Artist2, Artist3
+        Return format: Artist1, Artist2, Artist3
         """
         artists = self.artists.all()
         groups = self.groups.all()
@@ -639,7 +691,7 @@ class Song(models.Model):
 
     def last_queued(self):
         """
-        Returns either the time the song was last queued, or 'Never'
+        Return either the time the song was last queued, or 'Never'
 
         Note: This works on when it was queued, not played.
         """
@@ -658,11 +710,11 @@ class Song(models.Model):
 
     def is_locked(self):
         """
-        Determines if the song is locked.
+        Determine if the song is locked.
 
-        This function compares the time it was last queued
+        This function compares the time it was last queued to self.locked_until
         """
-        if self.status != 'A' and self.status != 'N':
+        if not self.is_active():
             return True
         #last = self.last_queued()
         if not self.locked_until or self.locked_until < datetime.datetime.now():
@@ -670,21 +722,37 @@ class Song(models.Model):
         return True
 
     def is_favorite(self, user):
+        """
+        Check if song is favorite of given user
+        """
         q = Favorite.objects.filter(user=user, song=self)
         if q:
             return True
         return False
 
     def calc_votes(self):
+        """
+        Calculate vote values of song
+        
+        Stores data to the object, but does NOT save. That's your job
+        """
         votes = SongVote.objects.filter(song=self)
         if votes:
             data = votes.aggregate(models.Avg('vote'), models.Sum('vote'), models.Count('vote'))
             self.rating_total = data['vote__sum']
             self.rating_votes = data['vote__count']
             self.rating = data['vote__avg']
+        else:
+            #Added for cases where user giving the only vote is deleted
+            self.rating = None
+            self.rating_total = 0
+            self.rating_votes = 0
             
 
     def set_vote(self, vote, user):
+        """
+        Set new songvote for user, or update existing
+        """
         if vote < 1:
             return False
  
@@ -697,17 +765,41 @@ class Song(models.Model):
         return True
 
     def get_vote(self, user):
+        """
+        Return user's vote for song, or blank string
+        """
         vote = SongVote.objects.filter(song=self, user=user)
         if vote:
             return vote[0].vote
         return ""
 
     def queue_by(self, user, force = False):
+        """
+        Add song to queue - OBSOLETE, use common.queue_song
+        
+        Two arguments:
+            user - User that request the song. Required
+            force - Boolean - Skip check if user can queue (default False)
+        """
+        #Should not be used anymore, use common.queue_song()
+        assert False
         result = True
         Queue.objects.lock(Song, User, AjaxEvent)
         if not force:
-            requests = Queue.objects.filter(played=False, requested_by = user).count()
-            if requests >= settings.SONGS_IN_QUEUE:
+            Q = Queue.objects.filter(played=False, requested_by = user)
+            requests = Q.count()
+            lowrate = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
+            if lowrate and self.rating <= lowrate['lowvote']:
+                try:
+                    if Q.filter(song__rating__lte = lowrate['lowvote']).count() > lowrate['limit']:
+                        lowrate = True
+                    else:
+                        lowrate = False
+                except:
+                    lowrate = False
+            else:
+                lowrate = False
+            if requests >= settings.SONGS_IN_QUEUE or lowrate:
                 add_event(event='eval:alert("You have reached your queue limit. Wait for the songs to play.");', \
                     user = user)
                 result = False
@@ -845,13 +937,31 @@ class Queue(models.Model):
     def __unicode__(self):
         return self.song.title
 
-    def timeleft(self):
+    def yt_timeoffset(self):
+        """
+        Return current YouTube time offset
+        """
         if self.song.song_length == None or not self.played:
+            return 0
+        left = self.timeleft()
+        if left < 1:
+            return -1
+        offset = self.song.song_length + self.song.ytvidoffset - left
+        return offset
+
+    def timeleft(self):
+        """
+        Return in seconds the time until song is finished playing
+        """
+        if self.song.song_length == None or not self.played or not self.time_played:
             return 0
         delta = datetime.datetime.now() - self.time_played
         return self.song.song_length - delta.seconds
 
     def get_eta(self):
+        """
+        Find when song will play, according to current queue
+        """
         if self.id:
             baseq = Queue.objects.filter(played=False).exclude(id=self.id)
             baseq_lt = Queue.objects.filter(played=False, id__lt=self.id)
@@ -885,7 +995,10 @@ class Queue(models.Model):
         return eta
 
     def set_eta(self):
-         self.eta = self.get_eta()
+        """
+        Store expected time to play to the object.
+        """
+        self.eta = self.get_eta()
 
 class SongComment(models.Model):
     song = models.ForeignKey(Song)
@@ -1146,6 +1259,11 @@ class Screenshot(models.Model):
         return super(Screenshot, self).save(*args, **kwargs)
 
 def create_profile(sender, **kwargs):
+    """
+    Create profile entry for new user
+    
+    Post-save hook for User model
+    """
     if kwargs["created"]:
         try:
             profile = Userprofile(user = kwargs["instance"])
@@ -1161,6 +1279,7 @@ def set_song_values(sender, **kwargs):
             song.set_song_data()
         except:
             song.status = 'K'
-            pass
+        if not song.song_length:
+            song.status = 'K'
         song.save()
 post_save.connect(set_song_values, sender = Song)

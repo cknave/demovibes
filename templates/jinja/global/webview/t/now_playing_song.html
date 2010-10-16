@@ -10,9 +10,9 @@
   In Compilations: {% for comp in comps.all() %}{{ display.compilation(comp) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
  {% endif %}
  {{ display.songicons(now_playing.song) }}<br />
- 
+
  <p>Time Left: <span name="counter" sec="((%timeleft%))" inc="-1">{{ now_playing.song.length() }}</span></p>
- 
+
 {% else %}
  No Song Playing!!
 {% endif %}

@@ -3,6 +3,10 @@ import bottle
 #from bottle import route, default_app, request, post, get
 import pickle
 
+import threading
+LOCK = threading.Lock()
+
+
 try:
     import local_config
     allowed_ips = local_config.allowed_ips
@@ -25,11 +29,14 @@ def http_event_receiver():
     data = pickle.loads(data)
     event_receiver(data, 0)   
     return "OK"
-
+    
 def event_receiver(obj, id):
+    LOCK.acquire()
     global event
     event = obj
     uwsgi.green_unpause_all()
+    LOCK.release()
+    
 
 uwsgi.message_manager_marshal = event_receiver
 

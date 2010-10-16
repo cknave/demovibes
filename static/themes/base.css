@@ -2,6 +2,13 @@
     font-size:1.2em;
 }
 
+#main #profileform {
+    width: 100%
+}
+#main #profileform #id_info {
+    width: 95%;
+}
+
 #main .paging li.prev,li.next {
     margin-left:0.5em;
     margin-right:0.5em;

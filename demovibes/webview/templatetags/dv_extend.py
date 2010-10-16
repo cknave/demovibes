@@ -10,6 +10,7 @@ from django.template import Context, Template
 from django.template.loader import get_template
 from forum.models import Forum, Thread, Post, Subscription
 import os.path, random
+import logging
 import j2shim as js
 from jinja2 import contextfunction
 
@@ -25,7 +26,54 @@ class BetterPaginator(Paginator):
     >>>     'my_objects': my_objects.get_context(page),
     >>> }
     """
-    def get_context(self, page, range_gap=5):
+    
+    def page_range(self, total, current, numshown=10, f=4):
+        """
+        Return crunched list of pages
+        
+        Keywords:
+        total -- Total number of pages
+        current -- Current page
+        numshown -- Approximate size of list (plus close-to-current pages)
+                    Max size = numshown + 2 + (f*2)
+        f -- Number of close pages to list on each side of current page (default 2)
+        """
+        if not total or not current:
+            return []
+        step = total / numshown
+        if not step:
+            step = 1
+        c = 1
+        a = []
+        while c < total:
+            a.append(c)
+            c += step
+        a.append(total)
+        b = current - f
+        while b < (current + f + 1):
+            if 0 < b < total:
+                a.append(b)
+            b +=1
+        a = list(set(a))
+        a.sort()
+        return a
+    
+    def old_pagerange(self, num_pages, page, range_gap=5):
+        """
+        Return current page +/- range_gap pages
+        """
+        if page > 5:
+            start = page-range_gap
+        else:
+            start = 1
+
+        if page < num_pages-range_gap:
+            end = page+range_gap+1
+        else:
+            end = num_pages+1
+        return range(start, end)
+    
+    def get_context(self, page, range_gap=3):
         try:
             page = int(page)
         except (ValueError, TypeError), exc:
@@ -33,18 +81,10 @@ class BetterPaginator(Paginator):
 
         paginator = self.page(page)
 
-        if page > 5:
-            start = page-range_gap
-        else:
-            start = 1
-
-        if page < self.num_pages-range_gap:
-            end = page+range_gap+1
-        else:
-            end = self.num_pages+1
+        pagerange = self.page_range(self.num_pages, page)
 
         context = {
-            'page_range': range(start, end),
+            'page_range': pagerange,
             'objects': paginator.object_list,
             'num_pages': self.num_pages,
             'page': page,
@@ -61,7 +101,15 @@ class BetterPaginator(Paginator):
 
 @contextfunction
 def paginate(context, obj, limit=None, maxpages=None):
-
+    """
+    Paginate object, return (paginated_objectlist, paging_html_code)
+    
+    Paginates given object, using the BetterPaginator class.
+    It fetches current page via "p" GET variable.
+    Returns a paginated object list for given page, and rendered
+    HTML code for pages list. It also make sure to preserve GET variables,
+    and makes sure there's no multiple "q" variables in GET dict.
+    """
     if not limit:
         limit = settings.PAGINATE
         
@@ -196,12 +244,17 @@ def current_song(user = None):
             vote = 0
         c = {
             'song': Q.song,
+            'now_playing': Q,
             'myvote': vote,
             'voterange': [1, 2, 3, 4, 5],
             'user': user,
         }
         voteinfo = js.r2s("webview/t/now_playing_vote.html", c)
-        now = now + voteinfo
+        if not user or not user.is_authenticated() or user.get_profile().show_youtube:
+            ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
+        else:
+            ytinfo = ""
+        now = now + ytinfo + voteinfo
     return now
 
 @register.simple_tag

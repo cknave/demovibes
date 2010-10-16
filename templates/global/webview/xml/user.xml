@@ -10,6 +10,9 @@
     <realname>{{ profile.real_name }}</realname>
     <twitterid>{{ profile.twitter_id }}</twitterid>
     <webpage>{{ profile.web_page }}</webpage>
+    <favorites>
+    {% for fav in user.favorite_set.all %}<song id="{{ fav.song.id }}" locked="{{ fav.song.is_locked }}">{{ fav.song.title }}</song>{% endfor %}
+    </favorites>
     {% endwith %}
     {% else %}
     <hidden/>

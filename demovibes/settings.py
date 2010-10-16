@@ -26,6 +26,10 @@ TEMPLATE_DEBUG = False
 #UWSGI_EVENT_SERVER_HTTP = "http://<hostname>/demovibes/ajax/monitor/new/"
 # Remember to also add ip to allowed_ips in uwsgi_eventhandler local_settings
 
+#from django.conf import global_settings
+#FILE_UPLOAD_HANDLERS = ('webview.uploadprogress.UploadProgressCachedHandler', ) + \
+#    global_settings.FILE_UPLOAD_HANDLERS
+
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -189,6 +193,9 @@ JINJA2_TEMPLATE_DIRS = (
 
 # Maximum number of songs a user can have in the queue at the same time.
 SONGS_IN_QUEUE = 5
+
+# Optional filter for how many songs of "lowvote" or lower user can have in queue
+#SONGS_IN_QUEUE_LOWRATING = {'limit': 1, 'lowvote':2}
 
 # Time to lock a song until it can be requested again.
 SONG_LOCK_TIME = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }

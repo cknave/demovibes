@@ -24,7 +24,7 @@
     {% endfor %}</prod_artists>{% endifnotequal %}
 
     {% ifnotequal object.songs.count 0 %}<prod_songs>{% for song in object.songs.all %}
-     <song id="{{ song.id }}">
+     <song id="{{ song.id }}" locked="{{ song.is_locked }}">
          <title>{{ song.title }}</title>
          <status v="{{ song.status }}">{{ song.get_status_display }}</status>
          <rating votes="{{ song.rating_votes }}">{{ song.rating }}</rating>

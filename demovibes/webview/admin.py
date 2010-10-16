@@ -42,8 +42,10 @@ class SongAdmin(admin.ModelAdmin):
         ("General"        ,{ 'fields' : ['title', 'release_year', 'remix_of_id', 'file', 'explicit', 'artists', 'groups', 'labels']}),
         ("Reference Info"    ,{ 'fields' : ['pouetid', 'dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url', 'type', 'platform', 'status', 'info']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
+        ("YT Video", { 'fields' : ['ytvidid', 'ytvidoffset']}),
     ]
     inlines = [DownloadInline, SongLinkInline]
+    date_hierarchy = 'added'
 
 class QueueAdmin(admin.ModelAdmin):
     list_display = ('song', 'requested', 'played', 'requested_by', 'priority', 'playtime')
@@ -53,6 +55,8 @@ class QueueAdmin(admin.ModelAdmin):
 
 class SongCommentAdmin(admin.ModelAdmin):
     list_display = ['song', 'user']
+    search_fields = ['song__title', 'user__username', 'comment']
+    date_hierarchy = 'added'
 
 class GroupAdmin(admin.ModelAdmin):
     search_fields = ['name']
