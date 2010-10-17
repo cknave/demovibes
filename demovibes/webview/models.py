@@ -519,6 +519,9 @@ class Song(models.Model):
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
+
+    def has_video(self):
+        return self.ytvidid
     
     def is_active(self):
         """

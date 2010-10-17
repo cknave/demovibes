@@ -1,5 +1,5 @@
 {% import "macro/display.html" as display -%}
-<tr class="{{ row_class.next() }}">{# {% cache 3600 qlist req.id %} #}
+<tr class="{{ row_class.next() }}">
  <td align="left">
   {% if req.priority %}*{% endif %}{{ display.song(req.song) }}
  </td>
@@ -20,5 +20,7 @@
  <td align="left">
   {{ display.user(req.requested_by) }}
  </td>
-{# {% endcache %} #}
+  <td align="center" title="Vote rating">
+  {{ req.song.rating|floatformat|default("N/A", true) }}
+ </td>
 </tr>

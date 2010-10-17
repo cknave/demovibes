@@ -142,8 +142,11 @@
         <a href="{{ song.platform.get_absolute_url() }}"><img class="platform_icon" src="{{ song.platform.symbol.url }}" title="{{ song.platform.title|e }}" /></a>
     {%- endif -%}
     <a href="{{ song.get_absolute_url() }}">{{ song.title|e }}</a>
-    {%- if song.explicit -%}
+    {%- if song.explicit %}
         <img class="text-link" src="/static/explicit.gif" title="Contains Explicit Content!" />
+    {%- endif -%}
+    {%- if song.has_video() %}
+        <img class="text-link" src="/static/MiniIcon-Video.jpg" title="Video!" />
     {%- endif -%}
 {%- endmacro %}
 
