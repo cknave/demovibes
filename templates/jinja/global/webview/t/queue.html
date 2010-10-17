@@ -20,7 +20,7 @@
  <td align="left">
   {{ display.user(req.requested_by) }}
  </td>
-  <td align="center" title="Vote rating">
+  <td align="center" title="Song rating ({{ req.song.rating_votes }} votes)">
   {{ req.song.rating|floatformat|default("N/A", true) }}
  </td>
 </tr>
