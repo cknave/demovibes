@@ -46,7 +46,12 @@ def queue_song(song, user, event = True, force = False):
                 lowrate = False
         else:
             lowrate = False
-        if requests >= settings.SONGS_IN_QUEUE or lowrate:
+            
+        if lowrate:
+            models.add_event(event='eval:alert("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)");', user = user)
+            result = False
+            
+        if requests >= settings.SONGS_IN_QUEUE:
             models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user)
             result = False
         if result and song.is_locked():
