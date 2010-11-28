@@ -17,7 +17,7 @@
 
 {% if not user.is_authenticated() or user.get_profile().use_tags %}
 <div class="taglist">
-
+{% cache 86400 mkstr(object.id, object.last_changed, "tgcache") %}
     <p>Tags for song:</p>
     {% if tags %}
         {% for tag in tags %}
@@ -34,8 +34,11 @@
         {% endfor %}
     {% endif %}
     <br/>
+{% endcache %}
 </div>
 {% endif %}
+
+{% cache 86400 mkstr(object.id, object.last_changed, "songinfo") %}
 
 {{ display.song(object) }}
 
@@ -82,7 +85,7 @@ Song Status: {{ object.get_status_display() }}
 <br />Additional Information:<br /><i>{{ meta.info|urlize|bbcode|linebreaks }}</i>
 {% endif %}
 
-
+{% endcache %}
 
 {% if user.is_authenticated() %}
   <p>
@@ -105,16 +108,16 @@ Song Status: {{ object.get_status_display() }}
  </p>
 {% endif %}
 
+{% cache 86400 mkstr(object.id, object.last_changed, "songinfo2") %}
+
 <p>
 This song has been played {{ object.times_played }} times. [<a href="{{object.get_absolute_url()}}queue_history">See Request History</a>]<br />
 It was added {{ object.added|timesince }} ago.
 </p>
 
 {% if object.pouetid %}
-{% cache 86400 mkstr(object.id, object.pouetid) %}
   {{ object.get_pouet_screenshot() }}
   {{ object.get_pouet_download() }}
-{% endcache %}
 {% endif %}
 
 {% if object.songdownload_set.all()  %}
@@ -126,11 +129,7 @@ It was added {{ object.added|timesince }} ago.
  </ul>
 {% endif %}
 
-<p><a href="{{ url ("dv-song-edit", object.id) }}">[Edit information]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[Add links]</a>
-{% if user.is_staff %}
- - <a href="{{ url ("dv-song-infolist", object.id) }}">[View info versions]</a>
-{% endif %}
-</p>
+{% endcache %}
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}star.png" alt="" />Song Rating</h2>
 {% if object.rating_votes %}
@@ -150,6 +149,8 @@ It was added {{ object.added|timesince }} ago.
   </form>
 {% endif %}
 
+{% cache 86400 mkstr(object.id, object.last_changed, "songinfo3") %}
+
 A total of {{ object.num_favorited }} users have this song on their favourites list.<br />
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Compilation / Remix Information</h2>
@@ -162,11 +163,19 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
  </p>
 {% endif %}
 
+
+{% endcache %}
+
 {% if remix %}
 <br /><strong>Remixes Based On This Song:</strong><br /><br />
 {% for mix in remix %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
+<p><a href="{{ url ("dv-song-edit", object.id) }}">[Edit information]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[Add links]</a>
+{% if user.is_staff %}
+ - <a href="{{ url ("dv-song-infolist", object.id) }}">[View info versions]</a>
+{% endif %}
+</p>
 
 <h2>
 <img class="icon_header" src="{{ MEDIA_URL }}comment.png" alt="" />User Comments

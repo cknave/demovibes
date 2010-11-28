@@ -14,6 +14,18 @@
     margin-right:0.5em;
 }
 
+#linksform tr:hover {
+    background-color: #FFFFC2;
+}
+
+p.errorinfo {
+    color: #EC3030;
+}
+
+ul.errorlist li {
+   color: #EC3030;
+}
+
 #main .paging li {
     display: inline;
     list-style-type: none;
@@ -68,8 +80,8 @@ div.taglist {
     -webkit-border-top-left-radius:10px;
 }
 
-div.taglist p:first-child { margin-top: 0; } 
+div.taglist p:first-child { margin-top: 0; }
 
 #tagfield { width:90%;}
 
-#tagcloud	{background-image: url("/static/comment.png");}
+#tagcloud   {background-image: url("/static/comment.png");}

@@ -55,10 +55,18 @@
         <th>Remix of</th>
         <td>{{ display.song(meta.get_remix()) }}</td>
     </tr>
+    <tr>
+        <th>Pouet ID</th>
+        <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_new">{{ meta.pouetid }}</a>{% else %}None{% endif %}</td>
+    </tr>
+    <tr>
+        <th>YouTube link</th>
+        <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_new">{{ meta.ytvidid }}</a> - Offset: {{ meta.ytvidoffset }}{% else %}None{% endif %}</td>
+    </tr>
 </table>
 <h2>Action</h2>
 {% if meta.comment %}Note from user:
- {{ meta.info|linebreaks }}
+ <div id="metainfo">{{ meta.info|linebreaks }}</div>
 {% endif %}
 
 <form method="post" action=".">

@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 
-vidid = "{{now_playing.song.ytvidid|e}}";
+vidid = "{{now_playing.song.get_metadata().ytvidid|e}}";
 playoffset = "{{ now_playing.yt_timeoffset() }}";
 
 function onYouTubePlayerReady(ytid) {
@@ -17,7 +17,7 @@ function onYouTubePlayerReady(ytid) {
 
 var params = { allowScriptAccess: "always" };
 var atts = { id: "myytplayer" };
-swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer", 
+swfobject.embedSWF("http://www.youtube.com/apiplayer?enablejsapi=1&playerapiid=ytplayer",
                    "ytapiplayer", "200", "113" , "8", null, null, params, atts);
 
 </script><br/>

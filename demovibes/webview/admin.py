@@ -47,11 +47,9 @@ class SongAdmin(admin.ModelAdmin):
     list_filter = ['status']
     filter_horizontal = ['artists', 'groups', 'labels']
     fieldsets = [
-        ("General"        ,{ 'fields' : ['title', 'file', 'explicit']}),
-        ("Reference Info"    ,{ 'fields' : ['pouetid', 'status']}),
+        ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
-        ("YouTube Video", { 'fields' : ['ytvidid', 'ytvidoffset']}),
-        ("Old info"       ,{'classes': ('collapse',), 'fields': ['release_year', 'remix_of_id', 'artists', 'groups', 'labels', 'type', 'platform', 'info']}),
+        ("Old info"       ,{'classes': ('collapse',), 'fields': ['ytvidid', 'ytvidoffset', 'release_year', 'remix_of_id', 'artists', 'groups', 'labels', 'type', 'platform', 'info']}),
         ("Old links"      ,{'classes': ('collapse',), 'fields': ['dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url']}),
     ]
     inlines = [DownloadInline, SongLinkInline]

@@ -10,7 +10,7 @@
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
   <script>
   $(document).ready(function(){
-    $("#tagfield").autocomplete("http://{{ dv.site_url() }}{{ url("dv-ax-taglist") }}",
+    $("#tagfield").autocomplete("{{ url("dv-ax-taglist") }}",
     {multiple:true,
     formatResult: function(data, value) {
             return value.split(" ")[0];
