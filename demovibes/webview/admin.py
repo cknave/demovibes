@@ -24,7 +24,7 @@ class ArtistLinkInline(SongLinkInline):
     qs_key = "A"
 
 class UserprofileAdmin(admin.ModelAdmin):
-    search_fields = ['user']
+    search_fields = ['user__username']
     list_display = ['user', 'country', 'custom_css']
     inlines = [UserLinkInline]
 
@@ -32,17 +32,27 @@ class DownloadInline(admin.TabularInline):
     model = SongDownload
     extra = 3
 
+class SongMetaAdmin(admin.ModelAdmin):
+    search_fields = ['song__title']
+    list_display = ['song', 'checked', 'active', 'user']
+    list_filter = ['checked', 'active']
+    filter_horizontal = ['artists', 'groups', 'labels']
+    date_hierarchy = 'added'
+    exclude = ["active", "user", "song"]
+
 class SongAdmin(admin.ModelAdmin):
-    list_display = ['title', 'status', 'artist', 'uploader', 'bitrate', 'added', 'pouetid', 'explicit', 'info']
+    list_display = ['title', 'status', 'artist', 'uploader', 'bitrate', 'added', 'pouetid', 'explicit']
     list_editable = ['status']
     search_fields = ['title', 'status']
     list_filter = ['status']
     filter_horizontal = ['artists', 'groups', 'labels']
     fieldsets = [
-        ("General"        ,{ 'fields' : ['title', 'release_year', 'remix_of_id', 'file', 'explicit', 'artists', 'groups', 'labels']}),
-        ("Reference Info"    ,{ 'fields' : ['pouetid', 'dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url', 'type', 'platform', 'status', 'info']}),
+        ("General"        ,{ 'fields' : ['title', 'file', 'explicit']}),
+        ("Reference Info"    ,{ 'fields' : ['pouetid', 'status']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
         ("YouTube Video", { 'fields' : ['ytvidid', 'ytvidoffset']}),
+        ("Old info"       ,{'classes': ('collapse',), 'fields': ['release_year', 'remix_of_id', 'artists', 'groups', 'labels', 'type', 'platform', 'info']}),
+        ("Old links"      ,{'classes': ('collapse',), 'fields': ['dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url']}),
     ]
     inlines = [DownloadInline, SongLinkInline]
     date_hierarchy = 'added'
@@ -133,3 +143,4 @@ admin.site.register(Link, LinkAdmin)
 admin.site.register(LinkCategory)
 admin.site.register(Faq, FaqAdmin)
 admin.site.register(Screenshot, ScreenshotAdmin)
+admin.site.register(SongMetaData, SongMetaAdmin)

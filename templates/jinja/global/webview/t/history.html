@@ -4,9 +4,7 @@
   {{ display.song(req.song) }}
  </td>
  <td align="left">
-  {% for artist in req.song.artists.all() %}
-   {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}
-  {% endfor %}
+  {{ display.artists(req.song) }}
  </td>
  <td align="center">
   {{ req.song.length() }}

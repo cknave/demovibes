@@ -15,8 +15,15 @@ We recommend that you upload your song to the main artist entry.<h2>/Warning</h2
 
 <form action="." method="post" enctype="multipart/form-data">
 <table>
-<tr><th>Artist:</th><td>{% set A = artist %}{% include "webview/t/artist.html" %} [<a href="{{ url("dv-artists") }}">Change Artist</a>]</td></tr>
+<tr><th>Artist:</th><td>{{ display.artist(artist) }} [<a href="{{ url("dv-artists") }}">Change Artist</a>]</td></tr>
+
 {{ form.as_table() }}
+</table>
+
+<h2>Information</h2>
+
+<table>
+    {{ infoform.as_table() }}
 </table>
 
 {{ links }}

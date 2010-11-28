@@ -8,8 +8,8 @@
 
 <h2><img class="icon_header" src="/static/sound.png" alt="" />Song Sources/Types</h2>
 {% for p in objs %}
- {% if p.song_set.count() != 0 %}
-  {% set P = p %}{% include "webview/t/songtypename.html" %} ({{ p.song_set.count() }} Songs)<br />
+ {% if p.get_songs().count() != 0 %}
+  {% set P = p %}{% include "webview/t/songtypename.html" %} ({{ p.get_songs().count() }} Songs)<br />
  {% endif %}
 {% endfor%}
 

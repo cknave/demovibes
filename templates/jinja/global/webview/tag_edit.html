@@ -10,20 +10,20 @@
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
   <script>
   $(document).ready(function(){
-    $("#tagfield").autocomplete("http://{{ dv.site_url() }}{{ url("dv-ax-taglist") }}", 
-    {multiple:true, 
+    $("#tagfield").autocomplete("http://{{ dv.site_url() }}{{ url("dv-ax-taglist") }}",
+    {multiple:true,
     formatResult: function(data, value) {
-			return value.split(" ")[0];
-		},
+            return value.split(" ")[0];
+        },
     multipleSeparator:" "});
   });
   </script>
 
 {% endblock %}
- 
+
 {% block main %}
 <h2>Edit tags for {{ song|e }}</h2>
-
+<p>Editing tags for {{ display.song(song) }}.</p>
 <p>Please try to keep the style and words that's already in use.</p>
 
 Please input tags with space between to seperate them.

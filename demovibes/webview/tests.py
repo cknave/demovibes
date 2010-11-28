@@ -65,7 +65,7 @@ class BasicTest(TestCase):
             
         self.login()
         
-        for page in restricted:
+        for page in pages + restricted:
             r = self.client.get(page)
             self.failUnlessEqual(r.status_code, 200, "Failed to load page %s" % page)
         

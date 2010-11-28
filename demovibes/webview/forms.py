@@ -14,11 +14,12 @@ except ImportError:
 class UploadForm(forms.ModelForm):
     class Meta:
         model = Song
-        fields = ["title", "release_year", "file", "pouetid", "dtv_id", "wos_id", "zxdemo_id", "projecttwosix_id", "lemon_id", "hol_id", "al_id", "hvsc_url", "remix_of_id", "groups", "labels", "info", "type", "platform"]
-        
+        #fields = ["title", "release_year", "file", "pouetid", "dtv_id", "wos_id", "zxdemo_id", "projecttwosix_id", "lemon_id", "hol_id", "al_id", "hvsc_url", "remix_of_id", "groups", "labels", "info", "type", "platform"]
+        fields = ["file", "title"]
+
     def clean_file(self):
         data = self.cleaned_data['file']
-            
+
         # I didn't see this being used - remove?
         #~ if hasattr(data, 'temporary_file_path'):
             #~ F = data.temporary_file_path()
@@ -30,7 +31,7 @@ class UploadForm(forms.ModelForm):
             logging.error("uploaded file was kept in memory")
 
         if dscan.is_configured() and hasattr(data, 'temporary_file_path'):
-            file = data.temporary_file_path()    
+            file = data.temporary_file_path()
             df = dscan.ScanFile(file)
             if not df.readable:
                 raise forms.ValidationError("Unsupported audio format! Check the FAQ to see what's accepted")
@@ -39,7 +40,7 @@ class UploadForm(forms.ModelForm):
             # which will further reduce quality. also with ogg and aac, lower bitrates are more common
             #if df.bitrate < 128 and df.bitrate != 0:
             #    raise forms.ValidationError("We only accept audio with a bitrate of 128 kbps or higher")
-        
+
         #how the hell pymand finds the file without path is a mystery to me
         if not dscan.is_configured():
             import mad
@@ -48,8 +49,18 @@ class UploadForm(forms.ModelForm):
             layer = mf.layer()
             if bitrate < 128 or layer != 3:
                 raise forms.ValidationError("We only accept mpeg layer 3 (MP3) encoded files with bitrate of 128 kbps or higher")
-        
+
         return data
+
+class SongMetadataForm(forms.ModelForm):
+    class Meta:
+        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform"]
+        model = SongMetaData
+
+class EditSongMetadataForm(forms.ModelForm):
+    class Meta:
+        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "comment"]
+        model = SongMetaData
 
 class CreateArtistForm(forms.ModelForm):
     class Meta:
@@ -74,7 +85,7 @@ class CreateArtistForm(forms.ModelForm):
             raise forms.ValidationError('Image is bigger than allowed size dimensions! (Height : %d, width : %d)' % (max_height, max_width))
 
         return self.cleaned_data['artist_pic']
-        
+
 class CreateLabelForm(forms.ModelForm):
     class Meta:
         model = Label
@@ -128,29 +139,29 @@ class ProfileForm(forms.ModelForm):
         avatar = self.cleaned_data['avatar']
         if not avatar:
             return None
-        
+
         max_size = getattr(settings, 'MAX_AVATAR_SIZE', 65536)
         max_height = getattr(settings, 'MAX_AVATAR_HEIGHT', 100)
         max_width = getattr(settings, 'MAX_AVATAR_WIDTH', 100)
 
         if len(avatar) > max_size:
             raise forms.ValidationError('Image must be no bigger than %d bytes' % max_size)
-        
+
         image = Image.open(avatar)
         img_w, img_h = image.size
         if img_w > max_width or img_h > max_height:
             raise forms.ValidationError('Image is bigger than allowed size dimensions! (Height : %d, width : %d)' % (max_height, max_width))
         return self.cleaned_data['avatar']
-        
+
     class Meta:
         model = Userprofile
         fields = ['infoline', 'visible_to', 'web_page', 'aol_id', 'yahoo_id', 'icq_id', 'twitter_id', 'hol_id', 'country', 'location', 'avatar', 'fave_id', 'email_on_pm', 'email_on_group_add', 'email_on_artist_add', 'pm_accepted_upload', 'paginate_favorites', 'theme', 'custom_css', 'use_tags', 'show_youtube', 'info']
-        
+
 class FlashUploadForm(forms.ModelForm):
     class Meta:
         model = Song
         fields = ["title",'pouetid', 'info', 'type', 'platform']
-        
+
 class PmForm(forms.ModelForm):
     to = forms.CharField()
     subject = forms.CharField(min_length=3)
@@ -169,7 +180,7 @@ class CreateLinkForm(forms.ModelForm):
     class Meta:
         model = Link
         fields = ["link_type", "url_cat", "name", "link_title", "link_url", "link_image", "notes"]
-        
+
     def clean_link_image(self):
         link_image = self.cleaned_data['link_image']
         if not link_image:

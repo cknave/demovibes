@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template import TemplateDoesNotExist
 from django.conf import settings
 from django.views.generic.simple import direct_to_template
@@ -134,15 +134,16 @@ def list_queue(request):
     return j2shim.r2r('webview/queue_list.html', \
         {'now_playing': now_playing, 'history': history, 'queue': queue}\
         , request)
-    
+
 def list_song(request, song_id):
     song = get_object_or_404(Song, id=song_id)
-    
+
     # We can now get any compilation data that this song is a part of
     comps = Compilation.objects.filter(songs__id = song.id)
-    
+
     # Has this song been remixed?
-    remix = Song.objects.filter(remix_of_id = song.id)
+    remix_list = SongMetaData.objects.filter(remix_of_id = song.id, active=True)
+    remix = [d.song for d in remix_list]
     related = Song.tagged.related_to(song)
     tags = song.tags
     t2 = []
@@ -150,7 +151,7 @@ def list_song(request, song_id):
         tag.count = tag.items.count()
         t2.append(tag)
     tags = tagging.utils.calculate_cloud(t2)
-    
+
     return j2shim.r2r('webview/song_detail.html', \
         { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related, 'tags': tags }\
         , request)
@@ -171,7 +172,7 @@ def my_profile(request):
     Display the logged in user's profile.
     """
     user = request.user
-    
+
     profile = common.get_profile(user)
     links = LinkCheck("U", object = profile)
     if request.method == 'POST':
@@ -229,10 +230,10 @@ def show_approvals(request):
     """
     Shows the most recently approved songs in it's own window
     """
-    
+
     result_limit = getattr(settings, 'UPLOADED_SONG_COUNT', 150)
     songs = SongApprovals.objects.order_by('-approved')[:result_limit]
-    
+
     return j2shim.r2r('webview/recent_approvals.html', { 'songs': songs , 'settings' : settings }, request=request)
 
 def list_artists(request, letter):
@@ -258,7 +259,7 @@ def list_groups(request, letter):
     return j2shim.r2r('webview/group_list.html', \
         {'object_list' : groups, 'letter' : letter, 'al': alphalist}, \
         request=request)
-    
+
 def list_labels(request, letter):
     """
     List labels that start with a certain letter.
@@ -399,10 +400,10 @@ def list_favorites(request):
             songlist = paginator.page(paginator.num_pages)
         return j2shim.r2r('webview/favorites.html', \
           {'songs': songlist.object_list, 'page' : page, 'page_range' : paginator.page_range}, \
-          request=request) 
-    
+          request=request)
+
     # Attempt to list all faves at once!
-    return j2shim.r2r('webview/favorites.html', { 'songs': songs }, request=request) 
+    return j2shim.r2r('webview/favorites.html', { 'songs': songs }, request=request)
 
 @login_required
 def del_favorite(request, id): # XXX Fix to POST
@@ -420,106 +421,207 @@ def del_favorite(request, id): # XXX Fix to POST
         return HttpResponseRedirect(reverse('dv-favorites'))
 
 class LinkCheck(object):
-    def __init__(self, linktype, object = None):
+    def __init__(self, linktype, object = None, status = 0, user = None, add=False):
         self.type = linktype
+        self.add = add
         self.verified = []
+        self.user = user
+        self.status = status
         self.object = object
         self.valid = False
         self.get_list()
         self.title = "External Resources"
-    
+
     def get_link_for(self, o, generic):
         if not o or not generic:
             return None
         bla = ContentType.objects.get_for_model(o)
         r = GenericLink.objects.filter(content_type__pk=bla.id, object_id=o.id, link=generic)
         return r and r[0] or None
-    
+
     def get_list(self):
         self.linklist = GenericBaseLink.objects.filter(linktype = self.type)
         r = []
         for x in self.linklist:
             val = self.get_link_for(self.object, x)
             value=val and val.value or ""
-            r.append({'link': x, 'value': value, "error": ""})
+            r.append({'link': x, 'value': value, "error": "", "comment": ""})
         self.links = r
         return self.linklist
-    
+
     def __unicode__(self):
         return self.as_table()
-    
+
     def as_table(self):
+        """
+        Print links form as table
+        """
         return j2shim.r2s('webview/t/linksform.html', \
             {'links': self.links, 'title': self.title })
-    
+
     def is_valid(self, postdict):
+        """
+        Check if given links are valid according to given regex
+        """
         self.valid = True
         for entry in self.links:
-            l = entry['link']
+            l = entry['link'] # GenericBaseLink object
             key = "LL_%s" % l.id
             if postdict.has_key(key):
                 val = postdict[key].strip()
                 if val:
+                    ckey = key+"_comment"
+                    comment = postdict.has_key(ckey) and postdict[ckey].strip() or ""
+
+                    #Fill out dict in case it needs to be returned to user
                     entry['value'] = val
-                    if re.match(l.regex, val):
-                        self.verified.append((l, val))
+                    entry['comment'] = comment
+
+                    if re.match(l.regex + "$", val):
+                        self.verified.append((l, val, comment)) #Add to approved list
                     else:
                         self.valid = False
                         entry['error'] = "The input did not match expected value"
                 else:
-                    self.verified.append((l, ""))
+                    self.verified.append((l, "", "")) #No value for this link
         return self.valid
-        
+
     def save(self, obj):
+        """
+        Save links to database
+        """
         if self.verified and self.valid:
-            for l, val in self.verified:
+            for l, val, comment in self.verified:
                 r = self.get_link_for(obj, l)
                 if val:
-                    if r:
+
+                    if r and not self.add:
                         r.value = val
                         r.save()
                     else:
-                        GenericLink.objects.create(content_object=obj, value=val, link=l)
+                        GenericLink.objects.create(
+                            content_object=obj,
+                            value=val,
+                            link=l,
+                            status = self.status,
+                            comment = comment,
+                            user = self.user
+                        )
                 else:
-                    if r:
-                        r.delete()                
+                    if r and not self.add:
+                        r.delete()
+
+@permission_required('webview.change_songmetadata')
+def new_songinfo_list(request):
+    alink = request.GET.get("alink", False)
+    status = request.GET.get("status", False)
+    if alink and status.isdigit():
+        link = get_object_or_404(GenericLink, id=alink)
+        link.status = int(status)
+        link.save()
+    nusonginfo = SongMetaData.objects.filter(checked=False)
+    nulinkinfo = GenericLink.objects.filter(status=1)
+    c = {'metainfo': nusonginfo, 'linkinfo': nulinkinfo}
+    return j2shim.r2r("webview/list_newsonginfo.html", c, request)
+
+@permission_required('webview.change_songmetadata')
+def list_songinfo_for_song(request, song_id):
+    song = get_object_or_404(Song, id=song_id)
+    metalist = SongMetaData.objects.filter(song=song)
+    c = {'metalist':metalist, 'song': song}
+    return j2shim.r2r("webview/list_songinfo.html", c, request)
+
+@login_required
+def add_songlinks(request, song_id):
+    song = get_object_or_404(Song, id=song_id)
+    links = LinkCheck("S", status=1, user = request.user, add = True)
+    if request.method == "POST":
+        if links.is_valid(request.POST):
+            links.save(song)
+            return redirect(song)
+    c = {'song': song, 'links': links}
+    return j2shim.r2r("webview/add_songlinks.html", c, request)
+
+
+@permission_required('webview.change_songmetadata')
+def view_songinfo(request, songinfo_id):
+    meta = get_object_or_404(SongMetaData, id=songinfo_id)
+    if request.method == "POST":
+        if request.POST.has_key("activate") and request.POST["activate"]:
+            meta.set_active()
+        if request.POST.has_key("deactivate") and request.POST["deactivate"]:
+            meta.checked = True
+            meta.save()
+    c = {'meta': meta }
+    return j2shim.r2r("webview/view_songinfo.html", c, request)
+
+@login_required
+def edit_songinfo(request, song_id):
+    song = get_object_or_404(Song, id=song_id)
+    meta = song.get_metadata()
+    meta.comment = ""
+
+    if request.method == "POST":
+        m = SongMetaData(song=song, user=request.user)
+        form = EditSongMetadataForm(request.POST, instance=m)
+        if form.is_valid():
+            d=form.save()
+            return redirect(song)
+    else:
+        form = EditSongMetadataForm(instance=meta)
+
+    c = {'form': form, 'song': song}
+    return j2shim.r2r("webview/edit_songinfo.html", c, request)
 
 @login_required
 def upload_song(request, artist_id):
     artist = get_object_or_404(Artist, id=artist_id)
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_UPLOADS', 0)
     artist_auto_approve = getattr(settings, 'ARTIST_AUTO_APPROVE_UPLOADS', 1)
-    
-    links = LinkCheck("S")
-    
+
+    links = LinkCheck("S", user = request.user)
+
     # Quick test to see if the artist is currently active. If not, bounce
     # To the current queue!
     if artist.status != 'A':
         return HttpResponseRedirect(reverse('dv-queue'))
-        
+
     if request.method == 'POST':
         if artist_auto_approve and artist.link_to_user == request.user:
             # Auto Approved Song. Set Active, Add to Recent Uploads list
             status = 'A'
         else:
             status = 'U'
-            
+
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
             # Automatically approved due to Moderator status
             status = 'A'
-        
-        a = Song(uploader = request.user, status = status)
-        form = UploadForm(request.POST, request.FILES, instance = a)
 
-        if links.is_valid(request.POST) and form.is_valid():
+        a = Song(uploader = request.user, status = status)
+
+        form = UploadForm(request.POST, request.FILES, instance = a)
+        infoform = SongMetadataForm(request.POST)
+
+        if links.is_valid(request.POST) and form.is_valid() and infoform.is_valid():
             new_song = form.save(commit=False)
             new_song.save()
-            new_song.artists.add(artist)
+
+            songinfo = infoform.save(commit=False)
+            songinfo.user = request.user
+            songinfo.song = new_song
+            songinfo.checked = True
+            songinfo.save()
+
+            infoform.save_m2m()
             form.save_m2m()
 
+            songinfo.artists.add(artist)
+
+            songinfo.set_active()
+
             links.save(new_song)
-            
+
             if(new_song.status == 'A'):
                 # Auto Approved!
                 try:
@@ -530,12 +632,13 @@ def upload_song(request, artist_id):
                     # Should throw when the song isn't found in the DB
                     Q = SongApprovals(song = new_song, approved_by=request.user, uploaded_by=request.user)
                     Q.save()
-                
+
             return HttpResponseRedirect(new_song.get_absolute_url())
     else:
         form = UploadForm()
+        infoform = SongMetadataForm()
     return j2shim.r2r('webview/upload.html', \
-        {'form' : form, 'artist' : artist, 'links': links }, \
+        {'form' : form, 'infoform': infoform, 'artist' : artist, 'links': links }, \
         request=request)
 
 @permission_required('webview.change_song')
@@ -572,7 +675,7 @@ def activate_upload(request):
                 # Should throw when the song isn't found in the DB
                 Q = SongApprovals(song=song, approved_by=request.user, uploaded_by=song.uploader)
                 Q.save()
-        
+
         if song.uploader.get_profile().pm_accepted_upload and status == 'A' or status == 'R':
             PrivateMessage.objects.create(sender = request.user, to = song.uploader,\
              message = mail_tpl.render(c), subject = "Song Upload Status Changed To: %s" % stat)
@@ -599,7 +702,7 @@ def song_statistics(request, stattype):
         songs = Song.objects.order_by('-times_played')[:numsongs]
     return j2shim.r2r('webview/stat_songs.html',
                       {'songs': songs, 'title': title, 'numsongs': numsongs, 'stat': stat},
-                      request)    
+                      request)
 
 def tag_cloud(request):
     tags = cache.get("tagcloud")
@@ -630,7 +733,7 @@ def tag_edit(request, song_id):
     changes = TagHistory.objects.filter(song=song).order_by('-id')[:5]
     c = {'tags': tags, 'song': song, 'changes': changes}
     return j2shim.r2r('webview/tag_edit.html', c, request)
-    
+
 @login_required
 def create_artist(request):
     """
@@ -647,16 +750,16 @@ def create_artist(request):
             status = 'A'
         else:
             status = 'U'
-            
+
         a = Artist(created_by = request.user, status = status)
         form = CreateArtistForm(request.POST, request.FILES, instance = a)
         if form.is_valid() and links.is_valid(request.POST):
             new_artist = form.save(commit=False)
             new_artist.save()
             form.save_m2m()
-            
+
             links.save(new_artist)
-            
+
             return HttpResponseRedirect(new_artist.get_absolute_url())
     else:
         form = CreateArtistForm()
@@ -689,12 +792,12 @@ def activate_artists(request):
                 'stat' : stat,
         })
         artist.save()
-        
+
         # Send the email to inform the user of their request status
-        
+
         if artist.created_by.get_profile().email_on_artist_add and status == 'A' or status == 'R':
             PrivateMessage.objects.create(sender = request.user, to = artist.created_by,\
-             message = mail_tpl.render(c), subject = "Artist Request Status Changed To: %s" % stat)
+             message = mail_tpl.render(c), subject = u"Artist %s : %s" % (artist.handle, stat))
 
     artists = Artist.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_artists.html', { 'artists': artists }, request=request)
@@ -705,9 +808,9 @@ def create_group(request):
     Simple form to allow registereed users to create a new group entry.
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_GROUP', 0)
-    
+
     links = LinkCheck("G")
-    
+
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
@@ -715,7 +818,7 @@ def create_group(request):
             status = 'A'
         else:
             status = 'U'
-            
+
     if request.method == 'POST':
         g = Group(created_by = request.user, status = status)
         form = CreateGroupForm(request.POST, request.FILES, instance = g)
@@ -723,9 +826,9 @@ def create_group(request):
             new_group = form.save(commit=False)
             new_group.save()
             form.save_m2m()
-            
+
             links.save(new_group)
-            
+
             return HttpResponseRedirect(new_group.get_absolute_url())
     else:
         form = CreateGroupForm()
@@ -758,7 +861,7 @@ def activate_groups(request):
                 'stat' : stat,
         })
         group.save()
-        
+
         # Send the email to inform the user of their request status
         if group.created_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
             PrivateMessage.objects.create(sender = request.user, to = group.created_by,\
@@ -773,9 +876,9 @@ def create_label(request):
     Simple form to allow registereed users to create a new label entry.
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_LABEL', 0)
-    
+
     links = LinkCheck("L")
-    
+
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
@@ -783,7 +886,7 @@ def create_label(request):
             status = 'A'
         else:
             status = 'U'
-            
+
     if request.method == 'POST':
         l = Label(created_by = request.user, status = status)
         form = CreateLabelForm(request.POST, request.FILES, instance = l)
@@ -791,16 +894,16 @@ def create_label(request):
             new_label = form.save(commit=False)
             new_label.save()
             form.save_m2m()
-            
+
             links.save(new_label)
-            
+
             return HttpResponseRedirect(new_label.get_absolute_url())
     else:
         form = CreateLabelForm()
     return j2shim.r2r('webview/create_label.html', \
         {'form' : form, 'links': links }, \
         request=request)
-    
+
 @permission_required('webview.change_label')
 def activate_labels(request):
     """
@@ -826,7 +929,7 @@ def activate_labels(request):
                 'stat' : stat,
         })
         this_label.save()
-        
+
         # Send the email to inform the user of their request status
         if this_label.created_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
             PrivateMessage.objects.create(sender = request.user, to = this_label.created_by,\
@@ -852,7 +955,7 @@ def set_rating_autovote(request, song_id, user_rating):
         S.set_vote(int_vote, request.user)
         add_event(event="nowplaying")
 
-        # Successful vote placed. 
+        # Successful vote placed.
         try:
             refer = request.META['HTTP_REFERER']
             return HttpResponseRedirect(refer)
@@ -882,12 +985,12 @@ def link_category(request, slug):
     View all links associated with a specific link category slug
     """
     link_cat = get_object_or_404(LinkCategory, id_slug = slug)
-    
+
     # Query for each set; Easier to work with templates this way
     link_data_txt = Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=link_cat) # See what linkage data we have
     #link_data_ban = Link.objects.filter(status="A").filter(link_type="B").filter(url_cat=link_cat)
     #link_data_but = Link.objects.filter(status="A").filter(link_type="U").filter(url_cat=link_cat)
-    
+
     return j2shim.r2r('webview/links_category.html', \
             {'links_txt' : link_data_txt, 'cat' : link_cat}, \
             request=request)
@@ -899,7 +1002,7 @@ def link_create(request):
     A generic 'Thanks' page.
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_LINK', 0)
-    
+
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
         if request.user.is_staff and auto_approve == 1:
@@ -907,7 +1010,7 @@ def link_create(request):
             status = 'A'
         else:
             status = 'P'
-            
+
         l = Link(submitted_by = request.user, status = status)
         form = CreateLinkForm(request.POST, request.FILES, instance = l)
         if form.is_valid():
@@ -995,14 +1098,14 @@ def memcached_status(request):
         setattr(stats, key, value)
 
     host.close_socket()
-    
+
     return j2shim.r2r(
         'webview/memcached_status.html', dict(
-            stats=stats, 
+            stats=stats,
             hit_rate=100 * stats.get_hits / stats.cmd_get,
             time=datetime.datetime.now(), # server time
         ), request=request)
-        
+
 def upload_progress(request):
     """
     Return JSON object with information about the progress of an upload.

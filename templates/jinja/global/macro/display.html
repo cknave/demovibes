@@ -9,7 +9,7 @@
 {% endmacro %}
 
 {% macro artists(song) %}
-    {% for tartist in song.artists.all() %}
+    {% for tartist in song.get_metadata().artists.all() %}
     {{ artist(tartist) }}{% if loop.last %} {% else %}, {% endif %}
     {% endfor %}
 {% endmacro %}
@@ -28,7 +28,7 @@
     {% else %}
      <img src="/static/user_green.png" />
     {% endif %}
-    <a href="{{ A.get_absolute_url() }}" 
+    <a href="{{ A.get_absolute_url() }}"
      {% if A.alias_of -%}
        title="Alias of {{A.alias_of|e}}"
      {%- else -%}
@@ -50,31 +50,33 @@
 {%- endmacro %}
 
 {% macro user(U) -%}
-    <span>{{ dv.flag(U.get_profile().country) }}<a href="/demovibes/user/{{ U.username|e }}/" title="{{ U.get_profile().get_stat() }}" >{{ U.username|e }}</a></span>
+    {% if U %}<span>{{ dv.flag(U.get_profile().country) }}<a href="/demovibes/user/{{ U.username|e }}/" title="{{ U.get_profile().get_stat() }}" >{{ U.username|e }}</a></span>{% endif %}
 {%- endmacro %}
 
 {% macro label(L) -%}
-    <img class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>
+    {% if L %}<img class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>{% endif %}
 {%- endmacro %}
 
 {% macro group(G) -%}
-    <img class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>
+    {% if G %}<img class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>{% endif %}
 {% endmacro %}
 
 {% macro platform(P) -%}
+    {% if P %}
     {% if P.symbol -%}
         <a href="{{ P.get_absolute_url() }}"><img src="{{ P.symbol.url }}" title="{{ P.title|e }}" /></a>
     {%- endif -%}
     <a href="{{ P.get_absolute_url() }}">{{P.title|e}}</a>
+    {% endif %}
 {%- endmacro %}
 
 {% macro linksform(lo) %}
     {% if lo.links %}
-        <h3>External resources</h3>
+        <h2>External resources</h2>
         {% if errors %}
             <p class="errorinfo">There was an error with the following entries<br /><ul class="errors">
                 {% for x in errors %}
-                
+
                  <li>{{ x.l.name }} - value "{{ x.v }}"</li>
                 {% endfor %}</ul>
                 Please fix or remove them, and try again.
@@ -83,7 +85,7 @@
         <table>
         {% for ll in lo.links %}
             <tr>
-             <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" />{% endif %}{{ ll.link.name }} link</label></th> 
+             <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" />{% endif %}{{ ll.link.name }} link</label></th>
              <td>
                 <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
                 {% if ll.error %}
@@ -104,18 +106,24 @@
 {% endmacro %}
 
 {% macro links(Obj) -%}
-    {% for L in Obj.links.all() %}
+    {% for L in Obj.get_active_links() %}
         <a href="{{ L.get_link() }}" target="_new">
-            {% if L.link.icon %}
-                <img class="song-resource" src="{{ L.link.icon.url }}" title="[{{ L.link.name }}]" />
-            {% else %}
-                [{{ L.link.name }}]
-            {% endif %}
+            {%- if L.link.icon -%}
+                <img class="song-resource" src="{{ L.link.icon.url }}" title="[{{ L.link.name }}]{% if L.comment %} - {{ L.comment }}{% endif %}" />
+            {%- else -%}
+                <span title="{% if L.comment %}{{ L.comment }}{% endif %}">[{{ L.link.name }}]</span>
+            {%- endif -%}
         </a>
     {% endfor %}
 {%- endmacro %}
 
 {% macro songicons(S) -%}
+    {% if S.pouetid -%}
+        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+    {%- endif %}
+{%- endmacro %}
+
+{% macro songicons_old(S) -%}
     {% if S.pouetid -%}
         <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
@@ -125,7 +133,7 @@
     {% if S.hol_id %}
         <a href="http://hol.abime.net/{{ S.hol_id }}" target="_new"><img class="song-resource" src="/static/hol-icon.png" title="[Hall Of Light Link]" /></a>
     {% endif %}
-    {% if S.al_id %} 
+    {% if S.al_id %}
         <a href="http://www.atarilegend.com/games/games_detail.php?game_id={{ S.al_id }}" target="_new">
             <img class="song-resource" src="/static/atari-icon.png" title="[Atari Legends Link]" />
         </a>
@@ -137,9 +145,17 @@
     {% if S.hvsc_url %} <a href="{{ S.hvsc_url }}"><img class="song-resource" src="/static/sid-icon.gif" title="[SID File]" /></a>{% endif %}
 {%- endmacro %}
 
+{% macro labels(song) %}
+{% if song and song.get_metadata().labels.count() %}
+  Production Labels: {% for zlabel in song.get_metadata().labels.all() %}{{ label(zlabel) }} {% endfor %}<br />
+ {% endif %}
+{% endmacro %}
+
 {% macro song(song) -%}
-    {%- if song.platform.symbol -%}
-        <a href="{{ song.platform.get_absolute_url() }}"><img class="platform_icon" src="{{ song.platform.symbol.url }}" title="{{ song.platform.title|e }}" /></a>
+    {%- if song -%}
+    {%- set meta = song.get_metadata() -%}
+    {%- if meta.platform.symbol -%}
+        <a href="{{ meta.platform.get_absolute_url() }}"><img class="platform_icon" src="{{ meta.platform.symbol.url }}" title="{{ meta.platform.title|e }}" /></a>
     {%- endif -%}
     <a href="{{ song.get_absolute_url() }}">{{ song.title|e }}</a>
     {%- if song.explicit %}
@@ -147,6 +163,7 @@
     {%- endif -%}
     {%- if song.has_video() %}
         <img class="text-link" src="/static/MiniIcon-Video.jpg" title="Video!" />
+    {%- endif -%}
     {%- endif -%}
 {%- endmacro %}
 

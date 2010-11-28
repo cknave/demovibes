@@ -8,8 +8,8 @@
 
 <h2><img class="icon_header" src="/static/sound.png" alt="" />Song Platforms</h2>
 {% for p in objs %}
- {% if p.song_set.count() != 0 %}
-  {{ display.platform(p) }} ({{ p.song_set.count() }} Songs)<br />
+ {% if p.get_songs().count() != 0 %}
+  {{ display.platform(p) }} ({{ p.get_songs().count() }} Songs)<br />
  {% endif %}
 {% endfor%}
 

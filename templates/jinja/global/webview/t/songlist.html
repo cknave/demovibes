@@ -4,8 +4,9 @@
   {{ display.song(song) }}
  </td>
  <td>
-  {% for artist in song.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
-  {% for group in song.groups.all() %}{{ display.group(group) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+  {% set meta = song.get_metadata() %}
+  {% for artist in meta.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+  {% for group in meta.groups.all() %}{{ display.group(group) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
  </td>
  <td align="center">
   {{ song.length() }}

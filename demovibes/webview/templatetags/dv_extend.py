@@ -26,11 +26,11 @@ class BetterPaginator(Paginator):
     >>>     'my_objects': my_objects.get_context(page),
     >>> }
     """
-    
+
     def page_range(self, total, current, numshown=10, f=4):
         """
         Return crunched list of pages
-        
+
         Keywords:
         total -- Total number of pages
         current -- Current page
@@ -57,7 +57,7 @@ class BetterPaginator(Paginator):
         a = list(set(a))
         a.sort()
         return a
-    
+
     def old_pagerange(self, num_pages, page, range_gap=5):
         """
         Return current page +/- range_gap pages
@@ -72,7 +72,7 @@ class BetterPaginator(Paginator):
         else:
             end = num_pages+1
         return range(start, end)
-    
+
     def get_context(self, page, range_gap=3):
         try:
             page = int(page)
@@ -103,7 +103,7 @@ class BetterPaginator(Paginator):
 def paginate(context, obj, limit=None, maxpages=None):
     """
     Paginate object, return (paginated_objectlist, paging_html_code)
-    
+
     Paginates given object, using the BetterPaginator class.
     It fetches current page via "p" GET variable.
     Returns a paginated object list for given page, and rendered
@@ -112,27 +112,27 @@ def paginate(context, obj, limit=None, maxpages=None):
     """
     if not limit:
         limit = settings.PAGINATE
-        
+
     if maxpages:
         totlimit = limit * maxpages
         obj = obj[:totlimit]
-        
+
     pager = BetterPaginator(obj, limit)
     query_dict = context['request'].GET.copy()
-    
+
     if 'p' in query_dict:
         del query_dict['p']
-    
+
     try:
         pag = pager.get_context(context['request'].GET.get('p', 1), 10)
     except:
         return ([], "") # FIXME should raise 404 here, actually
-    
+
     cntxt = {
         'query_string': query_dict.urlencode(),
         'paginator': pag,
     }
-        
+
     paging = js.r2s('webview/t/paginate.html', cntxt)
     return (cntxt['paginator']['objects'], paging)
 
@@ -154,7 +154,7 @@ def get_online_users():
     if not result:
         timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
         userlist = Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')
-    
+
         # Stuff this into an object
         result = js.r2s('webview/whos_online_sb.html', { 'userlist' : userlist })
         cache.set("online_users", result, 60)
@@ -198,7 +198,7 @@ def count_text_links(parser, token):
     except ValueError:
         raise template.TemplateSyntaxError, "%r tag requires exactly one argument" % token.contents.split()[0]
     return CountTextLinkEntries(slugname)
-    
+
 def get_banner_links(parser, token):
     """
     """
@@ -414,7 +414,7 @@ class GetSongRatingStarsAvgNode(template.Node):
             # This in case something fails terribly!!
             song_rating = 0
             vote_count = 0
-        
+
         # Make sure song.rating is a real variable and has a value, otherwise default it to 0
         if(type(song.rating).__name__=='NoneType'):
             song_rating = 0
@@ -432,10 +432,10 @@ class GetSongRatingStarsAvgNode(template.Node):
         except:
             user_vote = 0
             user_anon = True
-            
+
         htmltxt = ""
         TempLine = ""
-            
+
         # This fixes an issue where UserVote doesnt actually exist yet. I have generated this
         # Error several times on the dev server. This fixes the problem.
         try:
@@ -443,7 +443,7 @@ class GetSongRatingStarsAvgNode(template.Node):
                 user_vote = int(0) # Implicitly define this as int, so there is no confusion!
         except:
             user_vote = int(0); # Throws an exception in some odd situations
-    
+
         htmltxt = common.get_now_playing()
 
         # Open the table
@@ -453,22 +453,22 @@ class GetSongRatingStarsAvgNode(template.Node):
         for count in range(1, 6):
             DiffVal = (count - user_vote) # Pre-calc rating difference
             TempLine = '<td align="center" onmouseover="voteshow(\'vote-%d\', %d);" onmouseout="voteshow(\'vote-%d\', %d);">' % (song.id, count, song.id, user_vote)
-    
+
             if(user_anon == False):
                 TempLine = TempLine + '<a href="/demovibes/song/%d/vote/%d/">' % ( song.id, count )
-    
+
             if(count > user_vote):
                 # Represent stars AFTER the current rated star
                 TempLine = TempLine + '<img src="/static/star-white.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
             else:
                 # This represents a star already under/up to the rating
                 TempLine = TempLine + '<img src="/static/star-red.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
-        
+
             if(user_anon == False):
                 TempLine = TempLine + '</a>'
-    
+
             TempLine = TempLine + "</td>\n" # Close the column
-    
+
             # Add this to the final text string
             htmltxt = htmltxt + TempLine
 
@@ -506,20 +506,20 @@ def get_text_link_entries(slug):
         except:
             # No matching slug was found!
             return None
-        
+
         # We have a slug; Now to see if it has any links
         try:
             site_links = Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=slug_id).order_by('-priority')
-            
+
             # Filter out categories which have no links in them!
             if len(site_links) == 0:
                 return " " # Prevents 'None' from being displayed
-            
+
             # We got the goods, let's go with it!
             T = loader.get_template('webview/t/link_category_header.html')
             C = Context({ 'LC' : slug_id })
             header = T.render(C)
-            
+
             T = loader.get_template('webview/links_text_all.html')
             C = Context({ 'text_links' : site_links })
             return header + T.render(C)
@@ -543,20 +543,20 @@ class GetTextLinkEntries(template.Node):
         except:
             # No matching slug was found!
             return None
-        
+
         # We have a slug; Now to see if it has any links
         try:
             site_links = Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=slug_id).order_by('-priority')
-            
+
             # Filter out categories which have no links in them!
             if len(site_links) == 0:
                 return " " # Prevents 'None' from being displayed
-            
+
             # We got the goods, let's go with it!
             T = loader.get_template('webview/t/link_category_header.html')
             C = Context({ 'LC' : slug_id })
             header = T.render(C)
-            
+
             T = loader.get_template('webview/links_text_all.html')
             C = Context({ 'text_links' : site_links })
             return header + T.render(C)
@@ -579,14 +579,14 @@ class CountTextLinkEntries(template.Node):
         except:
             # No matching slug was found!
             return 0
-    
+
         # We have a slug; Now to see if it has any links
         try:
             site_links = Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=slug_id).order_by('-priority')
         except:
             # No links, or something borked!
             return 0
-        
+
         # We got the goods, let's go with it!
             return len(site_links)
 
@@ -628,7 +628,7 @@ def get_unread_count(user):
 class GetInboxNode(template.Node):
     def __init__(self, user):
         self.user = user
-    
+
     def render(self, context):
         try:
             user = template.resolve_variable(self.user, context)
@@ -684,16 +684,16 @@ class IsFavoriteNode(template.Node):
         except:
             pass
         return ''
-    
+
 def get_song_queue_tag_j(origsong):
     #origsong = Song.objects.get(id = song.remix_of_id)
-    artists = origsong.artists
+    artists = origsong.get_metadata().artists
     return js.r2s('webview/queue_tag.html', { 'song' : origsong, 'artists' : artists })
 
 def get_song_queue_tag(song_id):
     try:
         song_obj = Song.objects.get(id = song_id)
-        artists = song_obj.artists
+        artists = song_obj.get_metadata().artists
 
         T = loader.get_template('webview/queue_tag.html')
         C = Context({ 'song' : song_obj, 'artists' : artists })
@@ -709,7 +709,7 @@ class GetSongQueueTag(template.Node):
         try:
             song = template.resolve_variable(self.song, context)
             song_obj = Song.objects.get(id = song)
-            artists = song_obj.artists
+            artists = song_obj.get_metadata().artists
 
             T = loader.get_template('webview/queue_tag.html')
             C = Context({ 'song' : song_obj, 'artists' : artists })
@@ -731,7 +731,7 @@ def bb_artist(hit):
         return T.render(C)
     except:
         return "[artist]%s[/artist]" % artistid
-    
+
 def bb_queue(hit):
     """
     Attempt to insert a song with queue information. The Song number is specified in the
@@ -743,17 +743,17 @@ def bb_queue(hit):
     try:
         songid = hit.group(1)
         song = Song.objects.get(id=songid)
-        artists = song.artists
+        artists = song.get_metadata().artists
     except:
         return "[queue]%s[/queue]" % songid
-    
+
     t = loader.get_template('webview/queue_tag.html')
     c = Context({
         'song' : song,
         'artists' : artists,
         'MEDIA_URL' : settings.MEDIA_URL,
         })
-        
+
     result = t.render(c)
     return result
 
@@ -783,10 +783,10 @@ def bb_flag(hit):
     """
     flagcode = hit.group(1)
     flag = flagcode.lower().encode('ascii', 'ignore')
-    
+
     if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
         return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (settings.MEDIA_URL, flag, flag)
-        
+
     # No flag image found, so default to Necta flag
     return "<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (settings.MEDIA_URL)
 
@@ -918,7 +918,7 @@ def bb_thread(hit):
         return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (t.get_absolute_url(), settings.MEDIA_URL, t)
     except:
         return "[thread]%s[/thread]" % (post_id)
-    
+
 def bb_forum(hit):
     """
     Add a forum link by it's slug. Link is made clickable.
@@ -929,20 +929,20 @@ def bb_forum(hit):
         return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (f.get_absolute_url(), settings.MEDIA_URL, f)
     except:
         return "[forum]%s[/forum]" % (forum_slug)
-    
+
 def bb_size(hit):
     """
-    Insert a text entry at a specified pixel size. Quite clever in that it will look for a 
+    Insert a text entry at a specified pixel size. Quite clever in that it will look for a
     Min/Max font height and auto adapt accordingly. Stops the text becoming too small or
     Too large! AAK: Move size settings to settings.py
     """
-    
+
     size = hit.group(1)
     text = hit.group(2)
-    
+
     minimum = getattr(settings, 'BBCODE_MINIMUM', 6)
     maximum = getattr(settings, 'BBCODE_MAXIMUM', 50)
-    
+
     # Size needs to be controlled, and may vary depending on the CSS on the site. We don't want
     # Users requesting a size too small to be visible, or too large and take up the whole screen!
     # This could eventually go into the settings.py file, hehe.
@@ -954,7 +954,7 @@ def bb_size(hit):
 
     # Return the normal text size
     return '<font style="font-size: %dpx">%s</font>' % (int(size), text)
-    
+
 def bb_youtube(hit):
     """
     Simplified YouTube video sharing tab. Embed the ID of the video into the [youtube]
@@ -962,7 +962,7 @@ def bb_youtube(hit):
     """
     video = hit.group(1)
     return '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/%s"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/%s" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>' % (video, video)
- 
+
 def bb_compilation(hit):
     """
     Attempt to find a compilation by it's ID number
@@ -988,7 +988,7 @@ def bb_compilation_name(hit):
         return T.render(Co)
     except:
         return '[album]%s[/album]' % (comp)
-    
+
 def bb_faq(hit):
     """
     Create a clickable FAQ link.
@@ -1015,7 +1015,7 @@ def bb_googlevideo_ol(hit):
     """
     video = hit.group(1)
     return '<a href="http://video.google.com/videoplay?docid=%s" target="_new"><img src="/static/googlevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video)
-    
+
 def bb_youtube_name_ol(hit):
     """
     Simplified YouTube video sharing tab. Embed the ID of the video into the [yt]
@@ -1034,7 +1034,7 @@ def bb_gvideo(hit):
     """
     video = hit.group(1)
     return '<object width="400" height="326"><param name="movie" value="http://video.google.com/googleplayer.swf?docId=%s"></param><param name="wmode" value="transparent"></param><embed src="http://video.google.com/googleplayer.swf?docId=%s" wmode="transparent" style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" flashvars=""></embed></object>' % ( video, video )
-    
+
 @register.filter
 def oneliner_mediaparse(value):
     """
@@ -1133,7 +1133,7 @@ def flag(value):
     flag = value.lower().encode('ascii', 'ignore')
     if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
         return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (settings.MEDIA_URL, flag, flag)
-        
+
     # No flag image found, return the Necta flag hehe
     return "<img src='%sflags/nectaflag.png' class='countryflag' alt='flag' />" % (settings.MEDIA_URL)
 
@@ -1191,7 +1191,7 @@ def dv_urlize(text):
         # Show them as they originally were added.
         link = part1.sub(r'\1<a href="\2" target="_blank">\2</a>', link)
         link = part2.sub(r'\1<a href="http://\2" target="_blank">\2</a>', link)
-    
+
     # Return the results of the conversion
     return link
 
@@ -1200,26 +1200,26 @@ bbdata_oneliner = [
         (r'\[url=(.+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
-        
+
         # img test is a little modified for oneliner. Using a baseheight of 20
         # Pixels, we scale the image proportionally. The outcome of the tag is a
         # Clickable thiumbnail, which opens in a new tab.
-        
+
         # This can be abused too much right now, commenting out
         #(r'\[img\](.+?)\[/img\]', r'<a href="\1" target="_new"><img src="\1" height="20" alt="" \></a>'),
         #(r'\[img=(.+?)\](.+?)\[/img\]', r'<a href="\1" target="_new"><b>\2</b> <img src="\1" alt="" height="20" \></a>'),
-        
+
         # Standard text display tags for bold, underline etc.
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
         (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),
         (r'\[u\](.+?)\[/u\]', r'<u>\1</u>'),
         (r'\[s\](.+?)\[/s\]', r'<s>\1</s>'),
-        
+
         # Big and Small might be taken out of oneliner, we'll see how they are used.
         (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
         (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
-        
-        # Standard colour tags for use in the oneliner. Most basic colours are pre-made 
+
+        # Standard colour tags for use in the oneliner. Most basic colours are pre-made
         # For ease of use. Feel free to add new colours.
         (r'\[red\](.+?)\[/red\]', r'<font color="red">\1</font>'),
         (r'\[green\](.+?)\[/green\]', r'<font color="green">\1</font>'),
@@ -1236,7 +1236,7 @@ bbdata_oneliner = [
         (r'\[white\](.+?)\[/white\]', r'<font color="white">\1</font>'),
         (r'\[yellow\](.+?)\[/yellow\]', r'<font color="yellow">\1</font>'),
         (r'\[black\](.+?)\[/black\]', r'<font color="black">\1</font>'),
-        
+
         # For those who want a bit extra pazazz, we can specify a HTML compliant
         # Colour code in the form of #00FF00 to be used. Handy for text effects.
         (r'\[color=#([0-9A-Fa-f]{6})\](.+?)\[/color\]', r'<font color="#\1">\2</font>'),
@@ -1275,7 +1275,7 @@ bbdata_full = [
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
         (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
         (r'\[img=(.+?)\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<a href="\1" target="_new"><b>\2</b><br /><img src="\1" alt="" /></a>'),
-        
+
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
         (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),
         (r'\[u\](.+?)\[/u\]', r'<u>\1</u>'),
@@ -1288,7 +1288,7 @@ bbdata_full = [
         (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
         (r'\[size=(.+?)\](.+?)\[/size\]', bb_size),
         (r'\[pre\](.+?)\[/pre\]', r'<pre class="bbpre">\1</pre>'),
-        
+
         (r'\[red\](.+?)\[/red\]', r'<font color="red">\1</font>'),
         (r'\[green\](.+?)\[/green\]', r'<font color="green">\1</font>'),
         (r'\[blue\](.+?)\[/blue\]', r'<font color="blue">\1</font>'),
@@ -1305,12 +1305,12 @@ bbdata_full = [
         (r'\[white\](.+?)\[/white\]', r'<font color="white">\1</font>'),
         (r'\[yellow\](.+?)\[/yellow\]', r'<font color="yellow">\1</font>'),
         (r'\[color=#(.+?)\](.+?)\[/color\]', r'<font color="#\1">\2</font>'),
-        
+
         (r'\[table\](.+?)\[/table\]', r'<table class="bbtable">\1</table>'),
         (r'\[th\](.+?)\[/th\]', r'<th>\1</th>'),
         (r'\[td\](.+?)\[/td\]', r'<td>\1</td>'),
         (r'\[tr\](.+?)\[/tr\]', r'<tr>\1</tr>'),
-        
+
         # Demovibes specific BB tags
         (r'\[user\](.+?)\[/user\]', bb_user),
         (r'\[song\](\d+?)\[/song\]', bb_song),
@@ -1331,7 +1331,7 @@ bbdata_full = [
         (r'\[platform\](\d+?)\[/platform\]', bb_platform),
         (r'\[platform\](.+?)\[/platform\]', bb_platformname),
     (r'\[faq\](\d+?)\[/faq\]', bb_faq),
-        
+
         # Experimental BBCode tags
         (r'\[youtube\](.+?)\[/youtube\]', bb_youtube),
         (r'\[gvideo\](.+?)\[/gvideo\]', bb_gvideo),

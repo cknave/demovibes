@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+{% with object.get_metadata as meta %}
 <song id="{{ object.id }}">
  <title>{{ object.title }}</title>
  <status v="{{ object.status }}">{{ object.get_status_display }}</status>
@@ -6,17 +7,18 @@
  <bitrate>{{ object.bitrate }}</bitrate>
  <samplerate>{{ object.samplerate }}</samplerate>
  <rating votes="{{ object.rating_votes }}">{{ object.rating }}</rating>
- <info>{{ object.info }}</info>
+ <info>{{ meta.info }}</info>
  <songlength>{{ object.song_length }}</songlength>
  <locked>{{ object.is_locked }}</locked>
  <locked_until>{{ object.locked_until }}</locked_until>
- {% if object.platform %}<platform id="{{ object.platform.id }}">{{ object.platform }}</platform>{% endif %}
- {% if object.type %}<type id="{{ object.type.id }}">{{ object.type }}</type>{% endif %}
+ {% if meta.platform %}<platform id="{{ meta.platform.id }}">{{ meta.platform }}</platform>{% endif %}
+ {% if meta.type %}<type id="{{ meta.type.id }}">{{ meta.type }}</type>{% endif %}
  {% if object.pouetid %}<pouetid>{{ object.pouetid }}</pouetid>{% endif %}
  <artists>
-  {% for artist in object.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
+  {% for artist in meta.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
  </artists>
  <groups>
-  {% for group in object.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
+  {% for group in meta.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
  </groups>
 </song>
+{% endwith %}

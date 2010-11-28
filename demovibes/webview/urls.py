@@ -1,11 +1,11 @@
 from django.conf.urls.defaults import *
 from demovibes.webview.models import *
 from django.conf import settings
-import djangojinja2        
-        
+import djangojinja2
+
 song_dict = {
     'queryset': Song.objects.select_related(depth=1).all(),
-    'extra_context': {  'a_test' : "True", 'vote_range': [1, 2, 3, 4, 5]}, 
+    'extra_context': {  'a_test' : "True", 'vote_range': [1, 2, 3, 4, 5]},
     'template_loader': djangojinja2._jinja_env,
 }
 
@@ -103,7 +103,7 @@ urlpatterns = patterns('',
     url(r'^inbox/$',                               'demovibes.webview.views.inbox', name = "dv-inbox"),
     url(r'^inbox/(?P<pm_id>\d+)/$',                'demovibes.webview.views.read_pm', name = "dv-read_pm"),
     url(r'^inbox/send/$',                          'demovibes.webview.views.send_pm', name = "dv-send_pm"),
-    
+
     url(r'^play/$',                                'django.views.generic.simple.direct_to_template', \
                 { 'template':'webview/radioplay.html'}, name = "dv-play_stream"),
     url(r'^$',                                     'django.views.generic.list_detail.object_list',     news_dict, name = "dv-root"),
@@ -115,19 +115,25 @@ urlpatterns = patterns('',
     url(r'^recent/$',                              'demovibes.webview.views.show_approvals', name = "dv-recent"),
     url(r'^platform/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', platforms, name = "dv-platform"),
     url(r'^platforms/$',                           'django.views.generic.list_detail.object_list', platforms, name = "dv-platforms"),
-    
+
     url(r'^sources/$',                           'django.views.generic.list_detail.object_list', sources, name = "dv-sources"),
     url(r'^source/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', sources, name = "dv-source"),
-    
+
     #Song views
+    url(r'^newshit/$',                          'demovibes.webview.views.new_songinfo_list', name="dv-new-info"),
     url(r'^songs/$',                               'django.views.generic.list_detail.object_list', \
                 dict(song_dict, extra_context = { 'al' : alphalist }), name = "dv-songs"),
     url(r'^songs/(?P<letter>.)/$',                 'demovibes.webview.views.list_songs', name = "dv-songs_letter"),
     url(r'^song/(?P<song_id>\d+)/$',             'demovibes.webview.views.list_song',   name = "dv-song"),
+    url(r'^song/(?P<song_id>\d+)/addlink/$',             'demovibes.webview.views.add_songlinks',   name = "dv-song-addlink"),
+    url(r'^song/(?P<song_id>\d+)/edit/$',             'demovibes.webview.views.edit_songinfo',   name = "dv-song-edit"),
+    url(r'^song/(?P<song_id>\d+)/infolist/$',             'demovibes.webview.views.list_songinfo_for_song',   name = "dv-song-infolist"),
     url(r'^song/(?P<song_id>\d+)/comments/$',      'demovibes.webview.views.list_song_comments', name = "dv-song_comment"),
     url(r'^song/(?P<song_id>\d+)/votes/$',         'demovibes.webview.views.list_song_votes', name = "dv-song_votes"),
     url(r'^song/(?P<song_id>\d+)/queue_history/$', 'demovibes.webview.views.list_song_history', name = "dv-song_history"),
-    
+
+    url(r'^metainfo/(?P<songinfo_id>\d+)/$',             'demovibes.webview.views.view_songinfo',   name = "dv-songinfo-view"),
+
     url(r'^groups/$',                             'django.views.generic.list_detail.object_list', \
                 dict(group_dict, extra_context = { 'al' : alphalist }), name = "dv-groups"),
     url(r'^groups/(?P<letter>.)/$',               'demovibes.webview.views.list_groups', name = "dv-groups_letter"),
@@ -168,7 +174,7 @@ urlpatterns = patterns('',
     url(r'^favorites/$',                           'demovibes.webview.views.list_favorites', name = "dv-favorites"),
     url(r'^favorites/del/(?P<id>\d+)/$',           'demovibes.webview.views.del_favorite', name = "dv-del_fav"),
     url(r'^uploaded_songs/$',                      'demovibes.webview.views.activate_upload', name = "dv-uploads"),
-    url(r'^upload_progress/$',                      'demovibes.webview.views.upload_progress', name = "dv-upload-progress"),    
+    url(r'^upload_progress/$',                      'demovibes.webview.views.upload_progress', name = "dv-upload-progress"),
     url(r'^oneliner/submit/$',                     'demovibes.webview.views.oneliner_submit', name = "dv-oneliner_submit"),
     (r'^ajax/',                                    include('demovibes.webview.ajax_urls')),
     (r'^xml/',                                     include('demovibes.webview.xml_urls')),
@@ -181,7 +187,7 @@ urlpatterns = patterns('',
     url(r'^new_artists/$',                      'demovibes.webview.views.activate_artists', name = "dv-newartists"),
     url(r'^group/create/$',                     'demovibes.webview.views.create_group', name = "dv-creategroup"),
     url(r'^new_groups/$',                       'demovibes.webview.views.activate_groups', name = "dv-newgroups"),
-    
+
     # Production label URL's (Labels/Producers Specific)
     url(r'^labels/$',                             'django.views.generic.list_detail.object_list', \
                 dict(labels_all_dict, extra_context = { 'al' : alphalist }), name = "dv-labels"),
@@ -189,17 +195,17 @@ urlpatterns = patterns('',
     url(r'^labels/(?P<letter>.)/$',               'demovibes.webview.views.list_labels', name = "dv-labels_letter"),
     url(r'^label/create/$',                    'demovibes.webview.views.create_label', name = "dv-createlabel"),
     url(r'^new_labels/$',                      'demovibes.webview.views.activate_labels', name = "dv-newlabels"),
-    
+
     # Link Management
     url(r'^links/(?P<slug>[-\w]+)/$',          'demovibes.webview.views.link_category', name = "dv-linkcategory"),
     url(r'^link/create/$',                    'demovibes.webview.views.link_create', name = "dv-createlink"),
     url(r'^link/pending/$',                   'demovibes.webview.views.activate_links', name = "dv-newlinks"),
     url(r'^links/$',                           'demovibes.webview.views.site_links', name = "dv-links"), # View existing Links
-    
+
     # FAQ System
     url(r'^faq/$',                                'django.views.generic.list_detail.object_list', faq_dict, name = "dv-faq"), # Generic FAQ System (All active Questions)
     url(r'^faq/(?P<object_id>\d+)/$',           'django.views.generic.list_detail.object_detail', faq_dict, name = "dv-faqitem"),
-    
+
     # Statistics & Cache stuff
     url(r'^status/cache/$',                    'demovibes.webview.views.memcached_status', name = "dv-memcached"), # Show memcached status
 

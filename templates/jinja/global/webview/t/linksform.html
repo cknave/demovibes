@@ -3,7 +3,7 @@
     <table>
     {% for ll in links %}
       <tr>
-         <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" /> {% endif %}{{ ll.link.name }} link</label></th> 
+         <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" /> {% endif %}{{ ll.link.name }} link</label></th>
          <td>
             <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
             {% if ll.error %}
@@ -22,6 +22,7 @@
         <td class="linkdesc">
             {{ ll.link.description }}
         </td>
+        <td><label for="id_LL_{{ ll.link.id }}_comment">Optional comment</label><input name="LL_{{ ll.link.id }}_comment" id="id_LL_{{ ll.link.id }}_comment"></td>
       </tr>
     {% endfor %}
     </table>

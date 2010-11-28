@@ -2,9 +2,11 @@
 
 {% import "macro/display.html" as display %}
 
-{% block title %}{{ object.artist()|e }} - {{ object.title|e }}{% endblock %} 
- 
+{% block title %}{{ object.artist()|e }} - {{ object.title|e }}{% endblock %}
+
 {% block main %}
+
+{% set meta = object.get_metadata() %}
 
 <h2>
  <img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Song Information
@@ -38,17 +40,17 @@
 {{ display.song(object) }}
 
 <p>
-Author: 
-{% for artist in object.artists.all() %}
- {{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} 
+Author:
+{% for artist in meta.artists.all() %}
+ {{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}
 {% endfor %}
-{% for group in object.groups.all() %}
+{% for group in meta.groups.all() %}
  {{ display.group(group) }}
 {% endfor %}
 </p>
 
-{% if object.labels.count() != 0 %}
- Production Label: {% for label in object.labels.all() %}{{ display.label(label) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
+{% if meta.labels.count() != 0 %}
+ Production Label: {% for label in meta.labels.all() %}{{ display.label(label) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
 {% endif %}
 
 {% if object.uploader %}
@@ -56,7 +58,7 @@ Uploaded By: {{ display.user(object.uploader) }}
 {% endif %}
 
 <p>
- Last Queued : 
+ Last Queued :
  {% if object.last_queued() != "Never" %}
   {{ object.last_queued()|timesince }} ago
  {% else %}
@@ -69,15 +71,15 @@ Extra Resources: {{ display.songicons(object) }} {{ display.links(object) }}
 
 <p>
 Song Length: {{ object.length() }}<br />
-{% if object.release_year %}Release Year: {{ object.release_year }}<br />{% endif %}
+{% if meta.release_year %}Release Year: {{ meta.release_year }}<br />{% endif %}
 Song Status: {{ object.get_status_display() }}
 {% if object.bitrate %}<br />Song Bitrate: {{ object.bitrate }} kbps{% endif %}
-{% if object.type %}<br />Song Source: {{ object.type|e }}{% endif %}
-{% if object.platform %}<br />Song Platform: {% set P = object.platform %}{% include "webview/t/platformname.html" %}{% endif %}
+{% if meta.type %}<br />Song Source: {{ meta.type|e }}{% endif %}
+{% if meta.platform %}<br />Song Platform: {{ display.platform(meta.platform) }}{% endif %}
 </p>
 
-{% if object.info %}
-<br />Additional Information:<br /><i>{{ object.info|urlize|bbcode|linebreaks }}</i>
+{% if meta.info %}
+<br />Additional Information:<br /><i>{{ meta.info|urlize|bbcode|linebreaks }}</i>
 {% endif %}
 
 
@@ -85,7 +87,13 @@ Song Status: {{ object.get_status_display() }}
 {% if user.is_authenticated() %}
   <p>
  {% if object.is_locked() %}
-  <img class="song_head" src="/static/lock.png" title="Song Locked" /> <i>Song is currently locked for queuing.{% if object.locked_until and object.is_active() %}It will be available for request again {{ object.locked_until }}{% endif %}</i>
+  <img class="song_head" src="/static/lock.png" title="Song Locked" />
+  <i>
+   Song is currently locked for queuing.
+   {% if object.locked_until and object.is_active() %}
+    It will be available for request again {{ object.locked_until }}
+   {% endif %}
+  </i>
  {% else %}
   <img class="song_head" src="{{ MEDIA_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url() }}queue/">Add To Queue</a>
  {% endif %}<br />
@@ -101,15 +109,13 @@ Song Status: {{ object.get_status_display() }}
 This song has been played {{ object.times_played }} times. [<a href="{{object.get_absolute_url()}}queue_history">See Request History</a>]<br />
 It was added {{ object.added|timesince }} ago.
 </p>
- {% if object.pouetid %}
-{% cache 86400 mkstr(object.id, object.pouetid) %} 
+
+{% if object.pouetid %}
+{% cache 86400 mkstr(object.id, object.pouetid) %}
   {{ object.get_pouet_screenshot() }}
   {{ object.get_pouet_download() }}
 {% endcache %}
- {% endif %}
-
-
-
+{% endif %}
 
 {% if object.songdownload_set.all()  %}
  <h2>Download Links</h2>
@@ -119,6 +125,12 @@ It was added {{ object.added|timesince }} ago.
  {% endfor %}
  </ul>
 {% endif %}
+
+<p><a href="{{ url ("dv-song-edit", object.id) }}">[Edit information]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[Add links]</a>
+{% if user.is_staff %}
+ - <a href="{{ url ("dv-song-infolist", object.id) }}">[View info versions]</a>
+{% endif %}
+</p>
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}star.png" alt="" />Song Rating</h2>
 {% if object.rating_votes %}
@@ -134,23 +146,25 @@ It was added {{ object.added|timesince }} ago.
  {% for v in vote_range %}
    <input type="radio" name="Rating" value="{{ v }}" {% if vote_value == v %}checked{% endif %} />{{ v }}
  {% endfor %}
-  <input type="submit" /> 
-  </form> 
+  <input type="submit" />
+  </form>
 {% endif %}
 
 A total of {{ object.num_favorited }} users have this song on their favourites list.<br />
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Compilation / Remix Information</h2>
-{% if object.remix_of_id %}This song is a remix of: {{ dv.get_song_queue_tag(object.remix_of_id) }}<br />{% endif %}
-{% if comps.count() != 0 %}
+
+{% if meta.remix_of_id %}This song is a remix of: {{ dv.get_song_queue_tag(meta.remix_of_id) }}<br />{% endif %}
+
+{% if comps %}
  <p><strong>This Song Is Listed In The Following Compilations:</strong><br /><br />
  {% for comp in comps.all() %}{{ display.compilation(comp) }}<br />{% endfor %}
  </p>
 {% endif %}
 
-{% if remix.count() != 0 %}
+{% if remix %}
 <br /><strong>Remixes Based On This Song:</strong><br /><br />
-{% for mix in remix.all() %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
+{% for mix in remix %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
 

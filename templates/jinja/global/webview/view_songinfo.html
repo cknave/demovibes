@@ -1,0 +1,69 @@
+{% extends "base/base.html" %}
+
+{% import "macro/display.html" as display %}
+
+{% block title %}{{ meta.song|e }} - Meta info{% endblock %}
+
+{% block main %}
+<h2>Status</h2>
+<table>
+    <tr>
+        <th>Song</th>
+        <td>{{ display.song(meta.song) }}</td>
+    </tr>
+    <tr>
+        <th>Active</th>
+        <td>{{ meta.active }}</td>
+    </tr>
+    <tr>
+        <th>Checked</th>
+        <td>{{ meta.checked }}</td>
+    </tr>
+</table>
+
+<h2>Information</h2>
+<table>
+    <tr>
+        <th>Artists</th>
+        <td>{{ display.artists(meta.song) }}</td>
+    </tr>
+    <tr>
+        <th>Groups</th>
+        <td>{% for g in meta.groups.all() %}{{ display.group(g) }} {% endfor %}</td>
+    </tr>
+    <tr>
+        <th>Labels</th>
+        <td>{% for l in meta.labels.all() %}{{ display.label(l) }} {% endfor %}</td>
+    </tr>
+    <tr>
+        <th>Info</th>
+        <td>{{ meta.info }}</td>
+    </tr>
+    <tr>
+        <th>Platform</th>
+        <td>{{ display.platform(meta.platform) }}</td>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>{{ display.platform(meta.type) }}</td>
+    </tr>
+    <tr>
+        <th>Release year</th>
+        <td>{{ meta.release_year }}</td>
+    </tr>
+    <tr>
+        <th>Remix of</th>
+        <td>{{ display.song(meta.get_remix()) }}</td>
+    </tr>
+</table>
+<h2>Action</h2>
+{% if meta.comment %}Note from user:
+ {{ meta.info|linebreaks }}
+{% endif %}
+
+<form method="post" action=".">
+ {% if not meta.checked %}<input type="submit" name="deactivate" value="Mark as checked" />{% endif %}
+ {% if not meta.active %}<input type="submit" name="activate" value="Activate" />{% endif %}
+</form>
+
+{% endblock %}

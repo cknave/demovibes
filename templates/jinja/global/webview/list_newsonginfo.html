@@ -1,0 +1,40 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display %}
+{% block title %}New songinfo{% endblock %}
+
+{% block main %}
+<h2>Song info</h2>
+<table>
+<tr>
+    <th>Song</th>
+    <th>User</th>
+    <th>Added</th>
+</tr>
+{% for info in metainfo %}
+    <tr>
+        <td>{{ display.song(info.song) }}</td>
+        <td>{{ display.user(info.user) }}</td>
+        <td>{{ info.added|timesince }} ago</td>
+        <td><a href="{{ url("dv-songinfo-view", info.id) }}">View</a></td>
+    </tr>
+{% endfor %}
+</table>
+
+<h2>Linkies</h2>
+<table>
+<tr>
+    <th>Song</th>
+    <th>Link</th>
+    <th>User</th>
+</tr>
+{% for info in linkinfo %}
+    <tr>
+        <td>{{ display.song(info.content_object) }}</td>
+        <td><a href="{{ info.get_link() }}" target="nju">{{ info.get_link() }}</a></td>
+        <td>{{ display.user(info.user) }}</td>
+        <td><a href=".?alink={{ info.id }}&status=0">Accept</a></td>
+        <td><a href=".?alink={{ info.id }}&status=2">Reject</a></td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,19 +1,28 @@
 {{ object.title }}
 {{ object.title }}
 {% for artist in object.artists.all %}
-{{ artist.handle }}
-{{ artist.name }}
+ {{ artist.handle }}
+ {{ artist.name }}
 {% endfor %}
+
 {% for group in object.groups.all %}
-{{ group.name }}
+ {{ group.name }}
 {% endfor %}
+
 {% for label in labels %}
 {% endfor %}
+
 {% for tag in object.tags %}
-{{ tag.name }}
+ {{ tag.name }}
 {% endfor %}
+
 {{ object.platform.title }}
 {{ object.release_year }}
 {{ object.type.title }}
 {{ object.uploader.username }}
 {{ object.info }}
+{{ object.pouetid }}
+
+{% for link in object.links.all %}
+ {{ link.value }} 
+{% endfor %}

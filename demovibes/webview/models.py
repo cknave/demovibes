@@ -37,7 +37,7 @@ if uwsgi_event_server:
 def add_event(event, user = None):
     """
     Add event to the event handler(s)
-    
+
     Keywords:
     event -- string that will be sent to clients
     user -- optional -- User to receive the event
@@ -92,8 +92,18 @@ class Group(models.Model):
 
     links = generic.GenericRelation("GenericLink")
 
+    def get_active_links(self):
+        """
+        Return all active generic links
+        """
+        return self.links.filter(status=0)
+
     def __unicode__(self):
         return self.name
+
+    def get_songs(self):
+        meta = Song.objects.filter(songmetadata__active=True, songmetadata__groups = self)
+        return meta
 
     class Meta:
         ordering = ['name']
@@ -125,20 +135,29 @@ class GenericBaseLink(models.Model):
         ("L", "Labels")
     )
     linktype = models.CharField(max_length=1, choices=LINKTYPE)
-    
+
     def __unicode__(self):
         return u"%s link for %s" % (self.name, self.get_linktype_display())
-    
+
+LINKSTATUS = (
+    (0,"Active"),
+    (1,"Uploaded"),
+    (2,"Disabled"),
+)
+
 class GenericLink(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField(db_index=True)
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     link = models.ForeignKey(GenericBaseLink)
     value = models.CharField(max_length = 80)
-    
+    status = models.PositiveIntegerField(choices=LINKSTATUS, default=0)
+    comment = models.TextField(blank=True)
+    user = models.ForeignKey(User, blank=True, null=True)
+
     def __unicode__(self):
         return u"%s for %s" % (self.link, self.content_object)
-    
+
     def get_link(self):
         """
         Return complete link
@@ -209,6 +228,12 @@ class Userprofile(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
+    def get_active_links(self):
+        """
+        Return all active generic links
+        """
+        return self.links.filter(status=0)
+
     def save(self, *args, **kwargs):
         self.last_changed = datetime.datetime.now()
         return super(Userprofile, self).save(*args, **kwargs)
@@ -216,7 +241,7 @@ class Userprofile(models.Model):
     def have_artist(self):
         """
         Check if user have artist connected to it
-        
+
         Return artist or False
         """
         try:
@@ -230,8 +255,8 @@ class Userprofile(models.Model):
     def get_token(self):
         """
         Return unique token for user.
-        
-        Can be used for various identification purposes, 
+
+        Can be used for various identification purposes,
         and generate unique urls for users (like queue)
         """
         if not self.token:
@@ -321,8 +346,18 @@ class Label(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
+    def get_active_links(self):
+        """
+        Return all active generic links
+        """
+        return self.links.filter(status=0)
+
     def __unicode__(self):
         return self.name
+
+    def get_songs(self):
+        meta = Song.objects.filter(songmetadata__active=True, songmetadata__labels = self)
+        return meta
 
     class Meta:
         ordering = ['name']
@@ -374,8 +409,18 @@ class Artist(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
+    def get_active_links(self):
+        """
+        Return all active generic links
+        """
+        return self.links.filter(status=0)
+
     def __unicode__(self):
         return self.handle
+
+    def get_songs(self):
+        meta = Song.objects.filter(songmetadata__active=True, songmetadata__artists = self)
+        return meta
 
     class Meta:
         ordering = ['handle']
@@ -423,6 +468,10 @@ class SongType(models.Model):
         ordering = ['title']
         verbose_name = 'Song Source'
 
+    def get_songs(self):
+        meta = Song.objects.filter(songmetadata__active=True, songmetadata__type = self)
+        return meta
+
     @models.permalink
     def get_absolute_url(self):
         return ("dv-source", [str(self.id)])
@@ -439,6 +488,10 @@ class SongPlatform(models.Model):
     class Meta:
         ordering = ['title']
 
+    def get_songs(self):
+        meta = Song.objects.filter(songmetadata__active=True, songmetadata__platform = self)
+        return meta
+
     @models.permalink
     def get_absolute_url(self):
         return ("dv-platform", [str(self.id)])
@@ -448,11 +501,49 @@ class Logo(models.Model):
     active = models.BooleanField(default=True, db_index=True)
     creator = models.CharField(max_length=60)
     description = models.TextField(blank = True)
+
     def __unicode__(self):
         return self.description or self.creator
 
     def get_absolute_url(self):
         return self.file.url
+
+class SongMetaData(models.Model):
+    user = models.ForeignKey(User, blank = True, null = True)
+    added = models.DateTimeField(auto_now_add=True)
+    song = models.ForeignKey("Song", db_index=True)
+    active = models.BooleanField(default=False, db_index=True)
+    checked = models.BooleanField(default=False)
+
+    artists = models.ManyToManyField(Artist, null = True, blank = True, help_text="Select all artists involved with creating this song. ")
+    groups = models.ManyToManyField(Group, null = True, blank = True)
+    info = models.TextField(blank = True, help_text="Additional Song information. BBCode tags are supported. No HTML.")
+    labels = models.ManyToManyField(Label, null = True, blank = True) # Production labels
+    platform = models.ForeignKey(SongPlatform, null = True, blank = True)
+    release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True)
+    type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source')
+    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
+
+    comment = models.TextField(blank=True, help_text="Extra information. Only visible to moderators")
+
+    class Meta:
+        ordering = ["-active", "-id"]
+
+    def get_remix(self):
+        if self.remix_of_id:
+            m = Song.objects.filter(id=self.remix_of_id)
+            if m:
+                return m[0]
+        return None
+
+    def __unicode__(self):
+        return self.song.title
+
+    def set_active(self):
+        SongMetaData.objects.filter(song=self.song).update(active=False)
+        self.active = True
+        self.checked = True
+        self.save()
 
 class Song(models.Model):
     STATUS_CHOICES = (
@@ -472,39 +563,39 @@ class Song(models.Model):
         )
     added = models.DateTimeField(auto_now_add=True)
     al_id = models.IntegerField(blank=True, null = True, verbose_name="Atari Legends ID", help_text="Atari Legends ID Number (Atari) - See http://www.atarilegend.com")
-    artists = models.ManyToManyField(Artist, null = True, blank = True, help_text="Select all artists involved with creating this song. ")
+    artists = models.ManyToManyField(Artist, null = True, blank = True, help_text="Select all artists involved with creating this song. ") #a
     bitrate = models.IntegerField(blank = True, null = True)
     cvgm_id = models.IntegerField(blank = True, null = True, verbose_name = "CVGM SongID", help_text="SongID on CVGM (Link will be provided)")
     dtv_id = models.IntegerField(blank=True, null = True, help_text="Demoscene TV number (id_prod= number) from Demoscene.tv", verbose_name="Demoscene.TV")
     explicit = models.BooleanField(default=False, verbose_name = "Explicit Lyrics?", help_text="Place a checkmark in the box to flag this song as having explicit lyrics/content")
     file = models.FileField(upload_to='media/music', verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
-    groups = models.ManyToManyField(Group, null = True, blank = True)
+    groups = models.ManyToManyField(Group, null = True, blank = True) #a
     hol_id = models.IntegerField(blank=True, null = True, verbose_name="H.O.L. ID", help_text="Hall of Light ID number (Amiga) - See http://hol.abime.net")
     hvsc_url = models.URLField(blank=True, verbose_name="HVSC Link", help_text="Link to HVSC SID file as a complete URL (C64) - See HVSC or alt. mirror (such as www.andykellett.com/music )")
-    info = models.TextField(blank = True, help_text="Additional Song information. BBCode tags are supported. No HTML.")
-    labels = models.ManyToManyField(Label, null = True, blank = True) # Production labels
+    info = models.TextField(blank = True, help_text="Additional Song information. BBCode tags are supported. No HTML.") #a
+    labels = models.ManyToManyField(Label, null = True, blank = True) #a Production labels
     last_changed = models.DateTimeField(auto_now = True)
     lemon_id = models.IntegerField(blank=True, null = True, verbose_name="Lemon64 ID", help_text="Lemon64 Game ID (C64 Only) - See http://www.lemon64.com")
     locked_until = models.DateTimeField(blank = True, null = True)
     loopfade_time = models.PositiveIntegerField(default = 0, verbose_name = "Loop fade time", help_text = "In seconds, 0 = disabled")
     necta_id = models.IntegerField(blank = True, null = True, verbose_name = "Necta SongID", help_text="SongID on Nectarine (Link will be provided)")
     num_favorited = models.IntegerField(default = 0)
-    platform = models.ForeignKey(SongPlatform, null = True, blank = True)
-    pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID")
+    platform = models.ForeignKey(SongPlatform, null = True, blank = True) #a
+    pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID") #a
     projecttwosix_id = models.IntegerField(blank=True, null = True, verbose_name="Project2612 ID", help_text="Project2612 ID Number (Genesis / Megadrive) - See http://www.project2612.org")
     rating = models.FloatField(blank = True, null = True)
     rating_total = models.IntegerField(default = 0)
     rating_votes = models.IntegerField(default = 0)
     replay_gain = models.FloatField(default = 0, verbose_name = _("Replay gain"))
-    release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True)
-    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
+    release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True) #a
+    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True) #a
     samplerate = models.IntegerField(blank = True, null = True)
     song_length = models.IntegerField(blank = True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
     times_played = models.IntegerField(null = True, default = 0)
     title = models.CharField(verbose_name="* Song Name", help_text="The name of this song, as it should appear in the database", max_length=80, db_index = True)
-    type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source')
+    type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source') #a
     uploader = models.ForeignKey(User,  null = True, blank = True)
     wos_id = models.CharField(max_length=8, blank=True, null = True, verbose_name="W.O.S. ID", help_text="World of Spectrum ID Number (Spectrum) such as 0003478 (leading 0's are IMPORTANT!) - See http://www.worldofspectrum.org")
     pouetlink = models.CharField(max_length=100, blank = True)
@@ -522,15 +613,30 @@ class Song(models.Model):
 
     def has_video(self):
         return self.ytvidid
-    
+
+    def get_download_links(self):
+        """
+        Return all active download links
+        """
+        return self.songdownload_set.filter(status=0)
+
+    def get_active_links(self):
+        """
+        Return all active generic links
+        """
+        return self.links.filter(status=0)
+
     def is_active(self):
         """
         Check if song is considered active.
         """
         return self.status == "A" or self.status == "N"
-    
+
     class Meta:
         ordering = ['title']
+
+    def get_metadata(self):
+        return self.songmetadata_set.all()[0]
 
     @models.permalink
     def get_absolute_url(self):
@@ -550,7 +656,7 @@ class Song(models.Model):
         if (not self.song_length) or self.song_length == 0 \
             or (not self.replay_gain) or self.replay_gain == 0:
             self.set_song_data()
-        
+
     def set_song_data(self):
         if dscan.is_configured():
             return self.set_song_data_demosauce()
@@ -560,20 +666,20 @@ class Song(models.Model):
     def set_song_data_demosauce(self):
         df = dscan.ScanFile(self.file.path)
         if not df.readable:
-            return False      
+            return False
         threshold = getattr(settings, 'LOOPINESS_THRESHOLD', False)
         looplength = getattr(settings, 'LOOP_LENGTH', False)
-        
+
         self.song_length = df.length
         self.replay_gain = df.replaygain()
         self.samplerate = df.samplerate
-        self.bitrate = df.bitrate  
+        self.bitrate = df.bitrate
         if not looplength:
             looplength = 120
         if threshold and threshold > 0 and df.loopiness > threshold:
             self.loopfade_time = max(looplength, self.song_length)
         return True
-			        
+
     def set_song_data_pymad(self):
         try:
             import mad
@@ -593,25 +699,26 @@ class Song(models.Model):
     def grab_pouet_info(self, tag, subtag = True):
         """
         Query Pouet XML for information defined by tag.
-        
+
         Takes two arguments
           tag -- string - Name of tag to find
           subtag -- boolean - Return value of the subtag under tag instead of value of tag - default True
         """
-        if not self.pouetid:
+        pouetid = self.pouetid
+        if not pouetid:
             return False
         try:
             key = "pouetxml%s" % self.id
             xmldata = cache.get(key)
             if not xmldata:
-                pouetlink = "http://www.pouet.net/export/prod.xnfo.php?which=%d" % (self.pouetid)
+                pouetlink = "http://www.pouet.net/export/prod.xnfo.php?which=%d" % (pouetid)
                 usock = urllib.urlopen(pouetlink)
                 xmldata = usock.read()
                 usock.close()
                 cache.set(key, xmldata, 30)
-            
+
             xmldoc = xml.dom.minidom.parseString(xmldata)
-            
+
             node = xmldoc.getElementsByTagName(tag)[0]
             if subtag:
                 node = node.childNodes[1]
@@ -625,7 +732,8 @@ class Song(models.Model):
         Simple XML retrival system for recovering data from pouet.net xml files. Eventually,
         I'll add code to recover more elements from pouet. AAK.
         """
-        if self.pouetid:
+        pouetid = self.pouetid
+        if pouetid:
             try:
                 if not self.pouetss:
                     imglink = self.grab_pouet_info("screenshot")
@@ -644,7 +752,8 @@ class Song(models.Model):
         """
         Recover first download link from Pouet XML. AAK.
         """
-        if self.pouetid:
+        pouetid = self.pouetid
+        if pouetid:
             try:
                 if not self.pouetlink:
                     link = self.grab_pouet_info("download")
@@ -658,15 +767,15 @@ class Song(models.Model):
 
             except:
                 pass
-                
-    def save(self, *args, **kwargs):           
+
+    def save(self, *args, **kwargs):
         if not os.path.isfile(self.file.path):
             self.song_length = None
             self.bitrate = None
             self.samplerate = None
             self.replay_gain = 0
             self.loopfade_time = 0
-        
+
         self.calc_votes()
         S = self.title[0].lower()
         if not S in alphalist:
@@ -674,14 +783,16 @@ class Song(models.Model):
         self.startswith = S
         return super(Song, self).save(*args, **kwargs)
 
+
     def artist(self):
         """
         Return the artists connected to the song as a string
 
         Return format: Artist1, Artist2, Artist3
         """
-        artists = self.artists.all()
-        groups = self.groups.all()
+        data = self.get_metadata()
+        artists = data.artists.all()
+        groups = data.groups.all()
         A = []
         for x in artists:
             A.append(x.handle)
@@ -736,7 +847,7 @@ class Song(models.Model):
     def calc_votes(self):
         """
         Calculate vote values of song
-        
+
         Stores data to the object, but does NOT save. That's your job
         """
         votes = SongVote.objects.filter(song=self)
@@ -750,7 +861,7 @@ class Song(models.Model):
             self.rating = None
             self.rating_total = 0
             self.rating_votes = 0
-            
+
 
     def set_vote(self, vote, user):
         """
@@ -758,7 +869,7 @@ class Song(models.Model):
         """
         if vote < 1:
             return False
- 
+
         obj, created = SongVote.objects.get_or_create(song = self, user=user, defaults = {'vote': vote})
         if not created:
             obj.vote = vote
@@ -779,7 +890,7 @@ class Song(models.Model):
     def queue_by(self, user, force = False):
         """
         Add song to queue - OBSOLETE, use common.queue_song
-        
+
         Two arguments:
             user - User that request the song. Required
             force - Boolean - Skip check if user can queue (default False)
@@ -922,6 +1033,8 @@ class SongDownload(models.Model):
     title = models.CharField(max_length=64)
     download_url = models.CharField(unique = True, max_length=200)
     added = models.DateTimeField(auto_now_add=True)
+    status = models.PositiveIntegerField(choices=LINKSTATUS, default=0)
+
     class Meta:
         ordering = ['title']
 
@@ -1007,6 +1120,7 @@ class SongComment(models.Model):
     song = models.ForeignKey(Song)
     user = models.ForeignKey(User)
     comment = models.TextField()
+    staff_comment = models.BooleanField(default=False, verbose_name = "Staff only")
     added = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -1264,7 +1378,7 @@ class Screenshot(models.Model):
 def create_profile(sender, **kwargs):
     """
     Create profile entry for new user
-    
+
     Post-save hook for User model
     """
     if kwargs["created"]:
