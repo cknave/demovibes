@@ -54,12 +54,12 @@ class UploadForm(forms.ModelForm):
 
 class SongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform"]
+        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset"]
         model = SongMetaData
 
 class EditSongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "comment"]
+        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "comment"]
         model = SongMetaData
 
 class CreateArtistForm(forms.ModelForm):

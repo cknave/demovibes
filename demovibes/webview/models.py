@@ -523,6 +523,9 @@ class SongMetaData(models.Model):
     release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True)
     type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source')
     remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
+    ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing")
+    ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset")
+    pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID")
 
     comment = models.TextField(blank=True, help_text="Extra information. Only visible to moderators")
 
@@ -544,6 +547,8 @@ class SongMetaData(models.Model):
         self.active = True
         self.checked = True
         self.save()
+        self.song.reset_pouetinfo()
+        self.song.save() #For cache updates
 
 class Song(models.Model):
     STATUS_CHOICES = (
@@ -602,8 +607,8 @@ class Song(models.Model):
     pouetss = models.CharField(max_length=100, blank = True)
     pouetgroup = models.CharField(max_length=100, blank = True)
     pouettitle = models.CharField(max_length=100, blank = True)
-    ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing")
-    ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset")
+    ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing") #a
+    ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset") #a
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
     objects = models.Manager()
@@ -612,7 +617,7 @@ class Song(models.Model):
     links = generic.GenericRelation(GenericLink)
 
     def has_video(self):
-        return self.ytvidid
+        return self.get_metadata().ytvidid
 
     def get_download_links(self):
         """
@@ -696,6 +701,9 @@ class Song(models.Model):
             result = False
         return result
 
+    def get_pouetid(self):
+        return self.get_metadata().pouetid
+
     def grab_pouet_info(self, tag, subtag = True):
         """
         Query Pouet XML for information defined by tag.
@@ -704,7 +712,7 @@ class Song(models.Model):
           tag -- string - Name of tag to find
           subtag -- boolean - Return value of the subtag under tag instead of value of tag - default True
         """
-        pouetid = self.pouetid
+        pouetid = self.get_pouetid()
         if not pouetid:
             return False
         try:
@@ -732,7 +740,7 @@ class Song(models.Model):
         Simple XML retrival system for recovering data from pouet.net xml files. Eventually,
         I'll add code to recover more elements from pouet. AAK.
         """
-        pouetid = self.pouetid
+        pouetid = self.get_pouetid()
         if pouetid:
             try:
                 if not self.pouetss:
@@ -748,11 +756,16 @@ class Song(models.Model):
             except:
                 return "Couldn't pull Pouet info!"
 
+    def reset_pouetinfo(self):
+        self.pouetss = ""
+        self.pouetlink = ""
+
+
     def get_pouet_download(self):
         """
         Recover first download link from Pouet XML. AAK.
         """
-        pouetid = self.pouetid
+        pouetid = self.get_pouetid()
         if pouetid:
             try:
                 if not self.pouetlink:
