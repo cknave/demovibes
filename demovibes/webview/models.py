@@ -767,7 +767,7 @@ class Song(models.Model):
                     self.save()
 
                 t = loader.get_template('webview/t/pouet_screenshot.html')
-                c = Context ( { 'object' : self,
+                c = Context ( { 'object' : self.get_metadata(),
                                'imglink' : self.pouetss } )
                 return t.render(c)
 
