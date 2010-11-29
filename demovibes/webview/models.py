@@ -86,7 +86,7 @@ class Group(models.Model):
     name = models.CharField(max_length=80, unique = True, db_index = True, verbose_name="* Name", help_text="The name of this group as you want it to appear.")
     pouetid = models.IntegerField(verbose_name="Pouet ID", help_text="If this group has a Pouet entry, enter the ID number here - See http://www.pouet.net", blank=True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
-    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
+    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Add the website address for this group, if one exists.")
     wiki_link = models.URLField(blank=True, help_text="URL to wikipedia entry (if available)")
 
@@ -151,7 +151,7 @@ class GenericLink(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     link = models.ForeignKey(GenericBaseLink)
     value = models.CharField(max_length = 80)
-    status = models.PositiveIntegerField(choices=LINKSTATUS, default=0)
+    status = models.PositiveIntegerField(choices=LINKSTATUS, default=0, db_index = True)
     comment = models.TextField(blank=True)
     user = models.ForeignKey(User, blank=True, null=True)
 
@@ -340,7 +340,7 @@ class Label(models.Model):
     name = models.CharField(max_length=40, unique = True, db_index = True, verbose_name="* Name", help_text="Name of this label, as you want it to appear on the site")
     pouetid = models.IntegerField(blank=True, null = True, verbose_name="Pouet ID", help_text="If this label has a pouet group entry, enter the ID here.")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
-    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
+    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Website for this label, if available")
     wiki_link = models.URLField(blank=True, help_text="Full URL to wikipedia entry (if available)")
 
@@ -402,7 +402,7 @@ class Artist(models.Model):
     link_to_user = models.OneToOneField(User, null = True, blank = True)
     name = models.CharField(max_length=64, blank = True, verbose_name="Name", help_text="Artist name (First and Last)")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
-    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
+    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     twitter_id = models.CharField(blank = True, max_length = 32, verbose_name = "Twitter ID", help_text="Enter the Twitter account name of the artist, if known (without the Twitter URL)")
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Website for this artist. Must exist on the web.")
     wiki_link = models.URLField(blank=True, help_text="URL to Wikipedia entry (if available)")
@@ -513,7 +513,7 @@ class SongMetaData(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     song = models.ForeignKey("Song", db_index=True)
     active = models.BooleanField(default=False, db_index=True)
-    checked = models.BooleanField(default=False)
+    checked = models.BooleanField(default=False, db_index = True)
 
     artists = models.ManyToManyField(Artist, null = True, blank = True, help_text="Select all artists involved with creating this song. ")
     groups = models.ManyToManyField(Group, null = True, blank = True)

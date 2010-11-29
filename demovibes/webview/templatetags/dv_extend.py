@@ -204,6 +204,22 @@ def get_banner_links(parser, token):
     """
     return
 
+def pending(category):
+    c = {
+        'songs': Song.objects.filter(status="U"),
+        'artists': Artist.objects.filter(status="U"),
+        'groups': Group.objects.filter(status="U"),
+        'labels': Label.objects.filter(status="U"),
+        'links': Link.objects.filter(status="P"),
+        'info': SongMetaData.objects.filter(checked=False),
+    }
+    r = cache.get("pend_"+category)
+    if not r:
+        if category in c.keys():
+            r = c[category].count()
+        cache.set("pend_"+category, r, 60)
+    return r
+
 def get_button_links(parser, token):
     """
     """
