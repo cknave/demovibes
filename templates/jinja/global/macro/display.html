@@ -8,8 +8,20 @@
     {% endif %}
 {% endmacro %}
 
-{% macro artists(song) %}
-    {% for tartist in song.get_metadata().artists.all() %}
+{% macro artists(song) -%}
+    {{ artists_meta(song.get_metadata()) }}
+{%- endmacro %}
+
+{% macro yesno(bool) -%}
+    {%- if bool -%}
+        <b>Yes</b>
+    {%- else -%}
+        No
+    {%- endif -%}
+{% endmacro %}
+
+{% macro artists_meta(meta) %}
+    {% for tartist in meta.artists.all() %}
     {{ artist(tartist) }}{% if loop.last %} {% else %}, {% endif %}
     {% endfor %}
 {% endmacro %}
@@ -50,7 +62,11 @@
 {%- endmacro %}
 
 {% macro user(U) -%}
-    {% if U %}<span>{{ dv.flag(U.get_profile().country) }}<a href="/demovibes/user/{{ U.username|e }}/" title="{{ U.get_profile().get_stat() }}" >{{ U.username|e }}</a></span>{% endif %}
+    {% if U %}
+        <span>{{ dv.flag(U.get_profile().country) }}<a href="/demovibes/user/{{ U.username|e }}/" title="{{ U.get_profile().get_stat() }}" >{{ U.username|e }}</a></span>
+    {% else %}
+        None
+    {% endif %}
 {%- endmacro %}
 
 {% macro label(L) -%}

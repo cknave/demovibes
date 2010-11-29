@@ -539,6 +539,24 @@ class SongMetaData(models.Model):
                 return m[0]
         return None
 
+    def get_changelist(self):
+        if self.active:
+            return []
+        fields = ["artists", "groups", "labels", "info", "platform", "release_year", "type", "remix_of_id", "ytvidid", "ytvidoffset", "pouetid"]
+        mfields = ["artists", "groups", "labels"]
+        meta = self.song.get_metadata()
+        result = []
+        for f in fields:
+            me = getattr(self, f)
+            old = getattr(meta, f)
+            if f in mfields:
+                if list(set(me.all()) ^ set(old.all())):
+                    result.append(f)
+            else:
+                if me != old:
+                    result.append(f)
+        return result
+
     def __unicode__(self):
         return self.song.title
 

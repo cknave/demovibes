@@ -13,15 +13,23 @@
     </tr>
     <tr>
         <th>Active</th>
-        <td>{{ meta.active }}</td>
+        <td>{{ display.yesno(meta.active) }}</td>
     </tr>
     <tr>
         <th>Checked</th>
-        <td>{{ meta.checked }}</td>
+        <td>{{ display.yesno(meta.checked) }}</td>
     </tr>
     <tr>
         <th>Added by</th>
         <td>{{ display.user(meta.user) }}</td>
+    </tr>
+    <tr>
+        <th>Added date</th>
+        <td>{{ meta.added }}</td>
+    </tr>
+    <tr>
+        <th>Changed fields</th>
+        <td>{{ meta.get_changelist()|join(", ") }}</td>
     </tr>
 </table>
 
@@ -29,7 +37,7 @@
 <table>
     <tr>
         <th>Artists</th>
-        <td>{{ display.artists(meta.song) }}</td>
+        <td>{{ display.artists_meta(meta) }}</td>
     </tr>
     <tr>
         <th>Groups</th>

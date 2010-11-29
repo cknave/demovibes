@@ -16,8 +16,8 @@
     <tr>
         <td>{{ display.user(info.user) }}</td>
         <td>{{ info.added|timesince }} ago</td>
-        <td>{{ info.active }}</td>
-        <td>{{ info.checked }}</td>
+        <td>{{ display.yesno(info.active) }}</td>
+        <td>{{ display.yesno(info.checked) }}</td>
         <td><a href="{{ url("dv-songinfo-view", info.id) }}">View</a></td>
     </tr>
     {% if info.active %}
