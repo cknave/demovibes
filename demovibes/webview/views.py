@@ -510,6 +510,7 @@ class LinkCheck(object):
                 else:
                     if r and not self.add:
                         r.delete()
+            obj.save() # For caching
 
 @permission_required('webview.change_songmetadata')
 def new_songinfo_list(request):

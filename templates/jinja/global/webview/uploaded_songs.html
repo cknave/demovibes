@@ -24,7 +24,7 @@
   {{ song.length() }}
  </td>
  <td>
-  {% for artist in song.artists.all() %} {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
+  {{ display.artists(song) }}
  </td>
  <td>
   {{ display.user(song.uploader) }}

@@ -118,8 +118,8 @@
 {%- endmacro %}
 
 {% macro songicons(S) -%}
-    {% if S.pouetid -%}
-        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+    {% if S.get_metadata().pouetid -%}
+        <a href="http://www.pouet.net/prod.php?which={{ S.get_metadata().pouetid }}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
 {%- endmacro %}
 
@@ -146,7 +146,7 @@
 {%- endmacro %}
 
 {% macro labels(song) %}
-{% if song and song.get_metadata().labels.count() %}
+ {% if song and song.get_metadata().labels.count() %}
   Production Labels: {% for zlabel in song.get_metadata().labels.all() %}{{ label(zlabel) }} {% endfor %}<br />
  {% endif %}
 {% endmacro %}

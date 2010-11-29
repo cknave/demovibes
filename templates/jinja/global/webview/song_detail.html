@@ -115,7 +115,7 @@ This song has been played {{ object.times_played }} times. [<a href="{{object.ge
 It was added {{ object.added|timesince }} ago.
 </p>
 
-{% if object.pouetid %}
+{% if object.get_metadata().pouetid %}
   {{ object.get_pouet_screenshot() }}
   {{ object.get_pouet_download() }}
 {% endif %}
