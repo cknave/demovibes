@@ -218,7 +218,7 @@ def pending(category):
         if category in c.keys():
             r = c[category].count()
         cache.set("pend_"+category, r, 60)
-    return r
+    return r and "(%d)" % r or ""
 
 def get_button_links(parser, token):
     """
