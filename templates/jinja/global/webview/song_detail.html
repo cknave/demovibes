@@ -171,9 +171,10 @@ A total of {{ object.num_favorited }} users have this song on their favourites l
 {% for mix in remix %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
+<h2><img class="icon_header" src="{{ MEDIA_URL }}link_edit.png" alt="" />Song Corrections &amp; Updates</h2>
 <p><a href="{{ url ("dv-song-edit", object.id) }}">[Edit information]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[Add links]</a>
 {% if user.is_staff %}
- - <a href="{{ url ("dv-song-infolist", object.id) }}">[View info versions]</a>
+ - <a href="{{ url ("dv-song-infolist", object.id) }}">[View Link History]</a>
 {% endif %}
 </p>
 
