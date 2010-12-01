@@ -5,7 +5,7 @@
 {% block title %}{{ meta.song|e }} - Meta info{% endblock %}
 
 {% block main %}
-<h2>Status</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}tick.png" alt="" />Correction Status</h2>
 <table>
     <tr>
         <th>Song</th>
@@ -33,7 +33,7 @@
     </tr>
 </table>
 
-<h2>Information</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}sound.png" alt="" />Song Information</h2>
 <table>
     <tr>
         <th>Artists</th>
@@ -76,14 +76,14 @@
         <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_new">{{ meta.ytvidid }}</a> - Offset: {{ meta.ytvidoffset }}{% else %}None{% endif %}</td>
     </tr>
 </table>
-<h2>Action</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}explicit.gif" alt="" />Respond To Change</h2>
 {% if meta.comment %}Note from user:
  <div id="metainfo">{{ meta.comment|linebreaks }}</div>
 {% endif %}
 
 <form method="post" action=".">
- {% if not meta.checked %}<input type="submit" name="deactivate" value="Mark as checked" />{% endif %}
- {% if not meta.active %}<input type="submit" name="activate" value="Activate" />{% endif %}
+ {% if not meta.checked %}<input type="submit" name="deactivate" value="Reject Changes" />{% endif %}
+ {% if not meta.active %}<input type="submit" name="activate" value="Accept Changes" />{% endif %}
 </form>
 
 {% endblock %}
