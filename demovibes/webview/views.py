@@ -101,6 +101,10 @@ def addqueue(request, song_id): # XXX Fix to POST
         song = Song.objects.get(id=song_id)
     except:
         return HttpResponseNotFound()
+    ref = request.META.get('HTTP_REFERER', False)
+    url = song.get_absolute_url()
+    if not request.is_ajax() and ref and not ref.endswith(url):
+        return HttpResponseRedirect(url)
     #song.queue_by(request.user)
     common.queue_song(song, request.user)
     return direct_to_template(request, template = "webview/song_queued.html")
