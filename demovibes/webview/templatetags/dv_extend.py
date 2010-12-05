@@ -278,7 +278,7 @@ def ajaxevent():
     """
     Returns the latest ajax event in the table, or 0 if there are none.
     """
-    return common.get_latest_event()
+    return common.get_latest_event() + 1
 
 @register.simple_tag
 def get_oneliner():

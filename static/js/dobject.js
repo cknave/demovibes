@@ -41,7 +41,7 @@ function ajaxmonitor(eventid, url) {
 }
 
 function ajaxmonitorupdate(req) {
-        // must return event in lines  
+        // must return event in lines
         var event=req.split('\n');
         var i;
         var id;
@@ -58,5 +58,5 @@ function ajaxmonitorupdate(req) {
             }
         }
         ajaxmonitorrequest=false;
-        setTimeout('ajaxmonitorspawn()',1); // we get a nice return ask again right away
+        setTimeout('ajaxmonitorspawn()',100); // we get a nice return ask again right away
 }

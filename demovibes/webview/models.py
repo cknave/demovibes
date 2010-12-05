@@ -34,17 +34,28 @@ if uwsgi_event_server:
         import pickle
         uwsgi_event_server = "HTTP"
 
-def add_event(event, user = None):
+def add_event(event = None, user = None, eventlist = []):
     """
-    Add event to the event handler(s)
+    Add event(s) to the event handler(s)
 
     Keywords:
     event -- string that will be sent to clients
     user -- optional -- User to receive the event
+    eventlist -- List of events to process
+
+    Either event or eventlist must be supplied
     """
-    ae = AjaxEvent.objects.create(event = event, user = user)
+    if not event and not eventlist:
+        return False
+
+    if event:
+        eventlist=[event]
+
+    for event in eventlist:
+        ae = AjaxEvent.objects.create(event = event, user = user)
+
     if uwsgi_event_server:
-        R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:10] #Should have time based limit here..
+        R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:20] #Should have time based limit here..
         R = [(x.id, x.event) for x in R]
         data = (R, ae.id+1)
         if uwsgi_event_server:
@@ -925,44 +936,6 @@ class Song(models.Model):
             return vote[0].vote
         return ""
 
-    def queue_by(self, user, force = False):
-        """
-        Add song to queue - OBSOLETE, use common.queue_song
-
-        Two arguments:
-            user - User that request the song. Required
-            force - Boolean - Skip check if user can queue (default False)
-        """
-        #Should not be used anymore, use common.queue_song()
-        assert False
-        result = True
-        Queue.objects.lock(Song, User, AjaxEvent)
-        if not force:
-            Q = Queue.objects.filter(played=False, requested_by = user)
-            requests = Q.count()
-            lowrate = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
-            if lowrate and self.rating <= lowrate['lowvote']:
-                try:
-                    if Q.filter(song__rating__lte = lowrate['lowvote']).count() > lowrate['limit']:
-                        lowrate = True
-                    else:
-                        lowrate = False
-                except:
-                    lowrate = False
-            else:
-                lowrate = False
-            if requests >= settings.SONGS_IN_QUEUE or lowrate:
-                add_event(event='eval:alert("You have reached your queue limit. Wait for the songs to play.");', \
-                    user = user)
-                result = False
-            if self.is_locked():
-                result = False
-        if result:
-            Q = Queue(song=self, requested_by=user, played = False)
-            Q.save()
-            add_event(event='a_queue_%i' % self.id)
-        Queue.objects.unlock()
-        return result
 try:
     tagging.register(Song)
 except tagging.AlreadyRegistered:

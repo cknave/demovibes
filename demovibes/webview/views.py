@@ -982,7 +982,7 @@ def set_rating_autovote(request, song_id, user_rating):
     if int_vote <= 5 and int_vote > 0:
         S = Song.objects.get(id = song_id)
         S.set_vote(int_vote, request.user)
-        add_event(event="nowplaying")
+        #add_event(event="nowplaying")
 
         # Successful vote placed.
         try:

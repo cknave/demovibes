@@ -20,14 +20,12 @@ def play_queued(queue):
     temp = get_now_playing(True)
     temp = get_history(True)
     temp = get_queue(True)
-    models.add_event(event="queue")
-    models.add_event(event="history")
-    models.add_event(event="nowplaying")
-    
+    models.add_event(eventlist=("queue", "history", "nowplaying"))
 
 # This function should both make cake, and eat it
 def queue_song(song, user, event = True, force = False):
     sl = settings.SONG_LOCK_TIME
+    EVS = []
     Q = False
     time = datetime.timedelta(hours = sl['hours'], days = sl['days'], minutes = sl['minutes'])
     result = True
@@ -46,11 +44,11 @@ def queue_song(song, user, event = True, force = False):
                 lowrate = False
         else:
             lowrate = False
-            
+
         if lowrate:
             models.add_event(event='eval:alert("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)");', user = user)
             result = False
-            
+
         if requests >= settings.SONGS_IN_QUEUE:
             models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user)
             result = False
@@ -65,10 +63,11 @@ def queue_song(song, user, event = True, force = False):
     if result:
         Q.eta = Q.get_eta()
         Q.save()
-        models.add_event(event='a_queue_%i' % song.id)
+        EVS.append('a_queue_%i' % song.id)
         if event:
             bla = get_queue(True) # generate new queue cached object
-            models.add_event(event='queue')
+            EVS.append('queue')
+    models.add_event(eventlist=EVS)
     return Q
 
 
@@ -85,13 +84,13 @@ def get_now_playing_song(create_new=False):
 def get_now_playing(create_new=False):
     logging.debug("Getting now playing")
     key = "nnowplaying"
-    
+
     try:
         songtype = get_now_playing_song(create_new)
         song = songtype.song
     except:
         return ""
-       
+
     R = cache.get(key)
     if not R or create_new:
         comps = models.Compilation.objects.filter(songs__id = song.id)
@@ -192,19 +191,19 @@ def add_oneliner(user, message):
 def get_event_key(key):
     event = get_latest_event()
     return "%sevent%s" % (key, event)
-    
+
 # Not perfect, borks if I add () to decorator (or arguments..)
 # Tried moving logic to call and def a wrapper there, but django somehow didn't like that
 #
 # Code will try to find an "event" value in the GET part of the url. If it can't find it,
 # the current event number is collected from database.
 class cache_output(object):
-    
+
     def __init__(self, f):
         self.f = f
         self.n = f.__name__
         self.s = 60*5 # default cache time in seconds
-        
+
     def __call__(self, *args, **kwargs):
         try:
             try:
