@@ -22,8 +22,8 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
                 {{ display.song(songr.song) }}
             </td>
             <td>
-                {% for artist in songr.song.artists.all() %} {{ display.artist(artist) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
-                {% for group in songr.song.groups.all() %} {{ display.group(group) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
+                {{ display.artists(songr.song) }}
+                {% for group in songr.song.get_metadata().groups.all() %} {{ display.group(group) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
             </td>
             <td>
                 {{ songr.approved|date("d M Y") }}
@@ -31,9 +31,9 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
             <td align="center">
                 {{ songr.song.length() }}
             </td>
-	    <td align="center">
-    		{{ display.user(songr.uploaded_by) }}
-	    </td>
+        <td align="center">
+            {{ display.user(songr.uploaded_by) }}
+        </td>
             <td align="center">
                 <span name="a_queue_{{ songr.song.id }}">{{ display.songspan_noauth(songr.song) }}</span>
                 {{ display.favorite(songr.song, user) }}

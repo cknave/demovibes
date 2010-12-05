@@ -299,6 +299,13 @@ class Userprofile(models.Model):
         stat, image = self.get_status()
         return stat
 
+    def send_message(self, subject, message, sender, reply_to=False):
+        PrivateMessage.objects.create(sender = sender,
+            to = self.user,
+            message = message,
+            subject = subject
+        )
+
     def get_status(self):
         """
         Find and return user status and icon
@@ -1247,7 +1254,7 @@ class RadioStream(models.Model):
 
 class PrivateMessage(models.Model):
     message = models.TextField()
-    reply_to = models.ForeignKey('PrivateMessage', blank = True, null = True, default = None)
+    reply_to = models.ForeignKey('self', blank = True, null = True, default = None)
     sender = models.ForeignKey(User, related_name="sent_messages")
     sent = models.DateTimeField(auto_now_add=True)
     subject = models.CharField(max_length=60)
@@ -1265,7 +1272,17 @@ class PrivateMessage(models.Model):
     def get_absolute_url(self):
         return ("dv-read_pm", [str(self.id)])
 
+    def has_unread(self):
+        return self.privatemessage_set.filter(unread=True).exists()
+
     def save(self, *args, **kwargs):
+        #Find the grandparent message
+        if self.reply_to:
+            ref = self.reply_to.reply_to
+            while ref.reply_to:
+                ref = ref.reply_to
+            self.reply_to = ref
+
         #Check if user have send pm on, and if its a new message
         profile = self.to.get_profile()
         if self.pk == None and profile.email_on_pm:

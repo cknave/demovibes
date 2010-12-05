@@ -523,6 +523,7 @@ def new_songinfo_list(request):
     if alink and status.isdigit():
         link = get_object_or_404(GenericLink, id=alink)
         link.status = int(status)
+        link.content_object.save()
         link.save()
     nusonginfo = SongMetaData.objects.filter(checked=False)
     nulinkinfo = GenericLink.objects.filter(status=1)
@@ -553,8 +554,20 @@ def view_songinfo(request, songinfo_id):
     meta = get_object_or_404(SongMetaData, id=songinfo_id)
     if request.method == "POST":
         if request.POST.has_key("activate") and request.POST["activate"]:
+            if not meta.checked:
+                meta.user.get_profile().send_message(
+                    subject="Song info approved",
+                    message="Your metadata for song [song]%s[/song] is now active :)"  % meta.song.id,
+                    sender = request.user
+                )
             meta.set_active()
         if request.POST.has_key("deactivate") and request.POST["deactivate"]:
+            if not meta.checked:
+                meta.user.get_profile().send_message(
+                    subject="Song info not approved",
+                    message="Your metadata for song [song]%s[/song] was not approved :(" % meta.song.id,
+                    sender = request.user
+                )
             meta.checked = True
             meta.save()
     c = {'meta': meta }
@@ -682,8 +695,11 @@ def activate_upload(request):
                 Q.save()
 
         if song.uploader.get_profile().pm_accepted_upload and status == 'A' or status == 'R':
-            PrivateMessage.objects.create(sender = request.user, to = song.uploader,\
-             message = mail_tpl.render(c), subject = "Song Upload Status Changed To: %s" % stat)
+            song.uploader.get_profile().send_message(
+                sender = request.user,
+                message = mail_tpl.render(c),
+                subject = "Song Upload Status Changed To: %s" % stat
+            )
     songs = Song.objects.filter(status = "U").order_by('added')
     return j2shim.r2r('webview/uploaded_songs.html', {'songs' : songs}, request=request)
 
@@ -801,8 +817,10 @@ def activate_artists(request):
         # Send the email to inform the user of their request status
 
         if artist.created_by.get_profile().email_on_artist_add and status == 'A' or status == 'R':
-            PrivateMessage.objects.create(sender = request.user, to = artist.created_by,\
-             message = mail_tpl.render(c), subject = u"Artist %s : %s" % (artist.handle, stat))
+            artist.created_by.get_profile().send_message(sender = request.user,
+                message = mail_tpl.render(c),
+                subject = u"Artist %s : %s" % (artist.handle, stat)
+            )
 
     artists = Artist.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_artists.html', { 'artists': artists }, request=request)
@@ -869,8 +887,11 @@ def activate_groups(request):
 
         # Send the email to inform the user of their request status
         if group.created_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
-            PrivateMessage.objects.create(sender = request.user, to = group.created_by,\
-             message = mail_tpl.render(c), subject = "Group Request Status Changed To: %s" % stat)
+            group.created_by.get_profile().send_message(
+                sender = request.user,
+                message = mail_tpl.render(c),
+                subject = "Group Request Status Changed To: %s" % stat
+            )
 
     groups =Group.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_groups.html', { 'groups': groups }, request=request)
@@ -937,8 +958,11 @@ def activate_labels(request):
 
         # Send the email to inform the user of their request status
         if this_label.created_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
-            PrivateMessage.objects.create(sender = request.user, to = this_label.created_by,\
-             message = mail_tpl.render(c), subject = "Label Request Status Changed To: %s" % stat)
+            this_label.created_by.get_profile().send_message(
+                sender = request.user,
+                message = mail_tpl.render(c),
+                subject = "Label Request Status Changed To: %s" % stat
+            )
 
     labels = Label.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_labels.html', { 'labels': labels }, request=request)
