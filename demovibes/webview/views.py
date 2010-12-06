@@ -107,6 +107,8 @@ def addqueue(request, song_id): # XXX Fix to POST
         return HttpResponseRedirect(url)
     #song.queue_by(request.user)
     common.queue_song(song, request.user)
+    if request.is_ajax():
+        return HttpResponse("OK")
     return direct_to_template(request, template = "webview/song_queued.html")
 
 @login_required
