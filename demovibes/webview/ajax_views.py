@@ -33,14 +33,14 @@ def ping(request, event_id):
 
 def monitor(request, event_id):
     for x in range(120):
-        R = AjaxEvent.objects.filter(id__gte=event_id).order_by('id')
+        R = AjaxEvent.objects.filter(id__gt=event_id).order_by('id')
         if R:
             entries = list()
             for event in R:
                 if event.user == None or event.user == request.user:
                     if not str(event.event) in entries:
                         entries.append(str(event.event))
-            ajaxid = R.order_by('-id')[0].id
+            ajaxid = R.order_by('-id')[0].id + 1
             return render_to_response('webview/js/manager.html', \
                 { 'events' : entries, 'id' : ajaxid },  context_instance=RequestContext(request))
         time.sleep(2)
