@@ -33,7 +33,7 @@ def ping(request, event_id):
 
 def monitor(request, event_id):
     for x in range(120):
-        R = AjaxEvent.objects.filter(id__gt=event_id).order_by('id')
+        R = AjaxEvent.objects.filter(id__gte=event_id).order_by('id')
         if R:
             entries = list()
             for event in R:
