@@ -181,6 +181,7 @@ ROOT_URLCONF = 'demovibes.urls'
 TEMPLATE_DIRS = (
     pj('templates', 'local'),
     pj('templates', 'global'),
+    pj('templates', 'jinja', 'local'),
     pj('templates', 'jinja', 'global'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
