@@ -3,7 +3,16 @@ try:
     from werkzeug import DebuggedApplication, run_simple
 except:
     print "Need werkzeug installed to run"
-    
+
+
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.dirname(SITE_ROOT)
+
+sys.path.append(SITE_ROOT)
+sys.path.append(os.path.join(SITE_ROOT, "demovibes"))
+
+
+
 os.environ['DJANGO_SETTINGS_MODULE'] = 'demovibes.settings'
 
 def null_technical_500_response(request, exc_type, exc_value, tb):

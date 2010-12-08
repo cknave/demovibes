@@ -705,7 +705,6 @@ def activate_upload(request):
     songs = Song.objects.filter(status = "U").order_by('added')
     return j2shim.r2r('webview/uploaded_songs.html', {'songs' : songs}, request=request)
 
-@cache_page(60*15)
 def song_statistics(request, stattype):
     songs = None
     title = "Mu"
@@ -969,7 +968,6 @@ def activate_labels(request):
     labels = Label.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_labels.html', { 'labels': labels }, request=request)
 
-@cache_page(60*5)
 def users_online(request):
     timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
     userlist = Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')

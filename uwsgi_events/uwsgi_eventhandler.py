@@ -41,7 +41,7 @@ uwsgi.message_manager_marshal = event_receiver
 @bottle.get('/demovibes/ajax/monitor/:id#[0-9]+#/')
 def handler(id):
     id = int(id)
-    if not event or event[1] < id:
+    if not event or event[1] <= id:
         uwsgi.green_pause(60)
     myevent = event
     eventid = myevent[1]
