@@ -189,6 +189,7 @@ TEMPLATE_DIRS = (
 )
 
 JINJA2_TEMPLATE_DIRS = (
+    pj('templates', 'jinja', 'local'),
     pj('templates', 'jinja', 'global'),
 )
 
