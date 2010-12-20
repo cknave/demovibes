@@ -1073,7 +1073,7 @@ class Queue(models.Model):
         left = self.timeleft()
         if left < 1:
             return -1
-        offset = self.song.song_length + self.song.ytvidoffset - left
+        offset = self.song.song_length + self.song.get_metadata().ytvidoffset - left
         return offset
 
     def timeleft(self):
