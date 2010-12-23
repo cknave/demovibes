@@ -1,5 +1,5 @@
 {% import "macro/display.html" as display -%}
-{% cache 43200 mkstr("song_row", song.id, song.last_changed) %}
+{% cache 172800 mkstr("song_row", song.id, song.last_changed) %}
  <td>
   {{ display.song(song) }}
  </td>
