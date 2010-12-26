@@ -402,6 +402,7 @@ def view_compilation(request, comp_id):
             for song in comp.get_songs():
                 Queue.objects.create(song=song, played=False, playtime=playtime, requested_by = request.user, description = desc)
             common.get_queue(True)
+            return redirect("dv-queue")
     return j2shim.r2r('webview/compilation.html',
         { 'comp' : comp, 'user' : request.user , 'sessionform': sessionform},
         request=request)
