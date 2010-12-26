@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from demovibes.webview.models import *
 from django.conf import settings
+from  demovibes.webview import views
 import djangojinja2
 
 song_dict = {
@@ -70,6 +71,12 @@ streams_dict_txt = {
     'queryset': RadioStream.objects.filter(active=True, streamtype = 'M'),
     'template_loader': djangojinja2._jinja_env,
 }
+streams_dict_m3u = {
+    'queryset': RadioStream.objects.filter(active=True, streamtype = 'M'),
+    'template_loader': djangojinja2._jinja_env,
+    'template_name': "webview/streamlist_m3u.html",
+}
+
 streams_dict = {
     'queryset': RadioStream.objects.filter(active=True).order_by('name'),
     'template_name' : "webview/streams.html",
@@ -108,6 +115,7 @@ urlpatterns = patterns('',
                 { 'template':'webview/radioplay.html'}, name = "dv-play_stream"),
     url(r'^$',                                     'django.views.generic.list_detail.object_list',     news_dict, name = "dv-root"),
     url(r'^streams/streams.txt$',                  'django.views.generic.list_detail.object_list',     streams_dict_txt, name = "dv-streams.txt"),
+    url(r'^streams/streams.m3u$',                  'django.views.generic.list_detail.object_list',     streams_dict_m3u, name = "dv-streams.m3u"),
     url(r'^streams/$',                             'django.views.generic.list_detail.object_list',     streams_dict, name = "dv-streams"),
     url(r'^oneliner/$',                            'django.views.generic.list_detail.object_list', \
                 dict(oneliner_dict, paginate_by=settings.PAGINATE), name = "dv-oneliner"),
@@ -158,7 +166,8 @@ urlpatterns = patterns('',
     # Add support for displaying all compilations
     url(r'^compilations/$',                             'django.views.generic.list_detail.object_list', \
                 dict(comp_dict, extra_context = { 'al' : alphalist }), name = "dv-compilations"),
-     url(r'^compilations/(?P<letter>.)/$',               'demovibes.webview.views.list_compilations', name = "dv-compilations_letter"),
+    url(r'^compilations/new/$',                     views.AddCompilation(), name = "dv-newcomp"),
+    url(r'^compilations/(?P<letter>.)/$',               'demovibes.webview.views.list_compilations', name = "dv-compilations_letter"),
 
     url(r'^user/$',                                'demovibes.webview.views.my_profile', name = "dv-my_profile"),
     url(r'^online/$',                              'demovibes.webview.views.users_online', name = "dv-users_online"),

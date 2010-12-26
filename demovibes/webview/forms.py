@@ -86,6 +86,10 @@ class CreateArtistForm(forms.ModelForm):
 
         return self.cleaned_data['artist_pic']
 
+class CreateSessionForm(forms.Form):
+    description = forms.CharField(required=False, label = "Description")
+    time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
+
 class CreateLabelForm(forms.ModelForm):
     class Meta:
         model = Label
@@ -199,3 +203,9 @@ class CreateLinkForm(forms.ModelForm):
             raise forms.ValidationError('Link Image is bigger than allowed size dimensions! (Height : %d, width : %d)' % (max_height, max_width))
 
         return self.cleaned_data['link_image']
+
+
+class CreateCompilationForm(forms.ModelForm):
+    class Meta:
+        model = Compilation
+        exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]

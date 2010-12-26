@@ -2,6 +2,9 @@ from demovibes.webview.models import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 
+class CompilationSongInline(admin.TabularInline):
+    model = CompilationSongList
+
 class SongLinkInline(generic.GenericTabularInline):
     qs_key = "S"
     extra = 1
@@ -90,9 +93,12 @@ class ArtistAdmin(admin.ModelAdmin):
 class CompilationAdmin(admin.ModelAdmin):
     list_display = ('name', 'rel_date', 'date_added', 'created_by', 'status')
     search_fields = ['name'] # For now, we only need to search by the name of the compilation
-    filter_horizontal = ['songs', 'prod_groups', 'prod_artists']
+    filter_horizontal = ['prod_groups', 'prod_artists']
     list_filter = ['status']
-    raw_id_fields = ["songs", "prod_artists", "prod_groups"]
+    raw_id_fields = ["prod_artists", "prod_groups"]
+    inlines = [
+        CompilationSongInline,
+    ]
 
 class LabelAdmin(admin.ModelAdmin):
     search_fields =  ['name']

@@ -2,6 +2,8 @@ from webview.models import *
 from webview.forms import *
 from webview import common
 
+from webview.baseview import BaseView
+
 from tagging.models import TaggedItem
 import tagging.utils
 
@@ -35,6 +37,47 @@ import re
 # Create your views here.
 
 L = logging.getLogger('webview.views')
+
+class WebView(BaseView):
+    basetemplate = "webview/"
+
+class AddCompilation(WebView):
+    template = "add_compilation.html"
+    staff_required = True
+    forms = [
+        (CreateCompilationForm, "compform"),
+    ]
+
+    def pre_view(self):
+        self.context['songsinput']=""
+
+    def POST(self):
+        songstr = self.request.POST.get("songsinput", "").split(",")
+        self.context['songsinput'] = self.request.POST.get("songsinput", "")
+        songs = []
+        for S in songstr:
+            songs.append(Song.objects.get(id=S))
+
+        if self.forms_valid and songs:
+            newcf = self.context["compform"].save(commit=False)
+            #exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]
+            newcf.created_by = self.request.user
+            newcf.status = "U"
+            newcf.save()
+            self.context["compform"].save_m2m()
+            artists = []
+            playtime = 0
+            for index, S in enumerate(songs):
+                newcf.add_song(S, index)
+                playtime = playtime + S.song_length
+                for a in S.get_metadata().artists.all():
+                    if a not in artists:
+                        artists.append(a)
+            newcf.running_time = playtime
+            for a in artists:
+                newcf.prod_artists.add(a)
+            newcf.save()
+            self.redirect(newcf)
 
 def about_pages(request, page):
     try:
@@ -345,8 +388,23 @@ def view_compilation(request, comp_id):
     """
     Try to view a compilation entry.
     """
+    permission = request.user.has_perm("webview.make_session")
     comp = get_object_or_404(Compilation, id=comp_id) # Find it, or return a 404 error
-    return j2shim.r2r('webview/compilation.html', { 'comp' : comp, 'user' : request.user }, request=request)
+    if permission:
+        sessionform = CreateSessionForm()
+    else:
+        sessionform = False
+    if request.method == "POST" and permission:
+        sessionform = CreateSessionForm(request.POST)
+        if sessionform.is_valid():
+            desc = sessionform.cleaned_data['description']
+            playtime = sessionform.cleaned_data['time']
+            for song in comp.get_songs():
+                Queue.objects.create(song=song, played=False, playtime=playtime, requested_by = request.user, description = desc)
+            common.get_queue(True)
+    return j2shim.r2r('webview/compilation.html',
+        { 'comp' : comp, 'user' : request.user , 'sessionform': sessionform},
+        request=request)
 
 @login_required
 def add_favorite(request, id): # XXX Fix to POST

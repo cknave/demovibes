@@ -60,15 +60,6 @@ Author:
 Uploaded By: {{ display.user(object.uploader) }}
 {% endif %}
 
-<p>
- Last Queued :
- {% if object.last_queued() != "Never" %}
-  {{ object.last_queued()|timesince }} ago
- {% else %}
-  Never Been Queued!
- {% endif %}
-</p>
-
 Extra Resources: {{ display.songicons(object) }} {{ display.links(object) }}
 <br />
 
@@ -86,6 +77,15 @@ Song Status: {{ object.get_status_display() }}
 {% endif %}
 
 {% endcache %}
+
+<p>
+ Last Queued :
+ {% if object.last_queued() != "Never" %}
+  {{ object.last_queued()|timesince }} ago
+ {% else %}
+  Never Been Queued!
+ {% endif %}
+</p>
 
 {% if user.is_authenticated() %}
   <p>

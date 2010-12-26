@@ -29,6 +29,13 @@ Name: {{ comp.name|e }}<br />
 {% if comp.pouet %}Pouet Info: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_new">Pouet Link</a><br />{% endif %}
 {% if comp.date_added %}<br />Added On: {{ comp.date_added|date("F j, Y") }} <br />By: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
 </p>
+{% if sessionform %}
+<h1>Session making maker!</h1>
+<form method="post" action=".">
+{{ sessionform.as_p() }}
+<input type="submit" value="Make session"/>
+</form>
+{% endif %}
 </td>
 <td class="compilation_description" valign="top">
 <b><i>Compilation Details For {{ comp.name|e }}:</i></b><br />
@@ -51,7 +58,7 @@ Name: {{ comp.name|e }}<br />
 
 {% if comp.songs.count != 0 %}
  <b><i>Songs In This Production ({{ comp.songs.count() }} Total):</i></b><br /><br />
- {% for song in comp.songs.all() %}
+ {% for song in comp.get_songs() %}
   {{ display.song(song) }} by {{ display.artists(song) }}
   <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}

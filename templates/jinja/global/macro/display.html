@@ -58,7 +58,7 @@
 {% endmacro %}
 
 {% macro compilation(C) -%}
-    <img class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} /><a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
+    <img class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} /> <a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
 {%- endmacro %}
 
 {% macro user(U) -%}

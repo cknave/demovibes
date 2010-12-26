@@ -1,11 +1,11 @@
 {{ object.title }}
 {{ object.title }}
-{% for artist in object.artists.all %}
+{% for artist in object.get_metadata.artists.all %}
  {{ artist.handle }}
  {{ artist.name }}
 {% endfor %}
 
-{% for group in object.groups.all %}
+{% for group in object.get_metadata.groups.all %}
  {{ group.name }}
 {% endfor %}
 
@@ -16,13 +16,13 @@
  {{ tag.name }}
 {% endfor %}
 
-{{ object.platform.title }}
-{{ object.release_year }}
-{{ object.type.title }}
+{{ object.get_metadata.platform.title }}
+{{ object.get_metadata.release_year }}
+{{ object.get_metadata.type.title }}
 {{ object.uploader.username }}
-{{ object.info }}
-{{ object.pouetid }}
+{{ object.get_metadata.info }}
+{{ object.get_metadata.pouetid }}
 
-{% for link in object.links.all %}
- {{ link.value }} 
+{% for link in object.get_active_links.all %}
+ {{ link.value }}
 {% endfor %}

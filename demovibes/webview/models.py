@@ -992,15 +992,25 @@ class Compilation(models.Model):
     purchase_page = models.URLField(help_text="If this is a commercial product, you can provide a 'Buy Now' link here", blank = True) # If commercial CD, link to purchase the album
     rel_date = models.DateField(help_text="Original Release Date", null=True, blank = True) # Original release date, we could also add re-release date though not necessary just yet!
     running_time = models.IntegerField(help_text="Overall running time (In Seconds)", blank = True, null = True) # Running time of the album/compilation
-    songs = models.ManyToManyField(Song, null = True, blank = True)
+    songs = models.ManyToManyField(Song, null = True, blank = True, through="CompilationSongList")
     startswith = models.CharField(max_length=1, editable = False, db_index = True) # Starting letter for search purposes
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
     wiki_link = models.URLField(blank=True, help_text="URL to wikipedia entry (if available)")
     youtube_link = models.URLField(help_text="Link to Youtube/Google Video Link (external)", blank = True) # Link to a video of the production
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
+
+    def get_songs(self):
+        return self.songs.all().order_by("compilationsonglist__index")
+
+    def add_song(self, song, index=0):
+        return CompilationSongList.objects.create(compilation=self, song=song, index=index)
+
     class Meta:
         ordering = ['name']
+        permissions = (
+            ("make_session", "Can create sessions"),
+        )
 
     def length(self):
         """
@@ -1023,6 +1033,14 @@ class Compilation(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('dv-compilation', [str(self.id)])
+
+class CompilationSongList(models.Model):
+    song = models.ForeignKey("Song")
+    compilation = models.ForeignKey("Compilation")
+    index = models.PositiveIntegerField(default=0, verbose_name="Song index")
+
+    class Meta:
+        ordering = ['index']
 
 class CompilationVote(models.Model):
     """
@@ -1057,6 +1075,7 @@ class Queue(models.Model):
     requested_by = models.ForeignKey(User)
     requested = models.DateTimeField(auto_now_add=True, db_index = True)
     song = models.ForeignKey(Song)
+    description = models.TextField(blank=True)
     time_played = models.DateTimeField(blank = True, null = True, db_index = True)
 
     objects = LockingManager()

@@ -3,10 +3,12 @@ from demovibes.webview.common import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_control, cache_page
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 import socket
+
+from haystack.query import SearchQuerySet
 
 from tagging.models import Tag
 
@@ -16,8 +18,43 @@ from django.db.models import Q
 import time, datetime
 from django.core.cache import cache
 import j2shim
+import re
+
+idlist = re.compile(r'^(\d+,)+\d+$')
 
 use_eventful = getattr(settings, 'USE_EVENTFUL', False)
+
+@cache_page(60*15)
+def songinfo(request):
+    def makeinfo(song):
+        return '{"title": "%s", "artists": "%s", "id": "%s", "url": "%s"}' % (song.title, song.artist(), song.id, song.get_absolute_url())
+    songid = request.REQUEST.get("id", "").strip()
+    if not songid:
+        return HttpResponse('{"error": "Empty input"}')
+    if songid.isdigit():
+        try:
+            S = Song.objects.get(id=songid)
+            return HttpResponse('[%s]' % makeinfo(S))
+        except:
+            return HttpResponse('{"error": "No song by that ID"}')
+
+    if idlist.match(songid):
+            num = songid.split(",")
+            res = []
+            for x in num:
+                S = Song.objects.get(id=x)
+                res.append(makeinfo(S))
+            return HttpResponse('[%s]' % ','.join(res))
+
+
+    SL = SearchQuerySet().auto_query(songid).models(Song).load_all()[:10]
+    if not SL:
+        return HttpResponse('{"error": "No results found"}')
+    data = []
+    for S in SL:
+        data.append(makeinfo(S.object))
+    result = '[%s]' % ','.join(data)
+    return HttpResponse(result)
 
 #For updating last_active field before sending to (external?) event handler
 def ping(request, event_id):
@@ -85,14 +122,14 @@ def oneliner(request):
 @cache_control(must_revalidate=True, max_age=30)
 def songupdate(request, song_id):
     song = Song.objects.get(id=song_id)
-    return j2shim.r2r('webview/js/generic.html', { 
+    return j2shim.r2r('webview/js/generic.html', {
         'song' : song,
         'event' : "a_queue_%i" % song.id,
         'template' : 'webview/t/songlist_span.html',
         },  request)
 
-def words(request, prefix): 
-    extrawords=['boobies','boobietrap','nectarine']; 
+def words(request, prefix):
+    extrawords=['boobies','boobietrap','nectarine'];
     words= [a.username+"" for a in User.objects.filter(username__istartswith=prefix)];
     words.extend([a.handle+"" for a in Artist.objects.filter(handle__istartswith=prefix)]);
     words.extend([a.name+"" for a in Artist.objects.filter(name__istartswith=prefix)]);

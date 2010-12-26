@@ -1356,7 +1356,7 @@ bbdata_full = [
 def reify(bblist):
     templist = []
     for x in bblist:
-        res = re.compile(x[0], re.DOTALL & re.IGNORECASE)
+        res = re.compile(x[0], re.DOTALL | re.IGNORECASE)
         templist.append((res, x[1]))
     return templist
 
