@@ -4,6 +4,7 @@ from django.contrib.contenttypes import generic
 
 class CompilationSongInline(admin.TabularInline):
     model = CompilationSongList
+    raw_id_fields = ["song"]
 
 class SongLinkInline(generic.GenericTabularInline):
     qs_key = "S"
