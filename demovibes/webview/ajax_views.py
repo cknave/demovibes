@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 import socket
 
+from django.utils import simplejson
+
 from haystack.query import SearchQuerySet
 
 from tagging.models import Tag
@@ -27,14 +29,15 @@ use_eventful = getattr(settings, 'USE_EVENTFUL', False)
 @cache_page(60*15)
 def songinfo(request):
     def makeinfo(song):
-        return '{"title": "%s", "artists": "%s", "id": "%s", "url": "%s"}' % (song.title, song.artist(), song.id, song.get_absolute_url())
-    songid = request.REQUEST.get("id", "").strip()
+        return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.song_length}
+    songid = request.REQUEST.get("q", "").strip()
     if not songid:
         return HttpResponse('{"error": "Empty input"}')
     if songid.isdigit():
         try:
             S = Song.objects.get(id=songid)
-            return HttpResponse('[%s]' % makeinfo(S))
+            result = [makeinfo(S)]
+            return HttpResponse(simplejson.dumps(result))
         except:
             return HttpResponse('{"error": "No song by that ID"}')
 
@@ -44,17 +47,16 @@ def songinfo(request):
             for x in num:
                 S = Song.objects.get(id=x)
                 res.append(makeinfo(S))
-            return HttpResponse('[%s]' % ','.join(res))
+            return HttpResponse(simplejson.dumps(res))
 
 
-    SL = SearchQuerySet().auto_query(songid).models(Song).load_all()[:10]
+    SL = SearchQuerySet().auto_query(songid).models(Song).load_all()[:20]
     if not SL:
         return HttpResponse('{"error": "No results found"}')
     data = []
     for S in SL:
         data.append(makeinfo(S.object))
-    result = '[%s]' % ','.join(data)
-    return HttpResponse(result)
+    return HttpResponse(simplejson.dumps(data))
 
 #For updating last_active field before sending to (external?) event handler
 def ping(request, event_id):
