@@ -2,7 +2,7 @@ from webview.models import *
 from webview.forms import *
 from webview import common
 
-from webview.baseview import BaseView
+from mybaseview import MyBaseView
 
 from tagging.models import TaggedItem
 import tagging.utils
@@ -38,12 +38,12 @@ import re
 
 L = logging.getLogger('webview.views')
 
-class WebView(BaseView):
+class WebView(MyBaseView):
     basetemplate = "webview/"
 
 class AddCompilation(WebView):
     template = "add_compilation.html"
-    staff_required = True
+    login_required = True
     forms = [
         (CreateCompilationForm, "compform"),
     ]
@@ -51,32 +51,39 @@ class AddCompilation(WebView):
     def pre_view(self):
         self.context['songsinput']=""
 
+    def save_compilation(self, compdata, songs):
+        newcf = compdata.save(commit=False)
+        if not newcf.id:
+            newcf.created_by = self.request.user
+            newcf.status = "U"
+        newcf.save()
+        compdata.save_m2m()
+        artists = []
+        playtime = 0
+        newcf.reset_songs()
+        for index, S in enumerate(songs):
+            newcf.add_song(S, index)
+            playtime = playtime + S.song_length
+            for a in S.get_metadata().artists.all():
+                if a not in artists:
+                    artists.append(a)
+        newcf.running_time = playtime
+        newcf.prod_artists.clear()
+        for a in artists:
+            newcf.prod_artists.add(a)
+        newcf.save()
+        return newcf
+
     def POST(self):
         songstr = self.request.POST.get("songsinput", "").split(",")
         self.context['songsinput'] = self.request.POST.get("songsinput", "")
         songs = []
-        for S in songstr:
-            songs.append(Song.objects.get(id=S))
+        if songstr:
+            for S in songstr:
+                songs.append(Song.objects.get(id=S))
 
         if self.forms_valid and songs:
-            newcf = self.context["compform"].save(commit=False)
-            #exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]
-            newcf.created_by = self.request.user
-            newcf.status = "U"
-            newcf.save()
-            self.context["compform"].save_m2m()
-            artists = []
-            playtime = 0
-            for index, S in enumerate(songs):
-                newcf.add_song(S, index)
-                playtime = playtime + S.song_length
-                for a in S.get_metadata().artists.all():
-                    if a not in artists:
-                        artists.append(a)
-            newcf.running_time = playtime
-            for a in artists:
-                newcf.prod_artists.add(a)
-            newcf.save()
+            newcf = self.save_compilation(self.context["compform"], songs)
             self.redirect(newcf)
 
 def about_pages(request, page):
@@ -154,18 +161,22 @@ def addqueue(request, song_id): # XXX Fix to POST
         return HttpResponse("OK")
     return direct_to_template(request, template = "webview/song_queued.html")
 
-@login_required
-def addcomment(request, song_id):
+
+class addComment(WebView):
     """
     Add a comment to a song.
     """
-    if request.method == 'POST':
-        comment = request.POST['Comment'].strip()
-        song = get_object_or_404(Song, id=song_id)
+    login_required = True
+
+    def pre_view(self):
+        song_id = self.kwargs['song_id']
+        self.song = get_object_or_404(Song, id=song_id)
+        self.redirect(self.song)
+
+    def POST(self):
+        comment = self.request.POST.get("Comment", "").strip()
         if comment:
-           form = SongComment(comment = request.POST['Comment'], song = song, user = request.user)
-           form.save()
-    return HttpResponseRedirect(song.get_absolute_url())
+            SongComment.objects.create(comment = comment, song = self.song, user = self.request.user)
 
 def site_about(request):
     """
@@ -173,16 +184,18 @@ def site_about(request):
     """
     return j2shim.r2r('webview/site-about.html', { }, request)
 
-def list_queue(request):
+class listQueue(WebView):
     """
     Display the current song, the next songs in queue, and the latest 20 songs in history.
     """
-    now_playing = ""
-    history = common.get_history()
-    queue = common.get_queue()
-    return j2shim.r2r('webview/queue_list.html', \
-        {'now_playing': now_playing, 'history': history, 'queue': queue}\
-        , request)
+    template = "queue_list.html"
+
+    def set_context(self):
+        return {
+                'now_playing': "",
+                'history': common.get_history(),
+                'queue': common.get_queue(),
+        }
 
 def list_song(request, song_id):
     song = get_object_or_404(Song, id=song_id)
@@ -633,6 +646,25 @@ def view_songinfo(request, songinfo_id):
             meta.save()
     c = {'meta': meta }
     return j2shim.r2r("webview/view_songinfo.html", c, request)
+
+class editSonginfo(WebView):
+    template = "edit_songinfo.html"
+    forms = [EditSongMetadataForm, "form"]
+    login_required = True
+
+    def form_form_init(self):
+        self.context['song'] = song = get_object_or_404(Song, id=self.kwargs['song_id'])
+        if self.method == "POST":
+            m = SongMetaData(song=song, user=request.user)
+        else:
+            m = song.get_metadata()
+            m.comment = ""
+        return {'instance': m}
+
+    def POST(self):
+        if self.forms_valid:
+            self.context['form'].save()
+            self.redirect(self.context['song'])
 
 @login_required
 def edit_songinfo(request, song_id):

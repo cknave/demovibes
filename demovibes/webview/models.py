@@ -1000,6 +1000,9 @@ class Compilation(models.Model):
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
 
+    def reset_songs(self):
+        self.songs.all().delete()
+
     def get_songs(self):
         return self.songs.all().order_by("compilationsonglist__index")
 

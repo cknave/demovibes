@@ -14,18 +14,10 @@ except ImportError:
 class UploadForm(forms.ModelForm):
     class Meta:
         model = Song
-        #fields = ["title", "release_year", "file", "pouetid", "dtv_id", "wos_id", "zxdemo_id", "projecttwosix_id", "lemon_id", "hol_id", "al_id", "hvsc_url", "remix_of_id", "groups", "labels", "info", "type", "platform"]
         fields = ["file", "title"]
 
     def clean_file(self):
         data = self.cleaned_data['file']
-
-        # I didn't see this being used - remove?
-        #~ if hasattr(data, 'temporary_file_path'):
-            #~ F = data.temporary_file_path()
-            #~ mimetype, not_used = mimetypes.guess_type(F)
-        #~ else:
-            #~ mimetype = data.content_type
 
         if not hasattr(data, 'temporary_file_path'):
             logging.error("uploaded file was kept in memory")

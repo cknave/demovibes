@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from demovibes.webview.models import *
 from django.conf import settings
-from  demovibes.webview import views
+from demovibes.webview import views
 import djangojinja2
 
 song_dict = {
@@ -173,9 +173,9 @@ urlpatterns = patterns('',
     url(r'^online/$',                              'demovibes.webview.views.users_online', name = "dv-users_online"),
     url(r'^user/(?P<user>\w+)/$',                  'demovibes.webview.views.view_profile', name = "dv-profile"),
     url(r'^user/(?P<user>\w+)/favorites/$',        'demovibes.webview.views.view_user_favs', name = "dv-user-favs"),
-    url(r'^queue/$',                               'demovibes.webview.views.list_queue', name = "dv-queue"),
+    url(r'^queue/$',                               views.listQueue(), name = "dv-queue"),
     url(r'^song/(?P<song_id>\d+)/queue/$',         'demovibes.webview.views.addqueue', name = "dv-add_queue"),
-    url(r'^comment/add/(?P<song_id>\d+)/$',        'demovibes.webview.views.addcomment', name = "dv-addcomment"),
+    url(r'^comment/add/(?P<song_id>\d+)/$',        views.addComment(), name = "dv-addcomment"),
     url(r'^tags/$',                                'demovibes.webview.views.tag_cloud', name = "dv-tagcloud"),
     url(r'^tags/(?P<tag>[^/]+)/$',                 'demovibes.webview.views.tag_detail', name = "dv-tagdetail"),
     url(r'^song/(?P<song_id>\d+)/tags/$',           'demovibes.webview.views.tag_edit', name = "dv-songtags"),
