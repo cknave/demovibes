@@ -1,12 +1,1 @@
-<object type="application/x-shockwave-flash" data="{{ MEDIA_URL }}flash/player_mp3_multi.swf" width="200" height="20">
-     <param name="movie" value="{{ MEDIA_URL }}flash/player_mp3_multi.swf" />
-     <param name="bgcolor" value="#ffffff" />
-     <param name="FlashVars" value="mp3={{ song.file.url }}&showlist=0" />
-</object>
-<applet code="de.quippy.javamod.main.applet.JavaModApplet.class"
-        archive="/static/javamod/javamod.jar"
-        width="170"
-        height="70">
-<param name="file" value="http://{{ dv.site_url() }}{{ song.file.url }}" />
-<param name="a" value="-" />
-</applet>
+<a href="{{ url ("dv-play_song", song.id) }}" target="playsong">[Listen]</a>

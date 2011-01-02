@@ -41,6 +41,15 @@ L = logging.getLogger('webview.views')
 class WebView(MyBaseView):
     basetemplate = "webview/"
 
+class PlaySong(WebView):
+    template="playsong.html"
+    staff_required = True
+
+    def set_context(self):
+        songid = self.kwargs['song_id']
+        song = get_object_or_404(Song, id=songid)
+        return {'song': song}
+
 class AddCompilation(WebView):
     template = "add_compilation.html"
     login_required = True
