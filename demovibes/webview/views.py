@@ -2,6 +2,8 @@ from webview.models import *
 from webview.forms import *
 from webview import common
 
+from openid_provider.models import TrustedRoot
+
 from mybaseview import MyBaseView
 
 from tagging.models import TaggedItem
@@ -294,6 +296,14 @@ class MyProfile(WebView):
     def initialize(self):
         self.profile = common.get_profile(self.request.user)
         self.links = LinkCheck("U", object = self.profile)
+
+    def pre_view(self):
+        rootid = self.request.REQUEST.get("killroot", False)
+        if rootid and rootid.isdigit():
+            root = TrustedRoot.objects.get(id=rootid)
+            if root.openid.user == self.request.user:
+                root.delete()
+                return self.redirect("dv-my_profile")
 
     def POST(self):
         if self.forms_valid and self.links.is_valid(self.request.POST):

@@ -7,9 +7,20 @@
 <a href="/accounts/password/change/">Change My Password</a><br /><a href="{{ url ("dv-profile", profile.user) }}">View My Live Profile</a>
 
 <h2>OpenID</h2>
+Your <a href="http://openidexplained.com/" target="_new">OpenID</a> key:
+<ul>
 {% for id in user.openid_set.all() %}
-http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/>
+    <li><img src="{{ MEDIA_URL }}/openid-icon.png" alt="OpenID"/> http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/></li>
+    {% if id.trustedroot_set.all() %}
+    Allowed sites:
+        <ul>
+        {% for root in id.trustedroot_set.all() %}
+            <li>{{ root.trust_root }} <a href=".?killroot={{ root.id }}" title="Remove">[x]</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endfor %}
+</ul>
 
 <h2><img class="icon_header" src="{{ MEDIA_URL }}page_white_edit.png" alt="" />Profile Settings</h2>
 <form action="." method="post" enctype="multipart/form-data">
