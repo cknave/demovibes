@@ -287,6 +287,7 @@ class ViewUserFavs(ProfileView):
         return {'favorites':favorites, 'favuser': self.user}
 
 class MyProfile(WebView):
+    template = "my_profile.html"
     login_required = True
     forms = [(ProfileForm, "form")]
 
