@@ -845,7 +845,7 @@ class songStatistics(WebView):
 class tagCloud(WebView):
     template = "tag_cloud.html"
     cache_key = "tag_cloud"
-    cache_duration = 15*60
+    cache_duration = 24*60*60
 
     def get_cache_key(self):
         tag_id = cache.get("tagver", 0)
@@ -859,6 +859,7 @@ class tagCloud(WebView):
 
 class tagDetail(WebView):
     template = "tag_detail.html"
+    cache_duration = 24*60*60
 
     def get_cache_key(self):
         tag_id = cache.get("tagver", 0)
