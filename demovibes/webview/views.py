@@ -308,7 +308,7 @@ class MyProfile(WebView):
     def POST(self):
         if self.forms_valid and self.links.is_valid(self.request.POST):
             self.context['form'].save()
-            links.save(self.profile)
+            self.links.save(self.profile)
             self.redirect("dv-my_profile")
 
     def form_form_init(self):
