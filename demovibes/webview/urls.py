@@ -129,29 +129,27 @@ urlpatterns = patterns('',
 
     #Song views
     url(r'^newshit/$',                          'demovibes.webview.views.new_songinfo_list', name="dv-new-info"),
-    url(r'^songs/$',                               'django.views.generic.list_detail.object_list', \
-                dict(song_dict, extra_context = { 'al' : alphalist }), name = "dv-songs"),
-    url(r'^songs/(?P<letter>.)/$',                 'demovibes.webview.views.list_songs', name = "dv-songs_letter"),
+    url(r'^songs/$',                               views.ListSongs(), name = "dv-songs"),
+    url(r'^songs/(?P<letter>.)/$',                 views.ListSongs(), name = "dv-songs_letter"),
     url(r'^song/(?P<song_id>\d+)/$',             'demovibes.webview.views.list_song',   name = "dv-song"),
     url(r'^song/(?P<song_id>\d+)/addlink/$',             'demovibes.webview.views.add_songlinks',   name = "dv-song-addlink"),
     url(r'^song/(?P<song_id>\d+)/edit/$',             'demovibes.webview.views.edit_songinfo',   name = "dv-song-edit"),
     url(r'^song/(?P<song_id>\d+)/infolist/$',             'demovibes.webview.views.list_songinfo_for_song',   name = "dv-song-infolist"),
-    url(r'^song/(?P<song_id>\d+)/comments/$',      'demovibes.webview.views.list_song_comments', name = "dv-song_comment"),
-    url(r'^song/(?P<song_id>\d+)/votes/$',         'demovibes.webview.views.list_song_votes', name = "dv-song_votes"),
-    url(r'^song/(?P<song_id>\d+)/queue_history/$', 'demovibes.webview.views.list_song_history', name = "dv-song_history"),
+    url(r'^song/(?P<song_id>\d+)/comments/$',      views.songComments(), name = "dv-song_comment"),
+    url(r'^song/(?P<song_id>\d+)/votes/$',         views.songVotes(), name = "dv-song_votes"),
+    url(r'^song/(?P<song_id>\d+)/queue_history/$', views.songHistory(), name = "dv-song_history"),
 
     url(r'^metainfo/(?P<songinfo_id>\d+)/$',             'demovibes.webview.views.view_songinfo',   name = "dv-songinfo-view"),
 
-    url(r'^groups/$',                             'django.views.generic.list_detail.object_list', \
-                dict(group_dict, extra_context = { 'al' : alphalist }), name = "dv-groups"),
-    url(r'^groups/(?P<letter>.)/$',               'demovibes.webview.views.list_groups', name = "dv-groups_letter"),
+    url(r'^groups/$',                             views.ListGroups(), name = "dv-groups"),
+    url(r'^groups/(?P<letter>.)/$',               views.ListGroups(), name = "dv-groups_letter"),
     url(r'^group/(?P<object_id>\d+)/$',            'django.views.generic.list_detail.object_detail',       group_a_dict, name = "dv-group"),
 
-    url(r'^statistics/(?P<stattype>\w+)/$',                 'demovibes.webview.views.song_statistics', name = "dv-stats"),
+    url(r'^statistics/$',                           views.songStatistics(), name = "dv-stats"),
+    url(r'^statistics/(?P<stattype>\w+)/$',         views.songStatistics(), name = "dv-stats"),
 
-    url(r'^artists/$',                             'django.views.generic.list_detail.object_list', \
-            dict(artist_dict, extra_context = { 'al' : alphalist }), name = "dv-artists"),
-    url(r'^artists/(?P<letter>.)/$',               'demovibes.webview.views.list_artists', name = "dv-artists_letter"),
+    url(r'^artists/$',                             views.ListArtists(), name = "dv-artists"),
+    url(r'^artists/(?P<letter>.)/$',               views.ListArtists(), name = "dv-artists_letter"),
     url(r'^artist/(?P<object_id>\d+)/$',           'django.views.generic.list_detail.object_detail',       artist_a_dict, name = "dv-artist"),
     url(r'^artist/(?P<artist_id>\d+)/upload/$',    'demovibes.webview.views.upload_song', name = "dv-upload"),
 
@@ -164,22 +162,21 @@ urlpatterns = patterns('',
     url(r'^song/(?P<song_id>\d+)/vote/$',          'demovibes.webview.views.set_rating', name = "dv-vote"),
 
     # Add support for displaying all compilations
-    url(r'^compilations/$',                             'django.views.generic.list_detail.object_list', \
-                dict(comp_dict, extra_context = { 'al' : alphalist }), name = "dv-compilations"),
+    url(r'^compilations/$',                             views.ListComilations(), name = "dv-compilations"),
     url(r'^compilations/new/$',                     views.AddCompilation(), name = "dv-newcomp"),
-    url(r'^compilations/(?P<letter>.)/$',               'demovibes.webview.views.list_compilations', name = "dv-compilations_letter"),
+    url(r'^compilations/(?P<letter>.)/$',               views.ListComilations(), name = "dv-compilations_letter"),
 
-    url(r'^user/$',                                'demovibes.webview.views.my_profile', name = "dv-my_profile"),
+    url(r'^user/$',                                views.MyProfile(), name = "dv-my_profile"),
     url(r'^online/$',                              'demovibes.webview.views.users_online', name = "dv-users_online"),
-    url(r'^user/(?P<user>\w+)/$',                  'demovibes.webview.views.view_profile', name = "dv-profile"),
-    url(r'^user/(?P<user>\w+)/favorites/$',        'demovibes.webview.views.view_user_favs', name = "dv-user-favs"),
+    url(r'^user/(?P<user>\w+)/$',                  views.ViewProfile(), name = "dv-profile"),
+    url(r'^user/(?P<user>\w+)/favorites/$',        views.ViewUserFavs(), name = "dv-user-favs"),
     url(r'^queue/$',                               views.listQueue(), name = "dv-queue"),
-    url(r'^song/(?P<song_id>\d+)/queue/$',         'demovibes.webview.views.addqueue', name = "dv-add_queue"),
-    url(r'^song/(?P<song_id>\d+)/play/$',         views.PlaySong(), name = "dv-play_song"),
+    url(r'^song/(?P<song_id>\d+)/queue/$',         views.AddQueue(), name = "dv-add_queue"),
+    url(r'^song/(?P<song_id>\d+)/play/$',          views.PlaySong(), name = "dv-play_song"),
     url(r'^comment/add/(?P<song_id>\d+)/$',        views.addComment(), name = "dv-addcomment"),
-    url(r'^tags/$',                                'demovibes.webview.views.tag_cloud', name = "dv-tagcloud"),
-    url(r'^tags/(?P<tag>[^/]+)/$',                 'demovibes.webview.views.tag_detail', name = "dv-tagdetail"),
-    url(r'^song/(?P<song_id>\d+)/tags/$',           'demovibes.webview.views.tag_edit', name = "dv-songtags"),
+    url(r'^tags/$',                                views.tagCloud(), name = "dv-tagcloud"),
+    url(r'^tags/(?P<tag>[^/]+)/$',                 views.tagDetail(), name = "dv-tagdetail"),
+    url(r'^song/(?P<song_id>\d+)/tags/$',          views.tagEdit(), name = "dv-songtags"),
     url(r'^favorites/add/(?P<id>\d+)/$',           'demovibes.webview.views.add_favorite', name = "dv-add_fav"),
     url(r'^favorites/$',                           'demovibes.webview.views.list_favorites', name = "dv-favorites"),
     url(r'^favorites/del/(?P<id>\d+)/$',           'demovibes.webview.views.del_favorite', name = "dv-del_fav"),
@@ -191,6 +188,7 @@ urlpatterns = patterns('',
 
     # Compilation Views
     url(r'^compilation/(?P<comp_id>\d+)/$',             'demovibes.webview.views.view_compilation',       name = "dv-compilation"),
+    url(r'^compilation/(?P<comp_id>\d+)/edit/$',         views.EditCompilation(),       name = "dv-compilation-edit"),
 
     # Creation URL's for users to make new stuff
     url(r'^artist/create/$',                    'demovibes.webview.views.create_artist', name = "dv-createartist"),
@@ -199,10 +197,9 @@ urlpatterns = patterns('',
     url(r'^new_groups/$',                       'demovibes.webview.views.activate_groups', name = "dv-newgroups"),
 
     # Production label URL's (Labels/Producers Specific)
-    url(r'^labels/$',                             'django.views.generic.list_detail.object_list', \
-                dict(labels_all_dict, extra_context = { 'al' : alphalist }), name = "dv-labels"),
+    url(r'^labels/$',                             views.ListLabels(), name = "dv-labels"),
     url(r'^label/(?P<object_id>\d+)/$',            'django.views.generic.list_detail.object_detail',       labels_a_dict, name = "dv-label"),
-    url(r'^labels/(?P<letter>.)/$',               'demovibes.webview.views.list_labels', name = "dv-labels_letter"),
+    url(r'^labels/(?P<letter>.)/$',               views.ListLabels(), name = "dv-labels_letter"),
     url(r'^label/create/$',                    'demovibes.webview.views.create_label', name = "dv-createlabel"),
     url(r'^new_labels/$',                      'demovibes.webview.views.activate_labels', name = "dv-newlabels"),
 

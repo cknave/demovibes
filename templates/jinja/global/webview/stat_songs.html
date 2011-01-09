@@ -13,7 +13,7 @@
  <th>Vote</th>
  <th>Queue</th>
  <th>Last Request</th>
- {% if stat %}<th>{{ stat|capitalize }}</th>{% endif %}
+ {% if stat %}<th>{{ name }}</th>{% endif %}
 </tr>
 {% for song in songs %}
 <tr class="{{ loop.cycle('row1', 'row2') }}">

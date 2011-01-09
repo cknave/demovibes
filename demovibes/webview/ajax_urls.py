@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from demovibes.webview.models import *
+from demovibes.webview import views
 
 urlpatterns = patterns('',
     (r'^ping/(?P<event_id>\d+)/$',   'demovibes.webview.ajax_views.ping'),
@@ -9,7 +10,7 @@ urlpatterns = patterns('',
     (r'^history/$',             'demovibes.webview.ajax_views.history'),
     url(r'^songinfo/$',             'demovibes.webview.ajax_views.songinfo', name="dv-ax-songinfo"),
     url(r'^oneliner/$',            'demovibes.webview.ajax_views.oneliner', name="dv-ax-oneliner"),
-    (r'song/(?P<song_id>\d+)/queue/',   'demovibes.webview.views.addqueue'),
+    (r'song/(?P<song_id>\d+)/queue/',   views.AddQueue()),
     url(r'^tags/$',            'demovibes.webview.ajax_views.get_tags', name="dv-ax-taglist"),
     (r'a_queue_(?P<song_id>\d+)/$',        'demovibes.webview.ajax_views.songupdate'),
     (r'words/(?P<prefix>\w+)/$',        'demovibes.webview.ajax_views.words'),

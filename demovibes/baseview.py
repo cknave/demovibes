@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect, render_to_response
+from django.core.cache import cache
 
 class BaseView(object):
 
@@ -25,9 +26,13 @@ class BaseView(object):
     forms = []
     formdata = {}
 
+    cache_key = None
+    cache_duration = 60*5
+    cache_output = False
+
     use_decorators = [transaction.commit_on_success]
-    run_before_main = ["run_permissions_check", "setup_session", "handle_forms", "pre_view"]
-    run_after_main = ["post_view", "update_context", "close_session", "render"]
+    run_before_main = ["initialize", "run_permissions_check", "setup_session", "handle_forms", "pre_view"]
+    run_after_main = ["post_view", "update_context", "close_session", "check_caching", "render"]
 
     content_type = settings.DEFAULT_CONTENT_TYPE
 
@@ -83,7 +88,12 @@ class BaseView(object):
         funclist = self.run_before_main + [self.method] + self.run_after_main
         return self.run_functions_from_list(funclist)
 
+    # ---- Permission check block ----
+
     def run_permissions_check(self):
+        """
+        Check if user have permission to view, if not return denied
+        """
         if not self.default_permissions_check():
             return self.deny_permission()
 
@@ -98,17 +108,24 @@ class BaseView(object):
     def check_permissions(self):
         return True
 
+    def deny_permission(self):
+        response = HttpResponse("Permission denied")
+        response.status_code = 403
+        return response
+
+    # ---- End permission check block
+
     def setup_session(self):
         self.session = self.request.session
 
     def close_session(self):
         self.request.session = self.session
 
-    def deny_permission(self):
-        return HttpResponse("Permission denied")
-
     def update_context(self):
         self.context.update(self.set_context())
+
+    def set_context(self):
+        return {}
 
     def handle_forms(self):
         """
@@ -139,9 +156,6 @@ class BaseView(object):
 
             self.context[formname] = form_instance
 
-    def set_context(self):
-        return {}
-
     def redirect(self, target):
         self.log.debug(u"Setting redirect to target %s" % target)
         self.response = redirect(target)
@@ -157,8 +171,41 @@ class BaseView(object):
     def render_template(self, template, context, request):
         return render_to_response(template, context, context_instance=RequestContext(request), mimetype=self.content_type)
 
-    def method_not_allowed(self, method):
+    def method_not_allowed(self):
         self.log.info("Method is not allowed")
-        response = HttpResponse('Method not allowed: %s' % method)
+        response = HttpResponse('Method not allowed: %s' % self.method)
         response.status_code = 405
         return response
+
+    # ---- Caching block ----
+
+    def check_caching(self):
+        key = self.get_cache_key()
+        if not self.cache_output:
+            self.update_cached_context(key)
+        else:
+            return self.render_cached(key)
+
+    def fetch_cache(self, key, function):
+        data = cache.get(key)
+        if data == None:
+            time = self.get_cache_duration()
+            data = function()
+            cache.set(key, data, time)
+        return data
+
+    def render_cached(self, key):
+        return self.fetch_cache(key, self.render)
+
+    def update_cached_context(self, key):
+        if key and hasattr(self, "set_cached_context"):
+            context = self.fetch_cache(key, self.set_cached_context)
+            self.context.update(context)
+
+    def get_cache_key(self):
+        return self.cache_key
+
+    def get_cache_duration(self):
+        return self.cache_duration
+
+    # ---- End caching block ----
