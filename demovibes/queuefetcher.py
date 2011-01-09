@@ -21,17 +21,17 @@ class song_finder(object):
         4 : 3,
         5 : 1,
     }
-    
+
     def __init__(self, djuser = None):
         self.sysenc = sys.getdefaultencoding()
         self.fsenc = sys.getfilesystemencoding()
-        
+
         self.meta = None
         self.timestamp = None
         self.song = None
-        
+
         self.log = logging.getLogger("pyAdder")
-        
+
         if not djuser:
             djuser = getattr(settings, 'DJ_USERNAME', "djrandom")
         try:
@@ -39,14 +39,14 @@ class song_finder(object):
         except:
             print "User (%s) not found! Aborting!" % djuser
             sys.exit(1)
-        
+
         self.bitly_username = getattr(settings, 'BITLY_USERNAME', False)
         self.bitly_key = getattr(settings, 'BITLY_API_KEY', False)
-        
+
         self.max_songlength = getattr(settings, 'DJ_MAX_LENGTH', None)
         self.twitter_username = getattr(settings, 'TWITTER_USERNAME', False)
         self.twitter_password = getattr(settings, 'TWITTER_PASSWORD', False)
-        
+
         self.base_url = self.get_site_url()
         self.init_jt()
         self.weight_table = {
@@ -57,7 +57,7 @@ class song_finder(object):
             4 : 0,
             5 : 0
         }
-        
+
     def findQueued(self):
         """
         Return next queued song, or a random song, or a jingle.
@@ -74,11 +74,11 @@ class song_finder(object):
             common.play_queued(song)
             return song.song
         else:
-            return self.getRandom()        
+            return self.getRandom()
 
     def get_metadata(self):
         return self.meta.encode(self.sysenc, 'replace')
-        
+
     def get_next_song(self):
         """
         Return next song filepath to be played
@@ -89,13 +89,13 @@ class song_finder(object):
                 self.log.warning(u"Song '%s' stopped playing after less than 3 seconds for some reason!" % self.meta)
                 time.sleep(3)
         self.timestamp = datetime.datetime.now()
-        
+
         song = self.findQueued()
-    
+
         self.meta = u"%s - %s" % (song.artist(), song.title)
         self.log.debug("Now playing \"%s\" [ID %s]" % (song.title, song.id))
         self.song = song
-    
+
         try:
             filepath = song.file.path.encode(self.fsenc)
         except:
@@ -104,8 +104,8 @@ class song_finder(object):
             except:
                 filepath = song.file.path
         self.log.debug("Returning path %s" % filepath)
-        return filepath     
-    
+        return filepath
+
     def get_site_url(self):
         current_site = Site.objects.get_current()
         protocol = getattr(settings, 'MY_SITE_PROTOCOL', 'http')
@@ -146,7 +146,7 @@ class song_finder(object):
 
     def isGoodSong(self, song):
         """Check if song is a good song to play
-    
+
         Checks if song is locked, and if that voteclass of songs have been played recently.
         Returns true or false
         """
@@ -180,7 +180,7 @@ class song_finder(object):
 
     def send_to_twitter(self, song):
         twitter_message = "Now Playing: %s - %s" % (song.artist(), song.title)
-        
+
         if self.bitly_username and self.bitly_key:
             url = self.base_url + song.get_absolute_url()
             self.log.debug("Bitly : Full URL To Song URL: %s" % url)
@@ -190,7 +190,7 @@ class song_finder(object):
                 twitter_message += ' - %s' % short_url
             except:
                 self.log.warning("Bit.ly failed to shorten url!")
-    
+
         if self.twitter_username and self.twitter_password:
             self.log.debug("Tweeting: %s" % twitter_message)
             self.tweet(self.twitter_username, self.twitter_password, twitter_message)

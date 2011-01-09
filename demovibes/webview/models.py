@@ -1001,7 +1001,7 @@ class Compilation(models.Model):
 
 
     def reset_songs(self):
-        self.songs.all().delete()
+        CompilationSongList.objects.filter(compilation = self).delete()
 
     def get_songs(self):
         return self.songs.all().order_by("compilationsonglist__index")
