@@ -104,6 +104,10 @@ def render_to_string(template_name, context=None, request=None, processors=None)
 def render_to_response(template_name, context=None, request=None,
                        processors=None, mimetype=None):
     """Render a template into a response object."""
+    if not mimetype:
+        mimetype=settings.DEFAULT_CONTENT_TYPE
+    if not "charset" in mimetype:
+        mimetype = mimetype + "; charset=" + settings.DEFAULT_CHARSET
     return HttpResponse(render_to_string(template_name, context, request,
                                          processors), mimetype=mimetype)
 
