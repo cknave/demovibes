@@ -65,7 +65,7 @@ Author:
 <p>
 {{ gettext("Song Length") }}: {{ object.length() }}<br />
 {% if meta.release_year %}{{ gettext("Release Year") }}: {{ meta.release_year }}<br />{% endif %}
-{{ gettext("Song Status"}}: {{ object.get_status_display() }}
+{{ gettext("Song Status") }}: {{ object.get_status_display() }}
 {% if object.bitrate %}<br />{{ gettext("Song Bitrate") }}: {{ object.bitrate }} kbps{% endif %}
 {% if meta.type %}<br />{{ gettext("Song Source") }}: {{ meta.type|e }}{% endif %}
 {% if meta.platform %}<br />{{ gettext("Song Platform") }}: {{ display.platform(meta.platform) }}{% endif %}
