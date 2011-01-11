@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block main %}
-<h2>Avaliable statistics</h2>
+<h2>{{ gettext("Avaliable statistics") }}</h2>
 {% for word, vals in keys.items() %}
 <p><a href="{{ url("dv-stats", word) }}">{{ word|capitalize }}</a> - {{ vals[0] }}</p>
 {% endfor %}

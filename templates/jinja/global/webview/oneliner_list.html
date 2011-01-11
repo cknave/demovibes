@@ -1,9 +1,9 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display -%}
-{% block title %}Oneliner{% endblock %}
+{% block title %}{{ gettext("Oneliner") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" />Oneliner History</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" />{{ gettext("Oneliner History") }}</h2>
 
 <div class="olh_wrapper">
 
@@ -15,7 +15,7 @@
 </div>
 
 <div class="olh_message">
-	<p>{{ line.message|mksafe|bbcode_oneliner|smileys|oneliner_mediaparse|bbcode_oneliner|dv_urlize }}</p>
+    <p>{{ line.message|mksafe|bbcode_oneliner|smileys_oneliner|oneliner_mediaparse|bbcode_oneliner|dv_urlize }}</p>
 </div>
 </div>{% endcache %}
 {% endfor %}
@@ -23,7 +23,7 @@
 </div>
 
 <div class="olh_pages">
-<p>Pages:
+<p>{{ gettext("Pages") }}:
 {% for p in page_range[:20] %}
 {% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url("dv-oneliner") }}?page={{ p }}">{{ p }}</a> {% endif %}
 {% endfor %}</p>

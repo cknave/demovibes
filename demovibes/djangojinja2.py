@@ -66,6 +66,8 @@ def create_env():
     ENV.globals.update(jinja2_funcs.GLOBALS)
     ENV.filters.update(jinja2_funcs.FILTERS)
     ENV.fragment_cache = cache
+    trans = getattr(settings, 'LANGUAGE_CODE')
+    ENV.install_null_translations(newstyle=True)
     ENV.fragment_cache_prefix = "fcache"
     return ENV
 

@@ -2,7 +2,7 @@
 
 {% import "macro/display.html" as display %}
 
-{% block title %}Edit tags for {{ song|e }}{% endblock %}
+{% block title %}{{ gettext("Edit tags for") }} {{ song|e }}{% endblock %}
 
 {% block headblock %}
 
@@ -22,23 +22,23 @@
 {% endblock %}
 
 {% block main %}
-<h2>Edit tags for {{ song|e }}</h2>
-<p>Editing tags for {{ display.song(song) }}.</p>
-<p>Please try to keep the style and words that's already in use.</p>
+<h2>{{ gettext("Edit tags for") }} {{ song|e }}</h2>
+<p>{{ gettext("Editing tags for") }} {{ display.song(song) }}.</p>
+<p>{{ gettext("Please try to keep the style and words that's already in use.") }}</p>
 
-Please input tags with space between to seperate them.
-<h2>Change tags</h2>
+<span>{{ gettext("Please input tags with space between to seperate them.") }}</span>
+<h2>{{ gettext("Change tags") }}</h2>
 <form method="post" action=".">
 Tags : <input type="text" name="tags" value="{{ tags|e }}"  id="tagfield" />
 <input type="submit" value="Update tags" />
 </form>
-<h3>Latest changes:</h3>
+<h3>{{ gettext("Latest changes") }}:</h3>
 {% if changes %}
 <table>
 <tr>
-<th>User</th>
-<th>Time</th>
-<th>Tags</th>
+<th>{{ gettext("User") }}</th>
+<th>{{ gettext("Time") }}</th>
+<th>{{ gettext("Tags") }}</th>
 </tr>
 {% for change in changes %}
 <tr>
@@ -49,6 +49,6 @@ Tags : <input type="text" name="tags" value="{{ tags|e }}"  id="tagfield" />
 {% endfor %}
 </table>
 {% else %}
-No tags have been added yet
+{{ gettext("No tags have been added yet") }}
 {% endif %}
 {% endblock %}

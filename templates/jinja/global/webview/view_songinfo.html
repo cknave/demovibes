@@ -2,88 +2,88 @@
 
 {% import "macro/display.html" as display %}
 
-{% block title %}{{ meta.song|e }} - Meta info{% endblock %}
+{% block title %}{{ meta.song|e }} - {{ gettext("Meta info") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}tick.png" alt="" />Correction Status</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}tick.png" alt="" />{{ gettext("Correction Status") }}</h2>
 <table>
     <tr>
-        <th>Song</th>
+        <th>{{ gettext("Song") }}</th>
         <td>{{ display.song(meta.song) }}</td>
     </tr>
     <tr>
-        <th>Active</th>
+        <th>{{ gettext("Active") }}</th>
         <td>{{ display.yesno(meta.active) }}</td>
     </tr>
     <tr>
-        <th>Checked</th>
+        <th>{{ gettext("Checked") }}</th>
         <td>{{ display.yesno(meta.checked) }}</td>
     </tr>
     <tr>
-        <th>Added by</th>
+        <th>{{ gettext("Added by") }}</th>
         <td>{{ display.user(meta.user) }}</td>
     </tr>
     <tr>
-        <th>Added date</th>
+        <th>{{ gettext("Added date") }}</th>
         <td>{{ meta.added }}</td>
     </tr>
     <tr>
-        <th>Changed fields</th>
+        <th>{{ gettext("Changed fields") }}</th>
         <td>{{ meta.get_changelist()|join(", ") }}</td>
     </tr>
 </table>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}sound.png" alt="" />Song Information</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}sound.png" alt="" />{{ gettext("Song Information") }}</h2>
 <table>
     <tr>
-        <th>Artists</th>
+        <th>{{ gettext("Artists") }}</th>
         <td>{{ display.artists_meta(meta) }}</td>
     </tr>
     <tr>
-        <th>Groups</th>
+        <th>{{ gettext("Groups") }}</th>
         <td>{% for g in meta.groups.all() %}{{ display.group(g) }} {% endfor %}</td>
     </tr>
     <tr>
-        <th>Labels</th>
+        <th>{{ gettext("Labels") }}</th>
         <td>{% for l in meta.labels.all() %}{{ display.label(l) }} {% endfor %}</td>
     </tr>
     <tr>
-        <th>Info</th>
+        <th>{{ gettext("Info") }}</th>
         <td>{{ meta.info }}</td>
     </tr>
     <tr>
-        <th>Platform</th>
+        <th>{{ gettext("Platform") }}</th>
         <td>{{ display.platform(meta.platform) }}</td>
     </tr>
     <tr>
-        <th>Type</th>
+        <th>{{ gettext("Type") }}</th>
         <td>{{ display.platform(meta.type) }}</td>
     </tr>
     <tr>
-        <th>Release year</th>
+        <th>{{ gettext("Release year") }}</th>
         <td>{{ meta.release_year }}</td>
     </tr>
     <tr>
-        <th>Remix of</th>
+        <th>{{ gettext("Remix of") }}</th>
         <td>{{ display.song(meta.get_remix()) }}</td>
     </tr>
     <tr>
-        <th>Pouet ID</th>
-        <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_new">{{ meta.pouetid }}</a>{% else %}None{% endif %}</td>
+        <th>{{ gettext("Pouet ID") }}</th>
+        <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_new">{{ meta.pouetid }}</a>{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>
     <tr>
-        <th>YouTube link</th>
-        <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_new">{{ meta.ytvidid }}</a> - Offset: {{ meta.ytvidoffset }}{% else %}None{% endif %}</td>
+        <th>{{ gettext("YouTube link") }}</th>
+        <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_new">{{ meta.ytvidid }}</a> - {{ gettext("Offset") }}: {{ meta.ytvidoffset }}{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>
 </table>
-<h2><img class="icon_header" src="{{ MEDIA_URL }}explicit.gif" alt="" />Respond To Change</h2>
-{% if meta.comment %}Note from user:
+<h2><img class="icon_header" src="{{ MEDIA_URL }}explicit.gif" alt="" />{{ gettext("Respond To Change") }}</h2>
+{% if meta.comment %}{{ gettext("Note from user") }}:
  <div id="metainfo">{{ meta.comment|linebreaks }}</div>
 {% endif %}
 
 <form method="post" action=".">
- {% if not meta.checked %}<input type="submit" name="deactivate" value="Reject Changes" />{% endif %}
- {% if not meta.active %}<input type="submit" name="activate" value="Accept Changes" />{% endif %}
+ {% if not meta.checked %}<input type="submit" name="deactivate" value="{{ gettext("Reject Changes") }}" />{% endif %}
+ {% if not meta.active %}<input type="submit" name="activate" value="{{ gettext("Accept Changes") }}" />{% endif %}
 </form>
 
 {% endblock %}

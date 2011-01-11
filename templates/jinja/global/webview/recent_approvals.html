@@ -1,19 +1,19 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display -%}
-{% block title %}Recent Song Approvals{% endblock %}
+{% block title %}{{ gettext("Recent Song Approvals") }}{% endblock %}
 
 {% block main %}
  <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Recently Approved Songs</h2>
-Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><br />
+<p>{{ gettext("Displaying the latest %(num)d uploaded songs", num=settings.UPLOADED_SONG_COUNT) }}:</p>
 
  <table class="recent-approvals">
  <tr>
-  <th>Song Title</th>
-  <th>Artist</th>
-  <th>Added</th>
-  <th>Length</th>
-  <th>Uploader</th>
-  <th>Status</th>
+  <th>{{ gettext("Song Title") }}</th>
+  <th>{{ gettext("Artist") }}</th>
+  <th>{{ gettext("Added") }}</th>
+  <th>{{ gettext("Length") }}</th>
+  <th>{{ gettext("Uploader") }}</th>
+  <th>{{ gettext("Status") }}</th>
 </tr>
 {% if songs %}
     {% for songr in songs %}
@@ -41,7 +41,7 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
         </tr>
     {% endfor %}
 {% else %}
-   <tr><td>No Entries!!</td><td></td><td></td><td></td><td></td><td></td></tr>
+   <tr><td>{{ gettext("No Entries!!") }}</td><td></td><td></td><td></td><td></td><td></td></tr>
 {% endif %}
  </table>
 

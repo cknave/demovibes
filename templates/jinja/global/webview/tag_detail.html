@@ -2,11 +2,11 @@
 
 {% import "macro/display.html" as display %}
 
-{% block title %}Tag {{ tag|e }}{% endblock %}
- 
+{% block title %}{{ gettext("Tag") }} {{ tag|e }}{% endblock %}
+
 {% block main %}
-<h2>Info for tag(s) "{{ tag|e }}"</h2>
-<p>Related tags:</p>
+<h2>{{ gettext("Info for tag(s)") }} "{{ tag|e }}"</h2>
+<p>{{ gettext("Related tags") }}:</p>
 {% for tagd in related %}
     <span class="tagview_{{ tagd.font_size }}">
         <a href="{{ url("dv-tagdetail", mkstr(tag|e,",",tagd|e)) }}" title='Add tag "{{ tagd|e }}" to filter' class="tag_add">[+]</a>
@@ -16,7 +16,7 @@
         {% if not loop.last %}, {% endif %}
     </span>
 {% endfor %}
-<h2>Songs connected to tags</h2>
+<h2>{{ gettext("Songs connected to tags") }}</h2>
 
 {% set objs, paging = dv.paginate(songs, 300) %}
 

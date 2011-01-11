@@ -1,9 +1,9 @@
 {% import "macro/display.html" as display -%}<html>
-<head><title>{{ song }} playing</title></head>
+<head><title>{{ song }} {{ gettext("playing") }}</title></head>
 <body>
-<p>Song : {{ display.song(song) }}</p>
+<p>{{ gettext("Song") }}: {{ display.song(song) }}</p>
 <table>
-<tr><th>Flash player</th><th>Java player</th></tr>
+<tr><th>{{ gettext("Flash player") }}</th><th>{{ gettext("Java player") }}</th></tr>
     <tr>
         <td>
         <object type="application/x-shockwave-flash" data="{{ MEDIA_URL }}flash/player_mp3_multi.swf" width="200" height="20">

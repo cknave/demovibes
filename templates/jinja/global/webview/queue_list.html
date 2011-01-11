@@ -1,12 +1,12 @@
 {% extends "base/base.html" %}
 
-{% block title %}Queue list{% endblock %}
+{% block title %}{{ gettext("Queue list") }}{% endblock %}
 
 {% block main %}
 
 <h2>
 <img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />
-Pending Queue List
+<span>{{ gettext("Pending Queue List") }}</span>
 </h2>
 
 <div name="queue">
@@ -15,7 +15,7 @@ Pending Queue List
 
 <h2>
 <img class="icon_header" src="{{ MEDIA_URL }}hourglass.png" alt="" />
-Request History
+<span>{{ gettext("Request History") }}</span>
 </h2>
 
 <div name="history">

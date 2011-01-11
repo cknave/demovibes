@@ -1,13 +1,12 @@
 {% extends "base/base.html" %}
 
-{% block title %}Frequently Asked Questions (FAQ){% endblock %}
+{% block title %}{{ gettext("Frequently Asked Questions (FAQ)") }}{% endblock %}
 
 {% block main %}
-<a name="top"></a><h2><img class="icon_header" src="/static/comment.png" alt="" />Frequently Asked Questions (FAQ)</h2>
+<a name="top"></a><h2><img class="icon_header" src="/static/comment.png" alt="" />{{ gettext("Frequently Asked Questions (FAQ)") }}</h2>
 
 
 {# {% cache 86400 "faq_a" object.id object.last_updated %} #}<a name="{{ object.id }}"></a><strong>Q. {{ object.question|e }}</strong>{% if user.is_staff %} - [<a href="/admin/webview/faq/{{ object.id }}"><img src="/static/link_edit.png" title="Edit FAQ Question/Answer" /></a>]{% endif %}<br />
 {{ object.answer|urlize|linebreaks|smileys|bbcode }}<br />
-Added by {% set U = object.added_by %}{% include "webview/t/user.html" %} (Last Updated: {{ object.last_updated|timesince }}){# {% endcache %} #} [<a href="{{ url("dv-faq") }}">Full FAQ List</a>]<br />
+{{ gettext("Added by") }} {% set U = object.added_by %}{% include "webview/t/user.html" %} ({{ gettext("Last Updated") }}: {{ object.last_updated|timesince }}){# {% endcache %} #} [<a href="{{ url("dv-faq") }}">{{ gettext("Full FAQ List") }}</a>]<br />
 {% endblock %}
-

@@ -1,19 +1,19 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display -%}
-{% block title %}Uploaded Songs{% endblock %}
+{% block title %}{{ gettext("Uploaded Songs") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />Uploaded Songs</h2>
-<p>The following songs are currently pending review and approval:</p>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />{{ gettext("Uploaded Songs") }}</h2>
+<p>{{ gettext("The following songs are currently pending review and approval") }}:</p>
 <br />
 
 <table>
 <tr>
- <th>Song Title</th>
- <th>Length</th>
- <th>Artist</th>
- <th>Uploader</th>
- <th>Uploaded</th>
+ <th>{{ gettext("Song Title") }}</th>
+ <th>{{ gettext("Length") }}</th>
+ <th>{{ gettext("Artist") }}</th>
+ <th>{{ gettext("Uploader") }}</th>
+ <th>{{ gettext("Uploaded") }}</th>
 </tr>
 {% for song in songs %}
 <tr>

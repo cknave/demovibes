@@ -1,9 +1,9 @@
 {% extends "base/base.html" %}
 
-{% block title %}{{ cat.name|e }} - All Links{% endblock %}
+{% block title %}{{ cat.name|e }} - {{ gettext("All Links") }}{% endblock %}
 
 {% block main %}
-<h2>{% if cat.icon %}<img class="icon_header" src="{{ cat.icon.url }}">{% else %}<img class="icon_header" src="/static/transmit_blue.png">{% endif %}{{ cat.name|e }} - ({% count_text_links cat.id_slug %} Links)</h2>
+<h2>{% if cat.icon %}<img class="icon_header" src="{{ cat.icon.url }}">{% else %}<img class="icon_header" src="/static/transmit_blue.png">{% endif %}{{ cat.name|e }} - ({% count_text_links cat.id_slug %} {{ gettext("Links") }})</h2>
 {{cat.description|urlize|linebreaks}}
 <br />
 {% if links_txt %}

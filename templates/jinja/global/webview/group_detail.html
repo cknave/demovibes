@@ -2,10 +2,10 @@
 
 {% import "macro/display.html" as display -%}
 
-{% block title %}Group Info For {{ object.name|e }}{% endblock %}
+{% block title %}{{ gettext("Group Info For") }} {{ object.name|e }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" {% if object.group_icon %}src="{{ object.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} alt="" />Group Information For {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/group/{{ object.id }}/">Edit Info</a>]{% endif %}</h2>
+<h2><img class="icon_header" {% if object.group_icon %}src="{{ object.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} alt="" />{{ gettext("Group Information For") }} {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/group/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]{% endif %}</h2>
 
 <table>
 <tr>
@@ -13,10 +13,10 @@
 {% if object.group_logo %}<img class="group_logo" src="{{ object.group_logo.url }}">{% else %}<img class="group_logo" src="/static/no_picture.png" />{% endif %}
 <br /><strong>{{ object.name|e }}</strong><br />{% if object.found_date %}(Founded On: {{object.found_date|date("F j, Y") }}){% endif %}<br />
 
-{% if object.webpage %}<a href="{{ object.webpage|e }}" target="_new">Visit Group's Website</a><br />{% endif %}
-{% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">Pouet Link</a><br />{% endif %}
-{% if object.last_updated %}Last Updated: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
-{% if object.created_by %}Added By: {{ display.user(object.created_by) }}<br />{% endif %}
+{% if object.webpage %}<a href="{{ object.webpage|e }}" target="_new">{{ gettext("Visit Group's Website") }}</a><br />{% endif %}
+{% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">{{ gettext("Pouet Link") }}</a><br />{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.created_by %}{{ gettext("Added By") }}: {{ display.user(object.created_by) }}<br />{% endif %}
 {{ display.links(object) }}
 </td>
 <td class="group_description" valign="top">
@@ -25,19 +25,19 @@
 {% endif %}<br />
 
 {% if object.artist_set.count() != 0 %}
- <b>Active Group Members:</b><br />
+ <b>{{ gettext("Active Group Members") }}:</b><br />
  {% for artist in object.artist_set.all() %}
   {{ display.artist(artist) }}<br />
  {% endfor %}<br />
 {% endif %}
 
 {% if object.get_songs().count() != 0 %}
- <b>Active Group Songs:</b><br />
+ <b>{{ gettext("Active Group Songs") }}:</b><br />
 
  {% set objs, paging = dv.paginate(object.get_songs().all()) %}
 
  {% for song in objs %}
-  {{ display.song(song) }} by {{ display.artists(song)}}
+  {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song)}}
   <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}<br />
 {% endif %}

@@ -1,9 +1,9 @@
 {% extends "base/base.html" %}
 
-{% block title %}Song Queued{% endblock %}
+{% block title %}{{ gettext("Song Queued") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/music.png" alt="" />Song Queued</h2>
-Your Song Has Been Queued!
+<h2><img class="icon_header" src="/static/music.png" alt="" />{{ gettext("Song Queued") }}</h2>
+<span>{{ gettext("Your Song Has Been Queued!") }}</span>
 {% endblock %}
 

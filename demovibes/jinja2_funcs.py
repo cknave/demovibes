@@ -45,7 +45,7 @@ def timeuntil(date):
 def mksafe(arg):
     """
     Force escaping of html
-    
+
     First turn it into a Markup() type with escape, then force it into unicode again,
     so other modifications to the string won't be automatically escaped.
     """
@@ -60,13 +60,14 @@ FILTERS = {
     'date': defaultfilters.date,
     'pluralize': defaultfilters.pluralize,
     'timesince': timesince,
-    'timeuntil': timeuntil,    
+    'timeuntil': timeuntil,
     'floatformat': defaultfilters.floatformat,
-    'linebreaks': defaultfilters.linebreaks,    
+    'linebreaks': defaultfilters.linebreaks,
     'smileys': dv_extend.smileys,
+    'smileys_oneliner': dv_extend.smileys_oneliner,
     'oneliner_mediaparse': dv_extend.oneliner_mediaparse,
     'bbcode_oneliner': dv_extend.bbcode_oneliner,
-    'bbcode': dv_extend.bbcode,    
+    'bbcode': dv_extend.bbcode,
     'dv_urlize': dv_extend.dv_urlize,
     'mksafe': mksafe,
 }

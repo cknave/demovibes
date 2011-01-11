@@ -4,7 +4,7 @@
 {% block title %}{{ object.handle|e }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" /><span class="header">Artist Info{% if user.is_staff %} [<a href="/admin/webview/artist/{{ object.id }}/">Edit Artist Info</a>]{% endif %}</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" /><span class="header">{{ gettext("Artist Info") }}{% if user.is_staff %} [<a href="/admin/webview/artist/{{ object.id }}/">{{ gettext("Edit Artist Info") }}</a>]{% endif %}</h2>
 <table>
 <tr>
 <td class="artist_details" valign="top">
@@ -24,30 +24,30 @@
 <br />
 
 {% if object.link_to_user %}
- <a href="/demovibes/user/{{ object.link_to_user.username|e }}/">View Artist's User Page</a><br />
+ <a href="/demovibes/user/{{ object.link_to_user.username|e }}/">{{ gettext("View Artist's User Page") }}</a><br />
 {% endif %}
 
 {% if object.alias_of %}
- <strong>This is an alias of : {{ display.artist(object.alias_of) }}!</strong><br />
+ <strong>{{ gettext("This is an alias of") }} : {{ display.artist(object.alias_of) }}!</strong><br />
 {% endif %}
 
 {% if object.groups.all() %}
- Groups : {% for group in object.groups.all() %}{{ display.group(group) }}{% endfor %}<br />
+ {{ gettext("Groups") }} : {% for group in object.groups.all() %}{{ display.group(group) }}{% endfor %}<br />
 {% endif %}
 
 {% if object.aliases.all() %}
- Aliases: {% for alias  in object.aliases.all() %}{{ display.artist(alias)}}{% if loop.last %}{% else %}, {% endif %}{% endfor %}<br />
+ {{ gettext("Aliases") }} : {% for alias  in object.aliases.all() %}{{ display.artist(alias)}}{% if loop.last %}{% else %}, {% endif %}{% endfor %}<br />
 {% endif %}
 <br />
 
 {% if object.name %}
- Name : {{ object.name|e }}<br />
+ {{ gettext("Name") }} : {{ object.name|e }}<br />
 {% endif %}
 
-Location: {{ dv.flag(object.home_country) }} {% if object.home_location %}{{ object.home_location|e }}{% endif %}<br />
+{{ gettext("Location") }}: {{ dv.flag(object.home_country) }} {% if object.home_location %}{{ object.home_location|e }}{% endif %}<br />
 
 {% if object.dob %}
- Date Of Birth : {{ object.dob|date("F j, Y") }}<br />
+ {{ gettext("Date Of Birth") }} : {{ object.dob|date("F j, Y") }}<br />
 {% endif %}
 
 {% if object.is_deceased %}
@@ -55,31 +55,31 @@ Date Of Death: {{ object.deceased_date|date("F j, Y") }}<br />
 {% endif %}
 
 {% if object.labels.count() != 0 %}
- Associated Labels: {% for labels in object.labels.all() %}{{ display.label(labels) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
+ {{ gettext("Associated Labels") }} : {% for labels in object.labels.all() %}{{ display.label(labels) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}<br />
 {% endif %}
 
 {% if object.info %}
-<br />Additional Information:<br />
+<br />{{ gettext("Additional Information") }}:<br />
 <p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
 {% endif %}<br />
 
 {% if object.webpage %}
-<br /><a href="{{ object.webpage|e }}" target="_new">Artist's Website</a><br />
+<br /><a href="{{ object.webpage|e }}" target="_new">{{ gettext("Artist's Website") }}</a><br />
 {% endif %}
 
 {% if object.status == "A" %}
- <a href="{{ object.get_absolute_url() }}upload/">Upload a new song by this artist</a><br />
+ <a href="{{ object.get_absolute_url() }}upload/">{{ gettext("Upload a new song by this artist") }}</a><br />
 {% else %}
- <strong>Artist Locked For Uploading!</strong><br />
+ <strong>{{ gettext("Artist Locked For Uploading!") }}</strong><br />
 {% endif %}
 <br />
-{% if object.last_updated %}Last Updated: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
-{% if object.created_by %}Added By: {{ display.user(object.created_by) }}<br />{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.created_by %}{{ gettext("Added By") }}: {{ display.user(object.created_by) }}<br />{% endif %}
 </td>
 </tr>
 </table>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Songs Connected To This Artist</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ gettext("Songs Connected To This Artist") }}</h2>
 {% include "webview/t/songheader.html" %}
 
 {% set songlist = object.get_songs() %}

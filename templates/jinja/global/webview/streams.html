@@ -1,27 +1,27 @@
 {% extends "base/base.html" %}
 
-{% block title %}Audio Streams{% endblock %}
+{% block title %}{{ gettext("Audio Streams") }}{% endblock %}
 
 {% block main %}
-<h2>{{ dv.site_name() }} Audio Streams</h2>
+<h2>{{ dv.site_name() }} {{ gettext("Audio Streams") }}</h2>
 {% include "webview/stream_instructions.html" %}
 <br />
 {% for stream in object_list %}
 <div class="bubbleInfo">
     {{ dv.flag(stream.country_code) }} <a href="{{ stream.url|e }}" class="trigger">{{stream.name|e}}</a> ({{ stream.bitrate }} kbps {{ stream.get_streamtype_display() }})
 <div class="popup">
-    <b>Stream Name:</b> {{ dv.flag(stream.country_code) }} {{stream.name|e}}<br />
-    <b>Direct Stream Link:</b> <a href="{{ stream.url|e }}">{{stream.name|e}}</a><br />
-    {% if stream.streamtype != 'S' %}<b>PlayList File:</b> <a href="{{ stream.url|e }}.m3u">M3U</a><br />{% endif %}
-    <b>Stream Info:</b> {{ stream.get_streamtype_display() }} - {{ stream.bitrate }} kbps<br />
+    <b>{{ gettext("Stream Name") }}:</b> {{ dv.flag(stream.country_code) }} {{stream.name|e}}<br />
+    <b>{{ gettext("Direct Stream Link") }}:</b> <a href="{{ stream.url|e }}">{{stream.name|e}}</a><br />
+    {% if stream.streamtype != 'S' %}<b>{{ gettext("PlayList File") }}:</b> <a href="{{ stream.url|e }}.m3u">M3U</a><br />{% endif %}
+    <b>{{ gettext("Stream Info") }}:</b> {{ stream.get_streamtype_display() }} - {{ stream.bitrate }} kbps<br />
     {% if stream.description %}{{ stream.description|urlize|linebreaks }}{% endif %}
     </div>
 </div><br/>
 {% endfor %}
 
-<h2>Recommended Players</h2>
-The audio streams can be played on many different programs and platforms, including:<br />
-<br />
+<h2>{{ gettext("Recommended Players") }}</h2>
+<p>{{ gettext("The audio streams can be played on many different programs and platforms, including") }}:</p>
+
 <a href="http://www.winamp.com" target="_new">Winamp</a> (Windows Only)<br />
 <a href="http://www.microsoft.com/windows/windowsmedia/player" target="_new">Windows Media Player</a> (Windows, Windows Mobile, PocketPC)<br />
 <a href="http://www.apple.com/itunes" target="_new">iTunes</a> (Windows and Mac)<br />

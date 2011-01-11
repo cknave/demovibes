@@ -1,18 +1,18 @@
 {% extends "base/base.html" %}
 
 {% block main %}
-<h2>Top {{ numsongs }} {{ title }} songs</h2>
+<h2>{{ gettext("Top") }} {{ numsongs }} {{ title }} {{ gettext("songs") }}</h2>
 
 <table class="songlist">
 <tr>
- <th>Nr</th>
- <th>Song Title</th>
- <th>Artist</th>
- <th>Song Length</th>
- <th>Status</th>
- <th>Vote</th>
- <th>Queue</th>
- <th>Last Request</th>
+ <th>{{ gettext("Nr") }}</th>
+ <th>{{ gettext("Song Title") }}</th>
+ <th>{{ gettext("Artist") }}</th>
+ <th>{{ gettext("Song Length") }}</th>
+ <th>{{ gettext("Status") }}</th>
+ <th>{{ gettext("Vote") }}</th>
+ <th>{{ gettext("Queue") }}</th>
+ <th>{{ gettext("Last Request") }}</th>
  {% if stat %}<th>{{ name }}</th>{% endif %}
 </tr>
 {% for song in songs %}

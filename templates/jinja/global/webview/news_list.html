@@ -22,8 +22,8 @@
 
 
 {% else %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}newspaper.png" alt="" />There Is No News!</h2>
-No news here yet! You should take a trip to the admin interface and add some!
+<h2><img class="icon_header" src="{{ MEDIA_URL }}newspaper.png" alt="" />{{ gettext("There Is No News!") }}</h2>
+<span>{{ gettext("No news here yet! You should take a trip to the admin interface and add some!") }}</span>
 {% endif %}
 {% endblock %}
 

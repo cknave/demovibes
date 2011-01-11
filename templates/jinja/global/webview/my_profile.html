@@ -1,18 +1,18 @@
 {% extends "base/base.html" %}
 
-{% block title %}Edit My Profile{% endblock %}
+{% block title %}{{ gettext("Edit My Profile") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}user.png" alt="" />My Profile Settings</h2>
-<a href="/accounts/password/change/">Change My Password</a><br /><a href="{{ url ("dv-profile", profile.user) }}">View My Live Profile</a>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}user.png" alt="" />{{ gettext("My Profile Settings") }}</h2>
+<a href="/accounts/password/change/">{{ gettext("Change My Password") }}</a><br /><a href="{{ url ("dv-profile", profile.user) }}">{{ gettext("View My Live Profile") }}</a>
 
-<h2>OpenID</h2>
-Your <a href="http://openidexplained.com/" target="_new">OpenID</a> key:
+<h2>{{ gettext("OpenID") }}</h2>
+<span>{{ gettext("Your") }} <a href="http://openidexplained.com/" target="_new">OpenID</a> {{ gettext("key") }}:</span>
 <ul>
 {% for id in user.openid_set.all() %}
     <li><img src="{{ MEDIA_URL }}/openid-icon.png" alt="OpenID"/> http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/></li>
     {% if id.trustedroot_set.all() %}
-    Allowed sites:
+    <span>{{ gettext("Allowed sites") }}:</span>
         <ul>
         {% for root in id.trustedroot_set.all() %}
             <li>{{ root.trust_root }} <a href=".?killroot={{ root.id }}" title="Remove">[x]</a></li>
@@ -22,7 +22,7 @@ Your <a href="http://openidexplained.com/" target="_new">OpenID</a> key:
 {% endfor %}
 </ul>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}page_white_edit.png" alt="" />Profile Settings</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}page_white_edit.png" alt="" />{{ gettext("Profile Settings") }}</h2>
 <form action="." method="post" enctype="multipart/form-data">
 <table id="profileform">
 {{ form.as_table() }}
@@ -30,7 +30,7 @@ Your <a href="http://openidexplained.com/" target="_new">OpenID</a> key:
 
 {{ links }}
 
-<input type="submit" value="Update" />
+<input type="submit" value="{{ gettext("Update") }}" />
 </form>
 {% endblock %}
 

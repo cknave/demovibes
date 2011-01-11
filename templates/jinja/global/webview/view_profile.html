@@ -1,17 +1,17 @@
 {% extends "base/base.html" %}
-{% block title %}User Profile Of {{profile.user}}{% endblock %}
+{% block title %}{{ gettext("User Profile Of") }} {{profile.user}}{% endblock %}
 {% import "macro/display.html" as display -%}
 
 {% block main %}
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}{{ profile.get_littleman() }}" alt="" />User Profile For {{ profile.user|e }}{% if profile.web_page %} <a href="{{ profile.web_page|e }}" target="_new">[Visit User's Website]</a>{% endif %}</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}{{ profile.get_littleman() }}" alt="" />{{ gettext("User Profile For") }} {{ profile.user|e }}{% if profile.web_page %} <a href="{{ profile.web_page|e }}" target="_new">[Visit User's Website]</a>{% endif %}</h2>
 
 {% if profile.avatar %}
  <img src="{{ profile.avatar.url }}" title="[{{ profile.user|e }}'s Avatar]" alt="[{{ profile.user|e }}'s Avatar]" /><br />
 {% endif %}
 
 {% if profile.have_artist() %}
- <a href="{{ profile.user.artist.get_absolute_url() }}">View User's Artist Page</a><br />
+ <a href="{{ profile.user.artist.get_absolute_url() }}">{{ gettext("View User's Artist Page") }}</a><br />
 {% endif %}
 
 {% if profile.location %}
@@ -25,19 +25,19 @@
 Member Since: {{ profile.user.date_joined|date("F j, Y") }}<br />
 Last Login: {{ profile.user.last_login|date("F j, Y") }}<br />
 
-<a href="{{ url("dv-send_pm") }}?to={{ profile.user|e }}"><img src="{{ MEDIA_URL }}email.png" alt="mail" /> Send A Message</a> | View {{ profile.user|e }}'s <a href="{{ url ("dv-user-favs", profile.user) }}">Favourites List</a>.<br/>
+<a href="{{ url("dv-send_pm") }}?to={{ profile.user|e }}"><img src="{{ MEDIA_URL }}email.png" alt="mail" /> {{ gettext("Send A Message") }}</a> | View {{ profile.user|e }}'s <a href="{{ url ("dv-user-favs", profile.user) }}">{{ gettext("Favourites List") }}</a>.<br/>
 
 {% if profile.hol_id %}
- <a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ profile.hol_id|e }}" target="_new">See User's H.O.L. Details</a><br />
+ <a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ profile.hol_id|e }}" target="_new">{{ gettext("See User's H.O.L. Details") }}</a><br />
 {% endif %}
 
 {{ display.links(profile) }}
 
 {% if profile.fave_id %}
- <font color="blue">{{ profile.user|e }}'s <em>Ultimate</em> Song:</font> {{ dv.get_song_queue_tag(profile.fave_id) }}
+ <font color="blue">{{ profile.user|e }}'s <em>{{ gettext("Ultimate") }}</em> {{ gettext("Song") }}:</font> {{ dv.get_song_queue_tag(profile.fave_id) }}
 {% endif %}
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />Public information</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />{{ gettext("Public information") }}</h2>
 <p>
 {{ profile.info|mksafe|linebreaks|bbcode|smileys }}
 </p>

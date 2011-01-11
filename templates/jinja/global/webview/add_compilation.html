@@ -25,7 +25,7 @@ function hms(secs){
     for(var i=2;i>0;i--){
         time[i-1]=Math.floor(time[i]/60);
         time[i]=time[i]%/**/60;
-        if(time[i]<10) 
+        if(time[i]<10)
         time[i]='0'+time[i];
     }
     return time.join(':')
@@ -92,25 +92,25 @@ function addsongs (target, data) {
 </script>
 {% endblock %}
 
-{% block title %}Add compilation{% endblock %}
+{% block title %}{{ gettext("Add compilation") }}{% endblock %}
 
 {% block main %}
 
-<h2>Cool stuff</h2>
+<h2>{{ gettext("Cool stuff") }}</h2>
 <p><form id="addsongform">
-    <label for="songid">Search song : </label><input type="text" id="songid"/>
-    <input type="submit" value="Search" id="addsongsubmit"/> <div id="errr" style="color:#f00;"></div>
+    <label for="songid">{{ gettext("Search song") }} : </label><input type="text" id="songid"/>
+    <input type="submit" value="{{ gettext("Search") }}" id="addsongsubmit"/> <div id="errr" style="color:#f00;"></div>
     </form>
 </p>
 
 <div id="help" style="float: right; font-size:1.3em;">
-Hint : Drag... and drop!
+{{ gettext("Hint : Drag... and drop!") }}
 </div>
 <div id="dragarea">
-Search result
+{{ gettext("Search result") }}
 <ul id="sortsongsearchlist">
 </ul>
-<p>Songs in compilation (<span id="timelength">0:00:00</span>)</p>
+<p>{{ gettext("Songs in compilation" }} (<span id="timelength">0:00:00</span>)</p>
 <ol id="sortsonglist" style="min-height: 30px; background-color: #eee; width:100%; padding-top:5px;">
 </ol>
 
@@ -119,11 +119,11 @@ Search result
 
 <form method="post" action=".">
 
-<h2>Boring info</h2>
+<h2>{{ gettext("Boring info") }}</h2>
 <input id="songsinput" name="songsinput" type="hidden"/>
 <table>
     {{ compform }}
 </table>
-<input type="submit" value="Save entry"/>
+<input type="submit" value="{{ gettext("Save entry") }}"/>
 </form>
 {% endblock %}

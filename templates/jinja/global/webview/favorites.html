@@ -1,9 +1,9 @@
 {% extends "base/base.html" %}
 
-{% block title %}My Favourite Songs{% endblock %}
+{% block title %}{{ gettext("My Favourite Songs") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}heart.png" alt="" />My Favourite Songs</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}heart.png" alt="" />{{ gettext("My Favourite Songs") }}</h2>
 
 {% include "webview/t/songheader.html" %}
 
@@ -20,7 +20,6 @@
 </table>
 <br />
 
-Pages:
 {% for p in page_range %}
 {% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ url("dv-favorites") }}?page={{ p }}">{{ p }}</a> {% endif %}
 {% endfor %}

@@ -1110,11 +1110,9 @@ def bbcode_oneliner(value):
     Function for Oneliner purposes, as over time the tags may truncate or change
     or use specifically within the oneliner & it's limitations. AAK.
     """
-
     for bbset in bbdata_oneliner:
         p = bbset[0]
-        value = p.sub(bbset[1], value)
-
+        nr = p.sub(bbset[1], value)
     return value
 
 @register.filter
@@ -1125,19 +1123,39 @@ def wordwrap(value, arg=80):
     return "\n".join(textwrap.wrap(value, int(arg)))
 
 @register.filter
+def smileys_oneliner(value):
+    """
+    Replaces smiley text with images. First, do secret smileys so we can replace
+    Smileys pre-converted with others later.
+    """
+
+    num_smileys = 0
+    PER_SMILEY = getattr(settings, "ONELINER_PER_SMILEY_LIMIT", 0)
+    TOTAL_SMILEY = getattr(settings, "ONELINER_TOTAL_SMILEY_LIMIT", None)
+    for bbset in SMILEYS:
+        p = bbset[0]
+        (value, nr) = p.subn(bbset[1], value, PER_SMILEY)
+        num_smileys = num_smileys + nr
+        if TOTAL_SMILEY and TOTAL_SMILEY <= num_smileys:
+            return value
+    return value
+
+@register.filter
 def smileys(value):
     """
     Replaces smiley text with images. First, do secret smileys so we can replace
     Smileys pre-converted with others later.
     """
-    secretsmileys = getattr(settings,'SECRETSMILEYS', [])
-    for smiley in secretsmileys:
-        value = re.sub(r'(?:^|(?<=\s|<|>|:))%s(?=$|\s|<|>|:)' % re.escape(smiley[0]), r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[2]), value)
 
-    smileys = settings.SMILEYS
-    for smiley in smileys:
-        # Smiley patch provided by Korkut. AAK
-        value = re.sub(r'(?:^|(?<=\s|<|>|:))%s(?=$|\s|<|>|:)' % re.escape(smiley[0]), r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[0]), value)
+    num_smileys = 0
+    PER_SMILEY = getattr(settings, "OTHER_PER_SMILEY_LIMIT", 0)
+    TOTAL_SMILEY = getattr(settings, "OTHER_TOTAL_SMILEY_LIMIT", None)
+    for bbset in SMILEYS:
+        p = bbset[0]
+        (value, nr) = p.subn(bbset[1], value, PER_SMILEY)
+        num_smileys = num_smileys + nr
+        if TOTAL_SMILEY and TOTAL_SMILEYS <= num_smileys:
+            return value
     return value
 
 @register.filter
@@ -1352,6 +1370,26 @@ bbdata_full = [
         (r'\[youtube\](.+?)\[/youtube\]', bb_youtube),
         (r'\[gvideo\](.+?)\[/gvideo\]', bb_gvideo),
     ]
+
+def make_smileys():
+
+    def make_re(thesmiley):
+        return re.compile(r'(?:^|(?<=\s|<|>|:))%s(?=$|\s|<|>|:)' % re.escape(thesmiley), re.IGNORECASE)
+
+    r = []
+    secretsmileys = getattr(settings,'SECRETSMILEYS', [])
+    smileys = settings.SMILEYS
+    for smiley in secretsmileys:
+        sm = make_re(smiley[0])
+        v = r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[2])
+        r.append((sm, v))
+    for smiley in smileys:
+        sm = make_re(smiley[0])
+        v = r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[0])
+        r.append((sm, v))
+    return r
+
+SMILEYS = make_smileys()
 
 def reify(bblist):
     templist = []

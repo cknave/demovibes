@@ -1,14 +1,14 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display -%}
-{% block title %}Users online{% endblock %}
+{% block title %}{{ gettext("Users online") }}{% endblock %}
 
 {% block main %}
-<h2>Users seen the last 5 minutes</h2>
-There {{ userlist.count|pluralize("is,are") }} a total of {{ userlist.count() }} user{{ userlist.count()|pluralize }} online now.
+<h2>{{ gettext("Users seen the last 5 minutes") }}</h2>
+{{ ngettext("There is a total of %(num)d user online now.", "There are a total of %(num)d users online now.", userlist|count) }}
 <table>
     <tr>
-        <th>User</th>
-        <th>Last seen</th>
+        <th>{{ gettext("User") }}</th>
+        <th>{{ gettext("Last seen") }}</th>
     </tr>
 {% for profile in userlist %}
 <tr>
@@ -16,7 +16,7 @@ There {{ userlist.count|pluralize("is,are") }} a total of {{ userlist.count() }}
         {{ display.user(profile.user) }}
     </td>
     <td>
-        {{ profile.last_activity|timesince }} ago
+        {{ profile.last_activity|timesince }} {{ gettext("ago") }}
     </td>
 </tr>
 {% endfor %}

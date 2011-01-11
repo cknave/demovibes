@@ -1,9 +1,15 @@
 {% extends "base/base.html" %}
-{% block title %}Compilation: {{ comp.name|e }}{% if comp.label %} from {{ comp.label|e }}{% endif %}{% endblock %}
+{% block title %}{{ gettext("Compilation") }}: {{ comp.name|e }}{% if comp.label %} {{ gettext("from") }} {{ comp.label|e }}{% endif %}{% endblock %}
 {% import "macro/display.html" as display -%}
 
 {% block main %}
-<h2><img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} alt="Compilation" />Compilation: {{ comp.name|e }}{% if user.is_staff %} [<a href="/admin/webview/compilation/{{ comp.id }}/">Edit Info</a>]{% endif %}</h2>
+<h2>
+    <img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} alt="Compilation" />
+    {{ gettext("Compilation") }}: {{ comp.name|e }}
+    {% if user.is_staff %}
+        [<a href="/admin/webview/compilation/{{ comp.id }}/">{{ gettext("Edit Info") }}</a>]
+    {% endif %}
+</h2>
 
 <table>
 <tr>
@@ -14,34 +20,34 @@
  <img class="compilation_screenshot" src="/static/no_picture.png" alt="[No Cover Art]" /><br />
 {% endif %}
 <p class="compilation_details_s.all()">
-<b><i>Compilation Summary:</i></b><br />
+<b><i>{{ gettext("Compilation Summary") }}:</i></b><br />
 Name: {{ comp.name|e }}<br />
-{% if comp.label %}Label: {{ comp.label|e }}<br />{% endif %}
-{% if comp.rel_date %}Release Date: {{ comp.rel_date|date("F j, Y") }}<br />{% endif %}
-{% if comp.running_time %}Running Time: {{ comp.length() }}<br />{% endif %}
-{% if comp.num_discs %}Num. Disks: {{ comp.num_discs }}<br />{% endif %}
-{% if comp.youtube_link %}Video Clip: <a href="{{ comp.youtube_link|e }}" target="_new">Video Link</a><br />{% endif %}
-{% if comp.media_format %}Media Type: {{ comp.media_format }}<br />{% endif %}
-{% if comp.details_page %}Additional Info: <a href="{{ comp.details_page|e }}" target="_new">Details Page</a><br />{% endif %}
-{% if comp.purchase_page %}Purchase Info: <a href="{{ comp.purchase_page|e }}" target="_new">Purchase Info</a><br />{% endif %}
-{% if comp.download_link %}Download Link: <a href="{{ comp.download_link|e }}" target="_new">Download Info</a><br />{% endif %}
-{% if comp.bar_code %}UPC: {{ comp.bar_code|e }}<br />{% endif %}
-{% if comp.pouet %}Pouet Info: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_new">Pouet Link</a><br />{% endif %}
-{% if comp.date_added %}<br />Added On: {{ comp.date_added|date("F j, Y") }} <br />By: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
+{% if comp.label %}{{ gettext("Label") }}: {{ comp.label|e }}<br />{% endif %}
+{% if comp.rel_date %}{{ gettext("Release Date") }}: {{ comp.rel_date|date("F j, Y") }}<br />{% endif %}
+{% if comp.running_time %}{{ gettext("Running Time") }}: {{ comp.length() }}<br />{% endif %}
+{% if comp.num_discs %}{{ gettext("Num. Disks") }}: {{ comp.num_discs }}<br />{% endif %}
+{% if comp.youtube_link %}{{ gettext("Video Clip") }}: <a href="{{ comp.youtube_link|e }}" target="_new">{{ gettext("Video Link") }}</a><br />{% endif %}
+{% if comp.media_format %}{{ gettext("Media Type") }}: {{ comp.media_format }}<br />{% endif %}
+{% if comp.details_page %}{{ gettext("Additional Info") }}: <a href="{{ comp.details_page|e }}" target="_new">{{ gettext("Details Page") }}</a><br />{% endif %}
+{% if comp.purchase_page %}{{ gettext("Purchase Info") }}: <a href="{{ comp.purchase_page|e }}" target="_new">{{ gettext("Purchase Info") }}</a><br />{% endif %}
+{% if comp.download_link %}{{ gettext("Download Link") }}: <a href="{{ comp.download_link|e }}" target="_new">{{ gettext("Download Info") }}</a><br />{% endif %}
+{% if comp.bar_code %}{{ gettext("UPC") }}: {{ comp.bar_code|e }}<br />{% endif %}
+{% if comp.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_new">{{ gettext("Pouet Link") }}</a><br />{% endif %}
+{% if comp.date_added %}<br />{{ gettext("Added On") }}: {{ comp.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
 </p>
 {% if sessionform %}
-<h1>Session making maker!</h1>
+<h1>{{ gettext("Session making maker!") }}</h1>
 <form method="post" action=".">
 {{ sessionform.as_p() }}
-<input type="submit" value="Make session"/>
+<input type="submit" value="{{ gettext("Make session") }}"/>
 </form>
 {% endif %}
 </td>
 <td class="compilation_description" valign="top">
-<b><i>Compilation Details For {{ comp.name|e }}:</i></b><br />
+<b><i>{{ gettext("Compilation Details For") }} {{ comp.name|e }}:</i></b><br />
 {% if comp.info %}<p><i>{{ comp.info|urlize|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}
 {% if comp.prod_artists.count != 0 %}
- <b><i>Compilation Artists: </i></b>
+ <b><i>{{ gettext("Compilation Artists") }}: </i></b>
  {% for artist in comp.prod_artists.all() %}
   {{ display.artist(artist) }}
  {% endfor %}
@@ -49,7 +55,7 @@ Name: {{ comp.name|e }}<br />
 {% endif %}
 
 {% if comp.prod_groups.count() != 0 %}
- <b><i>Compilation Groups: </i></b>
+ <b><i>{{ gettext("Compilation Groups") }}: </i></b>
  {% for group in comp.prod_groups.all() %}
   {{ display.group(group) }}
  {% endfor %}
@@ -57,13 +63,13 @@ Name: {{ comp.name|e }}<br />
 {% endif %}
 
 {% if comp.songs.count != 0 %}
- <b><i>Songs In This Production ({{ comp.songs.count() }} Total):</i></b><br /><br />
+ <b><i>{{ gettext("Songs In This Production (%(num)d Total)", num=comp.songs.count()) }} :</i></b><br /><br />
  {% for song in comp.get_songs() %}
-  {{ display.song(song) }} by {{ display.artists(song) }}
+  {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song) }}
   <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}
 {% endif %}<br />
-{% if comp.prod_notes %}<i><b>Production Notes: </b>{{ comp.prod_notes|urlize|bbcode|linebreaks|smileys }}</i><br />{% endif %}
+{% if comp.prod_notes %}<i><b>{{ gettext("Production Notes") }}: </b>{{ comp.prod_notes|urlize|bbcode|linebreaks|smileys }}</i><br />{% endif %}
 </td>
 </tr>
 </table>

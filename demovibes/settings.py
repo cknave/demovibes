@@ -4,7 +4,7 @@ import os
 import django
 # calculated paths for django and the site
 # used as starting points for various other paths
-DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__)) 
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 SITE_ROOT = os.path.dirname(SITE_ROOT)
 
@@ -48,7 +48,7 @@ DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-# Use fulltext search on song title, artist handle and group name. Only supported on mysql, 
+# Use fulltext search on song title, artist handle and group name. Only supported on mysql,
 # and full-text have to be manually added to the DB
 USE_FULLTEXT_SEARCH = False
 
@@ -193,6 +193,8 @@ JINJA2_TEMPLATE_DIRS = (
     pj('templates', 'jinja', 'global'),
 )
 
+JINJA2_EXTENSIONS = ["jinja2.ext.i18n"]
+
 # Maximum number of songs a user can have in the queue at the same time.
 SONGS_IN_QUEUE = 5
 
@@ -227,7 +229,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
-    "django.core.context_processors.request",    
+    "django.core.context_processors.request",
 )
 
 INSTALLED_APPS = (
@@ -247,6 +249,16 @@ INSTALLED_APPS = (
     'haystack',
     'openid_provider',
 )
+
+## SMILEY LIMITS
+##
+# Note that total is not hard limit, and can be increased with (PER_SMILEY_LIMIT - 1) smileys
+
+#ONELINER_PER_SMILEY_LIMIT = 0
+#ONELINER_TOTAL_SMILEY_LIMIT = None
+#OTHER_PER_SMILEY_LIMIT = 0
+#OTHER_TOTAL_SMILEY_LIMIT = None
+
 
 # demosauce scan requires this. terra said there were problems...
 # but when I tested it I didn't see any
