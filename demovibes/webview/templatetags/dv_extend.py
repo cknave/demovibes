@@ -1112,7 +1112,7 @@ def bbcode_oneliner(value):
     """
     for bbset in bbdata_oneliner:
         p = bbset[0]
-        nr = p.sub(bbset[1], value)
+        value = p.sub(bbset[1], value)
     return value
 
 @register.filter
@@ -1404,6 +1404,7 @@ bbdata_full = reify(bbdata_full)
 bbdata_oneliner = reify(bbdata_oneliner)
 
 smileys.is_safe = True
+smileys_oneliner.is_safe = True
 bbcode.is_safe = True
 bbcode_oneliner.is_safe = True
 oneliner_mediaparse.is_safe = True
