@@ -106,6 +106,7 @@ sources = {
 urlpatterns = patterns('',
     # First, some generic 'site' areas commonly found on any site
     url(r'^about/$',                              'demovibes.webview.views.site_about', name = "dv-about"),
+    url(r'^login/$',                              views.Login(), name = "dv-login"),
 
     url(r'^inbox/$',                               'demovibes.webview.views.inbox', name = "dv-inbox"),
     url(r'^inbox/(?P<pm_id>\d+)/$',                'demovibes.webview.views.read_pm', name = "dv-read_pm"),
@@ -145,7 +146,7 @@ urlpatterns = patterns('',
     url(r'^groups/(?P<letter>.)/$',               views.ListGroups(), name = "dv-groups_letter"),
     url(r'^group/(?P<object_id>\d+)/$',            'django.views.generic.list_detail.object_detail',       group_a_dict, name = "dv-group"),
 
-    url(r'^statistics/$',                           views.songStatistics(), name = "dv-stats"),
+    url(r'^statistics/$',                           views.songStatistics(), name = "dv-stats-index"),
     url(r'^statistics/(?P<stattype>\w+)/$',         views.songStatistics(), name = "dv-stats"),
 
     url(r'^artists/$',                             views.ListArtists(), name = "dv-artists"),

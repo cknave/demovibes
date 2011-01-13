@@ -13,6 +13,8 @@ def pj(*path):
 
 from smileys import SMILEYS
 
+LOGIN_URL = "/demovibes/login/"
+
 DEBUG = True
 TEMPLATE_DEBUG = False
 

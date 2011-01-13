@@ -9,6 +9,8 @@ from mybaseview import MyBaseView
 from tagging.models import TaggedItem
 import tagging.utils
 
+from django.utils.translation import ugettext as _
+
 from django import forms
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponseBadRequest, HttpResponse
 
@@ -29,6 +31,9 @@ from django.contrib.contenttypes.models import ContentType
 
 from random import choice
 import logging
+
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_protect
 
 import j2shim
 
@@ -1277,6 +1282,52 @@ def memcached_status(request):
             hit_rate=100 * stats.get_hits / stats.cmd_get,
             time=datetime.datetime.now(), # server time
         ), request=request)
+
+class Login(MyBaseView):
+    template="registration/login.html"
+
+    MAX_FAILS_PER_HOUR = getattr(settings, "MAX_FAILED_LOGINS_PER_HOUR", 5)
+
+    def pre_view(self):
+        self.context['next'] = self.request.REQUEST.get("next", "")
+        self.context['username'] = self.request.REQUEST.get("username", "")
+        self.context['error'] = ""
+
+    def check_limit(self, keys):
+        for key in keys:
+            if cache.get(key, 0) > self.MAX_FAILS_PER_HOUR:
+                return True
+        return False
+
+    def add_to_limit(self, keys):
+        for key in keys:
+            if cache.get(key, None) == None:
+                cache.set(key, 1, 60*60)
+            else:
+                cache.incr(key)
+
+    def POST(self):
+        ip = self.request.META.get("REMOTE_ADDR")
+        username = self.request.POST['username']
+
+        key1 = hashlib.md5("loginfail" + username).hexdigest()
+        key2 = hashlib.md5("loginfail" + ip).hexdigest()
+        if self.check_limit((key1, key2)):
+            self.context['error'] = _("Too many failed logins. Please wait an hour before trying again.")
+            return False
+
+        password = self.request.POST['password']
+        next = self.request.POST.get("next", False)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(self.request, user)
+                return self.redirect(next or 'dv-root')
+            else:
+                self.context['error'] = _(u"I'm sorry, your account have been disabled.")
+        else:
+            self.add_to_limit((key1, key2))
+            self.context['error'] = _(u"I'm sorry, the username or password seem to be wrong.")
 
 def upload_progress(request):
     """

@@ -85,3 +85,4 @@ div.taglist p:first-child { margin-top: 0; }
 #tagfield { width:90%;}
 
 #tagcloud   {background-image: url("/static/comment.png");}
+#statistics   {background-image: url("/static/statistics.png");}

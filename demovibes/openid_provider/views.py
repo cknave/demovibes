@@ -10,17 +10,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django.conf import settings
 
+from openid.extensions import sreg
+
 from models import *
 from openid.server.server import Server
 
 import datetime
 
 def get_base_uri(req):
-    
+
     url = getattr(settings, 'OPENID_BASE_URI', False)
     if url:
         return url
-    
+
     name = req.META['HTTP_HOST']
     try: name = name[:name.index(':')]
     except: pass
@@ -33,12 +35,12 @@ def get_base_uri(req):
         proto = 'https'
     else:
         proto = 'http'
-    
+
     if port in [80, 443] or not port:
         port = ''
     else:
         port = ':%s' % port
-    
+
     return '%s://%s%s' % (proto, name, port)
 
 def django_response(webresponse):
@@ -51,8 +53,8 @@ def django_response(webresponse):
 
 def openid_server(req):
     """
-    This view is the actual OpenID server - running at the URL pointed to by 
-    the <link rel="openid.server"> tag. 
+    This view is the actual OpenID server - running at the URL pointed to by
+    the <link rel="openid.server"> tag.
     """
     host = get_base_uri(req)
     try:
@@ -65,7 +67,7 @@ def openid_server(req):
         OPENID_FILESTORE = '/tmp/openid-filestore'
         from openid.store.filestore import FileOpenIDStore
         store = FileOpenIDStore(OPENID_FILESTORE)
-        
+
     server = Server(store, op_endpoint="%s%s" % (host, reverse('openid-provider-root')))
 
     # Clear AuthorizationInfo session var, if it is set
@@ -73,7 +75,10 @@ def openid_server(req):
         del req.session['AuthorizationInfo']
 
     querydict = dict(req.REQUEST.items())
-    orequest = server.decodeRequest(querydict)
+    try:
+        orequest = server.decodeRequest(querydict)
+    except:
+        orequest = None
     if not orequest:
         orequest = req.session.get('OPENID_REQUEST', None)
         if not orequest:
@@ -95,6 +100,14 @@ def openid_server(req):
         if openid is not None:
             oresponse = orequest.answer(True, identity="%s%s" % (
                 host, reverse('openid-provider-identity', args=[openid.openid])))
+
+            sreg_data = {
+                'nickname': req.user.username
+            }
+            sreg_req = sreg.SRegRequest.fromOpenIDRequest(orequest)
+            sreg_resp = sreg.SRegResponse.extractResponse(sreg_req, sreg_data)
+            oresponse.addExtension(sreg_resp)
+
         elif orequest.immediate:
             raise Exception('checkid_immediate mode not supported')
         else:
@@ -146,8 +159,11 @@ def openid_decide(req):
 
     if req.method == 'POST' and req.POST.get('decide_page', False):
         allowed = 'allow' in req.POST
-        openid.trustedroot_set.create(trust_root=orequest.trust_root)
-        return HttpResponseRedirect(reverse('openid-provider-root'))
+        if allowed:
+            openid.trustedroot_set.create(trust_root=orequest.trust_root)
+            return HttpResponseRedirect(reverse('openid-provider-root'))
+        else:
+            return HttpResponseRedirect(reverse('dv-root'))
 
     # verify return_to of trust_root
     try:
@@ -174,7 +190,7 @@ def error_page(req, msg):
 
 def landing_page(req, orequest):
     """
-    The page shown when the user attempts to sign in somewhere using OpenID 
+    The page shown when the user attempts to sign in somewhere using OpenID
     but is not authenticated with the site. For idproxy.net, a message telling
     them to log in manually is displayed.
     """
@@ -192,7 +208,7 @@ def landing_page(req, orequest):
 import urlparse
 def openid_is_authorized(req, identity_url, trust_root):
     """
-    Check that they own the given identity URL, and that the trust_root is 
+    Check that they own the given identity URL, and that the trust_root is
     in their whitelist of trusted sites.
     """
     if not req.user.is_authenticated():

@@ -10,12 +10,12 @@
 <span>{{ gettext("Your") }} <a href="http://openidexplained.com/" target="_new">OpenID</a> {{ gettext("key") }}:</span>
 <ul>
 {% for id in user.openid_set.all() %}
-    <li><img src="{{ MEDIA_URL }}/openid-icon.png" alt="OpenID"/> http://{{ dv.site_url() }}{{ id.get_absolute_url() }}<br/></li>
+    <li><img src="{{ MEDIA_URL }}/openid-icon.png" alt="OpenID"/> {{ dv.site_url() }}{{ id.get_absolute_url() }}<br/></li>
     {% if id.trustedroot_set.all() %}
     <span>{{ gettext("Allowed sites") }}:</span>
         <ul>
         {% for root in id.trustedroot_set.all() %}
-            <li>{{ root.trust_root }} <a href=".?killroot={{ root.id }}" title="Remove">[x]</a></li>
+            <li><a href="{{ root.trust_root }}" target="_blank">{{ root.trust_root }}</a> - <a href=".?killroot={{ root.id }}" title="Remove">[x]</a></li>
         {% endfor %}
         </ul>
     {% endif %}
