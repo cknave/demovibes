@@ -26,7 +26,6 @@ idlist = re.compile(r'^(\d+,)+\d+$')
 
 use_eventful = getattr(settings, 'USE_EVENTFUL', False)
 
-@cache_page(60*15)
 def songinfo(request):
     def makeinfo(song):
         return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.song_length}

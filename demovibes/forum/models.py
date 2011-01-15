@@ -1,7 +1,7 @@
-""" 
+"""
 A basic forum model with corresponding thread/post models.
 
-Just about all logic required for smooth updates is in the save() 
+Just about all logic required for smooth updates is in the save()
 methods. A little extra logic is in views.py.
 """
 
@@ -103,7 +103,7 @@ class Forum(models.Model):
 
     def __unicode__(self):
         return u'%s' % self.title
-    
+
     class Meta:
         ordering = ['title',]
         verbose_name = _('Forum')
@@ -143,8 +143,8 @@ class Thread(models.Model):
     """
     A Thread belongs in a Forum, and is a collection of posts.
 
-    Threads can be closed or stickied which alter their behaviour 
-    in the thread listings. Again, the posts & views fields are 
+    Threads can be closed or stickied which alter their behaviour
+    in the thread listings. Again, the posts & views fields are
     automatically updated with saving a post or viewing the thread.
     """
     forum = models.ForeignKey(Forum)
@@ -185,17 +185,17 @@ class Thread(models.Model):
         f.threads = f.thread_set.count()
         f.posts = Post.objects.filter(thread__forum__pk=f.id).count()
         f.save()
-    
+
     def get_absolute_url(self):
         return ('forum_view_thread', [str(self.id)])
     get_absolute_url = models.permalink(get_absolute_url)
-    
+
     def __unicode__(self):
         return u'%s' % self.title
 
 class Post(models.Model):
-    """ 
-    A Post is a User's input to a thread. Uber-basic - the save() 
+    """
+    A Post is a User's input to a thread. Uber-basic - the save()
     method also updates models further up the heirarchy (Thread,Forum)
     """
     thread = models.ForeignKey(Thread)
@@ -208,9 +208,9 @@ class Post(models.Model):
         new_post = False
         if not self.id:
             self.time = datetime.datetime.now()
-        
+
         self.edited = datetime.datetime.now()
-            
+
         super(Post, self).save(*args, **kwargs)
 
         t = self.thread
@@ -243,12 +243,12 @@ class Post(models.Model):
 
     class Meta:
         ordering = ('-time',)
-        verbose_name = _('Post')
-        verbose_name_plural = _('Posts')
-        
+        verbose_name = _('Forum Post')
+        verbose_name_plural = _('Forum Posts')
+
     def get_absolute_url(self):
         return '%s#post%s' % (self.thread.get_absolute_url(), self.id)
-    
+
     def __unicode__(self):
         return u"%s" % self.id
 
@@ -263,6 +263,6 @@ class Subscription(models.Model):
         unique_together = (("author", "thread"),)
         verbose_name = _('Subscription')
         verbose_name_plural = _('Subscriptions')
-    
+
     def __unicode__(self):
         return u"%s to %s" % (self.author, self.thread)

@@ -66,6 +66,13 @@ ul.errorlist li {
 #main h2 {
     clear:both;
 }
+#searchform ul {
+margin: 0 !important;
+padding: 0 !important;
+}
+#searchform li {
+    display: inline;
+}
 
 div.taglist {
     background:#eee;

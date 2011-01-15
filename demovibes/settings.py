@@ -250,6 +250,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'haystack',
     'openid_provider',
+    'demovibes.search',
 )
 
 ## SMILEY LIMITS

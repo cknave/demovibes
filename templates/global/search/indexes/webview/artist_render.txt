@@ -1,1 +1,1 @@
-<img src="/static/user_green.png"/> <a href="{{ object.get_absolute_url }}">{{ object.handle }}</a>
+<img src="/static/user_green.png" title="Artist" alt="Artist"/> <a href="{{ object.get_absolute_url }}">{{ object.handle }}</a>

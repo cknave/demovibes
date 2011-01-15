@@ -10,6 +10,8 @@
 {% endfor %}
 
 {% for label in labels %}
+{{ label.name }}
+{{ label.pouetid }}
 {% endfor %}
 
 {% for tag in object.tags %}
@@ -25,4 +27,10 @@
 
 {% for link in object.get_active_links.all %}
  {{ link.value }}
+{% endfor %}
+
+{% for comment in object.songcomment_set.all %}
+{% if not comment.staff_comment %}
+{{ comment.comment }}
+{% endif %}
 {% endfor %}

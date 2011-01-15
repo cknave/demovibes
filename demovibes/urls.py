@@ -13,9 +13,8 @@ urlpatterns = patterns('',
     (r'^accounts/logout/$', 'webview.views.log_out'),
     (r'^demovibes/', include('demovibes.webview.urls')),
     (r'^openid/', include('demovibes.openid_provider.urls')),
-    (r'^search/', include('haystack.urls')),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
+    (r'^search/', include('demovibes.search.urls')),
+    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 

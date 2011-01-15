@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect, render_to_response
 from django.core.cache import cache
+import hashlib
 
 class BaseView(object):
 
@@ -24,11 +25,11 @@ class BaseView(object):
 
     forms_valid = True
     forms = []
-    formdata = {}
 
     cache_key = None
     cache_duration = 60*5
     cache_output = False
+    cache_hash_key = True
 
     use_decorators = [transaction.commit_on_success]
     run_before_main = ["initialize", "run_permissions_check", "setup_session", "handle_forms", "pre_view"]
@@ -37,7 +38,6 @@ class BaseView(object):
     content_type = settings.DEFAULT_CONTENT_TYPE
 
     response = None
-    context = {}
     _is_instance = False
 
     def __call__(self, request, *args, **kwargs):
@@ -49,6 +49,9 @@ class BaseView(object):
             for decorator in self.use_decorators:
                 newcopy = decorator(newcopy)
             return newcopy(request, *args, **kwargs)
+
+        self.context = {}
+        self.formdata = {}
 
         if hasattr(self, "configure"):
             self.configure()
@@ -181,6 +184,10 @@ class BaseView(object):
 
     def check_caching(self):
         key = self.get_cache_key()
+        if not key:
+            return False
+        if self.cache_hash_key:
+            key = hashlib.md5(key).hexdigest()
         if not self.cache_output:
             self.update_cached_context(key)
         else:

@@ -835,7 +835,7 @@ class songStatistics(WebView):
         return Song.objects.order_by('-rating_votes')
 
     def list_queued2(self):
-        return Song.objects.filter(status="A").order_by('times_played')
+        return Song.objects.filter(status="A").order_by('times_played', "locked_until")
 
     def list_queued(self):
         return Song.objects.filter(status="A").order_by('-times_played')
