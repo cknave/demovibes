@@ -159,7 +159,7 @@ class BaseView(object):
 
             self.context[formname] = form_instance
 
-    def redirect(self, target):
+    def redirect(self, target, get=""):
         self.log.debug(u"Setting redirect to target %s" % target)
         self.response = redirect(target)
         return self.response

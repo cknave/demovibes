@@ -1,16 +1,19 @@
 from haystack.query import SearchQuerySet
-from haystack.forms import ModelSearchForm
+from haystack.forms import ModelSearchForm, SearchForm
 from mybaseview import MyBaseView
 from webview import models as wm
 
 import re
 
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.http import HttpResponse
 # Create your views here.
 
 class MMs(ModelSearchForm):
     RE = re.compile(r'(^|\s)(?P<word>\w+\*)(\s|$)', re.I)
+
     def search(self):
         if not self.is_valid():
             return self.no_query_found()
@@ -29,18 +32,32 @@ class MMs(ModelSearchForm):
         sqs = self.searchqueryset.auto_query(q)
 
         for w in star:
-            sqs = sqs.filter(content=w)
+            sqs = sqs.filter(text__startswith=w)
 
         if self.load_all:
             sqs = sqs.load_all()
 
         return sqs.models(*self.get_models())
 
+class Ms(MMs):
+
+    def __init__(self, *args, **kwargs):
+        super(Ms, self).__init__(*args, **kwargs)
+        del self.fields['models']
+
+    def get_models(self):
+        return [wm.Song]
+
 class SearchView(MyBaseView):
     basetemplate = "search/"
     template = "search.html"
     searchtype = "All"
-    models = None
+
+    def pre_view(self):
+        if self.request.GET.get("songsonly"):
+            u = reverse("s-song")
+            u = u + "?" + self.request.META.get("QUERY_STRING")
+            return HttpResponseRedirect(u)
 
     def GET(self):
         self.form = MMs(self.request.GET)
@@ -51,14 +68,24 @@ class SearchView(MyBaseView):
             q = self.form.cleaned_data['q']
             if q:
                 sqs = self.form.search()
-                if self.models:
-                    sqs = sqs.models(self.models)
                 sugg = sqs.spelling_suggestion()
+                if sugg:
+                    sugg = sugg.split(" ")[0]
+                test = SearchQuerySet().filter(content=sugg).models(*self.form.get_models())
+                if not test:
+                    sugg = None
         return {'sqs': sqs, 'sugg': sugg, 'form': self.form, "query": q, "type": self.searchtype}
 
 class SongSearch(SearchView):
-    models = wm.Song
+    template = "search_songs.html"
     searchtype = "Songs"
+
+    def pre_view(self):
+        pass
+
+    def GET(self):
+        self.form = Ms(self.request.GET)
+        self.form.load_all = True
 
 class AjaxSearch(MyBaseView):
     content_type = "application/json"

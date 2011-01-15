@@ -1,22 +1,26 @@
 {% extends "base/base.html" %}
 
 {% block main %}
-<h2>{{ gettext("Search") }}</h2>
+<h2>{{ gettext("Song Search") }}</h2>
  <div id="searchform"><form method="get" action=".">
  <table>
  {{ form }}
  </table>
  <input type="submit" value="{{ gettext("Search") }}" />
- <input type="submit" name="songsonly" value="{{ gettext("Songs only") }}" />
  </form></div>
 {% if query %}
  {% if sugg %}Did you mean <a href=".?q={{sugg}}">{{sugg}}</a>?{% endif %}
  <h2>{{ gettext("Results") }}</h2>
  {% if sqs %}
   {% set objs, paging = dv.paginate(sqs) %}
-  {% for r in objs %}
-   <p class="search-result">{{ r.render }}</p>
-  {% endfor %}
+    {% include "webview/t/songheader.html" %}
+    {% for song in objs %}
+     <tr class="{{ loop.cycle('row1', 'row2') }}">
+     {% set song = song.object %}
+     {% include "webview/t/songlist.html" %}
+     </tr>
+    {% endfor %}
+</table>
 
   {{ paging }}
 
