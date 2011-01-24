@@ -125,6 +125,18 @@ def get_oneliner(create_new=False):
         logging.debug("Cache generated")
     return R
 
+def get_roneliner(create_new=False):
+    key = "roneliner"
+    logging.debug("Getting reverse oneliner cache")
+    R = cache.get(key)
+    if not R or create_new:
+        logging.info("No existing cache for reverse oneliner, making new one")
+        oneliner = models.Oneliner.objects.select_related(depth=2).order_by('id')[:15]
+        R = j2shim.r2s('webview/js/roneliner.html', { 'roneliner' : roneliner })
+        cache.set(key, R, 600)
+        logging.debug("Cache generated")
+    return R
+
 def get_queue(create_new=False):
     key = "nqueue"
     logging.debug("Getting cache for queue")

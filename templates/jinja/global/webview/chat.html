@@ -5,7 +5,7 @@
 <div id="chatbox-main">
 	<h3>{{ gettext("Chat box") }}</h3>
 	
-	{{ dv.get_oneliner() }}
+	{{ dv.get_roneliner() }}
 
 	{% if user.is_authenticated() %}
 		<form action="{{ url ("dv-oneliner_submit") }}" method="post" enctype="application/x-www-form-urlencoded"  onsubmit="apf('{{ url ("dv-ax-oneliner_submit") }}',this); this.Line.value = ''; return false;" >
