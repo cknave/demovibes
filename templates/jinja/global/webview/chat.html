@@ -9,7 +9,7 @@
 
 	{% if user.is_authenticated() %}
 		<form action="{{ url ("dv-oneliner_submit") }}" method="post" enctype="application/x-www-form-urlencoded"  onsubmit="apf('{{ url ("dv-ax-oneliner_submit") }}',this); this.Line.value = ''; return false;" >
-	            <input id="blah" name="Line" autocomplete="off" maxlength="256" onkeydown="return tc(this,event.keyCode);" onkeypress="return canceltab(event.keyCode);" value="…" onfocus="if (this.value == '…') { this.value=''; }" /><input id="makeitso" type="submit" value="" />
+	            <input id="blah" name="Line" autocomplete="off" maxlength="256" onkeydown="return tc(this,event.keyCode);" onkeypress="return canceltab(event.keyCode);" value="…" onfocus="if (this.value == '…') { this.value=''; }" style="width: 100%;" /><input id="makeitso" type="submit" value="" />
 		</form>
 	{% endif %}
 </div>
