@@ -249,6 +249,13 @@ def site_about(request):
     """
     return j2shim.r2r('webview/site-about.html', { }, request)
 
+def chat(request):
+    """
+    	Support for a generic 'chat' page
+    """
+    return j2shim.r2r('webview/chat.html', { }, request)
+ 
+
 class listQueue(WebView):
     """
     Display the current song, the next songs in queue, and the latest 20 songs in history.

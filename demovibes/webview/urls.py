@@ -128,6 +128,8 @@ urlpatterns = patterns('',
     url(r'^sources/$',                           'django.views.generic.list_detail.object_list', sources, name = "dv-sources"),
     url(r'^source/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', sources, name = "dv-source"),
 
+    url(r'^chat/$',				'demovibes.webview.views.chat', name = "dv-chat"),
+
     #Song views
     url(r'^newshit/$',                          'demovibes.webview.views.new_songinfo_list', name="dv-new-info"),
     url(r'^songs/$',                               views.ListSongs(), name = "dv-songs"),
