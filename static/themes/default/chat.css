@@ -1,0 +1,19 @@
+body { width: 100%; }
+
+#site { width: 100%; }
+#chatbox-main {
+	width: 70%;
+	float: left;
+	padding: 10px;
+}
+
+#chatbox-column {
+	width: 20%;
+	float: right;
+	padding: 10px;
+}
+
+#userlist {
+	max-height: 300px;
+	overflow-y: scroll;
+}
