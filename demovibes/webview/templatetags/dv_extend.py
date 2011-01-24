@@ -289,7 +289,7 @@ def get_oneliner():
     R = js.r2s('webview/oneliner2.html', {'oneliner' : oneliner})
     return R
 
-def get_ronliner():
+def get_roneliner():
     """
     Renders the reversed oneliner html
     """
