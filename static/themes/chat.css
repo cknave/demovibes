@@ -1,4 +1,4 @@
-body { width: 100%; }
+body { width: 99%; overflow-x: hidden }
 
 #site { width: 100%; }
 #chatbox-main {
