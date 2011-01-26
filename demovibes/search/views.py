@@ -24,6 +24,7 @@ class MMs(ModelSearchForm):
         q = self.cleaned_data['q']
         star = []
         s = self.RE.findall(q)
+        s = s.replace("-", " ")
         if s:
             for x in s:
                 w = x[1]
@@ -89,13 +90,14 @@ class SongSearch(SearchView):
 
 class AjaxSearch(MyBaseView):
     content_type = "application/json"
+    model = None
 
     def pre_view(self):
-        self.query = self.request.GET.get("q", "")
+        self.q = self.request.GET.get("q", "")
         self.start = int(self.request.GET.get("start", "0"))
         self.num   = int(self.request.GET.get("num", "20"))
         self.context['start'] = self.start
-        if not self.query:
+        if not self.q:
             self.set_error("No query sent")
             return self.render()
 
@@ -103,7 +105,7 @@ class AjaxSearch(MyBaseView):
         self.context['error'] = error
 
     def query(self, model, keyname="results"):
-        results = SearchQuerySet().auto_query(self.query).models(wm.Artist).load_all()
+        results = SearchQuerySet().auto_query(self.q).models(self.model).load_all()
         self.context['count'] = len(results)
         results = [self.make_info(s.object) for s in results[self.start:self.num]]
         if not results:
@@ -116,6 +118,7 @@ class AjaxSearch(MyBaseView):
 
 
 class GroupAjax(AjaxSearch):
+    model = wm.Group
     def make_info(self, group):
         return {'name': group.name, 'id': group.id}
 
@@ -123,6 +126,7 @@ class GroupAjax(AjaxSearch):
         return self.query(wm.Group, "groups")
 
 class ArtistAjax(AjaxSearch):
+    model = wm.Artist
     def make_info(self, artist):
         groups = [{'name':x.name,'id': x.id} for x in artist.groups.all()]
         data = {'handle': artist.handle, 'id':artist.id, 'url': artist.get_absolute_url(), 'name': artist.name}
@@ -135,6 +139,7 @@ class ArtistAjax(AjaxSearch):
 
 class SongAjax(AjaxSearch):
     idlist = re.compile(r'^(\d+,)+\d+$')
+    model = wm.Song
 
     def make_info(self, song):
         return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.song_length}
@@ -146,7 +151,7 @@ class SongAjax(AjaxSearch):
         songs = []
         count = 0
 
-        query = self.query
+        query = self.q
 
         if query.isdigit():
             try:
