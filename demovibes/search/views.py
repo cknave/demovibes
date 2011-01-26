@@ -22,9 +22,9 @@ class MMs(ModelSearchForm):
             return self.no_query_found()
 
         q = self.cleaned_data['q']
+        q = q.replace("-", " ")
         star = []
         s = self.RE.findall(q)
-        s = s.replace("-", " ")
         if s:
             for x in s:
                 w = x[1]
