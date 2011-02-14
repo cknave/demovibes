@@ -838,6 +838,9 @@ class songStatistics(WebView):
     def list_voted(self):
         return Song.objects.filter(rating_votes__gt = 9).order_by('-rating')
 
+    def list_leastvotes(self):
+        return Song.objects.order_by('rating_votes')
+
     def list_mostvotes(self):
         return Song.objects.order_by('-rating_votes')
 
@@ -849,11 +852,12 @@ class songStatistics(WebView):
 
     def initialize(self):
         self.stats = {
-            'favorites': ("most favoured", "num_favorited", "# Favorited", self.list_favorites),
-            'voted': ("highest voted", "rating", "Rating", self.list_voted),
-            'queued': ("most played", "times_played", "# Played", self.list_queued),
-            'unplayed': ("least played", "times_played", "# Played", self.list_queued2),
-            'mostvotes': ("most voted", "rating_votes", "# Votes", self.list_mostvotes),
+            'leastvotes': ("Songs with the least number of votes in the database.", "rating_votes", "# Votes", self.list_leastvotes),
+            'favorites': ("Songs which appear on more users favourites lists.", "num_favorited", "# Favorited", self.list_favorites),
+            'voted': ("Songs with the highest ratings in the database.", "rating", "Rating", self.list_voted),
+            'queued': ("The most played songs in the database.", "times_played", "# Played", self.list_queued),
+            'unplayed': ("The least played songs in the database.", "times_played", "# Played", self.list_queued2),
+            'mostvotes': ("Songs with the highest number of votes cast.", "rating_votes", "# Votes", self.list_mostvotes),
         }
         self.stattype = self.kwargs.get("stattype", "")
 
