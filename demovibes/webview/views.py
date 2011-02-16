@@ -840,7 +840,7 @@ class songStatistics(WebView):
         return Song.objects.filter(rating_votes__gt = 9).order_by('-rating')
 
     def list_leastvotes(self):
-		return Song.objects.filter(status="A").order_by('rating_votes', '?')[:100]
+		return Song.objects.filter(status="A").exclude(locked_until__gte=datetime.datetime.now()).order_by('rating_votes', '?')[:100]
 		
     def list_random(self):
 		max_id = Song.objects.order_by('-id')[0].id 
@@ -865,7 +865,7 @@ class songStatistics(WebView):
         return Song.objects.order_by('-rating_votes')
 
     def list_queued2(self):
-        return Song.objects.filter(status="A").order_by('times_played', "locked_until")
+        return Song.objects.filter(status="A").exclude(locked_until__gte=datetime.datetime.now()).order_by('times_played', 'locked_until')
 
     def list_queued(self):
         return Song.objects.filter(status="A").order_by('-times_played')
