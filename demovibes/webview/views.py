@@ -839,7 +839,7 @@ class songStatistics(WebView):
         return Song.objects.filter(rating_votes__gt = 9).order_by('-rating')
 
     def list_leastvotes(self):
-        return Song.objects.order_by('rating_votes')
+        return Song.objects.filter(status="A").order_by('rating_votes', '?')
 
     def list_mostvotes(self):
         return Song.objects.order_by('-rating_votes')
