@@ -42,6 +42,7 @@ import time
 import mimetypes
 import os
 import re
+import random
 # Create your views here.
 
 L = logging.getLogger('webview.views')
@@ -839,7 +840,26 @@ class songStatistics(WebView):
         return Song.objects.filter(rating_votes__gt = 9).order_by('-rating')
 
     def list_leastvotes(self):
-        return Song.objects.filter(status="A").order_by('rating_votes', '?')
+		return Song.objects.filter(status="A").order_by('rating_votes', '?')[:100]
+		
+    def list_random(self):
+		max_id = Song.objects.order_by('-id')[0].id 
+		max_songs = Song.objects.filter(status="A").count() 
+		num_songs = 100 
+		num_songs = num_songs < max_songs and num_songs or max_songs 
+		songlist = [] 
+		r_done = [] 
+		r = random.randint(0, max_id+1) 
+		while len(songlist) < num_songs: 
+		  r_list = [] 
+		  curr_count = (num_songs - len(songlist) + 2)
+		  for x in range(curr_count): 
+			while r in r_done: 
+			  r = random.randint(0, max_id+1) 
+			r_list.append(r) 
+		  r_done.extend(r_list) 
+		  songlist.extend([s for s in Song.objects.filter(id__in=r_list, status="A")]) 
+		return songlist
 
     def list_mostvotes(self):
         return Song.objects.order_by('-rating_votes')
@@ -852,6 +872,7 @@ class songStatistics(WebView):
 
     def initialize(self):
         self.stats = {
+            'random': ("Random songs from the database!", "rating_votes", "# Votes", self.list_random),
             'leastvotes': ("Songs with the least number of votes in the database.", "rating_votes", "# Votes", self.list_leastvotes),
             'favorites': ("Songs which appear on more users favourites lists.", "num_favorited", "# Favorited", self.list_favorites),
             'voted': ("Songs with the highest ratings in the database.", "rating", "Rating", self.list_voted),
