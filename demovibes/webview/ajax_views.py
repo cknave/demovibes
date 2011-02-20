@@ -65,6 +65,7 @@ def ping(request, event_id):
         if not get:
             P = get_profile(request.user)
             P.last_activity = datetime.datetime.now()
+            P.set_flag_from_ip(request.META['REMOTE_ADDR'])
             P.save()
             cache.set(key, "1", 100)
     return HttpResponseRedirect("/demovibes/ajax/monitor/%s/" % event_id)

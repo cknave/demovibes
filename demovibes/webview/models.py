@@ -22,7 +22,20 @@ from django.contrib.contenttypes import generic
 
 import tagging
 
+log = logging.getLogger("webview.models")
+
 #from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
+
+if getattr(settings, "LOOKUP_COUNTRY", True):
+    from demovibes.ip2cc import ip2cc
+    ipdb = os.path.join(settings.SITE_ROOT, "ipcountry.db")
+    if not os.path.exists(ipdb):
+        log.info("IP2Country DB not found, creating new")
+        from ip2cc import update as ip2ccupdate
+        ip2ccupdate.create_file(ipdb)
+    ipccdb = ip2cc.CountryByIP(ipdb)
+else:
+    ipccdb = False
 
 uwsgi_event_server = getattr(settings, 'UWSGI_EVENT_SERVER', False)
 
@@ -238,6 +251,16 @@ class Userprofile(models.Model):
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
 
     links = generic.GenericRelation(GenericLink)
+
+    def set_flag_from_ip(self, ip):
+        if ipccdb and not self.country:
+            try:
+                log.debug("Setting country for %s", self.user.username)
+                self.country = ipccdb[ip].lower()
+                log.debug("Country set to %s", self.country)
+            except:
+                self.country = getattr(settings, "DEFAULT_FLAG", "nectaflag")
+                log.warn("Profile : Could not find country for %s", ip)
 
     def get_active_links(self):
         """

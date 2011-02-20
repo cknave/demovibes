@@ -18,6 +18,10 @@ LOGIN_URL = "/demovibes/login/"
 DEBUG = True
 TEMPLATE_DEBUG = False
 
+#For looking up flag country on users with no flag set
+LOOKUP_COUNTRY = True
+DEFAULT_FLAG = "nectaflag"
+
 #To make this work you need:
 #  1. uWSGI
 #  2. start the uwsgi_eventhandler module
