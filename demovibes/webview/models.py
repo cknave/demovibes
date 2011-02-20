@@ -639,7 +639,7 @@ class Song(models.Model):
     type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source') #a
     uploader = models.ForeignKey(User,  null = True, blank = True)
     wos_id = models.CharField(max_length=8, blank=True, null = True, verbose_name="W.O.S. ID", help_text="World of Spectrum ID Number (Spectrum) such as 0003478 (leading 0's are IMPORTANT!) - See http://www.worldofspectrum.org")
-    pouetlink = models.CharField(max_length=100, blank = True)
+    pouetlink = models.CharField(max_length=200, blank = True)
     pouetss = models.CharField(max_length=100, blank = True)
     pouetgroup = models.CharField(max_length=100, blank = True)
     pouettitle = models.CharField(max_length=100, blank = True)
