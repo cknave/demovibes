@@ -17,11 +17,21 @@ class SongIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     render = CharField(indexed=False, use_template=True)
 
+    # Need haystack 1.2 for this
+    #title = CharField(model_attr='title', boost=5.0)
+
     def get_queryset(self):
         return M.Song.objects.all()
 
     def get_updated_field(self):
         return "last_changed"
+
+    # Need haystack 1.2 for this
+    #def prepare(self, obj):
+    #    data = super(SongIndex, self).prepare(obj)
+    #    if obj.status == "A":
+    #        data['boost'] = 5.0
+    #    return data
 
 class GroupIndex(SearchIndex):
     text = CharField(document=True, use_template=True)

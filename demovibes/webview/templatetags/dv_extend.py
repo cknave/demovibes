@@ -1238,8 +1238,8 @@ def dv_urlize(text):
     return link
 
 bbdata_oneliner = [
-        (r'\[url\](.+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
-        (r'\[url=(.+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
+        (r'\[url\]((http|https|ftp):.+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
+        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
 
@@ -1311,8 +1311,8 @@ bbdata_oneliner = [
       ]
 
 bbdata_full = [
-        (r'\[url\](.+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
-        (r'\[url=(.+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
+        (r'\[url\]((http|https|ftp).+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
+        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\2</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
         (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
