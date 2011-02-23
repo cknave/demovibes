@@ -22,9 +22,11 @@ class pyWhisperer(object):
             'MEMDUMP': self.command_memdump,
             'GETGAIN': self.command_getgain,
             'GETLOOP': self.command_getloop,
+            'NEXTSONG': self.command_nextsong,
         }
         self.host = host
         self.port = port
+        self.encode = self.encode_newline
         self.player = queuefetcher.song_finder()
         self.running = True
         self.timeout = timeout
@@ -57,6 +59,23 @@ class pyWhisperer(object):
                 self.conn.close()
         Log.debug("Closing down listener")
         self.listener.close()
+
+    def encode_newline(self, data):
+        l = []
+        for k, v in data.items():
+            l.append("%s=%s" % (k, v))
+        return "\n".join(l)
+
+    def command_nextsong(self):
+        data = {
+            'path': self.command_getsong(),
+            'artist': self.command_artist(),
+            'title': self.command_title(),
+            'loop': self.command_getloop(),
+            'gain': self.command_getgain(),
+            'meta': self.command_getmeta(),
+        }
+        return self.encode(data)
 
     def command_artist(self):
         return self.player.song.artist().encode("utf-8")
