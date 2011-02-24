@@ -139,7 +139,10 @@ class AddCompilation(WebView):
         songs = []
         if songstr:
             for S in songstr:
-                songs.append(Song.objects.get(id=S))
+				# By default songsinput is empty but in fact we have one entry in list (u'')
+				# So the code will goes here ... but not valid S
+				if S:
+					songs.append(Song.objects.get(id=S))
 
         if self.forms_valid and songs:
             newcf = self.save_compilation(self.context["compform"], songs)
