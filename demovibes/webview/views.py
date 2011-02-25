@@ -1354,7 +1354,7 @@ class Login(MyBaseView):
             return False
 
         next = self.request.POST.get("next", False)
-        if user and password:
+        if not user and not password:
             self.context['error'] = _(u"You need to supply a username and password")
             return
 
