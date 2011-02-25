@@ -1343,7 +1343,9 @@ class Login(MyBaseView):
 
     def POST(self):
         ip = self.request.META.get("REMOTE_ADDR")
-        username = self.request.POST['username']
+        
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
 
         key1 = hashlib.md5("loginfail" + username).hexdigest()
         key2 = hashlib.md5("loginfail" + ip).hexdigest()
@@ -1351,8 +1353,11 @@ class Login(MyBaseView):
             self.context['error'] = _("Too many failed logins. Please wait an hour before trying again.")
             return False
 
-        password = self.request.POST['password']
         next = self.request.POST.get("next", False)
+        if user and password:
+            self.context['error'] = _(u"You need to supply a username and password")
+            return
+
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
