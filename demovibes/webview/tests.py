@@ -26,8 +26,23 @@ class BasicTest(TestCase):
         self.user.delete()
         self.artist.delete()
 
+    def test_login(self):
+            upr = (
+                ({ "username":"test", "password":"bla"}, 200, "I'm sorry, the username or password seem to be wrong."),
+                ({ "username":"test", "ipassword":"bla"}, 200, "You need to supply a username and password"),
+                ({ "iusername":"test", "password":"bla"}, 200, "You need to supply a username and password"),
+                ({ "iusername":"test", "ipassword":"bla"}, 200, "You need to supply a username and password"),
+                ({ "username":"", "password":"bla"}, 200, "You need to supply a username and password"),
+                ({ "username":"asd", "password":""}, 200, "You need to supply a username and password"),
+                ({ "username":"", "password":""}, 200, "You need to supply a username and password"),
+            )
+            for up, retcode, err in upr:
+                r = self.client.post(reverse("dv-login"), up)
+                self.assertContains(r, ">%s</p>" % err, 1, retcode)
+
+
     def login(self):
-        r = self.client.post(reverse("auth_login"), 
+        r = self.client.post(reverse("dv-login"), 
             {'username': "testuser", 'password': "userpw"})
         self.assertNotEqual(r.status_code, 200)
     
@@ -36,7 +51,7 @@ class BasicTest(TestCase):
         Basic check if pages load or not
         """
         pages = ['dv-root', 'dv-songs', 'dv-platforms', "dv-streams", 
-                "dv-oneliner", "dv-search", "dv-recent", "dv-groups", 
+                "dv-oneliner", "dv-recent", "dv-groups", 
                 "dv-artists", "dv-compilations", "dv-queue", "dv-labels", 
                 "dv-links", "dv-users_online"]
         pages = [reverse(a) for a in pages]
@@ -61,7 +76,7 @@ class BasicTest(TestCase):
         
         for page in restricted + admin:
             r = self.client.get(page)
-            self.assertRedirects(r, reverse("auth_login")+"?next=%s" % page)
+            self.assertRedirects(r, reverse("dv-login")+"?next=%s" % page)
             
         self.login()
         
@@ -71,7 +86,7 @@ class BasicTest(TestCase):
         
         for page in admin:
             r = self.client.get(page)
-            self.assertRedirects(r, reverse("auth_login")+"?next=%s" % page)
+            self.assertRedirects(r, reverse("dv-login")+"?next=%s" % page)
         
     def testOneliner(self):
         """
@@ -79,7 +94,7 @@ class BasicTest(TestCase):
         """
         r = self.client.post(reverse("dv-oneliner_submit"), {'Line': "Test"})
         self.assertRedirects(r, 
-              reverse("auth_login")+"?next=%s" % reverse("dv-oneliner_submit"))
+              reverse("dv-login")+"?next=%s" % reverse("dv-oneliner_submit"))
         
         r = self.client.post(reverse("dv-ax-oneliner_submit"), 
           {'Line': "TestFailLine12345675"})

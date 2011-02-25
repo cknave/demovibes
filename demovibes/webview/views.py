@@ -1344,8 +1344,8 @@ class Login(MyBaseView):
     def POST(self):
         ip = self.request.META.get("REMOTE_ADDR")
         
-        username = self.request.POST.get('username')
-        password = self.request.POST.get('password')
+        username = self.request.POST.get('username', "")
+        password = self.request.POST.get('password', "")
 
         key1 = hashlib.md5("loginfail" + username).hexdigest()
         key2 = hashlib.md5("loginfail" + ip).hexdigest()
@@ -1354,7 +1354,8 @@ class Login(MyBaseView):
             return False
 
         next = self.request.POST.get("next", False)
-        if not user and not password:
+        
+        if not username or not password:
             self.context['error'] = _(u"You need to supply a username and password")
             return
 
