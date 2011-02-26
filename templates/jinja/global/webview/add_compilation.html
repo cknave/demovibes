@@ -81,23 +81,14 @@ function addsongs (target, data) {
         });
         return false;
     });
-    
-    $("#compilationsubmitform").submit( function() 
-    {
-        var arr = $("#sortsonglist").sortable("toArray");
-        if ( arr.length == 0 )
-        {
-			$("#errr").text("{{ gettext("Add songs in compilation") }}").stop(true, true).show().fadeOut(15000);
-			document.bodyElement.scrollTop='0px'
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-        return false;
+
+    $("#compilationsubmitform").submit( function(i) {
+        if (!$("#songsinput").val()) {
+            i.preventDefault();
+            alert("Quite a short compilation you got there, buddy!\n\n(Hint... Add some songs maybe?)");
+        }
     });
-    
+
     var loadstr = "{{ songsinput }}";
     if (loadstr) {
         $.getJSON('{{ url("dv-ax-songinfo") }}', {"q": loadstr}, function(data) {
