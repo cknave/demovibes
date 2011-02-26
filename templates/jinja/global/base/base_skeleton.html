@@ -8,14 +8,14 @@
         <title>{% block title %}{{ gettext("Welcome") }}{% endblock %} - {{ dv.site_name() }}</title>
         <meta name="Description" content="Demovibes Demoscene Radio - your 24/7 source of demoscene music" />
         <meta name="Keywords" content="demoscene, demo scene, scene music, scenemusic, radio, stream, streaming, demovibes, demo vibes, nectarine, necta" />
-        {% block headblock %}{% endblock %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
         <script src="{{ MEDIA_URL }}js/dutils.js" type="text/JavaScript"></script>
         <script src="{{ MEDIA_URL }}js/dobject.js?1" type="text/JavaScript"></script>
         <script src="{{ MEDIA_URL }}js/dtabcomplete.js" type="text/JavaScript"></script>
         <script src="{{ MEDIA_URL }}js/sort/tablesort.min.js" type="text/JavaScript"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
         <script src="{{ MEDIA_URL }}js/jquery/popup.js" type="text/JavaScript"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        {% block headblock %}{% endblock %}
     </head>
 
     <body {% block bodyid %}id="site"{% endblock %} onload="ajaxmonitor({{ dv.ajaxevent() }});" onunload="ajaxmonitorabort();">
