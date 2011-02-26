@@ -53,6 +53,8 @@ def queue_song(song, user, event = True, force = False):
             models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user)
             result = False
         if result and song.is_locked():
+            # In a case, this should not append since user (from view) can't reqs song locked
+            models.add_event(event='eval:alert("You can\'t queue a song locked!");', user = user)
             result = False
     if result:
         song.locked_until = datetime.datetime.now() + time

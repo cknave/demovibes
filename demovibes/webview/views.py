@@ -255,10 +255,10 @@ def site_about(request):
 
 def chat(request):
     """
-    	Support for a generic 'chat' page
+        Support for a generic 'chat' page
     """
     return j2shim.r2r('webview/chat.html', { }, request)
- 
+
 
 class listQueue(WebView):
     """
@@ -843,26 +843,26 @@ class songStatistics(WebView):
         return Song.objects.filter(rating_votes__gt = 9).order_by('-rating')
 
     def list_leastvotes(self):
-		return Song.objects.filter(status="A").exclude(locked_until__gte=datetime.datetime.now()).order_by('rating_votes', '?')[:100]
-		
+        return Song.objects.filter(status="A").exclude(locked_until__gte=datetime.datetime.now()).order_by('rating_votes', '?')[:100]
+
     def list_random(self):
-		max_id = Song.objects.order_by('-id')[0].id 
-		max_songs = Song.objects.filter(status="A").count() 
-		num_songs = 100 
-		num_songs = num_songs < max_songs and num_songs or max_songs 
-		songlist = [] 
-		r_done = [] 
-		r = random.randint(0, max_id+1) 
-		while len(songlist) < num_songs: 
-		  r_list = [] 
-		  curr_count = (num_songs - len(songlist) + 2)
-		  for x in range(curr_count): 
-			while r in r_done: 
-			  r = random.randint(0, max_id+1) 
-			r_list.append(r) 
-		  r_done.extend(r_list) 
-		  songlist.extend([s for s in Song.objects.filter(id__in=r_list, status="A")]) 
-		return songlist
+        max_id = Song.objects.order_by('-id')[0].id
+        max_songs = Song.objects.filter(status="A").count()
+        num_songs = 100
+        num_songs = num_songs < max_songs and num_songs or max_songs
+        songlist = []
+        r_done = []
+        r = random.randint(0, max_id+1)
+        while len(songlist) < num_songs:
+          r_list = []
+          curr_count = (num_songs - len(songlist) + 2)
+          for x in range(curr_count):
+            while r in r_done:
+              r = random.randint(0, max_id+1)
+            r_list.append(r)
+          r_done.extend(r_list)
+          songlist.extend([s for s in Song.objects.filter(id__in=r_list, status="A")])
+        return songlist
 
     def list_mostvotes(self):
         return Song.objects.order_by('-rating_votes')
@@ -1343,7 +1343,7 @@ class Login(MyBaseView):
 
     def POST(self):
         ip = self.request.META.get("REMOTE_ADDR")
-        
+
         username = self.request.POST.get('username', "")
         password = self.request.POST.get('password', "")
 
@@ -1354,7 +1354,7 @@ class Login(MyBaseView):
             return False
 
         next = self.request.POST.get("next", False)
-        
+
         if not username or not password:
             self.context['error'] = _(u"You need to supply a username and password")
             return
