@@ -81,6 +81,23 @@ function addsongs (target, data) {
         });
         return false;
     });
+    
+    $("#compilationsubmitform").submit( function() 
+    {
+        var arr = $("#sortsonglist").sortable("toArray");
+        if ( arr.length == 0 )
+        {
+			$("#errr").text("{{ gettext("Add songs in compilation") }}").stop(true, true).show().fadeOut(15000);
+			document.bodyElement.scrollTop='0px'
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+        return false;
+    });
+    
     var loadstr = "{{ songsinput }}";
     if (loadstr) {
         $.getJSON('{{ url("dv-ax-songinfo") }}', {"q": loadstr}, function(data) {
@@ -116,9 +133,9 @@ function addsongs (target, data) {
 
 </div>
 
-<form method="post" action=".">
+<form id="compilationsubmitform" action="." method="post">
 
-<h2>{{ gettext("Boring info") }}</h2>
+<h2>{{ gettext("Compilation info") }}</h2>
 <input id="songsinput" name="songsinput" type="hidden"/>
 <table>
     {{ compform }}
