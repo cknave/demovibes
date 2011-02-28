@@ -110,8 +110,10 @@ def get_history(create_new=False):
     logging.debug("Getting history cache")
     R = cache.get(key)
     if not R or create_new:
+        nowplaying = get_now_playing_song()
+        limit = nowplaying and (nowplaying.id - 50) or 0
         logging.info("No existing cache for history, making new one")
-        history = models.Queue.objects.select_related(depth=3).filter(played=True).order_by('-time_played')[1:21]
+        history = models.Queue.objects.select_related(depth=3).filter(played=True).filter(id__gt=limit).order_by('-time_played')[1:21]
         R = j2shim.r2s('webview/js/history.html', { 'history' : history })
         cache.set(key, R, 300)
         logging.debug("Cache generated")
