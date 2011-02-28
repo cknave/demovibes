@@ -422,7 +422,7 @@ class GetSongRatingStarsAvgNode(template.Node):
 
     def render(self, context):
         try:
-            songtype = Queue.objects.select_related(depth=2).filter(played=True).order_by('-time_played')[0]
+            songtype = common.get_now_playing_song() #Queue.objects.select_related(depth=2).filter(played=True).order_by('-time_played')[0]
             song = songtype.song
         except:
             # Exception is thrown if no song data from queue exists. Simply return 'No Song'

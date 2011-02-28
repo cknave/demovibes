@@ -1,5 +1,5 @@
 from demovibes.webview.models import *
-from demovibes.webview.common import cache_output
+from demovibes.webview.common import cache_output, get_now_playing_song
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.conf import settings
@@ -11,10 +11,10 @@ class XMLView(BaseView):
 
 def queue(request):
     try :
-        now_playing = Queue.objects.select_related(depth=2).filter(played=True).order_by('-id')[0]
+        now_playing = get_now_playing_song()
+        history = Queue.objects.select_related(depth=2).filter(played=True).filter(id__gt=now_playing.id - 50).order_by('-id')[1:21]
     except IndexError:
-        now_playing = ""
-    history = Queue.objects.select_related(depth=2).filter(played=True).order_by('-id')[1:21]
+        history = []
     queue = Queue.objects.select_related(depth=2).filter(played=False).order_by('id')
     return render_to_response('webview/xml/queue.xml', \
         {'now_playing': now_playing, 'history': history, 'queue': queue}, \

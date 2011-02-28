@@ -148,7 +148,6 @@ class AddCompilation(WebView):
             newcf = self.save_compilation(self.context["compform"], songs)
             self.redirect(newcf)
 
-#Borks for some weird reason... Not done
 class EditCompilation(AddCompilation):
     staff_required = True
 

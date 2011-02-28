@@ -1140,7 +1140,8 @@ class Queue(models.Model):
         else:
             baseq = baseq_lt = Queue.objects.filter(played=False)
         try :
-            playtime = Queue.objects.select_related(depth=2).filter(played=True).order_by('-time_played')[0].timeleft()
+            timelimit = datetime.datetime.now() - datetime.timedelta(hours=6)
+            playtime = Queue.objects.select_related(depth=2).filter(played=True).filter(time_played__gt = timelimit ).order_by('-time_played')[0].timeleft()
         except IndexError:
             playtime = 0
         if self.priority:
