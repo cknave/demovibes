@@ -104,7 +104,11 @@ ACCOUNT_ACTIVATION_DAYS = 7
 CHEROKEE_SECRET_DOWNLOAD_KEY=""
 CHEROKEE_SECRET_DOWNLOAD_PATH=""
 # IF defined, will alter default file url with re.sub(r1, r2, url)
-CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'', r'')
+#CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'', r'')
+# If defined, will limit number of generated links per user to X links per Y seconds
+#CHEROKEE_SECRET_DOWNLOAD_LIMIT={'number': X, 'seconds': Y}
+# URL to redirect to if limit is reached
+#CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL="/static/badman.html"
 
 # maximum time a song will be played in seconds
 # only used when demosauce streamer is used

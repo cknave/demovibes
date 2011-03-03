@@ -29,9 +29,20 @@ log = logging.getLogger("webview.models")
 CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
 CHEROKEE_PATH = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_PATH", "")
 CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
+CHEROKEE_LIMIT = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", "")
+CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
-def secure_download (url):
+def secure_download (url, user=None):
     if CHEROKEE_SECRET:
+        if CHEROKEE_LIMIT and user:
+            key = "urlgenlimit_%s" % user.id
+            try:
+                k = cache.incr(key)
+            except:
+                k = 1
+                cache.set(key, k, CHEROKEE_LIMIT.get("seconds"))
+            if k > CHEROKEE_LIMIT.get("number"):
+                return CHEROKEE_LIMIT_URL or "Limit reached"
         t = '%08x' % (time.time())
         if CHEROKEE_REGEX:
             try:
@@ -691,8 +702,8 @@ class Song(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
-    def get_file_url(self):
-        return secure_download(self.file.url)
+    def get_file_url(self, user=None):
+        return secure_download(self.file.url, user)
 
     def has_video(self):
         return self.get_metadata().ytvidid

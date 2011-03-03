@@ -3,7 +3,7 @@
 <body>
 <p>{{ gettext("Song") }}: {{ display.song(song) }}</p>
 <table>
-{% set songurl = song.get_file_url() %}
+{% set songurl = song.get_file_url(user) %}
 <tr><th>{{ gettext("Flash player") }}</th><th>{{ gettext("Java player") }}</th></tr>
     <tr>
         <td>
