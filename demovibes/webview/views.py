@@ -97,7 +97,12 @@ class PlaySong(SongView):
     staff_required = True
 
     def set_context(self):
-        return {'song': self.song}
+        limit = None
+        if CHEROKEE_SECRET:
+            key = "urlgenlimit_%s" % self.request.user.id
+            number = CHEROKEE_LIMIT.get("number")
+            limit = number - cache.get(key, 0)
+        return {'song': self.song, 'limit': limit}
 
 class AddCompilation(WebView):
     template = "add_compilation.html"

@@ -24,5 +24,9 @@
         </td>
     </tr>
 </table>
+<a href="{{ songurl }}">Download song for local verification</a>{% if limit != None %} - This link will only be valid for 60 seconds after this window was opened.{% endif %}
+{% if limit %}
+<p>Number of previews left : {{ limit }}</p>
+{% endif %}
 </body>
 </html>
