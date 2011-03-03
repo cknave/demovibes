@@ -97,6 +97,15 @@ ACCOUNT_ACTIVATION_DAYS = 7
 
 # END SMTP Configuration
 
+# Cherokee secure url shared key
+# If empty, disable
+# The secure url root should point to static folder.
+# See http://www.cherokee-project.com/doc/modules_handlers_secdownload.html for more info
+CHEROKEE_SECRET_DOWNLOAD_KEY=""
+CHEROKEE_SECRET_DOWNLOAD_PATH=""
+# IF defined, will alter default file url with re.sub(r1, r2, url)
+CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'', r'')
+
 # maximum time a song will be played in seconds
 # only used when demosauce streamer is used
 # default fadeout is right before knucklebusters gets ugly

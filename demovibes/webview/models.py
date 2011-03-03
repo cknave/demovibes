@@ -21,10 +21,26 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 import tagging
-
+import time, hashlib
 log = logging.getLogger("webview.models")
 
 #from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
+
+CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
+CHEROKEE_PATH = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_PATH", "")
+CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
+
+def secure_download (url):
+    if CHEROKEE_SECRET:
+        t = '%08x' % (time.time())
+        if CHEROKEE_REGEX:
+            try:
+                url = str(url)
+            except:
+                url = url.encode("utf8")
+            url = re.sub(*CHEROKEE_REGEX + (url,))
+        return CHEROKEE_PATH + "/%s/%s/%s" % (hashlib.md5(CHEROKEE_SECRET + "/" + url + t).hexdigest(), t, url)
+    return url
 
 if getattr(settings, "LOOKUP_COUNTRY", True):
     from demovibes.ip2cc import ip2cc
@@ -674,6 +690,9 @@ class Song(models.Model):
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
+
+    def get_file_url(self):
+        return secure_download(self.file.url)
 
     def has_video(self):
         return self.get_metadata().ytvidid
