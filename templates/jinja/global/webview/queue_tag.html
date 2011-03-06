@@ -1,2 +1,2 @@
 {% import "macro/display.html" as display -%}
-{{ display.song(song) }} {{ gettext("by") }} {% for artist in artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} {% endfor %} <span data-name"a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span>
+{{ display.song(song) }} {{ gettext("by") }} {% for artist in artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %} {% endfor %} <span data-name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span>

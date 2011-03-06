@@ -36,7 +36,7 @@ Displaying the latest {{ settings.UPLOADED_SONG_COUNT }} uploaded songs:<br /><b
 	    </td>
 	    {% endcache %}{# Otherwise, Locked/Unlocked State Is Cached #}
             <td align="center">
-                <span data-name"a_queue_{{ song.song.id }}">{% with song.song as song %}{% include "webview/t/songlist_span_noauth.html" %}{% endwith %}</span>
+                <span data-name="a_queue_{{ song.song.id }}">{% with song.song as song %}{% include "webview/t/songlist_span_noauth.html" %}{% endwith %}</span>
                 {% with song.song as song %}{% include "webview/t/fav_icon.html" %}{% endwith %}
             </td>
         </tr>

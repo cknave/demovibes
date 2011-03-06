@@ -42,7 +42,7 @@
 
  {% for song in objs %}
   {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song) }}
-  <span data-name"a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+  <span data-name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}<br />
 {% endif %}
 </td>

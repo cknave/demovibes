@@ -38,7 +38,7 @@ Links:{% if object.webpage %} <a href="{{ object.webpage }}" target="_blank">[We
  <b>Associated Songs:</b><br />
  {% for song in object.get_songs.all %}
   {% include "webview/t/songname.html" %} by {% for artist in song.artists.all %}{% with artist as A%}{% include "webview/t/artist.html" %}{% endwith %}{% if forloop.last %} {% else %}, {% endif %} {% endfor %}
-  <span data-name"a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+  <span data-name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}<br />
 {% endifnotequal %}
 </td>
