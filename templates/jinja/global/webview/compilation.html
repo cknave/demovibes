@@ -66,7 +66,7 @@ Name: {{ comp.name|e }}<br />
  <b><i>{{ gettext("Songs In This Production (%(num)d Total)", num=comp.songs.count()) }} :</i></b><br /><br />
  {% for song in comp.get_songs() %}
   {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song) }}
-  <span name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+  <span data-name"a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}
 {% endif %}<br />
 {% if comp.prod_notes %}<i><b>{{ gettext("Production Notes") }}: </b>{{ comp.prod_notes|urlize|bbcode|linebreaks|smileys }}</i><br />{% endif %}
