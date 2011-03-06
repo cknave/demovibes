@@ -14,15 +14,13 @@ function requestsong(no) {
 
 // added support for multiple counter spans with arbitrary direction
 function counter() {
-    var spans=document.getElementsByName('counter');
-    for (var i=0;i<spans.length;i++){
-        var counter=1*spans[i].getAttribute("data-sec");
-        var inc=1*spans[i].getAttribute("data-inc");
-
+    $("[data-name='counter']").each( function (i) {
+        var counter=1*i.attr("data-sec");
+        var inc=1*i.attr("data-inc");
         if ((inc<0 && counter>0) || inc>0) {
             counter=counter+inc;
 
-            spans[i].setAttribute("data-sec",counter);
+            i.attr("data-sec",counter);
             var s=counter;
             var h=Math.round(Math.floor(s/(60.0*60.0)));
             s%=(60*60);
@@ -36,13 +34,13 @@ function counter() {
             }
             try {
                 if (h>0) {
-                    spans[i].innerHTML=h+":"+m+":"+s;
+                    i.text(h+":"+m+":"+s);
                 }else{
-                    spans[i].innerHTML=m+":"+s;
+                    i.text(m+":"+s);
                 }
             }catch(err){} // ignore error
         }
-    }
+    });
 }
 
 // Added try/catch to prevent errors, if updates occur while this runs.

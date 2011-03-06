@@ -971,13 +971,13 @@ def bb_size(hit):
     # Users requesting a size too small to be visible, or too large and take up the whole screen!
     # This could eventually go into the settings.py file, hehe.
     if(int(size) < minimum):
-        return '<font style="font-size: %dpx">%s [Too Small, Upscaled To 6]</font>' % (minimum, text)
+        return '<span style="font-size: %dpx">%s [Too Small, Upscaled To 6]</span>' % (minimum, text)
 
     if(int(size) > maximum):
-        return '<font style="font-size: %dpx">%s [Too Large, Reduced To 50]</font>' % (maximum, text)
+        return '<span style="font-size: %dpx">%s [Too Large, Reduced To 50]</span>' % (maximum, text)
 
     # Return the normal text size
-    return '<font style="font-size: %dpx">%s</font>' % (int(size), text)
+    return '<span style="font-size: %dpx">%s</span>' % (int(size), text)
 
 def bb_youtube(hit):
     """
@@ -1238,8 +1238,8 @@ def dv_urlize(text):
     return link
 
 bbdata_oneliner = [
-        (r'\[url\]((http|https|ftp):.+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
-        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
+        (r'\[url\]((http|https|ftp|/):.+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
+        (r'\[url=((http|https|ftp|/).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
 
@@ -1263,25 +1263,25 @@ bbdata_oneliner = [
 
         # Standard colour tags for use in the oneliner. Most basic colours are pre-made
         # For ease of use. Feel free to add new colours.
-        (r'\[red\](.+?)\[/red\]', r'<font color="red">\1</font>'),
-        (r'\[green\](.+?)\[/green\]', r'<font color="green">\1</font>'),
-        (r'\[blue\](.+?)\[/blue\]', r'<font color="blue">\1</font>'),
-        (r'\[brown\](.+?)\[/brown\]', r'<font color="brown">\1</font>'),
-        (r'\[cyan\](.+?)\[/cyan\]', r'<font color="cyan">\1</font>'),
-        (r'\[darkblue\](.+?)\[/darkblue\]', r'<font color="darkblue">\1</font>'),
-        (r'\[gold\](.+?)\[/gold\]', r'<font color="gold">\1</font>'),
-        (r'\[grey\](.+?)\[/grey\]', r'<font color="gray">\1</font>'),
-        (r'\[magenta\](.+?)\[/magenta\]', r'<font color="magenta">\1</font>'),
-        (r'\[orange\](.+?)\[/orange\]', r'<font color="orange">\1</font>'),
-        (r'\[pink\](.+?)\[/pink\]', r'<font color="pink">\1</font>'),
-        (r'\[purple\](.+?)\[/purple\]', r'<font color="purple">\1</font>'),
-        (r'\[white\](.+?)\[/white\]', r'<font color="white">\1</font>'),
-        (r'\[yellow\](.+?)\[/yellow\]', r'<font color="yellow">\1</font>'),
-        (r'\[black\](.+?)\[/black\]', r'<font color="black">\1</font>'),
+        (r'\[red\](.+?)\[/red\]', r'<span style="color: red">\1</span>'),
+        (r'\[green\](.+?)\[/green\]', r'<span style="color: green">\1</span>'),
+        (r'\[blue\](.+?)\[/blue\]', r'<span style="color: blue">\1</span>'),
+        (r'\[brown\](.+?)\[/brown\]', r'<span style="color: brown">\1</span>'),
+        (r'\[cyan\](.+?)\[/cyan\]', r'<span style="color: cyan">\1</span>'),
+        (r'\[darkblue\](.+?)\[/darkblue\]', r'<span style="color: darkblue">\1</span>'),
+        (r'\[gold\](.+?)\[/gold\]', r'<span style="color: gold">\1</span>'),
+        (r'\[grey\](.+?)\[/grey\]', r'<span style="color: gray">\1</span>'),
+        (r'\[magenta\](.+?)\[/magenta\]', r'<span style="color: magenta">\1</span>'),
+        (r'\[orange\](.+?)\[/orange\]', r'<span style="color: orange">\1</span>'),
+        (r'\[pink\](.+?)\[/pink\]', r'<span style="color: pink">\1</span>'),
+        (r'\[purple\](.+?)\[/purple\]', r'<span style="color: purple">\1</span>'),
+        (r'\[white\](.+?)\[/white\]', r'<span style="color: white">\1</span>'),
+        (r'\[yellow\](.+?)\[/yellow\]', r'<span style="color: yellow">\1</span>'),
+        (r'\[black\](.+?)\[/black\]', r'<span style="color: black">\1</span>'),
 
         # For those who want a bit extra pazazz, we can specify a HTML compliant
         # Colour code in the form of #00FF00 to be used. Handy for text effects.
-        (r'\[color=#([0-9A-Fa-f]{6})\](.+?)\[/color\]', r'<font color="#\1">\2</font>'),
+        (r'\[color=#([0-9A-Fa-f]{6})\](.+?)\[/color\]', r'<span style="color:"\1;">\2</span>'),
 
         # Video Linking Tags
         (r'\[yt\](.+?)\[/yt\]', bb_youtube_ol),
@@ -1311,8 +1311,8 @@ bbdata_oneliner = [
       ]
 
 bbdata_full = [
-        (r'\[url\]((http|https|ftp).+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
-        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
+        (r'\[url\]((http|https|ftp|/).+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
+        (r'\[url=((http|https|ftp|/).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
         (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
@@ -1331,22 +1331,22 @@ bbdata_full = [
         (r'\[size=(.+?)\](.+?)\[/size\]', bb_size),
         (r'\[pre\](.+?)\[/pre\]', r'<pre class="bbpre">\1</pre>'),
 
-        (r'\[red\](.+?)\[/red\]', r'<font color="red">\1</font>'),
-        (r'\[green\](.+?)\[/green\]', r'<font color="green">\1</font>'),
-        (r'\[blue\](.+?)\[/blue\]', r'<font color="blue">\1</font>'),
-        (r'\[black\](.+?)\[/black\]', r'<font color="black">\1</font>'),
-        (r'\[brown\](.+?)\[/brown\]', r'<font color="brown">\1</font>'),
-        (r'\[cyan\](.+?)\[/cyan\]', r'<font color="cyan">\1</font>'),
-        (r'\[darkblue\](.+?)\[/darkblue\]', r'<font color="darkblue">\1</font>'),
-        (r'\[gold\](.+?)\[/gold\]', r'<font color="gold">\1</font>'),
-        (r'\[grey\](.+?)\[/grey\]', r'<font color="gray">\1</font>'),
-        (r'\[magenta\](.+?)\[/magenta\]', r'<font color="magenta">\1</font>'),
-        (r'\[orange\](.+?)\[/orange\]', r'<font color="orange">\1</font>'),
-        (r'\[pink\](.+?)\[/pink\]', r'<font color="pink">\1</font>'),
-        (r'\[purple\](.+?)\[/purple\]', r'<font color="purple">\1</font>'),
-        (r'\[white\](.+?)\[/white\]', r'<font color="white">\1</font>'),
-        (r'\[yellow\](.+?)\[/yellow\]', r'<font color="yellow">\1</font>'),
-        (r'\[color=#(.+?)\](.+?)\[/color\]', r'<font color="#\1">\2</font>'),
+        (r'\[red\](.+?)\[/red\]', r'<span style="color: red">\1</span>'),
+        (r'\[green\](.+?)\[/green\]', r'<span style="color: green">\1</span>'),
+        (r'\[blue\](.+?)\[/blue\]', r'<span style="color: blue">\1</span>'),
+        (r'\[black\](.+?)\[/black\]', r'<span style="color: black">\1</span>'),
+        (r'\[brown\](.+?)\[/brown\]', r'<span style="color: brown">\1</span>'),
+        (r'\[cyan\](.+?)\[/cyan\]', r'<span style="color: cyan">\1</span>'),
+        (r'\[darkblue\](.+?)\[/darkblue\]', r'<span style="color: darkblue">\1</span>'),
+        (r'\[gold\](.+?)\[/gold\]', r'<span style="color: gold">\1</span>'),
+        (r'\[grey\](.+?)\[/grey\]', r'<span style="color: gray">\1</span>'),
+        (r'\[magenta\](.+?)\[/magenta\]', r'<span style="color: magenta">\1</span>'),
+        (r'\[orange\](.+?)\[/orange\]', r'<span style="color: orange">\1</span>'),
+        (r'\[pink\](.+?)\[/pink\]', r'<span style="color: pink">\1</span>'),
+        (r'\[purple\](.+?)\[/purple\]', r'<span style="color: purple">\1</span>'),
+        (r'\[white\](.+?)\[/white\]', r'<span style="color: white">\1</span>'),
+        (r'\[yellow\](.+?)\[/yellow\]', r'<span style="color: yellow">\1</span>'),
+        (r'\[color=#(.+?)\](.+?)\[/color\]', r'<span style="color: #\1">\2</span>'),
 
         (r'\[table\](.+?)\[/table\]', r'<table class="bbtable">\1</table>'),
         (r'\[th\](.+?)\[/th\]', r'<th>\1</th>'),
