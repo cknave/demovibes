@@ -14,7 +14,8 @@ function requestsong(no) {
 
 // added support for multiple counter spans with arbitrary direction
 function counter() {
-    $("[data-name='counter']").each( function (i) {
+    $("[data-name='counter']").each( function (n) {
+        i = $(this);
         var counter=1*i.attr("data-sec");
         var inc=1*i.attr("data-inc");
         if ((inc<0 && counter>0) || inc>0) {
