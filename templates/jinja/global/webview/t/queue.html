@@ -1,24 +1,24 @@
 {% import "macro/display.html" as display -%}
 <tr class="{{ row_class.next() }}">
- <td align="left">
+ <td>
   {% if req.priority %}*{% endif %}{{ display.song(req.song) }}
  </td>
- <td align="left">
+ <td>
   {{ display.artists(req.song) }}
  </td>
- <td align="center">
+ <td>
   {{ req.song.length() }}
  </td>
- <td align="center">
+ <td>
   {{ req.requested|time("H:i") }}{% if req.playtime %} [{{ req.playtime|time("H:i") }}]{% endif %}
  </td>
- <td align="center">
+ <td>
   {{ req.eta|time("H:i") }}
  </td>
- <td align="left">
+ <td>
   {{ display.user(req.requested_by) }}
  </td>
-  <td align="center" title="Song rating ({{ req.song.rating_votes }} votes)">
+  <td title="Song rating ({{ req.song.rating_votes }} votes)">
   {{ req.song.rating|floatformat|default("N/A", true) }}
  </td>
 </tr>

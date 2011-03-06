@@ -6,7 +6,7 @@
 
 <table>
 <tr>
-<td class="compilation_summary" valign="top">
+<td class="compilation_summary">
 {% if comp.cover_art %}
  <img class="compilation_screenshot" src="{{ comp.cover_art.url }}" alt="[Cover Art]" /><br />
 {% else %}
@@ -29,7 +29,7 @@ Name: {{ comp.name }}<br />
 {% if comp.date_added %}<br />Added On: {{ comp.date_added|date:"F j, Y" }} <br />By: {% if comp.created_by %}{% with comp.created_by as U %}{% include "webview/t/user.html" %}{% endwith %}{% endif %}<br />{% endif %}
 </p>
 </td>
-<td class="compilation_description" valign="top">
+<td class="compilation_description">
 <b><i>Compilation Details For {{ comp.name }}:</i></b><br />
 {% if comp.info %}<p><i>{{ comp.info|force_escape|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}
 {% ifnotequal comp.prod_artists.count 0 %}

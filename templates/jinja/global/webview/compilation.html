@@ -13,7 +13,7 @@
 
 <table>
 <tr>
-<td class="compilation_summary" valign="top">
+<td class="compilation_summary">
 {% if comp.cover_art %}
  <img class="compilation_screenshot" src="{{ comp.cover_art.url }}" alt="[Cover Art]" /><br />
 {% else %}
@@ -43,7 +43,7 @@ Name: {{ comp.name|e }}<br />
 </form>
 {% endif %}
 </td>
-<td class="compilation_description" valign="top">
+<td class="compilation_description">
 <b><i>{{ gettext("Compilation Details For") }} {{ comp.name|e }}:</i></b><br />
 {% if comp.info %}<p><i>{{ comp.info|urlize|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}
 {% if comp.prod_artists.count != 0 %}

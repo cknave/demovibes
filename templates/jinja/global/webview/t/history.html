@@ -1,21 +1,21 @@
 {% import "macro/display.html" as display -%}
 <tr class="{{ row_class.next() }}">{# {% cache 7200 hilist req.id %} #}
- <td align="left">
+ <td>
   {{ display.song(req.song) }}
  </td>
- <td align="left">
+ <td>
   {{ display.artists(req.song) }}
  </td>
- <td align="center">
+ <td>
   {{ req.song.length() }}
  </td>
- <td align="center">
+ <td>
   {{ req.requested|time("H:i") }}
  </td>
- <td align="center">
+ <td>
   {{ req.time_played|time("H:i") }}
  </td>
- <td align="left">
+ <td>
   {{ display.user(req.requested_by) }}
  </td>{# {% endcache %} #}
 </tr>

@@ -8,10 +8,10 @@
   {% for artist in meta.artists.all() %}{{ display.artist(artist) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
   {% for group in meta.groups.all() %}{{ display.group(group) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
  </td>
- <td align="center">
+ <td>
   {{ song.length() }}
  </td>
- <td align="center">
+ <td>
   {{ song.get_status_display() }}
  </td>
  <td>

@@ -9,7 +9,7 @@
 
 <table>
 <tr>
-<td class="group_summary" valign="top">
+<td class="group_summary">
 {% if object.group_logo %}<img class="group_logo" src="{{ object.group_logo.url }}">{% else %}<img class="group_logo" src="/static/no_picture.png" />{% endif %}
 <br /><strong>{{ object.name|e }}</strong><br />{% if object.found_date %}(Founded On: {{object.found_date|date("F j, Y") }}){% endif %}<br />
 
@@ -19,7 +19,7 @@
 {% if object.created_by %}{{ gettext("Added By") }}: {{ display.user(object.created_by) }}<br />{% endif %}
 {{ display.links(object) }}
 </td>
-<td class="group_description" valign="top">
+<td class="group_description">
 {% if object.info %}
 <p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
 {% endif %}<br />

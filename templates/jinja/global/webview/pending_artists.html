@@ -9,10 +9,10 @@
 {% for artist in artists.all() %}
     <table>
     <tr>
-    <td valign="top">
-    {% if artist.artist_pic %}<img class="artist_logo" src="{{ artist.artist_pic.url }}" title="{{ artist.handle|e }}" alt="{{ artist.handle|e }}" align="left" width="100" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" title="No Picture" alt="No Picture" align="left" width="100" />{% endif %}
+    <td>
+    {% if artist.artist_pic %}<img class="artist_logo" src="{{ artist.artist_pic.url }}" title="{{ artist.handle|e }}" alt="{{ artist.handle|e }}" width="100" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" title="No Picture" alt="No Picture" width="100" />{% endif %}
     </td>
-    <td valign="top">
+    <td>
     {{ gettext("Artist") }}: {{ display.artist(artist) }}<br />
     {{ gettext("Location") }}:{% if artist.home_location %} {{ artist.home_location|e }}{% endif %} {{ dv.flag(artist.home_country) }}<br />
     {% if artist.webpage %}{{ gettext("Website") }}: <a href="{{ artist.webpage|e }}">{{ artist.webpage|e }}</a><br />{% endif %}

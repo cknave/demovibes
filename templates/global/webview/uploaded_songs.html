@@ -22,7 +22,7 @@
  <td>
   {% include "webview/t/songname.html" %}
  </td>
- <td align="center">
+ <td>
   {{ song.length }}
  </td>
  <td>
@@ -31,7 +31,7 @@
  <td>
   {% with song.uploader as U%}{% include "webview/t/user.html" %}{% endwith %}
  </td>
- <td align="center">
+ <td>
   {{ song.added|timesince }}
  </td>
  <td>

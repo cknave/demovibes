@@ -6,8 +6,8 @@
 {% load dv_extend %}<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" /><span class="header">Artist Info{% if user.is_staff %} [<a href="/admin/webview/artist/{{ object.id }}/">Edit Artist Info</a>]{% endif %}</h2>
 <table>
 <tr>
-<td class="artist_details" valign="top">
-{% if object.artist_pic %}<img class="artist_logo" src="{{ object.artist_pic.url }}" title="{{ object.handle }}'s Picture" align="left" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" alt="No Picture" align="left" />{% endif %}
+<td class="artist_details">
+{% if object.artist_pic %}<img class="artist_logo" src="{{ object.artist_pic.url }}" title="{{ object.handle }}'s Picture" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" alt="No Picture" />{% endif %}
 <br /><img src="/static/spacer.gif" /><br />
 {% if object.wiki_link %}
  <a href="{{ object.wiki_link }}" target="_blank"><img src="/static/wiki-icon.png" title="{{ object.handle }} on Wikipedia" /></a>{% endif %}
@@ -15,7 +15,7 @@
 {% if object.twitter_id %}<a href="http://www.twitter.com/{{ object.twitter_id }}" target="_blank"><img src="/static/twitter-icon.png" title="{{ object.handle }} on Twitter!" /></a>{% endif %}
 {% if object.last_fm_id %}<a href="http://www.last.fm/music/{{ object.last_fm_id }}" target="_blank"><img src="/static/lastfm-icon.png" title="{{ object.handle }} on Last.FM" /></a>{% endif %}
 </td>
-<td class="artist_information" valign="top">
+<td class="artist_information">
 <strong>{{ object.handle }}</strong> {% if object.is_deceased %}<img src="/static/deceased.png" class="countryflag" alt="Deceased {% if object.deceased_date %}[On {{ object.deceased_date|date:"F j, Y" }}]{% endif %}" />{% endif %}
 <br />
 

@@ -9,10 +9,10 @@
 {% for artist in artists.all %}
     <table>
     <tr>
-    <td valign="top">
-    {% if artist.artist_pic %}<img class="artist_logo" src="{{ artist.artist_pic.url }}" title="{{ artist.handle }}" alt="{{ artist.handle }}" align="left" width="100" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" title="No Picture" alt="No Picture" align="left" width="100" />{% endif %}
+    <td>
+    {% if artist.artist_pic %}<img class="artist_logo" src="{{ artist.artist_pic.url }}" title="{{ artist.handle }}" alt="{{ artist.handle }}" width="100" />{% else %}<img class="artist_logo" src="/static/no_artist_pic.png" title="No Picture" alt="No Picture" width="100" />{% endif %}
     </td>
-    <td valign="top">
+    <td>
     Artist: {% with artist as A %}{% include "webview/t/artist.html" %}{% endwith %}<br />
     Location:{% if artist.home_location %} {{ artist.home_location }}{% endif %} {{ artist.home_country|flag|safe }}<br />
     {% if artist.webpage %}Website: <a href="{{ artist.webpage }}">{{ artist.webpage }}</a><br />{% endif %}

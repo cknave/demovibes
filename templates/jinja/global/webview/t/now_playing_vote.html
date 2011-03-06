@@ -2,7 +2,7 @@
 <table class="vote" name="vote-{{ song.id }}" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});"> 
 <tr> 
 {% for v in voterange -%}
-    <td align="center" onmouseover="voteshow('vote-{{ song.id }}', {{ v }});" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
+    <td onmouseover="voteshow('vote-{{ song.id }}', {{ v }});" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
         <a href="{{ url("dv-vote-autovote", song.id, v) }}">
             <img src="/static/star-{% if v > myvote %}white{% else %}red{% endif %}.png" title="{{ v }} Star" border="0" id="vote-{{ song.id }}-{{ v }}" />
         </a>

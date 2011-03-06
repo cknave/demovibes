@@ -476,7 +476,7 @@ class GetSongRatingStarsAvgNode(template.Node):
 
         for count in range(1, 6):
             DiffVal = (count - user_vote) # Pre-calc rating difference
-            TempLine = '<td align="center" onmouseover="voteshow(\'vote-%d\', %d);" onmouseout="voteshow(\'vote-%d\', %d);">' % (song.id, count, song.id, user_vote)
+            TempLine = '<td onmouseover="voteshow(\'vote-%d\', %d);" onmouseout="voteshow(\'vote-%d\', %d);">' % (song.id, count, song.id, user_vote)
 
             if(user_anon == False):
                 TempLine = TempLine + '<a href="/demovibes/song/%d/vote/%d/">' % ( song.id, count )
@@ -1324,7 +1324,7 @@ bbdata_full = [
         (r'\[s\](.+?)\[/s\]', r'<s>\1</s>'),
         (r'\[quote=(.+?)\](.+?)\[/quote\]', r'<div class="bbquote"><b>\1 said:</b> "\2"</div>'),
         (r'\[quote\](.+?)\[/quote\]', r'<div class="bbquote"><b>Quote:</b> "\1"</div>'),
-        (r'\[center\](.+?)\[/center\]', r'<div align="center">\1</div>'),
+        (r'\[center\](.+?)\[/center\]', r'<div>\1</div>'),
         (r'\[code\](.+?)\[/code\]', r'<tt class="bbcode">\1</tt>'),
         (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
         (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),

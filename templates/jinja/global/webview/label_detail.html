@@ -7,7 +7,7 @@
 
 <table>
 <tr>
-<td class="label_summary" valign="top">
+<td class="label_summary">
 {% if object.logo %}<img class="label_logo" src="{{ object.logo.url }}" />{% else %}<img class="label_logo" src="/static/no_picture.png" />{% endif %}
 <br /><strong>{{ object.name|e }}</strong><br />
 {% if object.found_date %}({{ gettext("Founded On") }}: {{object.found_date|date("F j, Y") }})<br />{% endif %}
@@ -23,7 +23,7 @@
 {% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
 {% if object.created_by %}{{ gettext("Added By") }}: {% set U = object.created_by %}{% include "webview/t/user.html" %}<br />{% endif %}
 </td>
-<td class="label_description" valign="top">
+<td class="label_description">
 {% if object.info %}
 <p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
 {% endif %}<br />

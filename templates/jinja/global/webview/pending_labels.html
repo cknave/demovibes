@@ -9,10 +9,10 @@
 {% for label in labels.all() %}
     <table>
     <tr>
-    <td valign="top">
-    {% if label.logo %}<img class="label_logo" src="{{ label.logo.url }}" title="{{ label.name|e }} alt="{{ label.name|e }}" align="left" />{% else %}<img class="label_logo" src="/static/no_picture.png" height="100" title="No Picture" alt="No Picture" align="left" />{% endif %}
+    <td>
+    {% if label.logo %}<img class="label_logo" src="{{ label.logo.url }}" title="{{ label.name|e }} alt="{{ label.name|e }}" />{% else %}<img class="label_logo" src="/static/no_picture.png" height="100" title="No Picture" alt="No Picture" />{% endif %}
     </td>
-    <td valign="top">
+    <td>
     {{ gettext("Label") }}: {{ display.label(label) }}<br />
     {% if label.webpage %}{{ gettext("Website") }}: <a href="{{ label.webpage|e }}" target="_blank">{{ label.webpage|e }}</a><br />{% endif %}
     {% if label.wiki_link %}{{ gettext("Wiki Link") }}: <a href="{{ label.wiki_link|e }}" target="_blank">{{ label.wiki_link|e }}</a><br />{% endif %}
