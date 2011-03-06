@@ -7,7 +7,7 @@
 <a href="/accounts/password/change/">{{ gettext("Change My Password") }}</a><br /><a href="{{ url ("dv-profile", profile.user) }}">{{ gettext("View My Live Profile") }}</a>
 
 <h2>{{ gettext("OpenID") }}</h2>
-<span>{{ gettext("Your") }} <a href="http://openidexplained.com/" target="_new">OpenID</a> {{ gettext("key") }}:</span>
+<span>{{ gettext("Your") }} <a href="http://openidexplained.com/" target="_blank">OpenID</a> {{ gettext("key") }}:</span>
 <ul>
 {% for id in user.openid_set.all() %}
     <li><img src="{{ MEDIA_URL }}/openid-icon.png" alt="OpenID"/> {{ dv.site_url() }}{{ id.get_absolute_url() }}<br/></li>

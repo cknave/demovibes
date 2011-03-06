@@ -1032,13 +1032,13 @@ def bb_youtube_ol(hit):
     Tag like so: [yt]S-T8h0T0SK8[/yt]. This version is oneliner specific
     """
     video = hit.group(1)
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_new"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0" /> YouTube Link</a>' % (video)
+    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0" /> YouTube Link</a>' % (video)
 
 def bb_googlevideo_ol(hit):
     """
     """
     video = hit.group(1)
-    return '<a href="http://video.google.com/videoplay?docid=%s" target="_new"><img src="/static/googlevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video)
+    return '<a href="http://video.google.com/videoplay?docid=%s" target="_blank"><img src="/static/googlevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video)
 
 def bb_youtube_name_ol(hit):
     """
@@ -1049,7 +1049,7 @@ def bb_youtube_name_ol(hit):
     video = hit.group(1)
     title = hit.group(2)
 
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_new"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, video)
+    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, video)
 
 def bb_gvideo(hit):
     """
@@ -1238,8 +1238,8 @@ def dv_urlize(text):
     return link
 
 bbdata_oneliner = [
-        (r'\[url\]((http|https|ftp):.+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
-        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\3</a>'),
+        (r'\[url\]((http|https|ftp):.+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
+        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
 
@@ -1248,8 +1248,8 @@ bbdata_oneliner = [
         # Clickable thiumbnail, which opens in a new tab.
 
         # This can be abused too much right now, commenting out
-        #(r'\[img\](.+?)\[/img\]', r'<a href="\1" target="_new"><img src="\1" height="20" alt="" \></a>'),
-        #(r'\[img=(.+?)\](.+?)\[/img\]', r'<a href="\1" target="_new"><b>\2</b> <img src="\1" alt="" height="20" \></a>'),
+        #(r'\[img\](.+?)\[/img\]', r'<a href="\1" target="_blank"><img src="\1" height="20" alt="" \></a>'),
+        #(r'\[img=(.+?)\](.+?)\[/img\]', r'<a href="\1" target="_blank"><b>\2</b> <img src="\1" alt="" height="20" \></a>'),
 
         # Standard text display tags for bold, underline etc.
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
@@ -1311,12 +1311,12 @@ bbdata_oneliner = [
       ]
 
 bbdata_full = [
-        (r'\[url\]((http|https|ftp).+?)\[/url\]', r'<a href="\1" target="_new">\1</a>'),
-        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_new">\3</a>'),
+        (r'\[url\]((http|https|ftp).+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
+        (r'\[url=((http|https|ftp).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
         (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
-        (r'\[img=(.+?\.(jpg|jpeg|png|gif|bmp))\](.+?)\[/img\]', r'<a href="\1" target="_new"><b>\3</b><br /><img src="\1" alt="" /></a>'),
+        (r'\[img=(.+?\.(jpg|jpeg|png|gif|bmp))\](.+?)\[/img\]', r'<a href="\1" target="_blank"><b>\3</b><br /><img src="\1" alt="" /></a>'),
 
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
         (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),

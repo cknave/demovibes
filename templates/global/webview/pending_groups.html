@@ -15,7 +15,7 @@
     <td valign="top">
     Group: {% with group as G %}{% include "webview/t/group.html" %}{% endwith %}<br />
     {% if group.webpage %}Website: <a href="{{ group.webpage }}">{{ group.webpage }}</a><br />{% endif %}
-    {% if group.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ group.pouetid }}" target="_new"">Pouet Link</a><br />{% endif %}
+    {% if group.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ group.pouetid }}" target="_blank"">Pouet Link</a><br />{% endif %}
     {% if group.found_date %}Founding Date: {{ group.found_date|date:"F j, Y" }}<br />{% endif %}
     {% if group.created_by %}Created By: {% with group.created_by as U %}{% include "webview/t/user.html" %}{% endwith %}<br />{% endif %}
    

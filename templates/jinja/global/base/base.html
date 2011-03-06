@@ -24,7 +24,7 @@
             <li>&nbsp;</li>
             <li id="faq"><a href="{{ url ("dv-faq") }}">{{ gettext("FAQ") }}</a></li>
             <li id="links"><a href="{{ url ("dv-links") }}">{{ gettext("Links") }}</a></li>
-	    <li id="chat"><a href="{{ url ("dv-chat") }}">{{ gettext("Chat") }}</a></li>
+        <li id="chat"><a href="{{ url ("dv-chat") }}">{{ gettext("Chat") }}</a></li>
         </ul>
         {% endblock %}
         <br />
@@ -78,16 +78,14 @@
         </ul>
         <br />
         <h3>{{ gettext("Currently Playing") }}</h3>
-        <div name="nowplaying">
+        <div data-name="nowplaying">
         {{ dv.current_song(user) }}
-        <div align="center">
+        <div>
         </div>
         </div>
 
-    <form>
         <hr style="width: 80%; background-color: #000; height: 1px; border: 0px;" />
-        <input type="button" style="border: 1px solid; border-color: #333;" value="Listen" onClick="window.open('{{ url ("dv-play_stream") }}','player','width=170,height=130,toolbar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no,menubar=no,copyhistory=no')" /> - <a href="{{ url ("dv-streams") }}">{{ gettext("Streams") }}</a>
-    </form>
+        <input type="button" style="border: 1px solid; border-color: #333;" value="Listen" onclick="window.open('{{ url ("dv-play_stream") }}','player','width=170,height=130,toolbar=no,scrollbars=no,resizable=no,location=no,directories=no,status=no,menubar=no,copyhistory=no')" /> - <a href="{{ url ("dv-streams") }}">{{ gettext("Streams") }}</a>
     <br />
     {% for item in dv.get_news("B") %}
         <h3>{{ item.title }}</h3>

@@ -16,7 +16,7 @@
     {{ gettext("Artist") }}: {{ display.artist(artist) }}<br />
     {{ gettext("Location") }}:{% if artist.home_location %} {{ artist.home_location|e }}{% endif %} {{ dv.flag(artist.home_country) }}<br />
     {% if artist.webpage %}{{ gettext("Website") }}: <a href="{{ artist.webpage|e }}">{{ artist.webpage|e }}</a><br />{% endif %}
-    {% if artist.wiki_link %}{{ gettext("Wiki Link") }}: <a href="{{ artist.wiki_link|e }}" target="_new">{{ artist.wiki_link|e }}</a><br />{% endif %}
+    {% if artist.wiki_link %}{{ gettext("Wiki Link") }}: <a href="{{ artist.wiki_link|e }}" target="_blank">{{ artist.wiki_link|e }}</a><br />{% endif %}
     {% if artist.groups.count != 0 %}{{ gettext("Groups") }}: {% for group in artist.groups.all() %} {{ display.group(group) }}{% endfor %}<br />{% endif %}
     {% if artist.created_by %}{{ gettext("Created By") }}: {{ display.user(artist.created_by) }}<br />{% endif %}
 

@@ -15,7 +15,7 @@
     <td valign="top">
     {{ gettext("Group") }}: {{ display.group(group) }}<br />
     {% if group.webpage %}{{ gettext("Website") }}: <a href="{{ group.webpage }}">{{ group.webpage|e }}</a><br />{% endif %}
-    {% if group.pouetid %}{{ gettext("Pouet Link") }}: <a href="http://www.pouet.net/groups.php?which={{ group.pouetid }}" target="_new"">{{ gettext("Pouet Link") }}</a><br />{% endif %}
+    {% if group.pouetid %}{{ gettext("Pouet Link") }}: <a href="http://www.pouet.net/groups.php?which={{ group.pouetid }}" target="_blank"">{{ gettext("Pouet Link") }}</a><br />{% endif %}
     {% if group.found_date %}{{ gettext("Founding Date") }}: {{ group.found_date|date("F j, Y") }}<br />{% endif %}
     {% if group.created_by %}{{ gettext("Created By") }}: {{ display.user(group.created_by) }}<br />{% endif %}
 

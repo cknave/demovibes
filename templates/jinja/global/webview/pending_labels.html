@@ -14,10 +14,10 @@
     </td>
     <td valign="top">
     {{ gettext("Label") }}: {{ display.label(label) }}<br />
-    {% if label.webpage %}{{ gettext("Website") }}: <a href="{{ label.webpage|e }}" target="_new">{{ label.webpage|e }}</a><br />{% endif %}
-    {% if label.wiki_link %}{{ gettext("Wiki Link") }}: <a href="{{ label.wiki_link|e }}" target="_new">{{ label.wiki_link|e }}</a><br />{% endif %}
-    {% if label.pouetid %}{{ gettext("Pouet Link") }}: <a href="http://www.pouet.net/groups.php?which={{ label.pouetid }}" target="_new"">{{ gettext("Pouet Link") }}</a><br />{% endif %}
-    {% if label.hol_id %}{{ gettext("H.O.L. Link") }}: <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ label.hol_id }}" target="_new">.all() of Light Developer Entry</a><br />{% endif %}
+    {% if label.webpage %}{{ gettext("Website") }}: <a href="{{ label.webpage|e }}" target="_blank">{{ label.webpage|e }}</a><br />{% endif %}
+    {% if label.wiki_link %}{{ gettext("Wiki Link") }}: <a href="{{ label.wiki_link|e }}" target="_blank">{{ label.wiki_link|e }}</a><br />{% endif %}
+    {% if label.pouetid %}{{ gettext("Pouet Link") }}: <a href="http://www.pouet.net/groups.php?which={{ label.pouetid }}" target="_blank"">{{ gettext("Pouet Link") }}</a><br />{% endif %}
+    {% if label.hol_id %}{{ gettext("H.O.L. Link") }}: <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ label.hol_id }}" target="_blank">.all() of Light Developer Entry</a><br />{% endif %}
     {% if label.found_date %}{{ gettext("Founding Date") }}: {{ label.found_date|date("F j, Y") }}<br />{% endif %}
     {% if label.created_by %}{{ gettext("Created By") }}: {{ display.user(label.created_by) }}<br />{% endif %}
 

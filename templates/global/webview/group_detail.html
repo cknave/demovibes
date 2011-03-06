@@ -11,8 +11,8 @@
 {% if object.group_logo %}<img class="group_logo" src="{{ object.group_logo.url }}">{% else %}<img class="group_logo" src="/static/no_picture.png" />{% endif %}
 <br /><strong>{{ object.name }}</strong><br />{% if object.found_date %}(Founded On: {{object.found_date|date:"F j, Y" }}){% endif %}<br />
 
-{% if object.webpage %}<a href="{{ object.webpage }}" target="_new">Visit Group's Website</a><br />{% endif %}
-{% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">Pouet Link</a><br />{% endif %}
+{% if object.webpage %}<a href="{{ object.webpage }}" target="_blank">Visit Group's Website</a><br />{% endif %}
+{% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_blank">Pouet Link</a><br />{% endif %}
 {% if object.last_updated %}Last Updated: {{ object.last_updated|date:"F j, Y" }}<br />{% endif %}
 {% if object.created_by %}Added By: {% with object.created_by as U %}{% include "webview/t/user.html" %}{% endwith %}<br />{% endif %}
 </td>

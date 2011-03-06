@@ -1,9 +1,9 @@
 {% macro favorite(song, user) %}
     {% if user.is_authenticated() %}
         {% if song.is_favorite(user) %}
-            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="/static/heart_delete.png" title="Already Loved!" />
+            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="/static/heart_delete.png" title="Already Loved!" alt="Already a favorite" />
         {% else %}
-            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="/static/heart_add.png" title="Add As Fave" /></a>
+            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="/static/heart_add.png" title="Add As Fave" alt="Add as favorite"/></a>
        {% endif %}
     {% endif %}
 {% endmacro %}
@@ -28,9 +28,9 @@
 
 {% macro songspan_noauth(song) %}
     {% if song.is_locked() %}
-        <img class="song_tail" src="/static/lock.png" title="Locked" />
+        <img class="song_tail" src="/static/lock.png" title="Locked" alt="Locked"/>
     {% else %}
-        <a href="{{ url ("dv-add_queue", song.id) }}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="/static/add.png" title="Add To Queue" /></a>
+        <a href="{{ url ("dv-add_queue", song.id) }}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="/static/add.png" title="Add To Queue" alt="Add to queue"/></a>
     {% endif %}
 {% endmacro %}
 
@@ -38,7 +38,7 @@
     <span>{% if A.home_country %}
      {{ dv.flag(A.home_country) }}
     {% else %}
-     <img src="/static/user_green.png" />
+     <img src="/static/user_green.png" alt="User" />
     {% endif %}
     <a href="{{ A.get_absolute_url() }}"
      {% if A.alias_of -%}
@@ -52,13 +52,13 @@
      {%- if A.name %} ({{ A.name|e }}){% endif -%}
      </a>
      {%- if A.is_deceased -%}
-        <img src="/static/deceased.png" class="countryflag" title="Deceased {% if A.deceased_date %}[On {{ A.deceased_date }}]{% endif %}" />
+        <img src="/static/deceased.png" class="countryflag" alt="Deceased" title="Deceased {% if A.deceased_date %}[On {{ A.deceased_date }}]{% endif %}" />
      {%- endif %}
     </span>
 {% endmacro %}
 
 {% macro compilation(C) -%}
-    <img class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} /> <a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
+    <img alt="Compilation" class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} /> <a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
 {%- endmacro %}
 
 {% macro user(U) -%}
@@ -70,17 +70,17 @@
 {%- endmacro %}
 
 {% macro label(L) -%}
-    {% if L %}<img class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>{% endif %}
+    {% if L %}<img alt="Label" class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>{% endif %}
 {%- endmacro %}
 
 {% macro group(G) -%}
-    {% if G %}<img class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>{% endif %}
+    {% if G %}<img alt="Group" class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>{% endif %}
 {% endmacro %}
 
 {% macro platform(P) -%}
     {% if P %}
     {% if P.symbol -%}
-        <a href="{{ P.get_absolute_url() }}"><img src="{{ P.symbol.url }}" title="{{ P.title|e }}" /></a>
+        <a href="{{ P.get_absolute_url() }}"><img alt="Platform" src="{{ P.symbol.url }}" title="{{ P.title|e }}" /></a>
     {%- endif -%}
     <a href="{{ P.get_absolute_url() }}">{{P.title|e}}</a>
     {% endif %}
@@ -101,7 +101,7 @@
         <table>
         {% for ll in lo.links %}
             <tr>
-             <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img src="{{ ll.link.icon.url }}" />{% endif %}{{ ll.link.name }} link</label></th>
+             <th>{% if ll.link.icon %}<label for="id_LL_{{ ll.link.id }}"><img alt="Icon" src="{{ ll.link.icon.url }}" />{% endif %}{{ ll.link.name }} link</label></th>
              <td>
                 <input name="LL_{{ ll.link.id }}" id="id_LL_{{ ll.link.id }}" value="{{ ll.value }}"/>
                 {% if ll.error %}
@@ -123,9 +123,9 @@
 
 {% macro links(Obj) -%}
     {% for L in Obj.get_active_links() %}
-        <a href="{{ L.get_link() }}" target="_new">
+        <a href="{{ L.get_link() }}" target="_blank">
             {%- if L.link.icon -%}
-                <img class="song-resource" src="{{ L.link.icon.url }}" title="[{{ L.link.name }}]{% if L.comment %} - {{ L.comment }}{% endif %}" />
+                <img class="song-resource" alt="Icon" src="{{ L.link.icon.url }}" title="[{{ L.link.name }}]{% if L.comment %} - {{ L.comment }}{% endif %}" />
             {%- else -%}
                 <span title="{% if L.comment %}{{ L.comment }}{% endif %}">[{{ L.link.name }}]</span>
             {%- endif -%}
@@ -135,29 +135,29 @@
 
 {% macro songicons(S) -%}
     {% if S.get_metadata().pouetid -%}
-        <a href="http://www.pouet.net/prod.php?which={{ S.get_metadata().pouetid }}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+        <a href="http://www.pouet.net/prod.php?which={{ S.get_metadata().pouetid }}" target="_blank"><img alt="Pouet" class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
 {%- endmacro %}
 
 {% macro songicons_old(S) -%}
     {% if S.pouetid -%}
-        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_new"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_blank"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
     {% if S.dtv_id -%}
-        <a href="http://www.demoscene.tv/prod.php?id_prod={{ S.dtv_id }}" target="_new"><img class="song-resource" src="/static/television.png" title="[Demoscene.TV Link]" /></a>
+        <a href="http://www.demoscene.tv/prod.php?id_prod={{ S.dtv_id }}" target="_blank"><img class="song-resource" src="/static/television.png" title="[Demoscene.TV Link]" /></a>
     {% endif %}
     {% if S.hol_id %}
-        <a href="http://hol.abime.net/{{ S.hol_id }}" target="_new"><img class="song-resource" src="/static/hol-icon.png" title="[Hall Of Light Link]" /></a>
+        <a href="http://hol.abime.net/{{ S.hol_id }}" target="_blank"><img class="song-resource" src="/static/hol-icon.png" title="[Hall Of Light Link]" /></a>
     {% endif %}
     {% if S.al_id %}
-        <a href="http://www.atarilegend.com/games/games_detail.php?game_id={{ S.al_id }}" target="_new">
+        <a href="http://www.atarilegend.com/games/games_detail.php?game_id={{ S.al_id }}" target="_blank">
             <img class="song-resource" src="/static/atari-icon.png" title="[Atari Legends Link]" />
         </a>
     {% endif %}
-    {% if S.wos_id %} <a href="http://www.worldofspectrum.org/infoseekid.cgi?id={{S.wos_id}}" target="_new"><img class="song-resource" src="/static/wos-icon.png" title="[World of Spectrum Link]" /></a>{% endif %}
-    {% if S.zxdemo_id %} <a href="http://zxdemo.org/item.php?id={{S.zxdemo_id}}" target="_new"><img class="song-resource" src="/static/zxdemo-icon.gif" title="[ZXDemo Link]" /></a>{% endif %}
-    {% if S.lemon_id %} <a href="http://www.lemon64.com/games/details.php?ID={{S.lemon_id}}" target="_new"><img class="song-resource" src="/static/lemon64-icon.gif" title="[Lemon64 Link]" /></a>{% endif %}
-    {% if S.projecttwosix_id %} <a href="http://project2612.org/details.php?id={{S.projecttwosix_id}}" target="_new"><img class="song-resource" src="/static/project2612-icon.png" title="[Project2612 Link]" /></a>{% endif %}
+    {% if S.wos_id %} <a href="http://www.worldofspectrum.org/infoseekid.cgi?id={{S.wos_id}}" target="_blank"><img class="song-resource" src="/static/wos-icon.png" title="[World of Spectrum Link]" /></a>{% endif %}
+    {% if S.zxdemo_id %} <a href="http://zxdemo.org/item.php?id={{S.zxdemo_id}}" target="_blank"><img class="song-resource" src="/static/zxdemo-icon.gif" title="[ZXDemo Link]" /></a>{% endif %}
+    {% if S.lemon_id %} <a href="http://www.lemon64.com/games/details.php?ID={{S.lemon_id}}" target="_blank"><img class="song-resource" src="/static/lemon64-icon.gif" title="[Lemon64 Link]" /></a>{% endif %}
+    {% if S.projecttwosix_id %} <a href="http://project2612.org/details.php?id={{S.projecttwosix_id}}" target="_blank"><img class="song-resource" src="/static/project2612-icon.png" title="[Project2612 Link]" /></a>{% endif %}
     {% if S.hvsc_url %} <a href="{{ S.hvsc_url }}"><img class="song-resource" src="/static/sid-icon.gif" title="[SID File]" /></a>{% endif %}
 {%- endmacro %}
 
@@ -171,14 +171,14 @@
     {%- if song -%}
     {%- set meta = song.get_metadata() -%}
     {%- if meta.platform.symbol -%}
-        <a href="{{ meta.platform.get_absolute_url() }}"><img class="platform_icon" src="{{ meta.platform.symbol.url }}" title="{{ meta.platform.title|e }}" /></a>
+        <a href="{{ meta.platform.get_absolute_url() }}"><img alt="{{ meta.platform.title|e }}" class="platform_icon" src="{{ meta.platform.symbol.url }}" title="{{ meta.platform.title|e }}" /></a>
     {%- endif -%}
     <a href="{{ song.get_absolute_url() }}">{{ song.title|e }}</a>
     {%- if song.explicit %}
-        <img class="text-link" src="/static/explicit.gif" title="Contains Explicit Content!" />
+        <img class="text-link" alt="Explicit content" src="/static/explicit.gif" title="Contains Explicit Content!" />
     {%- endif -%}
     {%- if song.has_video() %}
-        <img class="text-link" src="/static/MiniIcon-Video.jpg" title="Video!" />
+        <img class="text-link" src="/static/MiniIcon-Video.jpg" alt="Have video" title="Video!" />
     {%- endif -%}
     {%- endif -%}
 {%- endmacro %}

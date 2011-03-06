@@ -53,7 +53,7 @@ function ajaxmonitorupdate(req) {
                 } else if (id.substr(0,1)=='!') {
                     ajaxeventid=parseInt(id.substr(1,id.length));
                 } else {
-                    $("[name='"+id+"']").load(ajaxurl+id+'/?event='+ajaxeventid)
+                    $("[data-name='"+id+"']").load(ajaxurl+id+'/?event='+ajaxeventid)
                 }
             }
         }

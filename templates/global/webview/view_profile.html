@@ -3,7 +3,7 @@
 
 {% block main %}
 {% load dv_extend %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}{{ profile.get_littleman }}" alt="" />User Profile For {{ profile.user }}{% if profile.web_page %} <a href="{{ profile.web_page }}" target="_new">[Visit User's Website]</a>{% endif %}</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}{{ profile.get_littleman }}" alt="" />User Profile For {{ profile.user }}{% if profile.web_page %} <a href="{{ profile.web_page }}" target="_blank">[Visit User's Website]</a>{% endif %}</h2>
 
 {% if profile.avatar %}
  <img src="{{ profile.avatar.url }}" title="[{{ profile.user }}'s Avatar]" alt="[{{ profile.user }}'s Avatar]" /><br />
@@ -27,7 +27,7 @@ Last Login: {{ profile.user.last_login|date:"F j, Y" }}<br />
 <a href="{% url dv-send_pm %}?to={{ profile.user }}"><img src="{{ MEDIA_URL }}email.png" alt="mail" /> Send A Message</a> | View {{ profile.user }}'s <a href="{% url dv-user-favs profile.user %}">Favourites List</a>.<br/>
 
 {% if profile.hol_id %}
- <a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ profile.hol_id }}" target="_new">See User's H.O.L. Details</a><br />
+ <a href="http://hol.abime.net/hol_search.php?N_ref_artist={{ profile.hol_id }}" target="_blank">See User's H.O.L. Details</a><br />
 {% endif %}
 
 {% if profile.fave_id %}

@@ -13,10 +13,10 @@
 {% if object.found_date %}({{ gettext("Founded On") }}: {{object.found_date|date("F j, Y") }})<br />{% endif %}
 {% if object.cease_date %}{{ gettext("Shutdown Date") }}: {{ object.cease_date }}<br />{% endif %}
 
-{{ gettext("Links") }}:{% if object.webpage %} <a href="{{ object.webpage|e }}" target="_new">{{ gettext("[Website]") }}</a>{% endif %}
-{% if object.wiki_link %} <a href="{{ object.wiki_link|e }}" target="_new">[Wiki]</a>{% endif %}
-{% if object.hol_id %} <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ object.hol_id }}" target="_new">[HOL]</a>{% endif %}
-{% if object.pouetid %} <a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">[Pouet]</a>{% endif %}
+{{ gettext("Links") }}:{% if object.webpage %} <a href="{{ object.webpage|e }}" target="_blank">{{ gettext("[Website]") }}</a>{% endif %}
+{% if object.wiki_link %} <a href="{{ object.wiki_link|e }}" target="_blank">[Wiki]</a>{% endif %}
+{% if object.hol_id %} <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ object.hol_id }}" target="_blank">[HOL]</a>{% endif %}
+{% if object.pouetid %} <a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_blank">[Pouet]</a>{% endif %}
 <p>{{ display.links(object) }}</p>
 <br />
 

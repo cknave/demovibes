@@ -13,10 +13,10 @@
 {% if object.found_date %}(Founded On: {{object.found_date|date:"F j, Y" }})<br />{% endif %}
 {% if object.cease_date %}Shutdown Date: {{ object.cease_date }}<br />{% endif %}
 
-Links:{% if object.webpage %} <a href="{{ object.webpage }}" target="_new">[Website]</a>{% endif %}
-{% if object.wiki_link %} <a href="{{ object.wiki_link }}" target="_new">[Wiki]</a>{% endif %}
-{% if object.hol_id %} <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ object.hol_id }}" target="_new">[HOL]</a>{% endif %}
-{% if object.pouetid %} <a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_new">[Pouet]</a>{% endif %}
+Links:{% if object.webpage %} <a href="{{ object.webpage }}" target="_blank">[Website]</a>{% endif %}
+{% if object.wiki_link %} <a href="{{ object.wiki_link }}" target="_blank">[Wiki]</a>{% endif %}
+{% if object.hol_id %} <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ object.hol_id }}" target="_blank">[HOL]</a>{% endif %}
+{% if object.pouetid %} <a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_blank">[Pouet]</a>{% endif %}
 <br />
 
 {% if object.last_updated %}Last Updated: {{ object.last_updated|date:"F j, Y" }}<br />{% endif %}

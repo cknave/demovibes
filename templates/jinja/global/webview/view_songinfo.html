@@ -69,11 +69,11 @@
     </tr>
     <tr>
         <th>{{ gettext("Pouet ID") }}</th>
-        <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_new">{{ meta.pouetid }}</a>{% else %}{{ gettext("None") }}{% endif %}</td>
+        <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_blank">{{ meta.pouetid }}</a>{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>
     <tr>
         <th>{{ gettext("YouTube link") }}</th>
-        <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_new">{{ meta.ytvidid }}</a> - {{ gettext("Offset") }}: {{ meta.ytvidoffset }}{% else %}{{ gettext("None") }}{% endif %}</td>
+        <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_blank">{{ meta.ytvidid }}</a> - {{ gettext("Offset") }}: {{ meta.ytvidoffset }}{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>
 </table>
 <h2><img class="icon_header" src="{{ MEDIA_URL }}explicit.gif" alt="" />{{ gettext("Respond To Change") }}</h2>

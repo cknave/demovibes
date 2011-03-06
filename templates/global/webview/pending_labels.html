@@ -14,10 +14,10 @@
     </td>
     <td valign="top">
     Label: {% with label as L %}{% include "webview/t/label.html" %}{% endwith %}<br />
-    {% if label.webpage %}Website: <a href="{{ label.webpage }}" target="_new">{{ label.webpage }}</a><br />{% endif %}
-    {% if label.wiki_link %}Wiki Link: <a href="{{ label.wiki_link }}" target="_new">{{ label.wiki_link }}</a><br />{% endif %}
-    {% if label.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ label.pouetid }}" target="_new"">Pouet Link</a><br />{% endif %}
-    {% if label.hol_id %}H.O.L. Link: <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ label.hol_id }}" target="_new">Hall of Light Developer Entry</a><br />{% endif %}
+    {% if label.webpage %}Website: <a href="{{ label.webpage }}" target="_blank">{{ label.webpage }}</a><br />{% endif %}
+    {% if label.wiki_link %}Wiki Link: <a href="{{ label.wiki_link }}" target="_blank">{{ label.wiki_link }}</a><br />{% endif %}
+    {% if label.pouetid %}Pouet Link: <a href="http://www.pouet.net/groups.php?which={{ label.pouetid }}" target="_blank"">Pouet Link</a><br />{% endif %}
+    {% if label.hol_id %}H.O.L. Link: <a href="http://hol.abime.net/hol_search.php?N_ref_developer={{ label.hol_id }}" target="_blank">Hall of Light Developer Entry</a><br />{% endif %}
     {% if label.found_date %}Founding Date: {{ label.found_date|date:"F j, Y" }}<br />{% endif %}
     {% if label.created_by %}Created By: {% with label.created_by as U %}{% include "webview/t/user.html" %}{% endwith %}<br />{% endif %}
    
