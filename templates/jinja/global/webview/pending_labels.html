@@ -23,7 +23,7 @@
 
     {% if label.info %}<p><i>{{ label.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
 
-    <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
+    <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&amp;status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newlabels") }}?label={{ label.id }}&amp;status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
     </td>
     </tr>
     </table>

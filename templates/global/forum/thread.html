@@ -1,10 +1,10 @@
 {% extends "forum_base.html" %}{% load i18n %}
 {% block title %}{{ thread.title|escape }} ({{ forum.title }}){% endblock %}
 
-{% block pagetitle %}{{ forum.title }} &raquo; {{ thread.title|escape }}{% endblock %}
+{% block pagetitle %}{{ forum.title }} &amp;raquo; {{ thread.title|escape }}{% endblock %}
 
 
-{% block breadcrumbs %}{% for title, url in thread.forum.get_url_name %} &raquo; <a href='{{ url }}'>{{ title }}</a>{% endfor %} &raquo; <a href='{{ thread.get_absolute_url }}'>{{ thread.title|escape }}</a> ({{ thread.posts }} post{{ thread.posts|pluralize }}){% endblock %}
+{% block breadcrumbs %}{% for title, url in thread.forum.get_url_name %} &amp;raquo; <a href='{{ url }}'>{{ title }}</a>{% endfor %} &amp;raquo; <a href='{{ thread.get_absolute_url }}'>{{ thread.title|escape }}</a> ({{ thread.posts }} post{{ thread.posts|pluralize }}){% endblock %}
 
 {% block forumcontent %}
 {% load dv_extend %}

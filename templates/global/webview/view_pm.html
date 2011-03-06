@@ -10,5 +10,5 @@ Sent On: {{ pm.sent }}
 <div class="pmview">
 {{ pm.message|force_escape|linebreaks|bbcode|smileys }}
 </div>
-<a href="{% url dv-inbox %}">Back To Inbox</a> | <a href="{% url dv-send_pm %}?to={{ pm.sender }}&title=RE: {{ pm.subject }}">Send Reply</a>
+<a href="{% url dv-inbox %}">Back To Inbox</a> | <a href="{% url dv-send_pm %}?to={{ pm.sender }}&amp;title=RE: {{ pm.subject }}">Send Reply</a>
 {% endblock %}

@@ -16,12 +16,12 @@
             <li id="compilations"><a href="{{ url ("dv-compilations") }}">{{ gettext("Compilations") }}</a></li>
             {% if not user.is_authenticated() or user.get_profile().use_tags %}<li id="tagcloud"><a href="{{ url('dv-tagcloud') }}">{{ gettext("Tag cloud") }}</a></li>{% endif %}
             <li id="statistics"><a href="{{ url ("dv-stats-index") }}">{{ gettext("Statistics") }}</a></li>
-            <li>&nbsp;</li>
+            <li>&amp;nbsp;</li>
             <li id="menuqueue"><a href="{{ url ("dv-queue") }}">{{ gettext("Queue") }}</a></li>
-            <li>&nbsp;</li>
+            <li>&amp;nbsp;</li>
             <li id="search"><a href="{{ url ("s-all") }}">{{ gettext("Search") }}</a></li>
             <li id="recent"><a href="{{ url ("dv-recent") }}">{{ gettext("New Uploads") }}</a></li>
-            <li>&nbsp;</li>
+            <li>&amp;nbsp;</li>
             <li id="faq"><a href="{{ url ("dv-faq") }}">{{ gettext("FAQ") }}</a></li>
             <li id="links"><a href="{{ url ("dv-links") }}">{{ gettext("Links") }}</a></li>
         <li id="chat"><a href="{{ url ("dv-chat") }}">{{ gettext("Chat") }}</a></li>

@@ -21,7 +21,7 @@
 
     {% if group.info %}<p><i>{{ group.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
 
-    <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
+    <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
     </td>
     </tr>
     </table>

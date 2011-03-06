@@ -32,8 +32,8 @@
         <td>{{ display.song(info.content_object) }}</td>
         <td><a href="{{ info.get_link() }}" target="nju">{{ info.get_link() }}</a></td>
         <td>{{ display.user(info.user) }}</td>
-        <td><a href=".?alink={{ info.id }}&status=0">{{ gettext("Accept") }}</a></td>
-        <td><a href=".?alink={{ info.id }}&status=2">{{ gettext("Reject") }}</a></td>
+        <td><a href=".?alink={{ info.id }}&amp;status=0">{{ gettext("Accept") }}</a></td>
+        <td><a href=".?alink={{ info.id }}&amp;status=2">{{ gettext("Reject") }}</a></td>
     </tr>
 {% endfor %}
 </table>

@@ -9,7 +9,7 @@
         <table>
             {{ form.as_table }}
             <tr>
-                <td>&nbsp;</td>
+                <td>&amp;nbsp;</td>
                 <td>
                     <input type="submit" value="Search">
                 </td>
@@ -28,7 +28,7 @@
             {% if page %}
                 Pages: 
                {% for i in page.paginator.page_range %}
-               <a href="?q={{ query }}&page={{ i }}">{{ i }}</a> 
+               <a href="?q={{ query }}&amp;page={{ i }}">{{ i }}</a> 
                {% endfor %}
             {% endif %}
         {% else %}
