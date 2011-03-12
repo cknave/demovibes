@@ -107,6 +107,13 @@ CHEROKEE_SECRET_DOWNLOAD_PATH=""
 #CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'', r'')
 # If defined, will limit number of generated links per user to X links per Y seconds
 #CHEROKEE_SECRET_DOWNLOAD_LIMIT={'number': X, 'seconds': Y}
+# Or, more specified:
+#CHEROKEE_SECRET_DOWNLOAD_LIMIT={
+#    'admin': {'number': 30, 'seconds': 60*60*24},
+#    'Group name': {'number': 15, 'seconds': 60*60*24},
+#    'default': {'number': 0, 'seconds': 60*60*24},
+#    'staff': {'number': 3, 'seconds': 60*60*24},
+#}
 # URL to redirect to if limit is reached
 #CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL="/static/badman.html"
 

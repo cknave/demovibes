@@ -11,7 +11,10 @@
 <h2>
  <img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ gettext("Song Information") }}
 {% if user.is_staff %}
- [<a href="/admin/webview/song/{{ object.id }}/">{{ gettext("Edit Info") }}</a>] <em>{{ gettext("Admin Preview") }}:</em> {% set song = object %}{% include "webview/t/flash_playsong.html" %}
+ [<a href="/admin/webview/song/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]
+{% endif %}
+{% if object.downloadable_by(user) %}
+    <em>{{ gettext("Preview") }}:</em> {% set song = object %}{% include "webview/t/flash_playsong.html" %}
 {% endif %}
 </h2>
 
@@ -69,6 +72,7 @@ Author:
 {% if object.bitrate %}<br />{{ gettext("Song Bitrate") }}: {{ object.bitrate }} kbps{% endif %}
 {% if meta.type %}<br />{{ gettext("Song Source") }}: {{ meta.type|e }}{% endif %}
 {% if meta.platform %}<br />{{ gettext("Song Platform") }}: {{ display.platform(meta.platform) }}{% endif %}
+{% if object.license %}<br />{{ gettext("Song License") }}: {{ display.license(object) }}{% endif %}
 </p>
 
 {% if meta.info %}

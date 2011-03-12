@@ -94,13 +94,15 @@ class ListByLetter(WebView):
 
 class PlaySong(SongView):
     template="playsong.html"
-    staff_required = True
+
+    def check_permissions(self):
+        return self.song.downloadable_by(self.request.user)
 
     def set_context(self):
         limit = None
         if CHEROKEE_SECRET:
             key = "urlgenlimit_%s" % self.request.user.id
-            number = CHEROKEE_LIMIT.get("number")
+            number = get_cherokee_limit(self.request.user).get("number",0)
             limit = number - cache.get(key, 0)
         return {'song': self.song, 'limit': limit}
 
@@ -675,6 +677,7 @@ def view_songinfo(request, songinfo_id):
                     message="Your metadata for song [song]%s[/song] is now active :)"  % meta.song.id,
                     sender = request.user
                 )
+            meta.song.log(request.user, "Approved song metadata")
             meta.set_active()
         if request.POST.has_key("deactivate") and request.POST["deactivate"]:
             if not meta.checked:
@@ -684,6 +687,7 @@ def view_songinfo(request, songinfo_id):
                     sender = request.user
                 )
             meta.checked = True
+            meta.song.log(request.user, "Rejected metadata %s" % meta.id)
             meta.save()
     c = {'meta': meta }
     return j2shim.r2r("webview/view_songinfo.html", c, request)
@@ -713,16 +717,27 @@ def edit_songinfo(request, song_id):
     meta = song.get_metadata()
     meta.comment = ""
 
+    form2 = False
+    if (request.user.get_profile().have_artist() and request.user.artist in meta.artists.all()) or (request.user.is_staff):
+        form2 = SongLicenseForm(instance=song)
+
     if request.method == "POST":
         m = SongMetaData(song=song, user=request.user)
-        form = EditSongMetadataForm(request.POST, instance=m)
-        if form.is_valid():
-            d=form.save()
-            return redirect(song)
+        if form2 and request.POST.get("special") == "licchange":
+            form2 = SongLicenseForm(request.POST, instance=song)
+            if form2.is_valid():
+                s = form2.save()
+                song.log(request.user, "Changed song license to %s" % s.license)
+                return redirect(song)
+        else:
+            form = EditSongMetadataForm(request.POST, instance=m)
+            if form.is_valid():
+                d=form.save()
+                return redirect(song)
     else:
         form = EditSongMetadataForm(instance=meta)
 
-    c = {'form': form, 'song': song}
+    c = {'form': form, 'song': song, 'form2': form2}
     return j2shim.r2r("webview/edit_songinfo.html", c, request)
 
 @login_required
@@ -803,9 +818,11 @@ def activate_upload(request):
         if status == 'A':
             stat = "Accepted"
             song.status = "A"
+            song.log(request.user, "Approved song")
         if status == 'R':
             stat = "Rejected"
             song.status = 'R'
+            song.log(request.user, "Rejected song")
 
         # This used to be propriatary, it is now a template. AAK
         mail_tpl = loader.get_template('webview/email/song_approval.txt')
@@ -993,9 +1010,11 @@ def activate_artists(request):
 
         if status == 'A':
             stat = "Accepted"
+            artist.log(request.user, "Activated artist")
             artist.status = "A"
         if status == 'R':
             stat = "Rejected"
+            artist.log(request.user, "Rejected artist")
             artist.status = 'R'
 
         # Prepare a mail template to inform user of the status of their request
@@ -1250,9 +1269,11 @@ def activate_links(request):
 
         if status == 'A':
             this_link.status = "A"
+            this_link.log(request.user, "Accepted link")
             this_link.approved_by = request.user
         if status == 'R':
             this_link.status = "R"
+            this_link.log(request.user, "Rejected link")
             this_link.approved_by = request.user
 
         # Save this to the DB
@@ -1321,6 +1342,21 @@ def memcached_status(request):
             hit_rate=100 * stats.get_hits / stats.cmd_get,
             time=datetime.datetime.now(), # server time
         ), request=request)
+
+class LicenseList(WebView):
+    template = "licenselist.html"
+
+    def set_context(self):
+        licenses = SongLicense.objects.all()
+        return {'licenses': licenses}
+
+class License(WebView):
+    template = "license.html"
+
+    def set_context(self):
+        id = self.kwargs.get("id")
+        license = SongLicense.objects.get(id=id)
+        return {'license': license}
 
 class Login(MyBaseView):
     template="registration/login.html"

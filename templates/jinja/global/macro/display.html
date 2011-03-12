@@ -20,6 +20,20 @@
     {%- endif -%}
 {% endmacro %}
 
+{% macro license(song) %}
+    {% if song.license %}
+        <a href="{{ song.license.get_absolute_url() }}">
+            {% if song.license.icon %}
+                <img src="{{ song.license.icon.url }}" title="{{ song.license.name }}"/>
+            {% else %}
+                {{ song.license.name }}
+            {% endif %}
+        </a>
+    {% else %}
+        Not set.
+    {% endif %}
+{% endmacro %}
+
 {% macro artists_meta(meta) %}
     {% for tartist in meta.artists.all() %}
     {{ artist(tartist) }}{% if loop.last %} {% else %}, {% endif %}
@@ -183,6 +197,59 @@
     {%- endif -%}
 {%- endmacro %}
 
+
 {% macro tag(tag) -%}
     <a href="{{ url("dv-tagdetail", tag|e) }}">{{ tag|e }}</a>
+{% endmacro %}
+
+{% macro songslist(objs, user) %}
+
+    {% include "webview/t/songheader.html" %}
+    {% for songy in objs %}
+     <tr class="{{ loop.cycle ('row1','row2') }}">
+    {% import "macro/display.html" as display -%}
+    {% cache 172800 mkstr("song_row", songy.id, songy.last_changed) %}
+     <td>
+      {{ display.song(songy) }}
+     </td>
+     <td>
+      {% set meta = songy.get_metadata() %}
+      {% for artisty in meta.artists.all() %}{{ display.artist(artisty) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+      {% for groupy in meta.groups.all() %}{{ display.group(groupy) }}{% if loop.last %} {% else %}, {% endif %}{% endfor %}
+     </td>
+     <td>
+      {{ songy.length() }}
+     </td>
+     <td>
+      {{ songy.get_status_display() }}
+     </td>
+     <td>
+      {{ songy.rating|floatformat(1) }}
+     </td>
+     {% endcache %}
+     <td>
+      <span data-name="a_queue_{{ songy.id }}">
+       {% if user.is_authenticated() %}
+        {% if songy.is_locked() %}
+         <span style="display:none">l</span>
+         <img class="song_tail" src="/static/lock.png" alt="Locked" title="Locked" />
+        {% else %}
+         <span style="display:none">u</span>
+         {% if user.is_authenticated() %}
+          <a href="{{ url ("dv-add_queue", songy.id) }}" onclick="requestsong({{ songy.id }});return false;">
+          <img class="song_tail" src="/static/add.png" alt="Add To Queue" title="Add To Queue" /></a>
+         {% endif %}
+        {% endif %}
+       {% else %}
+        <img class="song_head" src="/static/lock.png" title="Song Locked" />
+       {% endif %}
+      </span>
+     </td>
+     <td>
+       <span class="lastreqdate">{% if songy.last_queued != "Never" %}{{ songy.last_queued()|date("Y-m-d") }}{% else %}Never!{% endif %}</span>
+     </td>
+     </tr>
+    {% endfor %}
+    </table>
+
 {% endmacro %}

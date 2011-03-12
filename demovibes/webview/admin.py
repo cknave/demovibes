@@ -51,7 +51,7 @@ class SongAdmin(admin.ModelAdmin):
     list_filter = ['status']
     filter_horizontal = ['artists', 'groups', 'labels']
     fieldsets = [
-        ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status']}),
+        ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status', 'license']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
         ("Old info"       ,{'classes': ('collapse',), 'fields': ['ytvidid', 'ytvidoffset', 'release_year', 'remix_of_id', 'artists', 'groups', 'labels', 'type', 'platform', 'info']}),
         ("Old links"      ,{'classes': ('collapse',), 'fields': ['dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url']}),
@@ -129,9 +129,21 @@ class GBLAdmin(admin.ModelAdmin):
     list_filter = ['linktype']
     search_fields = ['name', 'link']
 
+class LicenseAdmin(admin.ModelAdmin):
+    list_display = ['name', 'downloadable']
+    list_filter = ['downloadable']
+    search_fields = ['name', 'url', 'description']
+
+class ObjLogAdmin(admin.ModelAdmin):
+    list_display = ['obj', 'user', "content_type", "added", "text"]
+    search_fields = ['user__username', "text"]
+    date_hierarchy = 'added'
+
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Song, SongAdmin)
+admin.site.register(SongLicense, LicenseAdmin)
 admin.site.register(SongType)
+admin.site.register(ObjectLog, ObjLogAdmin)
 admin.site.register(Theme)
 admin.site.register(RadioStream, RadioStreamAdmin)
 admin.site.register(News, NewsAdmin)

@@ -14,4 +14,15 @@
 </table>
 <input type="submit" value="{{ gettext("Submit data") }}">
 </form>
+
+{% if form2 %}
+<h2>Change song license</h2>
+<form method="post" action=".">
+<table>
+    {{ form2.as_table() }}
+</table>
+<input type="submit" value="{{ gettext("Change license") }}">
+<input type="hidden" value="licchange" name="special">
+</form>
+{% endif %}
 {% endblock %}

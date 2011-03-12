@@ -201,3 +201,8 @@ class CreateCompilationForm(forms.ModelForm):
     class Meta:
         model = Compilation
         exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]
+
+class SongLicenseForm(forms.ModelForm):
+    class Meta:
+        model = Song
+        fields = ["license"]

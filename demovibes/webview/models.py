@@ -32,17 +32,46 @@ CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
 CHEROKEE_LIMIT = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", "")
 CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
+def download_limit_reached(user):
+    limits = get_cherokee_limit(user)
+    if limits:
+        key = "urlgenlimit_%s" % user.id
+        k = cache.get(key, 0)
+        if k > limits.get("number"):
+            return True
+
+def get_cherokee_limit(user):
+    r = {}
+    if CHEROKEE_LIMIT and user and user.is_authenticated():
+        if CHEROKEE_LIMIT.get("default"):
+            L = CHEROKEE_LIMIT.get("default")
+        else:
+            L = CHEROKEE_LIMIT
+        if user.is_superuser and CHEROKEE_LIMIT.get("admin"):
+            L = CHEROKEE_LIMIT.get("admin")
+        elif user.is_staff and CHEROKEE_LIMIT.get("staff"):
+            L = CHEROKEE_LIMIT.get("staff")
+        for group in user.groups.all():
+            gn = CHEROKEE_LIMIT.get(group.name)
+            if gn:
+                if gn.get("seconds") >= L.get("seconds") and gn.get("number") >= L.get("number"):
+                    L = gn
+        r['seconds'] = L.get("seconds", 60*60*24)
+        r['number'] = L.get("number", 0)
+    return r
+
 def secure_download (url, user=None):
     if CHEROKEE_SECRET:
-        if CHEROKEE_LIMIT and user:
+        limits = get_cherokee_limit(user)
+        if limits:
             key = "urlgenlimit_%s" % user.id
             try:
                 k = cache.incr(key)
             except:
                 k = 1
-                cache.set(key, k, CHEROKEE_LIMIT.get("seconds"))
-            if k > CHEROKEE_LIMIT.get("number"):
-                return CHEROKEE_LIMIT_URL or "Limit reached"
+                cache.set(key, k, limits.get("seconds"))
+            if k > limits.get("number"):
+                return CHEROKEE_LIMIT_URL or " Limit reached"
         t = '%08x' % (time.time())
         if CHEROKEE_REGEX:
             try:
@@ -477,6 +506,13 @@ class Artist(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
+
     def get_active_links(self):
         """
         Return all active generic links
@@ -636,6 +672,21 @@ class SongMetaData(models.Model):
         self.song.reset_pouetinfo()
         self.song.save() #For cache updates
 
+class ObjectLog(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    obj = generic.GenericForeignKey('content_type', 'object_id')
+
+    user = models.ForeignKey(User)
+    added = models.DateTimeField(default=datetime.datetime.now())
+    text = models.TextField()
+
+    def __unicode__(self):
+        return unicode(self.obj)
+
+    def display(self):
+        return unicode(self.obj)
+
 class Song(models.Model):
     STATUS_CHOICES = (
             ('A', 'Active'),
@@ -696,11 +747,20 @@ class Song(models.Model):
     ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing") #a
     ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset") #a
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
+    license = models.ForeignKey("SongLicense", blank=True, null=True)
 
     objects = models.Manager()
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
+
+    def downloadable_by(self, user):
+        if user.is_authenticated() and not download_limit_reached(user):
+            if user.is_staff:
+                return True
+            if self.license and self.license.downloadable:
+                return True
+        return False
 
     def get_file_url(self, user=None):
         return secure_download(self.file.url, user)
@@ -743,6 +803,13 @@ class Song(models.Model):
         if self.song_length:
             return "%d:%02d" % ( self.song_length/60, self.song_length % 60 )
         return "Not set"
+
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
 
     def set_song_data_lazy(self):
         #use length or replaygain as indicator if song has had a propper scan yet
@@ -1052,6 +1119,12 @@ class Compilation(models.Model):
     youtube_link = models.URLField(help_text="Link to Youtube/Google Video Link (external)", blank = True) # Link to a video of the production
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
 
     def reset_songs(self):
         CompilationSongList.objects.filter(compilation = self).delete()
@@ -1415,6 +1488,13 @@ class Link(models.Model):
     status = models.CharField(max_length=1, choices = STATUS, default = 'A', db_index=True) # Status of the link in the system
     priority = models.BooleanField(default=False, db_index=True, help_text="If active, link will receive high priority and display in Bold") # Determines higher position in listings
 
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
+
     def __unicode__(self):
         return self.name
 
@@ -1450,6 +1530,21 @@ class Faq(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('dv-faqitem', [self.id])
+
+class SongLicense(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Name")
+    description = models.TextField(verbose_name="Description", blank = True)
+    icon = models.ImageField(upload_to = 'media/license', blank = True, null = True, verbose_name="License icon")
+    url = models.URLField(unique = True, verbose_name="License URL", blank = True)
+    downloadable = models.BooleanField(default=False, verbose_name="Can be downloaded")
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ("dv-license", [str(self.id)])
+
+    def __unicode__(self):
+        return self.name
+
 
 class Screenshot(models.Model):
     active = models.BooleanField(default=True, verbose_name = "Active?", db_index=True)
