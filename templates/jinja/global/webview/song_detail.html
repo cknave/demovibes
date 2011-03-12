@@ -72,7 +72,7 @@ Author:
 {% if object.bitrate %}<br />{{ gettext("Song Bitrate") }}: {{ object.bitrate }} kbps{% endif %}
 {% if meta.type %}<br />{{ gettext("Song Source") }}: {{ meta.type|e }}{% endif %}
 {% if meta.platform %}<br />{{ gettext("Song Platform") }}: {{ display.platform(meta.platform) }}{% endif %}
-{% if object.license %}<br />{{ gettext("Song License") }}: {{ display.license(object) }}{% endif %}
+{% if object.license %}<br />{{ gettext("Song License") }}: {{ display.songlicense(object) }}{% endif %}
 </p>
 
 {% if meta.info %}

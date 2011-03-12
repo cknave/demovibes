@@ -20,17 +20,21 @@
     {%- endif -%}
 {% endmacro %}
 
-{% macro license(song) %}
-    {% if song.license %}
-        <a href="{{ song.license.get_absolute_url() }}">
-            {% if song.license.icon %}
-                <img src="{{ song.license.icon.url }}" title="{{ song.license.name }}"/>
+{% macro license(lic) %}
+        <a href="{{ lic.get_absolute_url() }}">
+            {% if lic.icon %}
+                <img src="{{ lic.icon.url }}" title="{{ lic.name }}"/>
             {% else %}
-                {{ song.license.name }}
+                {{ lic.name }}
             {% endif %}
         </a>
+{% endmacro %}
+
+{% macro songlicense(song) %}
+    {% if song.license %}
+       {{ license(song.license) }}
     {% else %}
-        Not set.
+        Not set
     {% endif %}
 {% endmacro %}
 
