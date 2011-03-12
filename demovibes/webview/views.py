@@ -114,6 +114,8 @@ class AddCompilation(WebView):
         (CreateCompilationForm, "compform"),
     ]
 
+    action = "created"
+
     def pre_view(self):
         self.context['songsinput']=""
 
@@ -139,6 +141,7 @@ class AddCompilation(WebView):
         for a in artists:
             newcf.prod_artists.add(a)
         newcf.save()
+        newcf.log(self.request.user, "Compilation %s" % self.action)
         return newcf
 
     def POST(self):
@@ -158,6 +161,7 @@ class AddCompilation(WebView):
 
 class EditCompilation(AddCompilation):
     staff_required = True
+    action = "edited"
 
     def form_compform_init(self):
         ci = self.kwargs.get("comp_id")
@@ -968,6 +972,7 @@ class tagEdit(SongView):
     def POST(self):
         t = self.request.POST.get('tags', "")
         self.song.tags = re.sub(r'[^a-zA-Z0-9!_\-?& ]+', '', t)
+        self.song.log(self.request.user, "Edited tags")
         self.song.save() # For updating the "last changed" value
         TagHistory.objects.create(user=self.request.user, song=self.song, tags = self.request.POST['tags'])
         try:

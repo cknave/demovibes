@@ -172,6 +172,13 @@ class Group(models.Model):
 
     links = generic.GenericRelation("GenericLink")
 
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
+
     def get_active_links(self):
         """
         Return all active generic links
@@ -442,6 +449,13 @@ class Label(models.Model):
     wiki_link = models.URLField(blank=True, help_text="Full URL to wikipedia entry (if available)")
 
     links = generic.GenericRelation(GenericLink)
+
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
 
     def get_active_links(self):
         """
