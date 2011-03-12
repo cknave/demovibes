@@ -18,9 +18,11 @@
 {% if form2 %}
 <h2>Change song license</h2>
 <form method="post" action=".">
+Change the license of this song.
 <table>
     {{ form2.as_table() }}
 </table>
+{{ form2.media }}
 <input type="submit" value="{{ gettext("Change license") }}">
 <input type="hidden" value="licchange" name="special">
 </form>

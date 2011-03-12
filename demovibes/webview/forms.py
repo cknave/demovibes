@@ -202,7 +202,14 @@ class CreateCompilationForm(forms.ModelForm):
         model = Compilation
         exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]
 
-class SongLicenseForm(forms.ModelForm):
+class SLForm(object):
+    class Media:
+        js = ("js/license_info.js",)
+
+class SongLicenseForm(SLForm, forms.ModelForm):
     class Meta:
         model = Song
         fields = ["license"]
+
+class LicenseForm(SLForm, forms.Form):
+    license = forms.ModelChoiceField(queryset = SongLicense.objects.all(), empty_label="(No license)", required=False)

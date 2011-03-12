@@ -32,5 +32,18 @@
 
 <input type="submit" value="{{ gettext("Update") }}" />
 </form>
+
+{% if user.get_profile().have_artist() %}
+<h2>Song settings</h2>
+Change license on ALL my songs :
+<form action="." method="post">
+<table>
+{{ lic }}
+</table>
+{{ lic.media }}
+<input type="submit" value="Change them all!" name="artistdata"/>
+</form>
+{% endif %}
+
 {% endblock %}
 

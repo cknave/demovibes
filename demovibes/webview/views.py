@@ -104,6 +104,7 @@ class PlaySong(SongView):
             key = "urlgenlimit_%s" % self.request.user.id
             number = get_cherokee_limit(self.request.user).get("number",0)
             limit = number - cache.get(key, 0)
+        self.song.log(self.request.user, "Song preview / download")
         return {'song': self.song, 'limit': limit}
 
 class AddCompilation(WebView):
@@ -317,6 +318,8 @@ class MyProfile(WebView):
 
     def initialize(self):
         self.profile = common.get_profile(self.request.user)
+        if self.profile.have_artist():
+            self.context['lic'] = LicenseForm()
         self.links = LinkCheck("U", object = self.profile)
 
     def pre_view(self):
@@ -327,8 +330,21 @@ class MyProfile(WebView):
                 root.delete()
                 return self.redirect("dv-my_profile")
 
+    def handle_artistedit(self):
+        L = LicenseForm(self.request.POST)
+        if L.is_valid():
+            artist = self.request.user.artist
+            lic = L.cleaned_data['license']
+            for song in artist.get_songs():
+                song.log(self.request.user, "License Mass Change to %s" % lic)
+                song.license = lic
+                song.save()
+            self.redirect("dv-my_profile")
+
     def POST(self):
-        if self.forms_valid and self.links.is_valid(self.request.POST):
+        if self.profile.have_artist() and self.request.POST.get("artistdata"):
+            self.handle_artistedit()
+        elif self.forms_valid and self.links.is_valid(self.request.POST):
             self.context['form'].save()
             self.links.save(self.profile)
             self.redirect("dv-my_profile")

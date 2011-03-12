@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 import socket
 
+from mybaseview import MyBaseView
+
 from django.utils import simplejson
 
 from haystack.query import SearchQuerySet
@@ -25,6 +27,18 @@ import re
 idlist = re.compile(r'^(\d+,)+\d+$')
 
 use_eventful = getattr(settings, 'USE_EVENTFUL', False)
+
+class AjaxView(MyBaseView):
+    basetemplate = "webview/js/"
+
+
+class LicenseView(AjaxView):
+    template = "license.html"
+
+    def set_context(self):
+        id = self.kwargs.get("id")
+        lic = SongLicense.objects.get(id=id)
+        return {'license': lic}
 
 def songinfo(request):
     def makeinfo(song):

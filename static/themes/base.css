@@ -93,3 +93,5 @@ div.taglist p:first-child { margin-top: 0; }
 
 #tagcloud   {background-image: url("/static/comment.png");}
 #statistics   {background-image: url("/static/statistics.png");}
+
+#lic-info {float: right; width: 60%;}
