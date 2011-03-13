@@ -23,8 +23,13 @@
         </applet>
         </td>
     </tr>
+    <tr>
+        <td>Good at playing MP3's</td>
+        <td>Good at playing most formats</td>
+    </tr>
 </table>
-<a href="{{ songurl }}">Download song for local verification</a>{% if limit != None %} - This link will only be valid for 60 seconds after this window was opened.{% endif %}
+<a href="{{ songurl }}">Download song</a>
+{% if limit != None %}<p>This song link will only be valid for <b>60</b> seconds after this window was opened.</p>{% endif %}
 {% if limit %}
 <p>Number of previews left : {{ limit }}</p>
 {% endif %}
