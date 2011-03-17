@@ -714,6 +714,7 @@ class Song(models.Model):
             ('M', 'Moved'), # Moved to CVGM/Necta (Depending on content, see [thread]286[/thread] on Necta)
             ('N', 'Needs Re-Encoding'), # Technically, this track can still play even though it needs re-encoded. AAK
             ('C', 'Removed By Request'), # If we are asked to remove a track. AAK
+            ('P', 'Promotion'), # Requested by rams
             ('R', 'Rejected'),
             ('K', 'Kaput') # file doesn't exist or scanner didn't like the song
         )
