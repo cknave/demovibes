@@ -11,6 +11,8 @@ import socket
 import datetime
 import j2shim
 
+SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
+
 def play_queued(queue):
     queue.song.times_played = queue.song.times_played + 1
     queue.song.save()
@@ -24,6 +26,9 @@ def play_queued(queue):
 
 # This function should both make cake, and eat it
 def queue_song(song, user, event = True, force = False):
+    if SELFQUEUE_DISABLED and song.is_connected_to(user):
+        return False
+
     sl = settings.SONG_LOCK_TIME
     EVS = []
     Q = False

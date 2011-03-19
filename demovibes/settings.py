@@ -30,12 +30,15 @@ DEFAULT_FLAG = "nectaflag"
 #
 #If you have vserver that need a specific url, use this:
 #UWSGI_EVENT_SERVER_HTTP = "http://<hostname>/demovibes/ajax/monitor/new/"
-# Remember to also add ip to allowed_ips in uwsgi_eventhandler local_settings
+# Remember to also add ip to allowed_ips in uwsgi_eventhandler/local_settings.py
 
 #from django.conf import global_settings
 #FILE_UPLOAD_HANDLERS = ('webview.uploadprogress.UploadProgressCachedHandler', ) + \
 #    global_settings.FILE_UPLOAD_HANDLERS
 
+## Decides if a user can vote on and request his own songs
+#SONG_SELFQUEUE_DISABLED = False
+#SONG_SELFVOTE_DISABLED = False
 
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
@@ -53,10 +56,6 @@ DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
-# Use fulltext search on song title, artist handle and group name. Only supported on mysql,
-# and full-text have to be manually added to the DB
-USE_FULLTEXT_SEARCH = False
 
 # Search results per type (group, artist, songs)
 SEARCH_LIMIT = 40
@@ -279,7 +278,8 @@ INSTALLED_APPS = (
 
 ## SMILEY LIMITS
 ##
-# Note that total is not hard limit, and can be increased with (PER_SMILEY_LIMIT - 1) smileys
+# Note that total is not hard limit, and can in some cases
+# allow (PER_SMILEY_LIMIT - 1) smileys extra
 
 #ONELINER_PER_SMILEY_LIMIT = 0
 #ONELINER_TOTAL_SMILEY_LIMIT = None

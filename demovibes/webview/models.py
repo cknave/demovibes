@@ -32,6 +32,8 @@ CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
 CHEROKEE_LIMIT = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", "")
 CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
+SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
+
 def download_limit_reached(user):
     limits = get_cherokee_limit(user)
     if limits:
@@ -769,6 +771,14 @@ class Song(models.Model):
 
     links = generic.GenericRelation(GenericLink)
 
+    def is_connected_to(self, user):
+        if user and user.is_authenticated():
+            up = user.get_profile()
+            uartist = up.have_artist()
+            if uartist and uartist in self.get_metadata().artists.all():
+                return True
+        return False
+
     def downloadable_by(self, user):
         if user.is_authenticated() and not download_limit_reached(user):
             if user.is_staff:
@@ -1051,6 +1061,9 @@ class Song(models.Model):
         """
         Set new songvote for user, or update existing
         """
+        if SELFVOTE_DISABLED and self.is_connected_to(user):
+            return False
+
         if vote < 1:
             return False
 
