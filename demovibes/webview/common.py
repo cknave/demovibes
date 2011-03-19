@@ -27,6 +27,7 @@ def play_queued(queue):
 # This function should both make cake, and eat it
 def queue_song(song, user, event = True, force = False):
     if SELFQUEUE_DISABLED and song.is_connected_to(user):
+        models.add_event(event='eval:alert("You can\'t request your own songs!");', user = user)
         return False
 
     sl = settings.SONG_LOCK_TIME
