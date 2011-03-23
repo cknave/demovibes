@@ -24,8 +24,6 @@ import tagging
 import time, hashlib
 log = logging.getLogger("webview.models")
 
-#from demovibes.webview.common import get_oneliner, get_now_playing, get_queue, get_history
-
 CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
 CHEROKEE_PATH = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_PATH", "")
 CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
