@@ -73,6 +73,8 @@ def songinfo(request):
 
 #For updating last_active field before sending to (external?) event handler
 def ping(request, event_id):
+    if getattr(settings, "DISABLE_AJAX", False):
+        raise
     if request.user.is_authenticated():
         key = "uonli_%s" % request.user.id
         get = cache.get(key)

@@ -257,7 +257,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request",
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -274,7 +274,13 @@ INSTALLED_APPS = (
     'haystack',
     'openid_provider',
     'demovibes.search',
-)
+]
+
+try:
+    import django_wsgiserver
+    INSTALLED_APPS.append("django_wsgiserver")
+except:
+    pass
 
 ## SMILEY LIMITS
 ##
