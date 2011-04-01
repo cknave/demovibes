@@ -23,6 +23,7 @@
 {% set U = profile.user %}{% include "webview/t/user-icons.html" %}<br />
 <br />
 Member Since: {{ profile.user.date_joined|date("F j, Y") }}<br />
+Song Votes: {{ profile.get_votecount() }} Votes<br />
 Last Login: {{ profile.user.last_login|date("F j, Y") }}<br />
 
 <a href="{{ url("dv-send_pm") }}?to={{ profile.user|e }}"><img src="{{ MEDIA_URL }}email.png" alt="mail" /> {{ gettext("Send A Message") }}</a> | View {{ profile.user|e }}'s <a href="{{ url ("dv-user-favs", profile.user) }}">{{ gettext("Favourites List") }}</a>.<br/>

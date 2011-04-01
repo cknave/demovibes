@@ -3,22 +3,27 @@
 <song id="{{ object.id }}">
  <title>{{ object.title }}</title>
  <status v="{{ object.status }}">{{ object.get_status_display }}</status>
- <lastplayed></lastplayed>
  <bitrate>{{ object.bitrate }}</bitrate>
  <samplerate>{{ object.samplerate }}</samplerate>
  <rating votes="{{ object.rating_votes }}">{{ object.rating }}</rating>
- <info>{{ meta.info }}</info>
+ {% if meta.info %}<info>{{ meta.info }}</info>{% endif %}
  <songlength>{{ object.song_length }}</songlength>
  <locked>{{ object.is_locked }}</locked>
  <locked_until>{{ object.locked_until }}</locked_until>
+ <lastplayed>{{ object.last_queued }}</lastplayed>
  {% if meta.platform %}<platform id="{{ meta.platform.id }}">{{ meta.platform }}</platform>{% endif %}
  {% if meta.type %}<type id="{{ meta.type.id }}">{{ meta.type }}</type>{% endif %}
- {% if object.pouetid %}<pouetid>{{ object.pouetid }}</pouetid>{% endif %}
+ {% if meta.pouetid %}<pouetid>{{ meta.pouetid }}</pouetid>{% endif %}
+ {% if meta.ytvidid %}<ytid>{{ meta.ytvidid }}</ytid>{% endif %}
+ {% if meta.ytvidoffset %}<ytoffset>{{ meta.ytvidoffset }}</ytoffset>{% endif %}
  <artists>
   {% for artist in meta.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
  </artists>
- <groups>
+ {% if meta.groups.all|length > 0 %}<groups>
   {% for group in meta.groups.all %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
- </groups>
+ </groups>{% endif %}
+ {% if meta.labels.all|length > 0 %}<labels>
+  {% for label in meta.labels.all %}<label id="{{ label.id }}">{{ label.name }}</label>{% endfor %}
+ </labels>{% endif %}
 </song>
 {% endwith %}

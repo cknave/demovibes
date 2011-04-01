@@ -416,6 +416,13 @@ class Userprofile(models.Model):
         if self.user.is_active:
             return ("User","user.png")
         return ("Normal user","user.png")
+        
+    def get_votecount(self):
+	"""
+	Counts the number of songs this user has voted on
+	"""
+	countlist = SongVote.objects.filter(user=self.user)
+	return len(countlist);
 
     @models.permalink
     def get_absolute_url(self):
