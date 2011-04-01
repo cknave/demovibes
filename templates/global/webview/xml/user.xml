@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <user>
-    {% if not hidden %}
+    {% if user %}
     {% with user.get_profile as profile %}
     <avatar>{% if profile.avatar %}{{ profile.avatar.url }}{% endif %}</avatar>
     <country>{{ profile.country }}</country>
