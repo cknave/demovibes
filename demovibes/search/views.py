@@ -69,7 +69,7 @@ class SearchView(MyBaseView):
             q = self.form.cleaned_data['q']
             if q:
                 sqs = self.form.search()
-                sugg = sqs.spelling_suggestion()
+                sugg = sqs.spelling_suggestion().decode("utf8")
                 if sugg:
                     sugg = sugg.split(" ")[0]
                 test = SearchQuerySet().filter(content=sugg).models(*self.form.get_models())

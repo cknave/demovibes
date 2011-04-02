@@ -22,11 +22,15 @@
 <tr><td><a href="song_voting.tc">SongVoting</a></td></tr>
 <tr><td><a href="forum.tc">Forum</a></td></tr>
 <tr><td><a href="statistics.tc">Statistics</a></td></tr>
-<tr><td><a href="relogin_admin.tc">Re-Login Admin</a></td></tr>
+<tr><td><a href="log_out.tc">Log out</a></td></tr>
+<tr><td><a href="relogin_admin.tc">Login Admin</a></td></tr>
 <tr><td><a href="activate_artist.tc">Activate Artist</a></td></tr>
 <tr><td><a href="activate_group.tc">Activate Group</a></td></tr>
 <tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>
 <tr><td><a href="activate_songdata.tc">Activate Songdata</a></td></tr>
+<tr><td><a href="simple_xml_test.tc">SimpleXmlTest</a></td></tr>
+<tr><td><a href="bbcode_simple.tc">Simple BBcode</a></td></tr>
+<tr><td><a href="now_playing_display.tc">NowPlayingDisplay</a></td></tr>
 </tbody></table>
 </body>
 </html>

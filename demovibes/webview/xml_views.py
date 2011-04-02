@@ -11,7 +11,10 @@ class XMLView(BaseView):
 def queue(request):
     try :
         now_playing = get_now_playing_song()
-        history = Queue.objects.select_related(depth=2).filter(played=True).filter(id__gt=now_playing.id - 50).order_by('-id')[1:21]
+        if now_playing:
+            history = Queue.objects.select_related(depth=2).filter(played=True).filter(id__gt=now_playing.id - 50).order_by('-id')[1:21]
+        else:
+            history = Queue.objects.select_related(depth=2).filter(played=True).order_by('-id')[1:21]
     except IndexError:
         history = []
     queue = Queue.objects.select_related(depth=2).filter(played=False).order_by('id')

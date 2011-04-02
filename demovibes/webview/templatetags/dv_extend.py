@@ -14,6 +14,8 @@ import os.path, random
 import j2shim as js
 from jinja2 import contextfunction
 
+STATIC = settings.MEDIA_URL
+
 register = template.Library()
 
 class BetterPaginator(Paginator):
@@ -239,7 +241,7 @@ def logo():
             logo = L.file.url
             alt = "#%s - By %s" % (L.id, L.creator)
         except:
-            logo = "%slogos/default.png" % settings.MEDIA_URL
+            logo = "%slogos/default.png" % STATIC
             alt = "Logo"
         randlogo = '<img id="logo" src="%s" title="%s" alt="%s" />' % (logo, alt, alt)
         cache.set("current_logo", randlogo, 60*15)
@@ -313,7 +315,7 @@ def user_css(user):
     try:
         return user.get_profile().get_css()
     except:
-        return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % settings.MEDIA_URL)
+        return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % STATIC)
 
 @register.tag
 def css(parser, token):
@@ -483,10 +485,10 @@ class GetSongRatingStarsAvgNode(template.Node):
 
             if(count > user_vote):
                 # Represent stars AFTER the current rated star
-                TempLine = TempLine + '<img src="/static/star-white.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
+                TempLine = TempLine + '<img src="'+ STATIC + 'star-white.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
             else:
                 # This represents a star already under/up to the rating
-                TempLine = TempLine + '<img src="/static/star-red.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
+                TempLine = TempLine + '<img src="'+ STATIC + 'star-red.png" title="%d Star" border="0" id="vote-%d-%d" />' % ( count, song.id, count )
 
             if(user_anon == False):
                 TempLine = TempLine + '</a>'
@@ -504,10 +506,12 @@ class GetSongRatingStarsAvgNode(template.Node):
             T = loader.get_template('webview/t/fav_icon.html')
             C = Context({'song' : song, 'user' : user})
             FavIconTxt = T.render(C)
+
+            FavIconTxt = js.r2s("webview/t/fav_icon.html", {'song' : song, 'user' : user})
             htmltxt = htmltxt + '<td>%s</td>' % (FavIconTxt)
 
         # Add a link to voting history
-        htmltxt = htmltxt + '<td><a href="/demovibes/song/%d/votes/"><img class="song_head" src="/static/script.png" title="Voting History" /></a></td>' % (song.id)
+        htmltxt = htmltxt + '<td><a href="/demovibes/song/%d/votes/"><img class="song_head" src="%sscript.png" title="Voting History" /></a></td>' % (song.id, STATIC)
 
         # Close off the rest of the table/span
         htmltxt = htmltxt + '</tr>\n'
@@ -544,9 +548,14 @@ def get_text_link_entries(slug):
             C = Context({ 'LC' : slug_id })
             header = T.render(C)
 
+            header = js.r2s('webview/t/link_category_header.html', { 'LC' : slug_id })
+
             T = loader.get_template('webview/links_text_all.html')
             C = Context({ 'text_links' : site_links })
-            return header + T.render(C)
+            mu = T.render(C)
+
+            mu = js.r2s('webview/links_text_all.html', { 'text_links' : site_links })
+            return header + mu
         except:
             # Something borked!
             return None
@@ -581,9 +590,15 @@ class GetTextLinkEntries(template.Node):
             C = Context({ 'LC' : slug_id })
             header = T.render(C)
 
+            header = js.r2s('webview/t/link_category_header.html', { 'LC' : slug_id })
+
             T = loader.get_template('webview/links_text_all.html')
             C = Context({ 'text_links' : site_links })
-            return header + T.render(C)
+            mu = T.render(C)
+
+            mu = js.r2s('webview/links_text_all.html', { 'text_links' : site_links })
+
+            return header + mu
         except:
             # Something borked!
             return None
@@ -623,7 +638,7 @@ class GetCss(template.Node):
             user = template.resolve_variable(self.user, context)
             return user.get_profile().get_css()
         except:
-            return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % settings.MEDIA_URL)
+            return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % STATIC)
 
 def j_get_post_count(user):
     return Post.objects.filter(author=user).count()
@@ -721,7 +736,11 @@ def get_song_queue_tag(song_id):
 
         T = loader.get_template('webview/queue_tag.html')
         C = Context({ 'song' : song_obj, 'artists' : artists })
-        return T.render(C)
+        mu = T.render(C)
+
+        mu = js.r2s('webview/queue_tag.html', { 'song' : song_obj, 'artists' : artists })
+
+        return mu
     except:
         return unicode(song_id)
 
@@ -737,7 +756,11 @@ class GetSongQueueTag(template.Node):
 
             T = loader.get_template('webview/queue_tag.html')
             C = Context({ 'song' : song_obj, 'artists' : artists })
-            return T.render(C)
+            mu = T.render(C)
+
+            mu = js.r2s('webview/queue_tag.html', { 'song' : song_obj, 'artists' : artists })
+
+            return mu
 
         except:
             pass
@@ -752,7 +775,11 @@ def bb_artist(hit):
         artist = Artist.objects.get(id=artistid)
         T = loader.get_template('webview/t/artist.html')
         C = Context({'A' : artist})
-        return T.render(C)
+        mu = T.render(C)
+
+        mu = js.r2s('webview/t/artist.html', {'A' : artist})
+
+        return mu
     except:
         return "[artist]%s[/artist]" % artistid
 
@@ -775,10 +802,17 @@ def bb_queue(hit):
     c = Context({
         'song' : song,
         'artists' : artists,
-        'MEDIA_URL' : settings.MEDIA_URL,
+        'MEDIA_URL' : STATIC,
         })
 
     result = t.render(c)
+
+    result = js.r2s('webview/queue_tag.html', {
+        'song' : song,
+        'artists' : artists,
+        'MEDIA_URL' : STATIC,
+        })
+
     return result
 
 def bb_song(hit):
@@ -796,8 +830,11 @@ def bb_song(hit):
     c = Context({
         'song' : song,
     })
+    mu = t.render(c)
 
-    return t.render(c)
+    mu = js.r2s('webview/t/songname.html', {'song' : song})
+
+    return mu
 
 def bb_flag(hit):
     """
@@ -809,10 +846,10 @@ def bb_flag(hit):
     flag = flagcode.lower().encode('ascii', 'ignore')
 
     if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
-        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (settings.MEDIA_URL, flag, flag)
+        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
 
     # No flag image found, so default to Necta flag
-    return "<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (settings.MEDIA_URL)
+    return "<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (STATIC)
 
 def bb_user(hit):
     """
@@ -823,6 +860,9 @@ def bb_user(hit):
     try:
         user = hit.group(1)
         U = User.objects.get(username=user)
+
+        return js.r2s('webview/t/user.html', {'U' : U})
+
         T = loader.get_template('webview/t/user.html')
         C = Context({'U' : U})
         return T.render(C)
@@ -830,7 +870,7 @@ def bb_user(hit):
     except:
         # This is normally thrown when the user is invalid. Return the original result,
         # Only we add an icon to indicate an invalid user.
-        return '<img src="/static/user_error.png" alt="user" border="0" />%s' % (user)
+        return '<img src="'+ STATIC + 'user_error.png" alt="user" border="0" />%s' % (user)
 
 def bb_artistname(hit):
     """
@@ -839,13 +879,16 @@ def bb_artistname(hit):
     try:
         artist = hit.group(1)
         A = Artist.objects.get(handle=artist)
+
+        return js.r2s('webview/t/artist.html', {'A' : A})
+
         T = loader.get_template('webview/t/artist.html')
         C = Context({'A' : A})
         return T.render(C)
     except:
         # This is normally thrown when the artist is invalid. Return the original result,
         # Only we add an icon to indicate an invalid artist.
-        return '<img src="/static/user_error.png" alt="artist" border="0" /> %s' % (artist)
+        return '<img src="'+ STATIC + 'user_error.png" alt="artist" border="0" /> %s' % (artist)
 
 def bb_group(hit):
     """
@@ -854,6 +897,9 @@ def bb_group(hit):
     try:
         groupid = hit.group(1)
         group = Group.objects.get(id=groupid)
+
+        return js.r2s('webview/t/group.html', {'G' : group})
+
         T = loader.get_template('webview/t/group.html')
         C = Context({'G' : group})
         return T.render(C)
@@ -867,13 +913,16 @@ def bb_groupname(hit):
     try:
         group = hit.group(1)
         G = Group.objects.get(name=group)
+
+        return js.r2s('webview/t/group.html', {'G' : G})
+
         T = loader.get_template('webview/t/group.html')
         C = Context({'G' : G})
         return T.render(C)
     except:
         # This is normally thrown when the group is invalid. Return the original result,
         # Only we add an icon to indicate an invalid group.
-        return '<img src="/static/user_error.png" alt="user" border="0" /> %s' % (group)
+        return '<img src="'+ STATIC + 'user_error.png" alt="user" border="0" /> %s' % (group)
 
 def bb_label(hit):
     """
@@ -882,6 +931,9 @@ def bb_label(hit):
     try:
         labelid = hit.group(1)
         label = Label.objects.get(id=labelid)
+
+        return js.r2s('webview/t/label.html', {'L' : label})
+
         T = loader.get_template('webview/t/label.html')
         C = Context({ 'L' : label })
         return T.render(C)
@@ -896,12 +948,15 @@ def bb_labelname(hit):
     try:
         real_name = hit.group(1)
         L = Label.objects.get(name=real_name)
+
+        return js.r2s('webview/t/label.html', {'L' : L})
+
         T = loader.get_template('webview/t/label.html')
         C = Context({ 'L' : L })
         return T.render(C)
     except:
         # This will throw if the requested label is spelt incorrectly, or doesnt exist
-        return '<img src="/static/transmit.png" alt="Invalid Label" border="0" /> %s' % (real_name)
+        return '<img src="'+ STATIC + 'transmit.png" alt="Invalid Label" border="0" /> %s' % (real_name)
 
 def bb_platform(hit):
     """
@@ -910,6 +965,9 @@ def bb_platform(hit):
     try:
         plat_id = hit.group(1)
         platform = SongPlatform.objects.get(id=plat_id)
+
+        return js.r2s('webview/t/platformname.html', {'P' : platform})
+
         T = loader.get_template('webview/t/platformname.html')
         C = Context({ 'P' : platform })
         return T.render(C)
@@ -924,6 +982,9 @@ def bb_platformname(hit):
     try:
         plat_name = hit.group(1)
         P = SongPlatform.objects.get(title=plat_name)
+
+        return js.r2s('webview/t/platformname.html', {'P' : P})
+
         T = loader.get_template('webview/t/platformname.html')
         C = Context({ 'P' : P })
         return T.render(C)
@@ -939,7 +1000,7 @@ def bb_thread(hit):
     try:
         post_id = hit.group(1)
         t = Thread.objects.get(id=post_id)
-        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (t.get_absolute_url(), settings.MEDIA_URL, t)
+        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (t.get_absolute_url(), STATIC, t)
     except:
         return "[thread]%s[/thread]" % (post_id)
 
@@ -950,7 +1011,7 @@ def bb_forum(hit):
     try:
         forum_slug = hit.group(1)
         f = Forum.objects.get(slug=forum_slug)
-        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (f.get_absolute_url(), settings.MEDIA_URL, f)
+        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (f.get_absolute_url(), STATIC, f)
     except:
         return "[forum]%s[/forum]" % (forum_slug)
 
@@ -994,6 +1055,9 @@ def bb_compilation(hit):
     comp = hit.group(1)
     try:
         C = Compilation.objects.get(id=comp)
+
+        return js.r2s('webview/t/compilation.html', {'C' : C})
+
         T = loader.get_template('webview/t/compilation.html')
         Co = Context({'C' : C})
         return T.render(Co)
@@ -1007,6 +1071,9 @@ def bb_compilation_name(hit):
     comp = hit.group(1)
     try:
         C = Compilation.objects.get(name=comp)
+
+        return js.r2s('webview/t/compilation.html', {'C' : C})
+
         T = loader.get_template('webview/t/compilation.html')
         Co = Context({'C' : C})
         return T.render(Co)
@@ -1032,13 +1099,13 @@ def bb_youtube_ol(hit):
     Tag like so: [yt]S-T8h0T0SK8[/yt]. This version is oneliner specific
     """
     video = hit.group(1)
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0" /> YouTube Link</a>' % (video)
+    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0" /> YouTube Link</a>' % (video, STATIC)
 
 def bb_googlevideo_ol(hit):
     """
     """
     video = hit.group(1)
-    return '<a href="http://video.google.com/videoplay?docid=%s" target="_blank"><img src="/static/googlevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video)
+    return '<a href="http://video.google.com/videoplay?docid=%s" target="_blank"><img src="%sgooglevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video, STATIC)
 
 def bb_youtube_name_ol(hit):
     """
@@ -1049,7 +1116,7 @@ def bb_youtube_name_ol(hit):
     video = hit.group(1)
     title = hit.group(2)
 
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="/static/youtube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, video)
+    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, STATIC, video)
 
 def bb_gvideo(hit):
     """
@@ -1174,10 +1241,10 @@ def flag(value):
     """
     flag = value.lower().encode('ascii', 'ignore')
     if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
-        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (settings.MEDIA_URL, flag, flag)
+        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
 
     # No flag image found, return the Necta flag hehe
-    return "<img src='%sflags/nectaflag.png' class='countryflag' alt='flag' />" % (settings.MEDIA_URL)
+    return "<img src='%sflags/nectaflag.png' class='countryflag' alt='flag' />" % (STATIC)
 
 @register.filter
 def getattrs (obj, args):
@@ -1389,11 +1456,11 @@ def make_smileys():
     smileys = settings.SMILEYS
     for smiley in secretsmileys:
         sm = make_re(smiley[0])
-        v = r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[2])
+        v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[2])
         r.append((sm, v))
     for smiley in smileys:
         sm = make_re(smiley[0])
-        v = r'<img src="%s" title="%s" />' % (settings.MEDIA_URL + smiley[1], smiley[0])
+        v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[0])
         r.append((sm, v))
     return r
 

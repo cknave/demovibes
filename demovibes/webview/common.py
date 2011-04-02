@@ -80,7 +80,8 @@ def get_now_playing_song(create_new=False):
     if not queueobj or create_new:
         try:
             timelimit = datetime.datetime.now() - datetime.timedelta(hours=6)
-            queueobj = models.Queue.objects.select_related(depth=3).filter(played=True).filter(time_played__gt = timelimit ).order_by('-time_played')[0]
+
+            queueobj = models.Queue.objects.select_related(depth=3).filter(played=True).filter(time_played__gt = timelimit).order_by('-time_played')[0]
             logging.debug("Checking now playing song : Time limit is %s", timelimit)
         except:
             logging.info("Could not find now_playing")

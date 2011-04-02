@@ -63,7 +63,8 @@ class QueueAdmin(admin.ModelAdmin):
     list_display = ('song', 'requested', 'played', 'requested_by', 'priority', 'playtime')
     search_fields = ['song', 'requested', 'requested_by']
     list_filter = ['priority', 'played']
-    fields = ['song', 'played', 'requested_by', 'priority', 'playtime']
+    date_hierarchy = 'time_played'
+    fields = ['song', 'played', 'requested_by', 'priority', 'playtime', 'time_played']
 
 class SongCommentAdmin(admin.ModelAdmin):
     list_display = ['song', 'user']

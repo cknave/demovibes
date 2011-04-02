@@ -51,6 +51,41 @@
 	<td>TheNewNewLabelX</td>
 	<td></td>
 </tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Webview</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Queues</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=retrorespect</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id_played</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//form[@id='queue_form']/div[2]/fieldset/div[6]/div/p/span[1]/a[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//form[@id='queue_form']/div[2]/fieldset/div[6]/div/p/span[2]/a[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>_save</td>
+	<td></td>
+</tr>
 
 </tbody></table>
 </body>
