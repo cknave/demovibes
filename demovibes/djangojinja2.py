@@ -22,11 +22,9 @@ from itertools import chain
 from django.conf import settings
 from django.http import HttpResponse
 import jinja2
-from django.core.exceptions import ImproperlyConfigured
 from django.template.context import get_standard_processors
 from django.template import TemplateDoesNotExist
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound
-from jinja2.defaults import DEFAULT_NAMESPACE
+from jinja2 import FileSystemLoader, TemplateNotFound
 from django.template.context import Context
 import jinja2_funcs
 
@@ -66,7 +64,7 @@ def create_env():
     ENV.globals.update(jinja2_funcs.GLOBALS)
     ENV.filters.update(jinja2_funcs.FILTERS)
     ENV.fragment_cache = cache
-    trans = getattr(settings, 'LANGUAGE_CODE')
+    #trans = getattr(settings, 'LANGUAGE_CODE')
     ENV.install_null_translations(newstyle=True)
     ENV.fragment_cache_prefix = "fcache"
     return ENV

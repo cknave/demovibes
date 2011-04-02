@@ -6,11 +6,6 @@ from PIL import Image
 import dscan
 import logging
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-
 class UploadForm(forms.ModelForm):
     class Meta:
         model = Song

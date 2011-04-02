@@ -3,7 +3,6 @@
 import pygst
 pygst.require("0.10")
 import gst
-import pygtk
 import gtk
 
 import queuefetcher
@@ -17,7 +16,7 @@ class Main:
         output_filter = config.get("gstreamer", "output_filter")
 
         self.pipeline = self.make_pipeline(input_filter, output_filter)
-        
+
         bus = self.pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self.on_message)
@@ -51,10 +50,10 @@ class Main:
         #Convert audio data to something ready for shoutcast
         audioconvert = gst.element_factory_make("audioconvert", None)
         audioresample = gst.element_factory_make("audioresample", None)
-        
+
         encoder = gst.element_factory_make(output_filter, None)
         self.set_properties_from_config(encoder, output_filter)
-        
+
         queue = gst.element_factory_make("queue", None)
         queue.set_property("min-threshold-buffers", 10)
 
@@ -66,7 +65,7 @@ class Main:
         shout2send = gst.element_factory_make("shout2send", "streamer")
         self.set_properties_from_config(shout2send, "shoutcast")
         path.append(shout2send)
-        
+
         pipeline.add(*path)
         gst.element_link_many(*path)
 

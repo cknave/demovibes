@@ -1,8 +1,7 @@
 from demovibes.webview.models import *
-from demovibes.webview.common import cache_output, get_now_playing_song
+from demovibes.webview.common import get_now_playing_song
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.conf import settings
 from mybaseview import BaseView
 
 class XMLView(BaseView):

@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
 from demovibes.webview.views import about_pages
 
 # Uncomment the next two lines to enable the admin:

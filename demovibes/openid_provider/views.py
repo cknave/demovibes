@@ -6,7 +6,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ObjectDoesNotExist
 from django.template import RequestContext
 from django.conf import settings
 
@@ -14,8 +13,6 @@ from openid.extensions import sreg
 
 from models import *
 from openid.server.server import Server
-
-import datetime
 
 def get_base_uri(req):
 
@@ -205,7 +202,6 @@ def landing_page(req, orequest):
         login_url, REDIRECT_FIELD_NAME, path
         ))
 
-import urlparse
 def openid_is_authorized(req, identity_url, trust_root):
     """
     Check that they own the given identity URL, and that the trust_root is

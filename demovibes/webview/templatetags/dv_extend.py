@@ -6,11 +6,11 @@ from demovibes.webview import common
 from django.core.cache import cache
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.template import Context, Template
-from django.template.loader import get_template
-from forum.models import Forum, Thread, Post, Subscription
+from django.template import Context
+
+from forum.models import Forum, Thread, Post
 import os.path, random
-import logging
+
 import j2shim as js
 from jinja2 import contextfunction
 
@@ -475,7 +475,7 @@ class GetSongRatingStarsAvgNode(template.Node):
         htmltxt = htmltxt + '<tr>\n'
 
         for count in range(1, 6):
-            DiffVal = (count - user_vote) # Pre-calc rating difference
+            #DiffVal = (count - user_vote) # Pre-calc rating difference
             TempLine = '<td onmouseover="voteshow(\'vote-%d\', %d);" onmouseout="voteshow(\'vote-%d\', %d);">' % (song.id, count, song.id, user_vote)
 
             if(user_anon == False):

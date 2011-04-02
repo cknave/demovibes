@@ -1,10 +1,7 @@
-import sys, random, os, getopt
-
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
 from webview.models import *
-from django.contrib.auth.models import User
 
 from string import *
 

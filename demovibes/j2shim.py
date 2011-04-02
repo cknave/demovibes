@@ -11,12 +11,6 @@ else:
 
 import djangojinja2
 
-if JINJA:
-    try:
-        import djangojinja2
-    except:
-        JINJA = False
-
 def r2r(template_name, context=None, request=None, processors=None, mimetype=None):
     if JINJA:
         try:
@@ -33,5 +27,5 @@ def r2s(template_name, context=None, request=None, processors=None):
             pass
     T = get_template(template_name)
     C = Context (context)
-    result = T.render(C)    
+    result = T.render(C)
     return result

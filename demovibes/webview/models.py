@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
-import socket
+
 import re
 import os.path
 from django.conf import settings
@@ -13,7 +13,7 @@ import xml.dom.minidom, urllib # Needed for XML processing
 from django.core.cache import cache
 from django.template.defaultfilters import striptags
 from django.contrib.sites.models import Site
-from django.template import RequestContext, Context, loader
+from django.template import Context, loader
 from django.db.models.signals import post_save
 from django.utils.translation import ugettext_lazy as _
 
@@ -416,13 +416,13 @@ class Userprofile(models.Model):
         if self.user.is_active:
             return ("User","user.png")
         return ("Normal user","user.png")
-        
+
     def get_votecount(self):
-	"""
-	Counts the number of songs this user has voted on
-	"""
-	countlist = SongVote.objects.filter(user=self.user)
-	return len(countlist);
+        """
+        Counts the number of songs this user has voted on
+        """
+        countlist = SongVote.objects.filter(user=self.user)
+        return len(countlist);
 
     @models.permalink
     def get_absolute_url(self):

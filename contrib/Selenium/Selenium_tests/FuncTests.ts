@@ -21,6 +21,12 @@
 <tr><td><a href="edit_song_data.tc">EditSongData</a></td></tr>
 <tr><td><a href="song_voting.tc">SongVoting</a></td></tr>
 <tr><td><a href="forum.tc">Forum</a></td></tr>
+<tr><td><a href="statistics.tc">Statistics</a></td></tr>
+<tr><td><a href="relogin_admin.tc">Re-Login Admin</a></td></tr>
+<tr><td><a href="activate_artist.tc">Activate Artist</a></td></tr>
+<tr><td><a href="activate_group.tc">Activate Group</a></td></tr>
+<tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>
+<tr><td><a href="activate_songdata.tc">Activate Songdata</a></td></tr>
 </tbody></table>
 </body>
 </html>

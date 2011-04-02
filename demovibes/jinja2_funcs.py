@@ -1,9 +1,7 @@
-from django.template.defaulttags import URLNode
 from django.conf import settings
-from jinja2.filters import contextfilter
 from django.utils import translation
 from django.template import defaultfilters
-from jinja2 import Markup, escape, environmentfilter
+from jinja2 import escape
 
 from webview.templatetags import dv_extend
 

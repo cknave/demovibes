@@ -8,7 +8,6 @@ methods. A little extra logic is in views.py.
 from django.db import models
 import datetime
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 class Forum(models.Model):
@@ -205,7 +204,6 @@ class Post(models.Model):
     edited = models.DateTimeField(blank = True, null = True)
 
     def save(self, *args, **kwargs):
-        new_post = False
         if not self.id:
             self.time = datetime.datetime.now()
 

@@ -1,13 +1,10 @@
-from django.conf import settings
 from django.contrib.syndication.feeds import Feed
-from django.contrib.syndication.feeds import FeedDoesNotExist
 from django.utils.feedgenerator import Atom1Feed
 from django.contrib.sites.models import Site
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 
-from forum.models import Forum, Thread, Post
+from forum.models import Forum, Post
 
 class RssForumFeed(Feed):
     title_template = 'forum/feeds/post_title.html'
@@ -25,7 +22,7 @@ class RssForumFeed(Feed):
             self._site = Site.objects.get_current()
 
         if obj:
-            return _("%(title)s's Forum: %(forum)s") % { 
+            return _("%(title)s's Forum: %(forum)s") % {
                 'title': self._site.name,
                 'forum': obj.title }
         else:

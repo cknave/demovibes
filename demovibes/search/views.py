@@ -1,5 +1,5 @@
 from haystack.query import SearchQuerySet
-from haystack.forms import ModelSearchForm, SearchForm
+from haystack.forms import ModelSearchForm
 from mybaseview import MyBaseView
 from webview import models as wm
 
@@ -174,5 +174,4 @@ class SongAjax(AjaxSearch):
         return {
             'songs': songs,
             'count': count,
-            'error': error,
         }

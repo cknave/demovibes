@@ -2,7 +2,6 @@
 # vim: set ts=4 sw=4 : */
 
 from django.contrib import admin
-from django import forms
 
 from models import *
 

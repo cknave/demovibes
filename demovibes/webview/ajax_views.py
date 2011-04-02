@@ -1,12 +1,9 @@
 from demovibes.webview.models import *
 from demovibes.webview.common import *
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_control, cache_page
-from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
 from django.shortcuts import render_to_response
-import socket
 
 from mybaseview import MyBaseView
 
@@ -18,7 +15,6 @@ from tagging.models import Tag
 
 from django.template import RequestContext
 from django.conf import settings
-from django.db.models import Q
 import time, datetime
 from django.core.cache import cache
 import j2shim

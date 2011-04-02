@@ -1,4 +1,3 @@
-import datetime
 from haystack.indexes import *
 from haystack import site
 import webview.models as M

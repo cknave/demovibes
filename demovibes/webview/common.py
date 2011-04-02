@@ -1,10 +1,6 @@
-import time
 from webview import models
 from django.conf import settings
 from django.core.cache import cache
-from django.shortcuts import render_to_response
-from django.template import Context, Template
-from django.template.loader import get_template
 from django.conf import settings
 import logging
 import socket

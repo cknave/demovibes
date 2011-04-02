@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect, render_to_response
 from django.core.cache import cache
 import hashlib

@@ -10,37 +10,23 @@ from tagging.models import TaggedItem
 import tagging.utils
 
 from django.utils.translation import ugettext as _
-
-from django import forms
-from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponseBadRequest, HttpResponse
-
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404, redirect
 from django.template import TemplateDoesNotExist
 from django.conf import settings
 from django.views.generic.simple import direct_to_template
-
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.core.files.base import File
 from django.core.cache import cache
-
-from django.views.decorators.cache import cache_page
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import authenticate, login
 
-from random import choice
 import logging
 
-from django.contrib.auth import authenticate, login
-from django.views.decorators.csrf import csrf_protect
-
 import j2shim
-
 import hashlib
-import time
-import mimetypes
-import os
 import re
 import random
 # Create your views here.

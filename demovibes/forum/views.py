@@ -1,15 +1,14 @@
 """
-All forum logic is kept here - displaying lists of forums, threads 
+All forum logic is kept here - displaying lists of forums, threads
 and posts, adding new threads, and adding replies.
 """
 
 from forum.models import Forum,Thread,Post,Subscription
 from forum.forms import ThreadForm, ReplyForm, EditForm
 from datetime import datetime
-from django.shortcuts import get_object_or_404, render_to_response
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseServerError, HttpResponseForbidden
-from django.template import RequestContext, Context, loader
-from django import forms
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseForbidden
+from django.template import Context, loader
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.defaultfilters import striptags, wordwrap
@@ -21,9 +20,9 @@ import j2shim
 
 def forum_email_notification(post):
     try:
-        mail_subject = settings.FORUM_MAIL_PREFIX 
+        mail_subject = settings.FORUM_MAIL_PREFIX
     except AttributeError:
-	me = Site.objects.get_current()
+        me = Site.objects.get_current()
         mail_subject = "[%s Forums]" % me.name
     try:
         mail_from = settings.FORUM_MAIL_FROM
@@ -62,7 +61,7 @@ def edit(request, post_id):
 def forum(request, slug):
     """
     Displays a list of threads within a forum.
-    Threads are sorted by their sticky flag, followed by their 
+    Threads are sorted by their sticky flag, followed by their
     most recent post.
     """
     f = get_object_or_404(Forum, slug=slug)
@@ -70,7 +69,7 @@ def forum(request, slug):
     # If the user is not authorized to view the thread, then redirect
     if f.is_private and request.user.is_staff != True:
          return HttpResponseRedirect('/forum')
-    
+
     # Process new thread form if data was sent
     if request.method == 'POST':
         if not request.user.is_authenticated():
@@ -81,7 +80,7 @@ def forum(request, slug):
             new_thread.forum = f
             new_thread.save()
             Post.objects.create(thread=new_thread, author=request.user,
-               	body=thread_form.cleaned_data['body'],
+                body=thread_form.cleaned_data['body'],
                 time=datetime.now())
             if (thread_form.cleaned_data['subscribe'] == True):
                 Subscription.objects.create(author=request.user,
@@ -89,7 +88,7 @@ def forum(request, slug):
             return HttpResponseRedirect(new_thread.get_absolute_url())
     else:
         thread_form = ThreadForm()
-        
+
     # Pagination
     t = f.thread_set.all()
     paginator = Paginator(t, settings.FORUM_PAGINATE)
@@ -110,7 +109,7 @@ def forum(request, slug):
 
 def thread(request, thread):
     """
-    Increments the viewed count on a thread then displays the 
+    Increments the viewed count on a thread then displays the
     posts for that thread, in chronological order.
     """
     t = get_object_or_404(Thread, pk=thread)
@@ -163,7 +162,7 @@ def thread(request, thread):
             'forum': t.forum,
             'thread': t,
             'posts': posts.object_list,
-	        'page_range': paginator.page_range,
+            'page_range': paginator.page_range,
             'page': page,
             'reply_form': reply_form
         }, request)
@@ -189,4 +188,4 @@ def updatesubs(request):
         {
             'subs': subs,
         }, request)
-       
+
