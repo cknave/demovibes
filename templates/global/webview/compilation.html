@@ -2,7 +2,7 @@
 {% block title %}Compilation: {{ comp.name }}{% if comp.label %} from {{ comp.label }}{% endif %}{% endblock %}
 
 {% block main %}
-{% load dv_extend %}<h2><img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} alt="Compilation" />Compilation: {{ comp.name }}{% if user.is_staff %} [<a href="/admin/webview/compilation/{{ comp.id }}/">Edit Info</a>]{% endif %}</h2>
+{% load dv_extend %}<h2><img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="{{ MEDIA_URL }}recplay_ico.png"{% endif %} alt="Compilation" />Compilation: {{ comp.name }}{% if user.is_staff %} [<a href="/admin/webview/compilation/{{ comp.id }}/">Edit Info</a>]{% endif %}</h2>
 
 <table>
 <tr>
@@ -10,7 +10,7 @@
 {% if comp.cover_art %}
  <img class="compilation_screenshot" src="{{ comp.cover_art.url }}" alt="[Cover Art]" /><br />
 {% else %}
- <img class="compilation_screenshot" src="/static/no_picture.png" alt="[No Cover Art]" /><br />
+ <img class="compilation_screenshot" src="{{ MEDIA_URL }}no_picture.png" alt="[No Cover Art]" /><br />
 {% endif %}
 <p class="compilation_details_small">
 <b><i>Compilation Summary:</i></b><br />

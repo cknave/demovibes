@@ -7,15 +7,15 @@
 <tr><th>{{ gettext("Flash player") }}</th><th>{{ gettext("Java player") }}</th></tr>
     <tr>
         <td>
-        <object type="application/x-shockwave-flash" data="{{ MEDIA_URL }}flash/player_mp3_multi.swf" width="200" height="20">
-             <param name="movie" value="{{ MEDIA_URL }}flash/player_mp3_multi.swf" />
+        <object type="application/x-shockwave-flash" data="{{ STATIC_URL }}flash/player_mp3_multi.swf" width="200" height="20">
+             <param name="movie" value="{{ STATIC_URL }}flash/player_mp3_multi.swf" />
              <param name="bgcolor" value="#ffffff" />
              <param name="FlashVars" value="mp3={{ songurl }}&amp;showlist=0" />
         </object>
         </td>
         <td>
         <applet code="de.quippy.javamod.main.applet.JavaModApplet.class"
-                archive="/static/javamod/javamod.jar"
+                archive="{{ STATIC_URL }}javamod/javamod.jar"
                 width="170"
                 height="70">
         <param name="file" value="http://{{ dv.site_url() }}{{ songurl }}" />

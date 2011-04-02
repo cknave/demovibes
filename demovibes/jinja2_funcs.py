@@ -76,4 +76,5 @@ GLOBALS = {
     'mkstr': mkstr,
     'dummy': dummy,
     'dv': dv_extend,
+    'STATIC_URL': settings.MEDIA_URL,
 }

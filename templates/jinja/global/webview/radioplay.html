@@ -1,11 +1,11 @@
 <html><head><title>Mini Player</title></head><body>
-<object type="application/x-shockwave-flash" data="{{ MEDIA_URL }}flash/player_mp3_multi.swf" width="150" height="100">
-     <param name="movie" value="{{ MEDIA_URL }}flash/player_mp3_multi.swf" />
+<object type="application/x-shockwave-flash" data="{{ STATIC_URL }}flash/player_mp3_multi.swf" width="150" height="100">
+     <param name="movie" value="{{ STATIC_URL }}flash/player_mp3_multi.swf" />
      <param name="bgcolor" value="#ffffff" />
      <param name="FlashVars" value="playlist={{ url("dv-streams.txt") }}&amp;showslider=0&amp;showvolume=1&amp;autoplay=1&amp;showplaylistnumbers=0&amp;shuffle=1&amp;width=150&amp;volume=60&amp;volumewidth=40&amp;byteslimit=2048" />
 </object>
 <applet code="de.quippy.javamod.main.applet.JavaModApplet.class"
-        archive="{{ MEDIA_URL }}javamod/javamod.jar"
+        archive="{{ STATIC_URL }}javamod/javamod.jar"
         width="170"
         height="70">
 <param name="file" value="{{ url("dv-streams.txt") }}">

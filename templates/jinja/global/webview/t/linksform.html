@@ -1,5 +1,5 @@
 {% if links %}
-	<h2><img class="icon_header" src="/static/world_link.png" alt="" />{{ title }}</h2>
+	<h2><img class="icon_header" src="{{ STATIC_URL }}world_link.png" alt="" />{{ title }}</h2>
     <table id="linksform">
     {% for ll in links %}
       <tr>
@@ -13,7 +13,7 @@
          {% if ll.link.inputinfo %}
             <td title="{{ ll.link.inputinfo }}">
                 <span class="formq">
-                    <img src="/static/question.gif" alt="?"/>
+                    <img src="{{ STATIC_URL }}question.gif" alt="?"/>
                 </span>
             </td>
         {% else %}

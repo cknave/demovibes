@@ -63,7 +63,7 @@ Song Status: {{ object.get_status_display }}
  {% is_favorite object user %}
   <p>
  {% if object.is_locked %}
-  <img class="song_head" src="/static/lock.png" title="Song Locked" /> <i>Song is currently locked for queuing. It will be available for request in {{ object.locked_until|timeuntil }}</i>
+  <img class="song_head" src="{{ MEDIA_URL }}lock.png" title="Song Locked" /> <i>Song is currently locked for queuing. It will be available for request in {{ object.locked_until|timeuntil }}</i>
  {% else %}
   <img class="song_head" src="{{ MEDIA_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url }}queue/">Add To Queue</a>
  {% endif %}<br />

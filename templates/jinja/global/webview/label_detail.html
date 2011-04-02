@@ -3,12 +3,12 @@
 {% block title %}{{ gettext("Production / Label Info For") }} {{ object.name|e }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" {% if object.label_icon %}src="{{ object.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} alt="" />{{ gettext("Label / Production Information For") }} {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/label/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]{% endif %}</h2>
+<h2><img class="icon_header" {% if object.label_icon %}src="{{ object.label_icon.url }}"{% else %}src="{{ STATIC_URL }}transmit_blue.png"{% endif %} alt="" />{{ gettext("Label / Production Information For") }} {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/label/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]{% endif %}</h2>
 
 <table>
 <tr>
 <td class="label_summary">
-{% if object.logo %}<img class="label_logo" src="{{ object.logo.url }}" />{% else %}<img class="label_logo" src="/static/no_picture.png" />{% endif %}
+{% if object.logo %}<img class="label_logo" src="{{ object.logo.url }}" />{% else %}<img class="label_logo" src="{{ STATIC_URL }}no_picture.png" />{% endif %}
 <br /><strong>{{ object.name|e }}</strong><br />
 {% if object.found_date %}({{ gettext("Founded On") }}: {{object.found_date|date("F j, Y") }})<br />{% endif %}
 {% if object.cease_date %}{{ gettext("Shutdown Date") }}: {{ object.cease_date }}<br />{% endif %}

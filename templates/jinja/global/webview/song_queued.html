@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("Song Queued") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/music.png" alt="" />{{ gettext("Song Queued") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Song Queued") }}</h2>
 <span>{{ gettext("Your Song Has Been Queued!") }}</span>
 {% endblock %}
 

@@ -4,7 +4,7 @@
 {% for v in voterange -%}
     <td onmouseover="voteshow('vote-{{ song.id }}', {{ v }});" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
         <a href="{{ url("dv-vote-autovote", song.id, v) }}">
-            <img src="/static/star-{% if v > myvote %}white{% else %}red{% endif %}.png" title="{{ v }} Star" border="0" id="vote-{{ song.id }}-{{ v }}" />
+            <img src="{{ STATIC_URL }}star-{% if v > myvote %}white{% else %}red{% endif %}.png" title="{{ v }} Star" border="0" id="vote-{{ song.id }}-{{ v }}" />
         </a>
     </td> 
 {% endfor -%}
@@ -14,13 +14,13 @@
     {% if song.is_favorite(user) %} 
     {% else %}
         <a href="/demovibes/favorites/add/{{ song.id }}/">
-            <img class="song_head" src="/static/heart_add.png" title="Add As Fave" />
+            <img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" />
         </a>    
     {% endif %}
     </td>
     <td>
         <a href="/demovibes/song/{{ song.id }}/votes/">
-            <img class="song_head" src="/static/script.png" title="Voting History" />
+            <img class="song_head" src="{{ STATIC_URL }}script.png" title="Voting History" />
         </a>
     </td>
 </tr> 

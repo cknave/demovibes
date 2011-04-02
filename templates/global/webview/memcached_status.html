@@ -3,7 +3,7 @@
 {% block title %}Memcached Status{% endblock %}
 
 {% block main %}
- {% load dv_extend %}<h2><img class="icon_header" src="/static/link_add.png" alt="" />Memcached Status</h2>
+ {% load dv_extend %}<h2><img class="icon_header" src="{{ MEDIA_URL }}link_add.png" alt="" />Memcached Status</h2>
  <ul>
  <li>Memory usage:
     {{ stats.bytes|filesizeformat }}

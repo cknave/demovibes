@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("New songinfo") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ gettext("Song Information") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Song Information") }}</h2>
 <table>
 <tr>
     <th>{{ gettext("Song") }}</th>
@@ -20,7 +20,7 @@
 {% endfor %}
 </table>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}link_edit.png" alt="" />{{ gettext("Linkies") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}link_edit.png" alt="" />{{ gettext("Linkies") }}</h2>
 <table>
 <tr>
     <th>{{ gettext("Song") }}</th>

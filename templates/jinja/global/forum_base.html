@@ -7,7 +7,7 @@
 
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}user_comment.png" alt="" />{% block pagetitle %}Forum{% endblock %}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}user_comment.png" alt="" />{% block pagetitle %}Forum{% endblock %}</h2>
 <div id='djangoForumBreadcrumbs'><a href='{{ url("forum_index") }}'>Forums</a>{% block breadcrumbs %}{% endblock %}</div>
 {% block forumcontent %}{% endblock %}
 {% endblock %}

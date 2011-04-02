@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("Recent Song Approvals") }}{% endblock %}
 
 {% block main %}
- <h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />Recently Approved Songs</h2>
+ <h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />Recently Approved Songs</h2>
 <p>{{ gettext("Displaying the latest %(num)d uploaded songs", num=settings.UPLOADED_SONG_COUNT) }}:</p>
 
  <table class="recent-approvals">

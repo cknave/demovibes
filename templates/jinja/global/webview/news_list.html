@@ -4,25 +4,25 @@
 {% if object_list %}
 
 {% for news in object_list %}{% if news.status == "S" %}{# Sticky ones first! #}
- <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span></h2>
+ <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ STATIC_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span></h2>
  {{ news.text|linebreaks|bbcode }}
 {% endif %}{% endfor %}
 
 {% for news in object_list %}{% if news.status == "A" %}{# Then the rest. All active #}
  {# {% cache 600 "mainnews_a" news.id news.last_updated %} #}
- <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span> <span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
+ <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ STATIC_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span> <span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
  {{ news.text|linebreaks|bbcode }}
  {# {% endcache %} #}
 {% endif %}{% if user.is_authenticated() %}{% if news.status == "L" %}{# Then the rest. Logged in filter #}
  {# {% cache 600 "mainnews_l" news.id news.last_updated %} #}
- <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ MEDIA_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span> <span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
+ <h2><img class="icon_header" src="{% if news.icon %}{{ news.icon }}{% else %}{{ STATIC_URL }}newspaper.png{% endif %}" alt="" /><span class="headline"> {{ news.title }}</span> <span class="date">{{ news.added|date("P - F j, Y (T)") }}</span></h2>
  {{ news.text|linebreaks|bbcode }}
  {# {% endcache %} #}
 {% endif %}{% endif %}{% endfor %}
 
 
 {% else %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}newspaper.png" alt="" />{{ gettext("There Is No News!") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}newspaper.png" alt="" />{{ gettext("There Is No News!") }}</h2>
 <span>{{ gettext("No news here yet! You should take a trip to the admin interface and add some!") }}</span>
 {% endif %}
 {% endblock %}

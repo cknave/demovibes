@@ -3,7 +3,7 @@
 {% block title %}Site Links{% endblock %}
 
 {% block main %}
-{% load dv_extend %}<h2><img class="icon_header" src="/static/link.png" alt="" />Site Links</h2>
+{% load dv_extend %}<h2><img class="icon_header" src="{{ MEDIA_URL }}link.png" alt="" />Site Links</h2>
 As part of our ongoing discovery of musician/music related websites, we are pround to present this list of links for you to explore.
 {% if link_cats %}
  {% for cat in link_cats.all %}

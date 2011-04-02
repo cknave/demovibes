@@ -2,7 +2,7 @@
 <group id="{{ object.id }}">
     <name>{{object.name }}</name>
     {% if object.webpage %}<website>{{ object.webpage }}</website>{% endif %}
-    <group_logo>{% if object.group_logo %}{{ object.group_logo.url }}{% else %}/static/no_picture.png{% endif %}</group_logo>
+    <group_logo>{% if object.group_logo %}{{ object.group_logo.url }}{% else %}{{ MEDIA_URL }}no_picture.png{% endif %}</group_logo>
     {% if object.pouetid %}<pouet>{{ object.pouetid }}</pouet>{% endif %}
     {% if object.found_date %}<founding_date>{{ object.found_date|date:"F j, Y" }}</founding_date>{% endif %}
     {% if object.info %}<info>{{ object.info }}</info>{% endif %}

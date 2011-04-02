@@ -3,10 +3,10 @@
 {% block title %}Upload{% endblock %}
 
 {% block headblock %}
-<script type="text/javascript" src="{{ MEDIA_URL }}flash/upload/js/swfupload.js"></script> 
-<script type="text/javascript" src="{{ MEDIA_URL }}flash/upload/js/swfupload.swfobject.js"></script> 
-<script type="text/javascript" src="{{ MEDIA_URL }}flash/upload/js/fileprogress.js"></script> 
-<script type="text/javascript" src="{{ MEDIA_URL }}flash/upload/js/handlers.js"></script> 
+<script type="text/javascript" src="{{ STATIC_URL }}flash/upload/js/swfupload.js"></script> 
+<script type="text/javascript" src="{{ STATIC_URL }}flash/upload/js/swfupload.swfobject.js"></script> 
+<script type="text/javascript" src="{{ STATIC_URL }}flash/upload/js/fileprogress.js"></script> 
+<script type="text/javascript" src="{{ STATIC_URL }}flash/upload/js/handlers.js"></script> 
 <script type="text/javascript"> 
 		var swfu;
  
@@ -44,7 +44,7 @@
 				button_height: 22,
 				
 				// Flash Settings
-				flash_url : "{{ MEDIA_URL }}flash/upload/swfupload.swf",
+				flash_url : "{{ STATIC_URL }}flash/upload/swfupload.swf",
  
 				custom_settings : {
 					progress_target : "fsUploadProgress",

@@ -22,7 +22,7 @@
    {% if user.is_authenticated %}
     {% include "webview/t/songlist_span.html" %}
    {% else %}
-    <img class="song_head" src="/static/lock.png" title="Song Locked" />
+    <img class="song_head" src="{{ MEDIA_URL }}lock.png" title="Song Locked" />
    {% endif %}
   </span>
  </td>

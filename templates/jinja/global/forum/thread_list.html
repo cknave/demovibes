@@ -60,7 +60,7 @@ Pages : {% for p in page_range %}
 {% if page == p %}<b>{{ p }}</b>{% else %}<a href="{{ forum.get_absolute_url() }}/?page={{ p }}">{{ p }}</a> {% endif %}
 {% endfor %}
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}page_white_edit.png" alt="" />Start A New Forum Topic</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}page_white_edit.png" alt="" />Start A New Forum Topic</h2>
 {% if user.is_authenticated() %}
 <form method='post' action='.'>
 	<table id="newThread">

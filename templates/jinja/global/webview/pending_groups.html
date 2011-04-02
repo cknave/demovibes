@@ -3,14 +3,14 @@
 {% block title %}{{ gettext("Pending Group Approvals") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/group.png" alt="" />{{ gettext("Pending Group Approvals") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}group.png" alt="" />{{ gettext("Pending Group Approvals") }}</h2>
 <p>{{ gettext("The following groups have their status as 'Uploaded'. Moderators should verify the information for each entry to make sure it's ok.") }}</p>
 <br />
 {% for group in groups.all() %}
     <table>
     <tr>
     <td>
-    {% if group.group_logo %}<img class="group_logo" src="{{ group.group_logo.url }}" title="{{ group.name|e }}" alt="{{ group.name|e }}" />{% else %}<img class="group_logo" src="/static/no_picture.png" height="100" title="No Picture" alt="No Picture" />{% endif %}
+    {% if group.group_logo %}<img class="group_logo" src="{{ group.group_logo.url }}" title="{{ group.name|e }}" alt="{{ group.name|e }}" />{% else %}<img class="group_logo" src="{{ STATIC_URL }}no_picture.png" height="100" title="No Picture" alt="No Picture" />{% endif %}
     </td>
     <td>
     {{ gettext("Group") }}: {{ display.group(group) }}<br />
@@ -21,7 +21,7 @@
 
     {% if group.info %}<p><i>{{ group.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
 
-    <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=A"><img src="/static/thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=R"><img src="/static/thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
+    <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=A"><img src="{{ STATIC_URL }}thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newgroups") }}?group={{ group.id }}&amp;status=R"><img src="{{ STATIC_URL }}thumb_down.png" title="Reject" alt="Reject" /> {{ gettext("Reject") }}</a>
     </td>
     </tr>
     </table>

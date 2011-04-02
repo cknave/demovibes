@@ -1,9 +1,9 @@
 {% macro favorite(song, user) %}
     {% if user.is_authenticated() %}
         {% if song.is_favorite(user) %}
-            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="/static/heart_delete.png" title="Already Loved!" alt="Already a favorite" />
+            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Already Loved!" alt="Already a favorite" />
         {% else %}
-            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="/static/heart_add.png" title="Add As Fave" alt="Add as favorite"/></a>
+            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" alt="Add as favorite"/></a>
        {% endif %}
     {% endif %}
 {% endmacro %}
@@ -46,9 +46,9 @@
 
 {% macro songspan_noauth(song) %}
     {% if song.is_locked() %}
-        <img class="song_tail" src="/static/lock.png" title="Locked" alt="Locked"/>
+        <img class="song_tail" src="{{ STATIC_URL }}lock.png" title="Locked" alt="Locked"/>
     {% else %}
-        <a href="{{ url ("dv-add_queue", song.id) }}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="/static/add.png" title="Add To Queue" alt="Add to queue"/></a>
+        <a href="{{ url ("dv-add_queue", song.id) }}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="{{ STATIC_URL }}add.png" title="Add To Queue" alt="Add to queue"/></a>
     {% endif %}
 {% endmacro %}
 
@@ -56,7 +56,7 @@
     <span>{% if A.home_country %}
      {{ dv.flag(A.home_country) }}
     {% else %}
-     <img src="/static/user_green.png" alt="User" />
+     <img src="{{ STATIC_URL }}user_green.png" alt="User" />
     {% endif %}
     <a href="{{ A.get_absolute_url() }}"
      {% if A.alias_of -%}
@@ -70,13 +70,13 @@
      {%- if A.name %} ({{ A.name|e }}){% endif -%}
      </a>
      {%- if A.is_deceased -%}
-        <img src="/static/deceased.png" class="countryflag" alt="Deceased" title="Deceased {% if A.deceased_date %}[On {{ A.deceased_date }}]{% endif %}" />
+        <img src="{{ STATIC_URL }}deceased.png" class="countryflag" alt="Deceased" title="Deceased {% if A.deceased_date %}[On {{ A.deceased_date }}]{% endif %}" />
      {%- endif %}
     </span>
 {% endmacro %}
 
 {% macro compilation(C) -%}
-    <img alt="Compilation" class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="/static/recplay_ico.png"{% endif %} /> <a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
+    <img alt="Compilation" class="compilation_icon" {% if C.comp_icon %}src="{{ C.comp_icon.url }}"{% else %}src="{{ STATIC_URL }}recplay_ico.png"{% endif %} /> <a href="{{ C.get_absolute_url() }}">{{ C.name|e }}</a>
 {%- endmacro %}
 
 {% macro user(U) -%}
@@ -88,11 +88,11 @@
 {%- endmacro %}
 
 {% macro label(L) -%}
-    {% if L %}<img alt="Label" class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="/static/transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>{% endif %}
+    {% if L %}<img alt="Label" class="label_icon" {% if L.label_icon %}src="{{ L.label_icon.url }}"{% else %}src="{{ STATIC_URL }}transmit_blue.png"{% endif %} /><a href="{{ L.get_absolute_url() }}">{{ L.name|e }}</a>{% endif %}
 {%- endmacro %}
 
 {% macro group(G) -%}
-    {% if G %}<img alt="Group" class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="/static/group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>{% endif %}
+    {% if G %}<img alt="Group" class="group_icon" {% if G.group_icon %}src="{{ G.group_icon.url }}"{% else %}src="{{ STATIC_URL }}group.png"{% endif %} /><a href="{{ G.get_absolute_url() }}">{{ G.name|e }}</a>{% endif %}
 {% endmacro %}
 
 {% macro platform(P) -%}
@@ -129,7 +129,7 @@
              {% if ll.link.inputinfo %}
                 <td title="{{ ll.link.inputinfo }}">
                     <span class="formq">
-                        <img src="/static/question.gif" alt="?"/>
+                        <img src="{{ STATIC_URL }}question.gif" alt="?"/>
                     </span>
                 </td>
             {% endif %}
@@ -153,30 +153,30 @@
 
 {% macro songicons(S) -%}
     {% if S.get_metadata().pouetid -%}
-        <a href="http://www.pouet.net/prod.php?which={{ S.get_metadata().pouetid }}" target="_blank"><img alt="Pouet" class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+        <a href="http://www.pouet.net/prod.php?which={{ S.get_metadata().pouetid }}" target="_blank"><img alt="Pouet" class="song-resource" src="{{ STATIC_URL }}pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
 {%- endmacro %}
 
 {% macro songicons_old(S) -%}
     {% if S.pouetid -%}
-        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_blank"><img class="song-resource" src="/static/pouet-icon.gif" title="[Pouet Link]" /></a>
+        <a href="http://www.pouet.net/prod.php?which={{S.pouetid}}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}pouet-icon.gif" title="[Pouet Link]" /></a>
     {%- endif %}
     {% if S.dtv_id -%}
-        <a href="http://www.demoscene.tv/prod.php?id_prod={{ S.dtv_id }}" target="_blank"><img class="song-resource" src="/static/television.png" title="[Demoscene.TV Link]" /></a>
+        <a href="http://www.demoscene.tv/prod.php?id_prod={{ S.dtv_id }}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}television.png" title="[Demoscene.TV Link]" /></a>
     {% endif %}
     {% if S.hol_id %}
-        <a href="http://hol.abime.net/{{ S.hol_id }}" target="_blank"><img class="song-resource" src="/static/hol-icon.png" title="[Hall Of Light Link]" /></a>
+        <a href="http://hol.abime.net/{{ S.hol_id }}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}hol-icon.png" title="[Hall Of Light Link]" /></a>
     {% endif %}
     {% if S.al_id %}
         <a href="http://www.atarilegend.com/games/games_detail.php?game_id={{ S.al_id }}" target="_blank">
-            <img class="song-resource" src="/static/atari-icon.png" title="[Atari Legends Link]" />
+            <img class="song-resource" src="{{ STATIC_URL }}atari-icon.png" title="[Atari Legends Link]" />
         </a>
     {% endif %}
-    {% if S.wos_id %} <a href="http://www.worldofspectrum.org/infoseekid.cgi?id={{S.wos_id}}" target="_blank"><img class="song-resource" src="/static/wos-icon.png" title="[World of Spectrum Link]" /></a>{% endif %}
-    {% if S.zxdemo_id %} <a href="http://zxdemo.org/item.php?id={{S.zxdemo_id}}" target="_blank"><img class="song-resource" src="/static/zxdemo-icon.gif" title="[ZXDemo Link]" /></a>{% endif %}
-    {% if S.lemon_id %} <a href="http://www.lemon64.com/games/details.php?ID={{S.lemon_id}}" target="_blank"><img class="song-resource" src="/static/lemon64-icon.gif" title="[Lemon64 Link]" /></a>{% endif %}
-    {% if S.projecttwosix_id %} <a href="http://project2612.org/details.php?id={{S.projecttwosix_id}}" target="_blank"><img class="song-resource" src="/static/project2612-icon.png" title="[Project2612 Link]" /></a>{% endif %}
-    {% if S.hvsc_url %} <a href="{{ S.hvsc_url }}"><img class="song-resource" src="/static/sid-icon.gif" title="[SID File]" /></a>{% endif %}
+    {% if S.wos_id %} <a href="http://www.worldofspectrum.org/infoseekid.cgi?id={{S.wos_id}}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}wos-icon.png" title="[World of Spectrum Link]" /></a>{% endif %}
+    {% if S.zxdemo_id %} <a href="http://zxdemo.org/item.php?id={{S.zxdemo_id}}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}zxdemo-icon.gif" title="[ZXDemo Link]" /></a>{% endif %}
+    {% if S.lemon_id %} <a href="http://www.lemon64.com/games/details.php?ID={{S.lemon_id}}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}lemon64-icon.gif" title="[Lemon64 Link]" /></a>{% endif %}
+    {% if S.projecttwosix_id %} <a href="http://project2612.org/details.php?id={{S.projecttwosix_id}}" target="_blank"><img class="song-resource" src="{{ STATIC_URL }}project2612-icon.png" title="[Project2612 Link]" /></a>{% endif %}
+    {% if S.hvsc_url %} <a href="{{ S.hvsc_url }}"><img class="song-resource" src="{{ STATIC_URL }}sid-icon.gif" title="[SID File]" /></a>{% endif %}
 {%- endmacro %}
 
 {% macro labels(song) %}
@@ -193,10 +193,10 @@
     {%- endif -%}
     <a href="{{ song.get_absolute_url() }}">{{ song.title|e }}</a>
     {%- if song.explicit %}
-        <img class="text-link" alt="Explicit content" src="/static/explicit.gif" title="Contains Explicit Content!" />
+        <img class="text-link" alt="Explicit content" src="{{ STATIC_URL }}explicit.gif" title="Contains Explicit Content!" />
     {%- endif -%}
     {%- if song.has_video() %}
-        <img class="text-link" src="/static/MiniIcon-Video.jpg" alt="Have video" title="Video!" />
+        <img class="text-link" src="{{ STATIC_URL }}MiniIcon-Video.jpg" alt="Have video" title="Video!" />
     {%- endif -%}
     {%- endif -%}
 {%- endmacro %}
@@ -236,16 +236,16 @@
        {% if user.is_authenticated() %}
         {% if songy.is_locked() %}
          <span style="display:none">l</span>
-         <img class="song_tail" src="/static/lock.png" alt="Locked" title="Locked" />
+         <img class="song_tail" src="{{ STATIC_URL }}lock.png" alt="Locked" title="Locked" />
         {% else %}
          <span style="display:none">u</span>
          {% if user.is_authenticated() %}
           <a href="{{ url ("dv-add_queue", songy.id) }}" onclick="requestsong({{ songy.id }});return false;">
-          <img class="song_tail" src="/static/add.png" alt="Add To Queue" title="Add To Queue" /></a>
+          <img class="song_tail" src="{{ STATIC_URL }}add.png" alt="Add To Queue" title="Add To Queue" /></a>
          {% endif %}
         {% endif %}
        {% else %}
-        <img class="song_head" src="/static/lock.png" title="Song Locked" />
+        <img class="song_head" src="{{ STATIC_URL }}lock.png" title="Song Locked" />
        {% endif %}
       </span>
      </td>

@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("All Licenses") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/transmit_blue.png" alt="" />{{ gettext("Licenses") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}transmit_blue.png" alt="" />{{ gettext("Licenses") }}</h2>
 
 {% set objs, paging = dv.paginate(licenses) %}
 <table>

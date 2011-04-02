@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("My Favourite Songs") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}heart.png" alt="" />{{ gettext("My Favourite Songs") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}heart.png" alt="" />{{ gettext("My Favourite Songs") }}</h2>
 
 {% include "webview/t/songheader.html" %}
 
@@ -12,7 +12,7 @@
  {% include "webview/t/songlist.html" %}
  <td>
   <a href="{{ url ("dv-del_fav", song.id) }}">
-   <img class="song_tail" src="{{ MEDIA_URL }}heart_delete.png" alt="Remove From Favorites" title="Remove From Favorites" />
+   <img class="song_tail" src="{{ STATIC_URL }}heart_delete.png" alt="Remove From Favorites" title="Remove From Favorites" />
   </a>
  </td>
 </tr>

@@ -9,7 +9,7 @@
 {% set meta = object.get_metadata() %}
 
 <h2>
- <img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ gettext("Song Information") }}
+ <img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Song Information") }}
 {% if user.is_staff %}
  [<a href="/admin/webview/song/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]
 {% endif %}
@@ -93,7 +93,7 @@ Author:
 {% if user.is_authenticated() %}
   <p>
  {% if object.is_locked() %}
-  <img class="song_head" src="/static/lock.png" title="Song Locked" />
+  <img class="song_head" src="{{ STATIC_URL }}lock.png" title="Song Locked" />
   <i>
    {{ gettext("Song is currently locked for queuing.") }}
    {% if object.locked_until and object.is_active() %}
@@ -101,12 +101,12 @@ Author:
    {% endif %}
   </i>
  {% else %}
-  <img class="song_head" src="{{ MEDIA_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url() }}queue/">{{ gettext("Add To Queue") }}</a>
+  <img class="song_head" src="{{ STATIC_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url() }}queue/">{{ gettext("Add To Queue") }}</a>
  {% endif %}<br />
  {% if object.is_favorite(user) %}
-  <img class="song_head" src="{{ MEDIA_URL }}heart.png" title="Already Loved!" /> <span>{{ gettext("Already In Your Favourites List!") }}</span>
+  <img class="song_head" src="{{ STATIC_URL }}heart.png" title="Already Loved!" /> <span>{{ gettext("Already In Your Favourites List!") }}</span>
  {% else %}
-  <img class="song_head" src="{{ MEDIA_URL }}heart_add.png" title="Add To Faves" /> <a href="{{ url ("dv-add_fav", object.id) }}">{{ gettext("Add To Favorites") }}</a>
+  <img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add To Faves" /> <a href="{{ url ("dv-add_fav", object.id) }}">{{ gettext("Add To Favorites") }}</a>
  {% endif %}
  </p>
 {% endif %}
@@ -134,7 +134,7 @@ Author:
 
 {% endcache %}
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}star.png" alt="" />{{ gettext("Song Rating") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}star.png" alt="" />{{ gettext("Song Rating") }}</h2>
 {% if object.rating_votes %}
   {{ gettext("Song Rating") }}: {{ object.rating|floatformat }} - {{ gettext("Votes Placed") }}: {{ object.rating_votes }} <a href="{{ object.get_absolute_url() }}votes/">{{ gettext("View Voting History") }}</a><br />
 {% else %}
@@ -156,7 +156,7 @@ Author:
 
 {{ gettext("A total of %(num)d users have this song on their favourites list.", num=object.num_favorited) }}<br />
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ gettext("Compilation / Remix Information") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Compilation / Remix Information") }}</h2>
 
 {% if meta.remix_of_id %}{{ gettext("This song is a remix of") }}: {{ dv.get_song_queue_tag(meta.remix_of_id) }}<br />{% endif %}
 
@@ -174,14 +174,14 @@ Author:
 {% for mix in remix %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}link_edit.png" alt="" />{{ gettext("Song Corrections &amp; Updates") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}link_edit.png" alt="" />{{ gettext("Song Corrections &amp; Updates") }}</h2>
 <p><a href="{{ url ("dv-song-edit", object.id) }}">[{{ gettext("Edit Information") }}]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[{{ gettext("Add Links") }}]</a>
 {% if user.is_staff %}
  - <a href="{{ url ("dv-song-infolist", object.id) }}">[{{ gettext("View Change History") }}]</a>
 {% endif %}
 </p>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}comment.png" alt="" />{{ gettext("User Comments") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}comment.png" alt="" />{{ gettext("User Comments") }}</h2>
 
 <p>
 

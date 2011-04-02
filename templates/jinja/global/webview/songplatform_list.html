@@ -6,7 +6,7 @@
 
 {% set objs, paging = dv.paginate(object_list, 300) %}
 
-<h2><img class="icon_header" src="/static/sound.png" alt="" />{{ gettext("Song Platforms") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}sound.png" alt="" />{{ gettext("Song Platforms") }}</h2>
 {% for p in objs %}
  {% if p.get_songs().count() != 0 %}
   {{ display.platform(p) }} ({{ p.get_songs().count() }} {{ gettext("Songs") }})<br />

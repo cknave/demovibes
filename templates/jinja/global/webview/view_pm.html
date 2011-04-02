@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("Read Private Message") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}newspaper.png" alt="" />{{ gettext("Read Private Message") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}newspaper.png" alt="" />{{ gettext("Read Private Message") }}</h2>
 
     <div class="pm_content">
     <span>{{ gettext("Message From") }}: {% set U = pm.sender %}{% include "webview/t/user.html" %}<br/></span>

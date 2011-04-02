@@ -3,7 +3,7 @@
 {% block title %}Upload New Song{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="/static/sound.png" alt="" />Upload A New Song</h2>
+<h2><img class="icon_header" src="{{ MEDIA_URL }}sound.png" alt="" />Upload A New Song</h2>
 <p>Use this form to upload a new song to the database. All uploads are checked by a moderator before being approved. Please try to fill in as much information as you can about the entry to make the job easier on the moderators.</p>
 
 {% include "webview/upload_instructions.html" %}

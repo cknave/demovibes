@@ -5,7 +5,7 @@
 {% block title %}{{ meta.song|e }} - {{ gettext("Meta info") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}tick.png" alt="" />{{ gettext("Correction Status") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}tick.png" alt="" />{{ gettext("Correction Status") }}</h2>
 <table>
     <tr>
         <th>{{ gettext("Song") }}</th>
@@ -33,7 +33,7 @@
     </tr>
 </table>
 
-<h2><img class="icon_header" src="{{ MEDIA_URL }}sound.png" alt="" />{{ gettext("Song Information") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}sound.png" alt="" />{{ gettext("Song Information") }}</h2>
 <table>
     <tr>
         <th>{{ gettext("Artists") }}</th>
@@ -76,7 +76,7 @@
         <td>{% if meta.ytvidid %}<a href="http://www.youtube.com/watch?v={{ meta.ytvidid }}" target="_blank">{{ meta.ytvidid }}</a> - {{ gettext("Offset") }}: {{ meta.ytvidoffset }}{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>
 </table>
-<h2><img class="icon_header" src="{{ MEDIA_URL }}explicit.gif" alt="" />{{ gettext("Respond To Change") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}explicit.gif" alt="" />{{ gettext("Respond To Change") }}</h2>
 {% if meta.comment %}{{ gettext("Note from user") }}:
  <div id="metainfo">{{ meta.comment|linebreaks }}</div>
 {% endif %}

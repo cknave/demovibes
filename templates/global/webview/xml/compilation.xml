@@ -3,7 +3,7 @@
     <title>{{ object.name }}</title>
     <status v="{{ object.status }}">{{ object.get_status_display }}</status>
     {% if object.label %}<label>{{ object.label }}</label>{% endif %}
-    <cover_art>{% if object.cover_art %}{{ object.cover_art.url }}{% else %}/static/no_picture.png{% endif %}</cover_art>
+    <cover_art>{% if object.cover_art %}{{ object.cover_art.url }}{% else %}{{ MEDIA_URL }}no_picture.png{% endif %}</cover_art>
     {% if object.details_page %}<details_link>{{ object.details_page }}</details_link>{% endif %}
     {% if object.purchase_page %} <purchase_link>{{ object.purchase_page }}</purchase_link>{% endif %}
     {% if object.youtube_link %}<youtube_link>{{ object.youtube_link }}</youtube_link>{% endif %}

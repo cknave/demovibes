@@ -1,1 +1,1 @@
-<img src="/static/group.png" title="Group" alt="Group"/> <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+<img src="{{ MEDIA_URL }}group.png" title="Group" alt="Group"/> <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>

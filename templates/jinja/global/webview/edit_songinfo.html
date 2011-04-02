@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("Edit songinfo") }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ MEDIA_URL }}script.png" alt="" />{{ gettext("Edit Metadata For") }} {{ song }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}script.png" alt="" />{{ gettext("Edit Metadata For") }} {{ song }}</h2>
 <p>{{ gettext("Edit song info for the song") }} <a href="{{ song.get_absolute_url() }}">{{ song }}</a></p>
 
 <p>{{ gettext("The information here will be submitted, but won't be active until a moderator has checked and approved it.") }}</p>

@@ -6,8 +6,8 @@
 
 {% block headblock %}
 
-  <link rel="stylesheet" href="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.css" type="text/css" />
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/jquery/autocomplete/jquery.autocomplete.css" type="text/css" />
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
   <script>
   $(document).ready(function(){
     $("#tagfield").autocomplete("{{ url("dv-ax-taglist") }}",
