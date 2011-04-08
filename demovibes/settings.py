@@ -154,6 +154,14 @@ MAX_GROUP_AVATAR_WIDTH = 250
 # Max internal length of the oneliner, in characters
 MAX_ONELINER_LENGTH = 256
 
+# In the updates page, you can limit the number of entries displayed for each category by
+# Adjusting these values accordingly.
+RECENT_ARTIST_VIEW_LIMIT  = 20
+RECENT_SONG_VIEW_LIMIT    = 20
+RECENT_LABEL_VIEW_LIMIT   = 20
+RECENT_GROUP_VIEW_LIMIT   = 20
+RECENT_COMP_VIEW_LIMIT    = 20
+
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True

@@ -859,6 +859,28 @@ def activate_upload(request):
             )
     songs = Song.objects.filter(status = "U").order_by('added')
     return j2shim.r2r('webview/uploaded_songs.html', {'songs' : songs}, request=request)
+    
+
+def showRecentChanges(request):
+    # Get some default stat values
+    artist_limit = getattr(settings, 'RECENT_ARTIST_VIEW_LIMIT', 20)
+    song_limit = getattr(settings, 'RECENT_SONG_VIEW_LIMIT', 20)
+    label_limit = getattr(settings, 'RECENT_LABEL_VIEW_LIMIT', 20)
+    group_limit = getattr(settings, 'RECENT_GROUP_VIEW_LIMIT', 20)
+    comp_limit = getattr(settings, 'RECENT_COMP_VIEW_LIMIT', 20)
+    
+    # Make a list of stuff needed for the stats page
+    songlist = Song.objects.order_by('-last_changed')[:song_limit]
+    artistlist = Artist.objects.order_by('-last_updated')[:artist_limit]
+    labellist = Label.objects.order_by('-last_updated')[:label_limit]
+    grouplist = Group.objects.order_by('-last_updated')[:group_limit]
+    complist = Compilation.objects.order_by('-last_updated')[:comp_limit]
+    
+    # And now return this as a template. default page cache is 5 minutes, which is ample enough
+    # To show real changes, without stressing out the SQL loads
+    return j2shim.r2r('webview/recent_changes.html', {'songs' : songlist, 'artists' : artistlist, 'groups' : grouplist, 
+      'labels' : labellist, 'compilations' : complist}, request=request)
+    
 
 class songStatistics(WebView):
     template = "stat_songs.html"

@@ -271,6 +271,7 @@ h3
 #artists	{background-image: url("/static/user_green.png");}
 #compilations   {background-image: url("/static/recplay_ico.png");}
 #recent	        {background-image: url("/static/new.png");}
+#recentchanges  {background-image: url("/static/page_white_edit.png");}
 #menuqueue	{background-image: url("/static/script.png");}
 #search		{background-image: url("/static/find.png");}
 #forum		{background-image: url("/static/user_comment.png");}

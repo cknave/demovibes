@@ -1,0 +1,35 @@
+{% extends "base/base.html" %}
+{% block title %}Most Recent Site Changes{% endblock %}
+
+{% block main %}
+{% cache 300 "recent_changes" %}{% if artists %}<h2><img class="icon_header" src="{{ MEDIA_URL }}user_green.png" alt="" />{{ artists|count }} Most Recently Updated Artists</h2>
+{% for A in artists %}
+{% include "webview/t/artist.html" %}<br />
+{% endfor %}{% endif %}
+
+{% if groups %}<h2><img class="icon_header" src="{{ MEDIA_URL }}group.png" alt="" />{{ groups|count }} Most Recently Updated Groups</h2>
+{% for G in groups %}
+{% include "webview/t/group.html" %}<br />
+{% endfor %}{% endif %}
+
+{% if labels %}<h2><img class="icon_header" src="{{ MEDIA_URL }}transmit_blue.png" alt="" />{{ labels|count }} Most Recently Updated Labels</h2>
+{% for L in labels %}
+{% include "webview/t/label.html" %}<br />
+{% endfor %}{% endif %}
+
+{% if compilations %}<h2><img class="icon_header" src="{{ MEDIA_URL }}recplay_ico.png" alt="" />{{ compilations|count }} Most Recently Updated Compilations</h2>
+{% for C in compilations %}
+{% include "webview/t/compilation.html" %}<br />
+{% endfor %}{% endif %}
+
+{% if songs %}<h2><img class="icon_header" src="{{ MEDIA_URL }}music.png" alt="" />{{ songs|count }} Most Recently Updated Songs</h2>
+{% include "webview/t/songheader.html" %}
+{% for song in songs %}
+ <tr class="row">
+{% include "webview/t/songlist.html" %}
+ </tr>
+{% endfor %}
+</table>{% endif %}
+{% endcache %}
+
+{% endblock %}

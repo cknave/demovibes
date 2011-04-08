@@ -152,6 +152,9 @@ urlpatterns = patterns('',
 
     url(r'^statistics/$',                           views.songStatistics(), name = "dv-stats-index"),
     url(r'^statistics/(?P<stattype>\w+)/$',         views.songStatistics(), name = "dv-stats"),
+    
+    # Updated Information, such as groups, labels etc.
+    url(r'^updates/$',					'demovibes.webview.views.showRecentChanges', name = "dv-updates"),
 
     url(r'^artists/$',                             views.ListArtists(), name = "dv-artists"),
     url(r'^artists/(?P<letter>.)/$',               views.ListArtists(), name = "dv-artists_letter"),
