@@ -16,6 +16,7 @@
  {% if meta.pouetid %}<pouetid>{{ meta.pouetid }}</pouetid>{% endif %}
  {% if meta.ytvidid %}<ytid>{{ meta.ytvidid }}</ytid>{% endif %}
  {% if meta.ytvidoffset %}<ytoffset>{{ meta.ytvidoffset }}</ytoffset>{% endif %}
+ {% if meta.license %}<license id="{{ meta.license.id }}">{{ meta.license }}</license>{% endif %}
  <artists>
   {% for artist in meta.artists.all %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
  </artists>
@@ -25,5 +26,13 @@
  {% if meta.labels.all|length > 0 %}<labels>
   {% for label in meta.labels.all %}<label id="{{ label.id }}">{{ label.name }}</label>{% endfor %}
  </labels>{% endif %}
+ <tags>{% for tag in song.tags %}
+  <tag>{{ tag.name }}</tag>
+ {% endfor %}</tags>
+ <links>
+ {% for link in song.links %}
+  <link type="{{ link.link.id }}">{{ link.get_link }}</link>
+ {% endfor %}
+ </links>
 </song>
 {% endwith %}

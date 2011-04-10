@@ -66,7 +66,7 @@
          title="Aliases : {% for alias in A.aliases.all() %}{{ alias.handle|e }} {% endfor %}"
        {%- endif -%}
      {% endif %}>
-     {{- A.handle|e }}
+     {{ A.handle|e }}
      {%- if A.name %} ({{ A.name|e }}){% endif -%}
      </a>
      {%- if A.is_deceased -%}

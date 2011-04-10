@@ -756,7 +756,7 @@ class Song(models.Model):
     samplerate = models.IntegerField(blank = True, null = True)
     song_length = models.IntegerField(blank = True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
-    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A')
+    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index=True)
     times_played = models.IntegerField(null = True, default = 0)
     title = models.CharField(verbose_name="* Song Name", help_text="The name of this song, as it should appear in the database", max_length=80, db_index = True)
     type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source') #a

@@ -21,6 +21,7 @@
 <tr><td><a href="edit_song_data.tc">EditSongData</a></td></tr>
 <tr><td><a href="song_voting.tc">SongVoting</a></td></tr>
 <tr><td><a href="forum.tc">Forum</a></td></tr>
+<tr><td><a href="song_comments.tc">SongComment</a></td></tr>
 <tr><td><a href="statistics.tc">Statistics</a></td></tr>
 <tr><td><a href="log_out.tc">Log out</a></td></tr>
 <tr><td><a href="relogin_admin.tc">Login Admin</a></td></tr>

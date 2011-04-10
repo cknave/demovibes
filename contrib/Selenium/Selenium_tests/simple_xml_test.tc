@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//playlist</td>
+	<td>//playlist/now/entry</td>
 	<td></td>
 </tr>
 <tr>
@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//song[@id='1']</td>
+	<td>//song[@id='1']/title</td>
 	<td></td>
 </tr>
 <tr>
@@ -38,17 +38,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//oneliner</td>
-	<td></td>
-</tr>
-<tr>
-	<td>open</td>
-	<td>/demovibes/xml/user/terra/</td>
-	<td></td>
-</tr>
-<tr>
-	<td>verifyElementPresent</td>
-	<td>//user</td>
+	<td>//oneliner/entry/message</td>
 	<td></td>
 </tr>
 <tr>
@@ -58,7 +48,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//online</td>
+	<td>//online/count</td>
 	<td></td>
 </tr>
 <tr>
@@ -78,7 +68,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//artist[@id='1']</td>
+	<td>//artist[@id='1']/handle</td>
 	<td></td>
 </tr>
 <tr>
@@ -88,7 +78,7 @@
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//comp[@id='1']</td>
+	<td>//comp[@id='1']/status</td>
 	<td></td>
 </tr>
 <tr>
@@ -101,7 +91,51 @@
 	<td>//group[@id='1']</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>open</td>
+	<td>/demovibes/xml/user/terra/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//user/extra/group</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/demovibes/xml/user/terra/favorites/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//favorites/song</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/demovibes/xml/user/test/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//user/avatar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//user/extra/hidden</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/demovibes/xml/user/test/favorites/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//favorites/hidden</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

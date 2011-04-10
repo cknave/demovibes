@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{% set meta = song.get_metadata() %}
+<song id="{{ song.id }}">
+ <title>{{ song.title }}</title>
+ <status v="{{ song.status }}">{{ song.get_status_display() }}</status>
+ <bitrate>{{ song.bitrate }}</bitrate>
+ <samplerate>{{ song.samplerate }}</samplerate>
+ <rating votes="{{ song.rating_votes }}">{{ song.rating }}</rating>
+ {% if meta.info %}<info>{{ meta.info }}</info>{% endif %}
+ <songlength>{{ song.song_length }}</songlength>
+ <locked>{{ song.is_locked() }}</locked>
+ <locked_until>{{ song.locked_until }}</locked_until>
+ <lastplayed>{{ song.last_queued() }}</lastplayed>
+ {% if meta.platform %}<platform id="{{ meta.platform.id }}">{{ meta.platform }}</platform>{% endif %}
+ {% if meta.type %}<type id="{{ meta.type.id }}">{{ meta.type }}</type>{% endif %}
+ {% if meta.pouetid %}<pouetid>{{ meta.pouetid }}</pouetid>{% endif %}
+ {% if meta.ytvidid %}<ytid>{{ meta.ytvidid }}</ytid>{% endif %}
+ {% if meta.ytvidoffset %}<ytoffset>{{ meta.ytvidoffset }}</ytoffset>{% endif %}
+ {% if meta.license %}<license id="{{ meta.license.id }}">{{ meta.license }}</license>{% endif %}
+ <artists>
+  {% for artist in meta.artists.all() %}<artist id="{{ artist.id }}">{{ artist.handle }}</artist>{% endfor %}
+ </artists>
+ {% if meta.groups.all()|length > 0 %}<groups>
+  {% for group in meta.groups.all() %}<group id="{{ group.id }}">{{ group.name }}</group>{% endfor %}
+ </groups>{% endif %}
+ {% if meta.labels.all()|length > 0 %}<labels>
+  {% for label in meta.labels.all() %}<label id="{{ label.id }}">{{ label.name }}</label>{% endfor %}
+ </labels>{% endif %}
+ <tags>{% for tag in song.tags %}
+  <tag>{{ tag.name }}</tag>
+  {% endfor %}
+ </tags>
+ <links>
+ {% for link in song.get_active_links() %}
+  <link>
+    <url>{{ link.get_link() }}</url>
+    <comment>{{ link.comment }}</comment>
+    <type id="{{ link.link.id }}">
+        <name>{{ link.link.name }}</name>
+        <icon>{% if link.link.icon %}{{ link.link.icon.url() }}{% endif %}</icon>
+    </type>
+  </link>
+ {% endfor %}
+ </links>
+</song>

@@ -1132,13 +1132,9 @@ def oneliner_mediaparse(value):
     """
     medialinks = [
         # YouTube auto scraping
-        (r'http://www.youtube.com/watch/v=([\w&;=-]+)', r'[yt]\1[/yt]'),
-        (r'http://youtube.com/watch?v=([\w&;=-]+)', r'[yt]\1[/yt]'),
-        (r'http://www.youtube.com/watch\?v=([\w&;=-]+)', r'[yt]\1[/yt]'),
-        (r'http://www.youtube.com/v/([\w&;=-]+)', r'[yt]\1[/yt]'),
-
+        (r'(^|\s)https?://(www\.|)youtube.com/(watch/?\?v=|v/)([\w&;=#-]+)', r'[yt]\4[/yt]'),
         # Google Video Scraping
-        (r'http://video.google.com/videoplay\?docid=([\w&;=-]+)', r'[gv]\1[/gv]'),
+        (r'(^|\s)http://video.google.com/videoplay\?docid=([\w&;=-]+)', r'[gv]\2[/gv]'),
     ]
 
     for mset in medialinks:

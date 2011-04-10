@@ -1,5 +1,5 @@
-<entry request_time="{{ entry.requested }}">
-   {% for artist in entry.song.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country|safe }}">{{ artist.handle }}</artist>{% endfor %}
+{% with entry.song.get_metadata as sd %}<entry request_time="{{ entry.requested }}">
+   {% for artist in sd.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country|safe }}">{{ artist.handle }}</artist>{% endfor %}
    <song id="{{ entry.song.id }}" length="{{ entry.song.length }}">{{ entry.song.title }}</song>
    <requester flag="{{ entry.requested_by.get_profile.country|safe }}">{{ entry.requested_by }}</requester>
-  </entry>
+  </entry>{% endwith %}

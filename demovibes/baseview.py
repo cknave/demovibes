@@ -189,20 +189,23 @@ class BaseView(object):
         if self.cache_hash_key:
             key = hashlib.md5(key).hexdigest()
         if not self.cache_output:
+            self.log.debug("Updating cached context")
             self.update_cached_context(key)
         else:
+            self.log.debug("Returning cached output")
             return self.render_cached(key)
+
+    def render_cached(self, key):
+        return self.fetch_cache(key, self.render)
 
     def fetch_cache(self, key, function):
         data = cache.get(key)
         if data == None:
+            self.log.debug("Generating new output cache")
             time = self.get_cache_duration()
             data = function()
             cache.set(key, data, time)
         return data
-
-    def render_cached(self, key):
-        return self.fetch_cache(key, self.render)
 
     def update_cached_context(self, key):
         if key and hasattr(self, "set_cached_context"):

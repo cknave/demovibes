@@ -76,7 +76,7 @@ Author:
 </p>
 
 {% if meta.info %}
-<br />{{ gettext("Additional Information") }}:<br /><i>{{ meta.info|urlize|bbcode|linebreaks }}</i>
+<br />{{ gettext("Additional Information") }}:<br /><i>{{ meta.info|urlize|linebreaks|bbcode }}</i>
 {% endif %}
 
 {% endcache %}
