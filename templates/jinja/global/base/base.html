@@ -32,9 +32,7 @@
         <br />
         <h3>{{ gettext("Infamous OneLiner") }}</h3>
         {% if user.is_authenticated() %}
-        <form action="{{ url ("dv-oneliner_submit") }}" method="post" enctype="application/x-www-form-urlencoded"  onsubmit="apf('{{ url ("dv-ax-oneliner_submit") }}',this); this.Line.value = ''; return false;" >
-            <input id="blah" name="Line" autocomplete="off" maxlength="256" onkeydown="return tc(this,event.keyCode);" onkeypress="return canceltab(event.keyCode);" value="{{ gettext("GURU MEDITATION") }}" onfocus="if (this.value == '{{ gettext("GURU MEDITATION") }}') { this.value=''; }" /><input id="makeitso" type="submit" value="" />
-        </form>
+	{% include "webview/oneliner_form.html" %}
         {% endif %}
         {{ dv.get_oneliner() }}
         <a href="{{ url ("dv-oneliner") }}">{{ gettext("Oneliner History") }}</a>
