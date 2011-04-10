@@ -870,7 +870,7 @@ def showRecentChanges(request):
     comp_limit = getattr(settings, 'RECENT_COMP_VIEW_LIMIT', 20)
     
     # Make a list of stuff needed for the stats page
-    songlist = Song.objects.order_by('-last_changed')[:song_limit]
+    songlist = Song.objects.order_by('-songmetadata__added')[:song_limit]
     artistlist = Artist.objects.order_by('-last_updated')[:artist_limit]
     labellist = Label.objects.order_by('-last_updated')[:label_limit]
     grouplist = Group.objects.order_by('-last_updated')[:group_limit]
