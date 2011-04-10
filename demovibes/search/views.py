@@ -69,8 +69,9 @@ class SearchView(MyBaseView):
             q = self.form.cleaned_data['q']
             if q:
                 sqs = self.form.search()
-                sugg = sqs.spelling_suggestion().decode("utf8")
+                sugg = sqs.spelling_suggestion()
                 if sugg:
+                    sugg = sugg.decode("utf8")
                     sugg = sugg.split(" ")[0]
                 test = SearchQuerySet().filter(content=sugg).models(*self.form.get_models())
                 if not test:
@@ -106,8 +107,9 @@ class AjaxSearch(MyBaseView):
 
     def query(self, model, keyname="results"):
         results = SearchQuerySet().auto_query(self.q).models(self.model).load_all()
+        results = results[self.start:self.start + self.num]
         self.context['count'] = len(results)
-        results = [self.make_info(s.object) for s in results[self.start:self.num]]
+        results = [self.make_info(s.object) for s in results]
         if not results:
             self.set_error("No results found")
             return {}
@@ -127,6 +129,7 @@ class GroupAjax(AjaxSearch):
 
 class ArtistAjax(AjaxSearch):
     model = wm.Artist
+
     def make_info(self, artist):
         groups = [{'name':x.name,'id': x.id} for x in artist.groups.all()]
         data = {'handle': artist.handle, 'id':artist.id, 'url': artist.get_absolute_url(), 'name': artist.name}
@@ -141,8 +144,14 @@ class SongAjax(AjaxSearch):
     idlist = re.compile(r'^(\d+,)+\d+$')
     model = wm.Song
 
+    def make_artists(self, song):
+        r = []
+        for x in song.get_metadata().artists.all():
+            r.append({'id': x.id, 'handle': x.handle, 'url': x.get_absolute_url() })
+        return r
+
     def make_info(self, song):
-        return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.song_length}
+        return {"title": song.title, "artists": self.make_artists(song), "id": song.id, "url": song.get_absolute_url(), "songlength": song.song_length}
 
     def get_songs_from_list(self, songs):
         return [self.make_info(wm.Song.objects.get(id=s)) for s in songs]
@@ -175,3 +184,9 @@ class SongAjax(AjaxSearch):
             'songs': songs,
             'count': count,
         }
+
+
+class SongAjax2(SongAjax):
+
+    def set_context(self):
+        return self.query(wm.Song, "songs")
