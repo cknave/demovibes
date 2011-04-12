@@ -15,7 +15,7 @@
  {% if sqs %}
   {% set objs, paging = dv.paginate(sqs) %}
   {% for r in objs %}
-   <p class="search-result">{{ r.render }}</p>
+   <p class="search-result">{{ r.render|replace("[MEDIA_URL]", STATIC_URL) }}</p>
   {% endfor %}
 
   {{ paging }}
