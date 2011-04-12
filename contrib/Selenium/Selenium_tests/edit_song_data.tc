@@ -44,7 +44,7 @@
 <tr>
 	<td>type</td>
 	<td>id_info</td>
-	<td>MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!</td>
+	<td>MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO! &lt;grin&gt; &amp; lulz</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -53,10 +53,9 @@
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Song Information </td>
+	<td>Song Information</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

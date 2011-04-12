@@ -23,12 +23,12 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/demovibes/xml/song/1/</td>
+	<td>/demovibes/xml/song/2/</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyElementPresent</td>
-	<td>//song[@id='1']/title</td>
+	<td>//song[@id='2']/title</td>
 	<td></td>
 </tr>
 <tr>

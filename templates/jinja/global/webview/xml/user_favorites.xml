@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <favorites>
     {% if full_info %}
-        {% for fav in target_user.favorite_set.all() %}<song id="{{ fav.song.id }}" locked="{{ fav.song.is_locked() }}">{{ fav.song.title }}</song>{% endfor %}
+        {% for fav in target_user.favorite_set.all() %}<song id="{{ fav.song.id }}" locked="{{ fav.song.is_locked() }}">{{ fav.song.title|e }}</song>{% endfor %}
     {% else %}
         <hidden/>
     {% endif %}

@@ -107,8 +107,9 @@ class AjaxSearch(MyBaseView):
 
     def query(self, model, keyname="results"):
         results = SearchQuerySet().auto_query(self.q).models(self.model).load_all()
+        self.context['total'] = len(results)
         results = results[self.start:self.start + self.num]
-        self.context['count'] = len(results)
+        self.context['returned'] = len(results)
         results = [self.make_info(s.object) for s in results]
         if not results:
             self.set_error("No results found")
