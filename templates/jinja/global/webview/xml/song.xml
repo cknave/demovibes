@@ -33,7 +33,7 @@
  <links>
  {% for link in song.get_active_links() %}
   <link>
-    <url>{{ link.get_link() }}</url>
+    <url>{{ link.get_link()|e }}</url>
     <comment>{{ link.comment|e }}</comment>
     <type id="{{ link.link.id }}">
         <name>{{ link.link.name|e }}</name>
