@@ -37,7 +37,7 @@
     <comment>{{ link.comment|e }}</comment>
     <type id="{{ link.link.id }}">
         <name>{{ link.link.name|e }}</name>
-        <icon>{% if link.link.icon %}{{ link.link.icon.url()|e }}{% endif %}</icon>
+        <icon>{% if link.link.icon %}{{ link.link.icon.url|e }}{% endif %}</icon>
     </type>
   </link>
  {% endfor %}
