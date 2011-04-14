@@ -65,7 +65,7 @@ Date Of Death: {{ object.deceased_date|date("F j, Y") }}<br />
 
 {% if object.info %}
 <br />{{ gettext("Additional Information") }}:<br />
-<p><i>{{ object.info|urlize|bbcode|linebreaks }}</i></p>
+<p><i>{{ object.info|urlize|linebreaks|bbcode }}</i></p>
 {% endif %}<br />
 
 {% if object.webpage %}
