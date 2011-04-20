@@ -7,4 +7,5 @@
      {{ display.user(U.user) }}{% if loop.last %} {% else %}, {% endif %}
     {% endfor %}
  </div>
+{% if newuser %}<br /><div id="newestuser" class="newestuser">Our Newest User: {{ display.user(newuser) }}</div>{% endif %}
 {% endif %}

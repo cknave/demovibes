@@ -423,6 +423,14 @@ class Userprofile(models.Model):
         """
         countlist = SongVote.objects.filter(user=self.user)
         return len(countlist);
+        
+    def get_uploadcount(self):
+	countlist = Song.objects.filter(uploader=self.user)
+        return len(countlist);
+        
+    def get_onelinercount(self):
+	countlist = Oneliner.objects.filter(user=self.user)
+        return len(countlist);
 
     @models.permalink
     def get_absolute_url(self):

@@ -824,3 +824,30 @@ table.songlist tr.row2 td {
 	-moz-border-radius: 10px;       /* for Firefox */
 	display: none; /* keeps the popup hidden if no JS available */
 } 
+
+table.recentchanges {
+	vertical-align:text-top;
+	/*border-collapse: collapse;*/
+	border-spacing: 2px;
+	width: 90%;
+}
+
+table.recentchanges td {
+	vertical-align:text-top;
+	padding: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.recent_icon_header
+{
+	padding: 1ex;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	vertical-align: middle;
+	margin: 0;
+	border: 0;
+	background-image: url("glow.png");
+	background-repeat: no-repeat;
+	background-position: center center;
+}

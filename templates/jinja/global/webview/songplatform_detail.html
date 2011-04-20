@@ -3,7 +3,7 @@
 {% block title %}{{ gettext("Platform") }} {{ object.title }}{% endblock %}
 
 {% block main %}
-<h2><img class="icon_header" src="{{ STATIC_URL }}script.png" alt="" />Platform - {{ object.title|e }}</h2>
+<h2>{% if object.symbol %}<img class="icon_header" src="{{ object.symbol.url }}" alt="[{{ object.title|e }}]" />{% else %}<img class="icon_header" src="{{ STATIC_URL }}script.png" alt="" />{% endif %}Platform - {{ object.title|e }}</h2>
 {% if object.image %}<img src="{{ object.image.url }}" title="Screenshot For {{ object.title|e }}" alt="Screenshot For {{ object.title|e }}" />{% endif %}
 {{object.description|urlize|linebreaks}}
 
