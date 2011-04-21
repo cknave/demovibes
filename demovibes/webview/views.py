@@ -820,6 +820,7 @@ def activate_upload(request):
         songid = int(request.GET['song'])
         status = request.GET['status']
         song = Song.objects.get(id=songid)
+        url = Site.objects.get_current()
 
         if status == 'A':
             stat = "Accepted"
@@ -834,8 +835,10 @@ def activate_upload(request):
         mail_tpl = loader.get_template('webview/email/song_approval.txt')
         c = Context({
                 'songid' : songid,
+                'song' : song,
                 'site' : Site.objects.get_current(),
                 'stat' : stat,
+                'url' : url,
         })
         song.save()
 
@@ -1036,6 +1039,7 @@ def activate_artists(request):
         artistid = int(request.GET['artist'])
         status = request.GET['status']
         artist = Artist.objects.get(id=artistid)
+        url = Site.objects.get_current()  # Pull this into a variable
 
         if status == 'A':
             stat = "Accepted"
@@ -1052,6 +1056,7 @@ def activate_artists(request):
                 'artist' : artist,
                 'site' : Site.objects.get_current(),
                 'stat' : stat,
+                'url' : url,
         })
         artist.save()
 
