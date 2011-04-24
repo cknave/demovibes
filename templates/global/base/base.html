@@ -52,8 +52,7 @@
             <li id="inbox"><a href="{% url dv-inbox %}">My Inbox {% get_inbox user %}</a></li>
             <li id="logout"><a href="{% url webview.views.log_out %}">Log Me Out</a></li>
         {% else %}
-            <li id="login"><a href="{% url dv-login %}">Log In</a></li>
-        <li id="register"><a href="/accounts/register">Register</a></li>
+            <li id="login"><a href="/account/signin/">Log In / Register</a></li>
         {% endif %}
         {% if user.is_staff %}
             <li id="admin"><a href="/admin" target="admin">Admin Area</a></li>

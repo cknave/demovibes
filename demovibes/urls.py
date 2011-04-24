@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     (r'^accounts/', include('demovibes.registration.urls')),
+    (r'^account/', include('django_authopenid.urls')),
     (r'^forum/', include('forum.urls')),
 
     #Only use this under development!! Only for serving static files with dev server!

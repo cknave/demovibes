@@ -22,7 +22,7 @@
             <li>&nbsp;</li>
             <li id="search"><a href="{{ url ("s-all") }}">{{ gettext("Search") }}</a></li>
             <li id="recent"><a href="{{ url ("dv-recent") }}">{{ gettext("New Uploads") }}</a></li>
-	    <li id="recentchanges"><a href="{{ url ("dv-updates") }}">{{ gettext("Recent Updates") }}</a></li>
+        <li id="recentchanges"><a href="{{ url ("dv-updates") }}">{{ gettext("Recent Updates") }}</a></li>
             <li>&nbsp;</li>
             <li id="faq"><a href="{{ url ("dv-faq") }}">{{ gettext("FAQ") }}</a></li>
             <li id="links"><a href="{{ url ("dv-links") }}">{{ gettext("Links") }}</a></li>
@@ -32,7 +32,7 @@
         <br />
         <h3>{{ gettext("Infamous OneLiner") }}</h3>
         {% if user.is_authenticated() %}
-	{% include "webview/oneliner_form.html" %}
+    {% include "webview/oneliner_form.html" %}
         {% endif %}
         {{ dv.get_oneliner() }}
         <a href="{{ url ("dv-oneliner") }}">{{ gettext("Oneliner History") }}</a>
@@ -50,8 +50,7 @@
             <li id="inbox"><a href="{{ url ("dv-inbox") }}">{{ gettext("My Inbox") }}</a> {{ dv.get_unread_count(user) }}</li>
             <li id="logout"><a href="{{ url ("webview.views.log_out") }}">{{ gettext("Log Me Out") }}</a></li>
         {% else %}
-            <li id="login"><a href="{{ url ("dv-login") }}">{{ gettext("Log In") }}</a></li>
-        <li id="register"><a href="/accounts/register">{{ gettext("Register") }}</a></li>
+            <li id="login"><a href="/account/signin/">{{ gettext("Log In / Register") }}</a></li>
         {% endif %}
         {% if user.is_staff %}
             <li id="admin"><a href="/admin" target="admin">{{ gettext("Admin Area") }}</a></li>

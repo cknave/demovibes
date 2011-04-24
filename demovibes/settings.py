@@ -13,7 +13,7 @@ def pj(*path):
 
 from smileys import SMILEYS
 
-LOGIN_URL = "/demovibes/login/"
+LOGIN_URL = "/account/signin/"
 
 DEBUG = True
 TEMPLATE_DEBUG = False
@@ -203,6 +203,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_authopenid.middleware.OpenIDMiddleware',
  #add ?profiler to url to get a profile of the page. Debug needs to be on
 )
 
@@ -263,6 +264,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
+    'django_authopenid.context_processors.authopenid',
 )
 
 INSTALLED_APPS = [
@@ -282,6 +284,7 @@ INSTALLED_APPS = [
     'haystack',
     'openid_provider',
     'demovibes.search',
+    'django_authopenid',
 ]
 
 try:
