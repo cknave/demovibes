@@ -4,6 +4,7 @@ import datetime
 
 import re
 import os.path
+from django.utils import simplejson
 from django.conf import settings
 from django.core.mail import EmailMessage
 #from django.core.urlresolvers import reverse
@@ -94,6 +95,7 @@ else:
     ipccdb = False
 
 uwsgi_event_server = getattr(settings, 'UWSGI_EVENT_SERVER', False)
+nodejs_event_server = getattr(settings, 'NODEJS_EVENT_SERVER', False)
 
 if uwsgi_event_server:
     uwsgi_event_server_http = getattr(settings, 'UWSGI_EVENT_SERVER_HTTP', False)
@@ -103,7 +105,17 @@ if uwsgi_event_server:
         import pickle
         uwsgi_event_server = "HTTP"
 
-def add_event(event = None, user = None, eventlist = []):
+if nodejs_event_server:
+    import pika
+
+    connection = pika.AsyncoreConnection(pika.ConnectionParameters(
+        host='localhost'))
+    channel = connection.channel()
+
+    channel.exchange_declare(exchange='events',
+                     type='fanout')
+
+def add_event(event = None, user = None, eventlist = [], metadata = {}):
     """
     Add event(s) to the event handler(s)
 
@@ -122,6 +134,18 @@ def add_event(event = None, user = None, eventlist = []):
 
     for event in eventlist:
         ae = AjaxEvent.objects.create(event = event, user = user)
+
+    if nodejs_event_server:
+        for x in eventlist:
+            e = {
+                'event': x,
+                'user': user and user.id or None,
+                'metadata': metadata,
+            }
+            e = simplejson.dumps(e)
+            channel.basic_publish(exchange='events',
+                      routing_key='',
+                      body=e)
 
     if uwsgi_event_server:
         R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:20] #Should have time based limit here..

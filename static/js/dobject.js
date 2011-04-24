@@ -34,7 +34,7 @@ function ajaxmonitorabort() {
         ajaxmonitorrequest.abort();
 }
 
-function ajaxmonitor(eventid, url) {
+function ajaxmonitor(eventid) {
     ajaxeventid=eventid;
     setTimeout('ajaxmonitorspawn()',1);
     setInterval('counter()',1000);

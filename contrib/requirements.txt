@@ -12,3 +12,4 @@ wsgiref==0.1.2
 flup==1.0.3.dev-20110405
 MySQL-python==1.2.3
 django-wsgiserver==0.6.9
+pika==0.5.2
