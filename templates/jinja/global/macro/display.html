@@ -206,6 +206,10 @@
     <a href="{{ url("dv-tagdetail", tag|e) }}">{{ tag|e }}</a>
 {% endmacro %}
 
+{% macro clicklesstag(tag) -%}
+    {{ tag|e }}
+{% endmacro %}
+
 {% macro songslist(objs, user) %}
 
     {% include "webview/t/songheader.html" %}
