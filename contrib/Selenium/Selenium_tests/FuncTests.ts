@@ -32,6 +32,7 @@
 <tr><td><a href="simple_xml_test.tc">SimpleXmlTest</a></td></tr>
 <tr><td><a href="bbcode_simple.tc">Simple BBcode</a></td></tr>
 <tr><td><a href="now_playing_display.tc">NowPlayingDisplay</a></td></tr>
+<tr><td><a href="logout_songinfo.tc">Logged out songinfo</a></td></tr>
 </tbody></table>
 </body>
 </html>

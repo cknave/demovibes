@@ -73,12 +73,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//form[@id='queue_form']/div[3]/fieldset/div[6]/div/p/span[1]/a[1]</td>
+	<td>//form[@id='queue_form']/div[2]/fieldset/div[6]/div/p/span[1]/a[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//form[@id='queue_form']/div[3]/fieldset/div[6]/div/p/span[2]/a[1]</td>
+	<td>//form[@id='queue_form']/div[2]/fieldset/div[6]/div/p/span[2]/a[1]</td>
 	<td></td>
 </tr>
 <tr>

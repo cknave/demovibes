@@ -23,17 +23,17 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Log In</td>
+	<td>link=Log In / Register</td>
 	<td></td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//input[@value='Log In']</td>
+	<td>blogin</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>You need to supply a username and password</td>
+	<td>This field is required</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,12 +43,12 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//input[@value='Log In']</td>
+	<td>blogin</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>You need to supply a username and password</td>
+	<td>This field is required</td>
 	<td></td>
 </tr>
 <tr>
@@ -58,12 +58,12 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//input[@value='Log In']</td>
+	<td>blogin</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>I'm sorry, the username or password seem to be wrong.</td>
+	<td>Please correct errors below</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,7 +73,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//input[@value='Log In']</td>
+	<td>blogin</td>
 	<td></td>
 </tr>
 <tr>
