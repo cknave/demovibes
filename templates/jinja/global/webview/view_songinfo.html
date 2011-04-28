@@ -68,6 +68,10 @@
         <td>{{ display.song(meta.get_remix()) }}</td>
     </tr>
     <tr>
+	<th>{{ gettext("Screenshot") }}</th>
+	<td>{% if meta.screenshot %}{{ meta.screenshot }}<br><img src="{{ meta.screenshot.image.url }}">{% endif %}</td>
+    </tr>
+    <tr>
         <th>{{ gettext("Pouet ID") }}</th>
         <td>{% if meta.pouetid %}<a href="http://pouet.net/prod.php?which={{ meta.pouetid }}" target="_blank">{{ meta.pouetid }}</a>{% else %}{{ gettext("None") }}{% endif %}</td>
     </tr>

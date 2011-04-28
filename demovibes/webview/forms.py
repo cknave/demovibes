@@ -41,12 +41,12 @@ class UploadForm(forms.ModelForm):
 
 class SongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset"]
+        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "screenshot"]
         model = SongMetaData
 
 class EditSongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "comment"]
+        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "screenshot", "comment"]
         model = SongMetaData
 
 class CreateArtistForm(forms.ModelForm):
@@ -76,6 +76,26 @@ class CreateArtistForm(forms.ModelForm):
 class CreateSessionForm(forms.Form):
     description = forms.CharField(required=False, label = "Description")
     time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
+    
+class CreateScreenshotForm(forms.ModelForm):
+    class Meta:
+        model = Screenshot
+        fields = ["name", "image", "description"]
+
+    def clean_image(self):
+        image = self.cleaned_data['image']
+        if not image:
+            return None
+
+        max_height = getattr(settings, 'SCREEN_UPLOAD_HEIGHT', 800)
+        max_width = getattr(settings, 'SCREEN_UPLOAD_WIDTH', 800)
+
+        image = Image.open(image)
+        img_w, img_h = image.size
+        if img_w > max_width or img_h > max_height:
+            raise forms.ValidationError('Screenshot is bigger than allowed size dimensions! (Max Height : %d, Width : %d)' % (max_height, max_width))
+
+        return self.cleaned_data['image']
 
 class CreateLabelForm(forms.ModelForm):
     class Meta:

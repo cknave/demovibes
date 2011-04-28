@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+{% import "macro/display.html" as display -%}
+{% block title %}{{ gettext("Production / Label Info For") }} {{ object.name|e }}{% endblock %}
+
+{% block main %}
+<h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshot For '") }} {{ object.name|e }}' {% if user.is_staff %} [<a href="/admin/webview/screenshot/{{ object.id }}/">{{ gettext("Edit Screenshot Info") }}</a>]{% endif %}</h2>
+
+<table>
+<tr>
+<td class="screenshot_summary">
+{% if object.image %}<img class="screenshot" src="{{ object.image.url }}" />{% else %}(No Image!){% endif %}
+<br /><br />
+{% if object.status %}{{ gettext("Current Status") }}: {{ object.get_status_display() }}<br />{% endif %}
+{% if not object.thumbnail %}<font color="red">This Screenshot Is Missing A Thumbnail!</font><br>{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.added_by %}{{ gettext("Added By") }}: {% set U = object.added_by %}{% include "webview/t/user.html" %}<br />{% endif %}
+</td></tr>
+<tr><td class="label_description">
+<h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshot Description") }}</h2>
+{% if object.description %}
+<p><i>{{ object.description|urlize|bbcode|linebreaks }}</i></p>
+{% endif %}
+</td>
+</tr>
+</table>
+
+{{ paging }}
+{% endblock %}

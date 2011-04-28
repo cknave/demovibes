@@ -215,6 +215,7 @@ def pending(category):
         'labels': Label.objects.filter(status="U"),
         'links': Link.objects.filter(status="P"),
         'info': SongMetaData.objects.filter(checked=False),
+        'screenshots': Screenshot.objects.filter(status="U"),
     }
     r = cache.get("pend_"+category)
     if not r:
@@ -255,6 +256,13 @@ def current_song(user = None):
     now = common.get_now_playing()
     if user:
         Q = common.get_now_playing_song()
+        try:
+	  screenshot = SongMetaData.objects.filter(song = Q.song, active=True)
+	except:
+	  screenshot = None
+	
+        scrborder = getattr(settings, 'SCREEN_DISPLAY_BORDER', 0) # So we can CSS a border around images, Optional
+        scrwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
         if not Q:
             return ""
         if user.is_authenticated():
@@ -267,13 +275,36 @@ def current_song(user = None):
             'myvote': vote,
             'voterange': [1, 2, 3, 4, 5],
             'user': user,
+            'scrborder' : scrborder,
+            'scrwidth' : scrwidth,
         }
         voteinfo = js.r2s("webview/t/now_playing_vote.html", c)
-        if Q.song.get_metadata().ytvidid and (not user or not user.is_authenticated() or user.get_profile().show_youtube):
-            ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
-        else:
-            ytinfo = ""
-        now = now + ytinfo + voteinfo
+        
+        # Now we can inject some logic to determine which additional screenshot/youtube data is
+        # Inserted into the now playing window. The logic order will always use this order:
+        #
+        # 1. YouTube Clip 
+        # 2. Screenshot
+        # 3. Pouet
+        #
+        # NOTES: Pouet is lower than screenshot; Some pouet prods have no image, or its crap and
+        # We want to display a better one. YouTube clip always takes highest order.
+        if user.get_profile().show_youtube and (user or user.is_authenticated()):
+	  if Q.song.get_metadata().ytvidid:
+	    ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
+	    now = now + ytinfo
+	  else: 
+	    if Q.song.get_metadata().screenshot:
+	      scinfo = js.r2s("webview/t/now_playing_screenshot.html", c)
+	      now = now + scinfo
+	    else:
+	      if Q.song.get_metadata().pouetid:
+		pouetinfo = js.r2s("webview/t/now_playing_pouet.html", c)
+		now = now + pouetinfo
+		
+	# Add Voting Info
+	now = now + voteinfo
+
     return now
 
 @register.simple_tag

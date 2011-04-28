@@ -10,6 +10,11 @@ song_dict = {
     'template_loader': djangojinja2._jinja_env,
 }
 
+screenshot_dict = {
+    'queryset': Screenshot.objects.filter(status="A"),
+    'template_loader': djangojinja2._jinja_env,
+}
+
 oneliner_dict = {
     'queryset': Oneliner.objects.all(),
     'template_loader': djangojinja2._jinja_env,
@@ -131,6 +136,13 @@ urlpatterns = patterns('',
     url(r'^source/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', sources, name = "dv-source"),
 
     url(r'^chat/$',             'demovibes.webview.views.chat', name = "dv-chat"),
+    
+    # Screenshot stuff
+    url(r'^screenshots/$',                       views.ListScreenshots(), name = "dv-screenshots"),
+    url(r'^screenshots/(?P<letter>.)/$',         views.ListScreenshots(), name = "dv-screenshots_letter"),
+    url(r'^screenshot/(?P<screenshot_id>\d+)/$', 'demovibes.webview.views.list_screenshot',   name = "dv-screenshot"),
+    url(r'^screenshot/create/$',                    'demovibes.webview.views.create_screenshot', name = "dv-createscreenshot"),
+    url(r'^new_screenshots/$',                      'demovibes.webview.views.activate_screenshots', name = "dv-newscreenshots"),
 
     #Song views
     url(r'^newshit/$',                          'demovibes.webview.views.new_songinfo_list', name="dv-new-info"),

@@ -151,6 +151,25 @@ MAX_GROUP_AVATAR_SIZE = 65536
 MAX_GROUP_AVATAR_HEIGHT = 250
 MAX_GROUP_AVATAR_WIDTH = 250
 
+# When displaying screenshots, pouet images and youtube videos, you can configure a maximum
+# Width & Height of those images here. These same values are used to verify newly added
+# Screenshots. Larger images are scaled down to fit the width, and smaller images are scaled
+# Upwards to fit within the frame.
+SCREEN_DISPLAY_WIDTH = 200
+SCREEN_DISPLAY_HEIGHT = 200
+SCREEN_DISPLAY_BORDER = 0
+
+# We can also limit the size of the original sized image
+SCREEN_UPLOAD_WIDTH = 800
+SCREEN_UPLOAD_HEIGHT = 800
+
+# Specify a quality level for scaled images
+SCREEN_SCALE_QUALITY = 85
+
+# Specify an output format, such as png, jpeg etc. PNG is the default, as its always available in
+# PIL. If you need to install libjpeg, make sure you rebuild PIL afterwards.
+SCREEN_SCALE_FORMAT = 'png'
+
 # Max internal length of the oneliner, in characters
 MAX_ONELINER_LENGTH = 256
 
@@ -161,6 +180,17 @@ RECENT_SONG_VIEW_LIMIT    = 20
 RECENT_LABEL_VIEW_LIMIT   = 20
 RECENT_GROUP_VIEW_LIMIT   = 20
 RECENT_COMP_VIEW_LIMIT    = 20
+
+# Auto-Approve Admin Uploads
+#
+# Anyone with a Super User status who uploads tracks will be auto approved if set to 1. No
+# Email notification will be sent if this occurs. Default is Off (0). Set to 1 to Enable.
+ADMIN_AUTO_APPROVE_UPLOADS = 0
+ADMIN_AUTO_APPROVE_GROUP = 0
+ADMIN_AUTO_APPROVE_LABEL = 0
+ADMIN_AUTO_APPROVE_ARTIST = 0
+ADMIN_AUTO_APPROVE_COMPILATION = 0
+ADMIN_AUTO_APPROVE_SCREENSHOT = 0
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.

@@ -261,3 +261,27 @@
     </table>
 
 {% endmacro %}
+
+{% macro screenshotslist(objs, user) %}
+  {% include "webview/t/screenheader.html" %}
+  {% for scr in objs %}
+    <tr class="{{ loop.cycle ('row1','row2') }}">
+  {% import "macro/display.html" as display -%}
+  {% cache 172800 mkstr("screenshot_row", scr.id, scr.last_updated) %}
+    <td>
+      <a href="{{ url ("dv-screenshot", scr.id) }}">{{ scr.name }}</a>
+    </td>
+    <td>
+      {{ display.user(scr.added_by) }}
+    </td>
+    <td>
+      {% if scr.last_updated %}{{scr.last_updated|date("Y-m-d") }}{% else %}Never{% endif %}
+    </td>{% endcache %}
+    <td>
+      {{ scr.get_status_display() }}
+    </td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endmacro %}
+

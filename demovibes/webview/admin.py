@@ -117,7 +117,7 @@ class FaqAdmin(admin.ModelAdmin):
 
 class ScreenshotAdmin(admin.ModelAdmin):
     search_fields = ['name']
-    list_display = ('name', 'last_updated', 'description', 'active')
+    list_display = ('name', 'image', 'last_updated', 'description', 'status')
 
 class RadioStreamAdmin(admin.ModelAdmin):
     search_fields = ('name', 'user', 'country_code')

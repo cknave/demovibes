@@ -290,6 +290,11 @@ def list_song(request, song_id):
     return j2shim.r2r('webview/song_detail.html', \
         { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related, 'tags': tags }\
         , request)
+      
+# This can probbably be made a generic object
+def list_screenshot(request, screenshot_id):
+    screenshot = get_object_or_404(Screenshot, id=screenshot_id)
+    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot, }, request)
 
 class ViewUserFavs(ProfileView):
     """
@@ -411,6 +416,10 @@ class ListComilations(ListByLetter):
 class ListSongs(ListByLetter):
     template = "song_list.html"
     model = Song
+    
+class ListScreenshots(ListByLetter):
+    template = "screenshot_list.html"
+    model = Screenshot
 
 @login_required
 def log_out(request):
@@ -1212,6 +1221,81 @@ def activate_labels(request):
 
     labels = Label.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_labels.html', { 'labels': labels }, request=request)
+
+
+@login_required
+def create_screenshot(request):
+    """
+    Simple form to allow registereed users to create a new screenshot entry.
+    """
+    auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_SCREENSHOT', 0)
+
+    if request.method == 'POST':
+        # Check to see if moderation settings allow for the check
+        if request.user.is_staff and auto_approve == 1:
+            # Automatically approved due to Moderator status
+            status = 'A'
+        else:
+            status = 'U'
+
+    if request.method == 'POST':
+        l = Screenshot(added_by = request.user, status = status)
+        form = CreateScreenshotForm(request.POST, request.FILES, instance = l)
+        if form.is_valid():
+            new_screenshot = form.save(commit=False)
+            new_screenshot.save()
+            form.save_m2m()
+            
+	    # Generate a request for the thumbnail
+	    new_screenshot.create_thumbnail()
+	    new_screenshot.save()
+
+	    # Leave this place :)
+            return HttpResponseRedirect(new_screenshot.get_absolute_url())
+    else:
+        form = CreateScreenshotForm()
+    return j2shim.r2r('webview/create_screenshot.html', \
+        {'form' : form }, \
+        request=request)
+
+@permission_required('webview.change_screenshot')
+def activate_screenshots(request):
+    """
+    Shows the most recently added labels who have a 'U' status in their upload marker
+    """
+    if "screenshot" in request.GET and "status" in request.GET:
+        screenshotid = int(request.GET['screenshot'])
+        status = request.GET['status']
+        this_screenshot = Screenshot.objects.get(id=screenshotid)
+        url = Site.objects.get_current()
+
+        if status == 'A':
+            stat = "Accepted"
+            this_screenshot.status = "A"
+        if status == 'R':
+            stat = "Rejected"
+            this_screenshot.status = 'R'
+
+        # Prepare a mail template to inform user of the status of their request
+        mail_tpl = loader.get_template('webview/email/screenshot_approval.txt')
+        c = Context({
+                'screenshot' : this_screenshot,
+                'site' : Site.objects.get_current(),
+                'stat' : stat,
+                'url' : url,
+        })
+        this_screenshot.save()
+
+        # Send the email to inform the user of their request status
+        if this_screenshot.added_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
+	    this_screenshot.added_by.get_profile().send_message(
+		sender = request.user,
+		message = mail_tpl.render(c),
+		subject = "Screenshot Request Status Changed To: %s" % stat
+	    )
+
+    screenshots = Screenshot.objects.filter(status = "U").order_by('last_updated')
+    return j2shim.r2r('webview/pending_screenshots.html', { 'screenshots': screenshots }, request=request)
 
 def users_online(request):
     timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)

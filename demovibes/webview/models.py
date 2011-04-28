@@ -21,6 +21,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+# Added for image processing/scaling
+from django.core.files.uploadedfile import SimpleUploadedFile
+import cStringIO
+from PIL import Image
+
 import tagging
 import time, hashlib
 log = logging.getLogger("webview.models")
@@ -664,6 +669,70 @@ class Logo(models.Model):
 
     def get_absolute_url(self):
         return self.file.url
+        
+class Screenshot(models.Model):
+    STATUS_CHOICES = (
+            ('A', 'Active'),
+            ('I', 'Inactive'),
+            ('D', 'Dupe'),
+            ('U', 'Uploaded'),
+            ('R', 'Rejected')
+        )
+        
+    added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
+    description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
+    image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
+    last_updated = models.DateTimeField(editable = False, blank = True, null = True)
+    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
+    startswith = models.CharField(max_length=1, editable = False, db_index = True)
+    status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
+    thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
+
+    def __unicode__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        S = self.name[0].lower()
+        if not S in alphalist:
+            S = '#'
+        self.startswith = S
+        self.last_updated = datetime.datetime.now()
+        return super(Screenshot, self).save(*args, **kwargs)
+
+    def create_thumbnail(self):
+	"""
+	Simple function for creating a thumbnail from an existing image. Most parameters can be changed in
+	Settings_local.py for complete customization. JPEG is not always available on all systems by default,
+	Unless libjpeg is installed and PIL is recompiled with it.
+	"""
+	if not self.image:
+	  return None
+	  
+	# Some variables used for scaling
+	thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
+	thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 200)
+	quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 85)
+	format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'png')
+
+	res = cStringIO.StringIO()
+	size=(thumbwidth, thumbheight)
+	
+	img = Image.open(self.image.path)
+	img.thumbnail(size, Image.ANTIALIAS)
+
+	if img.mode != "RGB":
+	    img = img.convert("RGB")
+
+	img.save(res, format, quality=quality) # Dump the scaled image to a buffer
+	res.seek(0)	# Move pointer back to the beginning of the buffer
+	thumb = SimpleUploadedFile(os.path.basename(self.image.path), res.read()) # Save it somewhere on the disk
+	self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
+	return
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('dv-screenshot', [str(self.id)])
+
 
 class SongMetaData(models.Model):
     user = models.ForeignKey(User, blank = True, null = True)
@@ -682,6 +751,7 @@ class SongMetaData(models.Model):
     remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
     ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing")
     ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset")
+    screenshot = models.ForeignKey(Screenshot, null = True, blank = True, verbose_name = "Screenshot", help_text = "Select a screenshot that applies directly to this song. If it doesn't exist, create it first.")
     pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID")
 
     comment = models.TextField(blank=True, help_text="Extra information. Only visible to moderators")
@@ -699,7 +769,7 @@ class SongMetaData(models.Model):
     def get_changelist(self):
         if self.active:
             return []
-        fields = ["artists", "groups", "labels", "info", "platform", "release_year", "type", "remix_of_id", "ytvidid", "ytvidoffset", "pouetid"]
+        fields = ["artists", "groups", "labels", "info", "platform", "release_year", "type", "remix_of_id", "ytvidid", "ytvidoffset", "screenshot", "pouetid"]
         mfields = ["artists", "groups", "labels"]
         meta = self.song.get_metadata()
         result = []
@@ -739,7 +809,7 @@ class ObjectLog(models.Model):
 
     def display(self):
         return unicode(self.obj)
-
+        
 class Song(models.Model):
     STATUS_CHOICES = (
             ('A', 'Active'),
@@ -786,6 +856,7 @@ class Song(models.Model):
     release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True) #a
     remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True) #a
     samplerate = models.IntegerField(blank = True, null = True)
+    screenshot = models.ForeignKey(Screenshot, null = True, blank = True, verbose_name = "Screenshot", help_text = "Select a screenshot that applies directly to this song. If it doesn't exist, create it first.")
     song_length = models.IntegerField(blank = True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index=True)
@@ -955,8 +1026,9 @@ class Song(models.Model):
 
     def get_pouet_screenshot(self):
         """
-        Simple XML retrival system for recovering data from pouet.net xml files. Eventually,
-        I'll add code to recover more elements from pouet. AAK.
+        Retreives the image for the given pouet object. The return result is a formatted html
+        Statement, with the image embedded. If you plan to use a different size, or place in
+        Your own container, use get_pouet_screenshot_img instead.
         """
         pouetid = self.get_pouetid()
         if pouetid:
@@ -973,6 +1045,24 @@ class Song(models.Model):
 
             except:
                 return "Couldn't pull Pouet info!"
+                
+    def get_pouet_screenshot_img(self):
+	"""
+	Modified version of the above function, except will return the path to the image so
+	We can use it in multiple locations easily.
+	"""
+        pouetid = self.get_pouetid()
+        if pouetid:
+            try:
+                if not self.pouetss:
+                    imglink = self.grab_pouet_info("screenshot")
+                    self.pouetss = imglink
+                    self.save()
+
+                return self.pouetss
+
+            except:
+                return None
 
     def reset_pouetinfo(self):
         self.pouetss = ""
@@ -1610,27 +1700,6 @@ class SongLicense(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class Screenshot(models.Model):
-    active = models.BooleanField(default=True, verbose_name = "Active?", db_index=True)
-    added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
-    description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
-    image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Image to be displayed for this screenshot
-    last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=70, verbose_name="Screen Name", help_text="Name/Title of this screenshot. Be verbose, to make it easier to find later. Use something such as a demo/production/game name.")
-    startswith = models.CharField(max_length=1, editable = False, db_index = True)
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        # Eventually, we will add a screenshot browser
-        S = self.name[0].lower()
-        if not S in alphalist:
-            S = '#'
-        self.startswith = S
-        self.last_updated = datetime.datetime.now()
-        return super(Screenshot, self).save(*args, **kwargs)
 
 def create_profile(sender, **kwargs):
     """
