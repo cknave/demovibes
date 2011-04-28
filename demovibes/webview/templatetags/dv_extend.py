@@ -254,17 +254,22 @@ def current_song(user = None):
     Returns the current song playing. Ties into right-panel on all views.
     """
     now = common.get_now_playing()
+    if not user or not user.is_authenticated():
+      return now
+    
     if user:
         Q = common.get_now_playing_song()
         try:
 	  screenshot = SongMetaData.objects.filter(song = Q.song, active=True)
 	except:
 	  screenshot = None
+	  
+	if not Q:
+            return ""
 	
         scrborder = getattr(settings, 'SCREEN_DISPLAY_BORDER', 0) # So we can CSS a border around images, Optional
         scrwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
-        if not Q:
-            return ""
+        
         if user.is_authenticated():
             vote = Q.song.get_vote(user) or 0
         else:
@@ -289,7 +294,7 @@ def current_song(user = None):
         #
         # NOTES: Pouet is lower than screenshot; Some pouet prods have no image, or its crap and
         # We want to display a better one. YouTube clip always takes highest order.
-        if user.get_profile().show_youtube and (user or user.is_authenticated()):
+        if user and user.get_profile().show_youtube and (user.is_authenticated()):
 	  if Q.song.get_metadata().ytvidid:
 	    ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
 	    now = now + ytinfo
