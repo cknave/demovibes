@@ -332,6 +332,7 @@ class Userprofile(models.Model):
     paginate_favorites = models.BooleanField(default = True)
     pm_accepted_upload = models.BooleanField(default=True, verbose_name = "Send PM on accepted upload")
     real_name = models.CharField(blank = True, max_length = 40, verbose_name = "Real Name", help_text="Your real name (optional)")
+    show_screenshots = models.BooleanField(default=True, verbose_name="Show Screenshots/Pouet Images in Currently Playing")
     show_youtube = models.BooleanField(default=True, verbose_name="Show YouTube videoes in Currently Playing")
     theme = models.ForeignKey(Theme, blank = True, null = True)
     token = models.CharField(blank = True, max_length=32)
@@ -683,14 +684,14 @@ class Screenshot(models.Model):
     description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
     image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
     last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
+    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily. A thumbnail will automatically be created for this image after it is uploaded.")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
 
     def __unicode__(self):
         return self.name
-
+        
     def save(self, *args, **kwargs):
         S = self.name[0].lower()
         if not S in alphalist:

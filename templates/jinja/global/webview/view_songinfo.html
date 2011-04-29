@@ -69,7 +69,7 @@
     </tr>
     <tr>
 	<th>{{ gettext("Screenshot") }}</th>
-	<td>{% if meta.screenshot %}{{ meta.screenshot }}<br><img src="{{ meta.screenshot.image.url }}">{% endif %}</td>
+	<td>{% if meta.screenshot %}{{ meta.screenshot }}<br>{% if meta.screenshot.thumbnail %}<img src="{{ meta.screenshot.thumbnail.url }}">{% else %}(No thumbnail){% endif %}{% endif %}</td>
     </tr>
     <tr>
         <th>{{ gettext("Pouet ID") }}</th>

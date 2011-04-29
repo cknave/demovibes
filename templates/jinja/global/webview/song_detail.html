@@ -122,9 +122,13 @@ Author:
   {{ object.get_pouet_screenshot() }}
   {{ object.get_pouet_download() }}
 {% endif %}
+{% if object.get_metadata().screenshot %}
+  <h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshot") }}</h2>
+  <a href="{{ url ("dv-screenshot", object.get_metadata().screenshot.id) }}">{% if object.get_metadata().screenshot.thumbnail %}<img src="{{ object.get_metadata().screenshot.thumbnail.url }}" alt="{{ object.get_metadata().screenshot.name|e }}" />{% else %}(No thumbnail{% endif %}</a>
+{% endif %}
 
 {% if object.songdownload_set.all()  %}
- <h2>{{ gettext("Download Links") }}</h2>
+ <h2><img class="icon_header" src="{{ STATIC_URL }}link_go.png" alt="" />{{ gettext("Download Links") }}</h2>
  <ul>
  {% for dl in object.songdownload_set.all() %}
   <li><a href="{{ dl.download_url|e }}">{{ dl.title|e }}</a></li>

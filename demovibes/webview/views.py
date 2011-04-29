@@ -294,7 +294,8 @@ def list_song(request, song_id):
 # This can probbably be made a generic object
 def list_screenshot(request, screenshot_id):
     screenshot = get_object_or_404(Screenshot, id=screenshot_id)
-    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot, }, request)
+    relatedsongs = SongMetaData.objects.filter(screenshot__id=screenshot_id, active=True)
+    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot, 'songs' : relatedsongs, }, request)
 
 class ViewUserFavs(ProfileView):
     """
@@ -657,7 +658,7 @@ def new_songinfo_list(request):
         link.status = int(status)
         link.content_object.save()
         link.save()
-    nusonginfo = SongMetaData.objects.filter(checked=False)
+    nusonginfo = SongMetaData.objects.filter(checked=False).order_by('added') # Oldest info events will be shown first
     nulinkinfo = GenericLink.objects.filter(status=1)
     c = {'metainfo': nusonginfo, 'linkinfo': nulinkinfo}
     return j2shim.r2r("webview/list_newsonginfo.html", c, request)

@@ -266,10 +266,10 @@ def current_song(user = None):
 	  
 	if not Q:
             return ""
-	
+            
         scrborder = getattr(settings, 'SCREEN_DISPLAY_BORDER', 0) # So we can CSS a border around images, Optional
         scrwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
-        
+
         if user.is_authenticated():
             vote = Q.song.get_vote(user) or 0
         else:
@@ -294,18 +294,17 @@ def current_song(user = None):
         #
         # NOTES: Pouet is lower than screenshot; Some pouet prods have no image, or its crap and
         # We want to display a better one. YouTube clip always takes highest order.
-        if user and user.get_profile().show_youtube and (user.is_authenticated()):
-	  if Q.song.get_metadata().ytvidid:
-	    ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
-	    now = now + ytinfo
-	  else: 
-	    if Q.song.get_metadata().screenshot:
-	      scinfo = js.r2s("webview/t/now_playing_screenshot.html", c)
-	      now = now + scinfo
-	    else:
-	      if Q.song.get_metadata().pouetid:
-		pouetinfo = js.r2s("webview/t/now_playing_pouet.html", c)
-		now = now + pouetinfo
+	if Q.song.get_metadata().ytvidid and user.get_profile().show_youtube:
+	  ytinfo = js.r2s("webview/t/now_playing_youtube.html", c)
+	  now = now + ytinfo
+	else: 
+	  if Q.song.get_metadata().screenshot and user.get_profile().show_screenshots:
+	    scinfo = js.r2s("webview/t/now_playing_screenshot.html", c)
+	    now = now + scinfo
+	  else:
+	    if Q.song.get_metadata().pouetid and user.get_profile().show_screenshots:
+	      pouetinfo = js.r2s("webview/t/now_playing_pouet.html", c)
+	      now = now + pouetinfo
 		
 	# Add Voting Info
 	now = now + voteinfo
