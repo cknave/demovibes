@@ -1052,6 +1052,31 @@ class Song(models.Model):
             except:
                 return "Couldn't pull Pouet info!"
 
+    def add_pouet_img_as_screenshot(self):
+        if self.get_pouetid() and not self.get_screenshots():
+            img_url = self.get_pouet_screenshot_img()
+            if not img_url:
+                return
+            try:
+                img = urllib.urlopen(img_url)
+            except:
+                return
+
+            image = SimpleUploadedFile(os.path.basename(img_url), img.read())
+
+            title = self.grab_pouet_info("name", False)
+            desc1 = "%s by %s" % (title, self.grab_pouet_info("authors"))
+            desc = "%s\nFetched from pouet id %s" % (desc1, self.get_pouetid())
+
+            s = Screenshot(obj=self, name=title, description=desc)
+            s.image.save(os.path.basename(img_url), image, save=True)
+            #s.save()
+            s.create_thumbnail()
+            s.save()
+
+            #self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
+
+
     def get_pouet_screenshot_img(self):
         """
         Modified version of the above function, except will return the path to the image so
@@ -1725,6 +1750,11 @@ post_save.connect(create_profile, sender=User)
 
 def set_song_values(sender, **kwargs):
     song = kwargs["instance"]
+    try:
+        song.add_pouet_img_as_screenshot()
+    except:
+        pass
+
     if (not song.song_length) and song.status != 'K' and os.path.isfile(song.file.path):
         try:
             song.set_song_data()

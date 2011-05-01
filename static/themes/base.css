@@ -101,6 +101,7 @@ div.screenshot {
     text-align: center;
     margin: 4px;
     float: left;
+    height: 135px;
 }
 span.screenshotname {
     font-weight: bold;
@@ -108,4 +109,15 @@ span.screenshotname {
 }
 div.clear {
     clear: both;
+}
+
+div#screenshot-image {
+    float: left;
+    margin-right: 25px;
+    margin-bottom: 25px;
+}
+
+div#songinfo-title {
+    font-weight: bold;
+    margin-bottom: 5px;
 }

@@ -5,18 +5,16 @@
 {% block main %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshot For '") }} {{ object.name|e }}' {% if user.is_staff %} [<a href="/admin/webview/screenshot/{{ object.id }}/">{{ gettext("Edit Screenshot Info") }}</a>]{% endif %}</h2>
 {% cache 172800 mkstr(object.id, object.last_updated, "screenshotinfo") %}
-<table>
-<tr>
-<td class="screenshot_summary">
-{% if object.image %}<img class="screenshot" src="{{ object.image.url }}" />{% else %}(No Image!){% endif %}
-<br /><br />
+<div id="screenshot-image">{% if object.image %}<img class="screenshot" src="{{ object.image.url }}" />{% else %}(No Image!){% endif %}</div>
+<div id="screenshot-data">
+<div id="songinfo-title">Song information</div>
 {% if object.status %}{{ gettext("Current Status") }}: {{ object.get_status_display() }}<br />{% endif %}
 {% if not object.thumbnail %}<font color="red">This Screenshot Is Missing A Thumbnail!</font><br>{% endif %}
 {% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
 {% if object.added_by %}{{ gettext("Added By") }}: {% set U = object.added_by %}{% include "webview/t/user.html" %}<br />{% endif %}
-Connected to : <a href="{{ object.obj.get_absolute_url()}}">{{ object.obj }}</a>
-</td></tr>
-</table>
+<p id="screenshot-connected">Connected to : <a href="{{ object.obj.get_absolute_url()}}">{{ object.obj }}</a></p>
+</div>
+
 <h2><img class="icon_header" src="{{ STATIC_URL }}script.png" alt="" />{{ gettext("Screenshot Description") }}</h2>
 {% if object.description %}
 <p><i>{{ object.description|urlize|bbcode|linebreaks }}</i></p>
