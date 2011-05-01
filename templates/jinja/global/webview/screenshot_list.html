@@ -10,11 +10,8 @@
 <br />
 <table class="screenshotlist">
 {% for scr in objs %}
-{{ loop.cycle('<tr class="screenshot_row"><td>', '<td>', '<td>', '<td>') }}
-<a href="{{ url ("dv-screenshot", scr.id) }}">{% if scr.thumbnail %}<img src="{{ scr.thumbnail.url }}" alt="{{ scr.name|e }}" />{% else %}(No Thumbnail!){% endif %}</a><br />
-{{ loop.cycle('</td>', '</td>', '</td>', '</td></tr>') }}
+    {{ display.screenshot(scr) }}
 {% endfor %}
 </table>
 <br />{{ paging }}
-{{ gettext("Not Finding What You're Looking For?") }} <a href="{{ url("dv-createscreenshot") }}">{{ gettext("Create A New Screenshot!") }}</a><br />
 {% endblock %}

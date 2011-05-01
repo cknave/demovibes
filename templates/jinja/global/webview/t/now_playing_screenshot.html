@@ -1,7 +1,7 @@
 {% import "macro/display.html" as display -%}
-{% set meta = song.get_metadata() %}
+{% set ss = song.get_screenshots()|random %}
 {% if now_playing.song %}
 <div id="screenshotview">
- <a href="{{ url ("dv-screenshot", meta.screenshot.id) }}">{% if meta.screenshot.thumbnail %}<img src="{{ meta.screenshot.thumbnail.url }}" alt="{{ meta.screenshot.name }} Screenshot" border="{{ scrborder }}">{% else %}(No Thumbnail){% endif %}</a><br />
+ <a href="{{ url ("dv-screenshot", ss.id) }}">{% if ss.thumbnail %}<img src="{{ ss.thumbnail.url }}" alt="{{ ss.name }} Screenshot" border="{{ scrborder }}">{% else %}(No Thumbnail){% endif %}</a><br />
 </div>
 {% endif %}

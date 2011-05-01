@@ -41,12 +41,12 @@ class UploadForm(forms.ModelForm):
 
 class SongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "screenshot"]
+        fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset"]
         model = SongMetaData
 
 class EditSongMetadataForm(forms.ModelForm):
     class Meta:
-        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "screenshot", "comment"]
+        fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "comment"]
         model = SongMetaData
 
 class CreateArtistForm(forms.ModelForm):
@@ -76,11 +76,14 @@ class CreateArtistForm(forms.ModelForm):
 class CreateSessionForm(forms.Form):
     description = forms.CharField(required=False, label = "Description")
     time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
-    
+
 class CreateScreenshotForm(forms.ModelForm):
+    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.Textarea)
+    object_id = forms.CharField(widget=forms.Textarea)
+
     class Meta:
         model = Screenshot
-        fields = ["name", "image", "description"]
+        fields = ["name", "image", "description", "content_type", "object_id"]
 
     def clean_image(self):
         image = self.cleaned_data['image']
@@ -167,11 +170,6 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Userprofile
         fields = ['infoline', 'visible_to', 'web_page', 'aol_id', 'yahoo_id', 'icq_id', 'twitter_id', 'hol_id', 'country', 'location', 'avatar', 'fave_id', 'email_on_pm', 'email_on_group_add', 'email_on_artist_add', 'pm_accepted_upload', 'paginate_favorites', 'theme', 'custom_css', 'use_tags', 'show_screenshots', 'show_youtube', 'info']
-
-class FlashUploadForm(forms.ModelForm):
-    class Meta:
-        model = Song
-        fields = ["title",'pouetid', 'info', 'type', 'platform']
 
 class PmForm(forms.ModelForm):
     to = forms.CharField()

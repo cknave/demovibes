@@ -14,7 +14,7 @@
             <li id="groups"><a href="{{ url ("dv-groups") }}">{{ gettext("Groups") }}</a></li>
             <li id="labels"><a href="{{ url ("dv-labels") }}">{{ gettext("Labels") }}</a></li>
             <li id="compilations"><a href="{{ url ("dv-compilations") }}">{{ gettext("Compilations") }}</a></li>
-	    <li id="screenshots"><a href="{{ url ("dv-screenshots") }}">{{ gettext("Screenshots") }}</a></li>
+            <li id="screenshots"><a href="{{ url ("dv-screenshots") }}">{{ gettext("Screenshots") }}</a></li>
             <li id="licenses"><a href="{{ url ("dv-licenses") }}">{{ gettext("Licenses") }}</a></li>
             {% if not user.is_authenticated() or user.get_profile().use_tags %}<li id="tagcloud"><a href="{{ url('dv-tagcloud') }}">{{ gettext("Tag cloud") }}</a></li>{% endif %}
             <li id="statistics"><a href="{{ url ("dv-stats-index") }}">{{ gettext("Statistics") }}</a></li>
@@ -70,7 +70,7 @@
             {% if perms.webview.change_label %}
                 <li id="unap-labels"><a href="{{ url ("dv-newlabels") }}">{{ gettext("Pending Labels") }}</a> {{ dv.pending("labels")}}</li>
             {% endif %}
-	    {% if perms.webview.change_screenshot %}
+        {% if perms.webview.change_screenshot %}
                 <li id="unap-screenshots"><a href="{{ url ("dv-newscreenshots") }}">{{ gettext("Pending Screenshots") }}</a> {{ dv.pending("screenshots")}}</li>
             {% endif %}
             {% if perms.webview.change_link %}

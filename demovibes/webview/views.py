@@ -42,6 +42,11 @@ class SongView(WebView):
         songid = self.kwargs['song_id']
         self.context['song'] = self.song = get_object_or_404(Song, id=songid)
 
+class SongAddScreenshot(SongView):
+
+    def GET(self):
+        return create_screenshot(self.request, self.song)
+
 class ProfileView(WebView):
     def initialize(self):
         username = self.kwargs['user']
@@ -59,6 +64,9 @@ class ListByLetter(WebView):
     """
     model = None
 
+    def get_objects(self):
+        return self.model.objects.all()
+
     def initialize(self):
         letter = self.kwargs.get("letter", False)
         if letter and not letter in alphalist or letter == '-':
@@ -70,9 +78,9 @@ class ListByLetter(WebView):
     def set_context(self):
         if self.model:
             if self.letter:
-                results = self.model.objects.filter(startswith=self.letter)
+                results = self.get_objects().filter(startswith=self.letter)
             else:
-                results = self.model.objects.all()
+                results = self.get_objects()
             return {'object_list': results }
         return {}
 
@@ -290,12 +298,11 @@ def list_song(request, song_id):
     return j2shim.r2r('webview/song_detail.html', \
         { 'object' : song, 'vote_range': [1, 2, 3, 4, 5], 'comps' : comps, 'remix' : remix, 'related': related, 'tags': tags }\
         , request)
-      
+
 # This can probbably be made a generic object
 def list_screenshot(request, screenshot_id):
     screenshot = get_object_or_404(Screenshot, id=screenshot_id)
-    relatedsongs = SongMetaData.objects.filter(screenshot__id=screenshot_id, active=True)
-    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot, 'songs' : relatedsongs, }, request)
+    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot }, request)
 
 class ViewUserFavs(ProfileView):
     """
@@ -417,10 +424,13 @@ class ListComilations(ListByLetter):
 class ListSongs(ListByLetter):
     template = "song_list.html"
     model = Song
-    
+
 class ListScreenshots(ListByLetter):
     template = "screenshot_list.html"
     model = Screenshot
+
+    def get_objects(self):
+        return self.model.objects.filter(status="A")
 
 @login_required
 def log_out(request):
@@ -872,7 +882,7 @@ def activate_upload(request):
             )
     songs = Song.objects.filter(status = "U").order_by('added')
     return j2shim.r2r('webview/uploaded_songs.html', {'songs' : songs}, request=request)
-    
+
 
 def showRecentChanges(request):
     # Get some default stat values
@@ -881,19 +891,19 @@ def showRecentChanges(request):
     label_limit = getattr(settings, 'RECENT_LABEL_VIEW_LIMIT', 20)
     group_limit = getattr(settings, 'RECENT_GROUP_VIEW_LIMIT', 20)
     comp_limit = getattr(settings, 'RECENT_COMP_VIEW_LIMIT', 20)
-    
+
     # Make a list of stuff needed for the stats page
     songlist = Song.objects.order_by('-songmetadata__added')[:song_limit]
     artistlist = Artist.objects.order_by('-last_updated')[:artist_limit]
     labellist = Label.objects.order_by('-last_updated')[:label_limit]
     grouplist = Group.objects.order_by('-last_updated')[:group_limit]
     complist = Compilation.objects.order_by('-last_updated')[:comp_limit]
-    
+
     # And now return this as a template. default page cache is 5 minutes, which is ample enough
     # To show real changes, without stressing out the SQL loads
-    return j2shim.r2r('webview/recent_changes.html', {'songs' : songlist, 'artists' : artistlist, 'groups' : grouplist, 
+    return j2shim.r2r('webview/recent_changes.html', {'songs' : songlist, 'artists' : artistlist, 'groups' : grouplist,
       'labels' : labellist, 'compilations' : complist}, request=request)
-    
+
 
 class songStatistics(WebView):
     template = "stat_songs.html"
@@ -1225,7 +1235,7 @@ def activate_labels(request):
 
 
 @login_required
-def create_screenshot(request):
+def create_screenshot(request, obj=None):
     """
     Simple form to allow registereed users to create a new screenshot entry.
     """
@@ -1241,22 +1251,29 @@ def create_screenshot(request):
 
     if request.method == 'POST':
         l = Screenshot(added_by = request.user, status = status)
+
         form = CreateScreenshotForm(request.POST, request.FILES, instance = l)
+
         if form.is_valid():
             new_screenshot = form.save(commit=False)
             new_screenshot.save()
             form.save_m2m()
-            
-	    # Generate a request for the thumbnail
-	    new_screenshot.create_thumbnail()
-	    new_screenshot.save()
 
-	    # Leave this place :)
+            # Generate a request for the thumbnail
+            new_screenshot.create_thumbnail()
+            new_screenshot.save()
+
+            # Leave this place :)
             return HttpResponseRedirect(new_screenshot.get_absolute_url())
     else:
-        form = CreateScreenshotForm()
+        if obj:
+            ct = ContentType.objects.get_for_model(obj.__class__)
+            i = {'content_type': ct, 'object_id': obj.id}
+        else:
+            i = {}
+        form = CreateScreenshotForm(initial=i)
     return j2shim.r2r('webview/create_screenshot.html', \
-        {'form' : form }, \
+        {'form' : form, "obj":obj }, \
         request=request)
 
 @permission_required('webview.change_screenshot')
@@ -1289,11 +1306,11 @@ def activate_screenshots(request):
 
         # Send the email to inform the user of their request status
         if this_screenshot.added_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
-	    this_screenshot.added_by.get_profile().send_message(
-		sender = request.user,
-		message = mail_tpl.render(c),
-		subject = "Screenshot Request Status Changed To: %s" % stat
-	    )
+            this_screenshot.added_by.get_profile().send_message(
+                sender = request.user,
+                message = mail_tpl.render(c),
+                subject = "Screenshot Request Status Changed To: %s" % stat
+            )
 
     screenshots = Screenshot.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_screenshots.html', { 'screenshots': screenshots }, request=request)

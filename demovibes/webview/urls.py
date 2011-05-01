@@ -136,7 +136,7 @@ urlpatterns = patterns('',
     url(r'^source/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', sources, name = "dv-source"),
 
     url(r'^chat/$',             'demovibes.webview.views.chat', name = "dv-chat"),
-    
+
     # Screenshot stuff
     url(r'^screenshots/$',                       views.ListScreenshots(), name = "dv-screenshots"),
     url(r'^screenshots/(?P<letter>.)/$',         views.ListScreenshots(), name = "dv-screenshots_letter"),
@@ -164,9 +164,9 @@ urlpatterns = patterns('',
 
     url(r'^statistics/$',                           views.songStatistics(), name = "dv-stats-index"),
     url(r'^statistics/(?P<stattype>\w+)/$',         views.songStatistics(), name = "dv-stats"),
-    
+
     # Updated Information, such as groups, labels etc.
-    url(r'^updates/$',					'demovibes.webview.views.showRecentChanges', name = "dv-updates"),
+    url(r'^updates/$',                  'demovibes.webview.views.showRecentChanges', name = "dv-updates"),
 
     url(r'^artists/$',                             views.ListArtists(), name = "dv-artists"),
     url(r'^artists/(?P<letter>.)/$',               views.ListArtists(), name = "dv-artists_letter"),
@@ -192,6 +192,7 @@ urlpatterns = patterns('',
     url(r'^user/(?P<user>\w+)/favorites/$',        views.ViewUserFavs(), name = "dv-user-favs"),
     url(r'^queue/$',                               views.listQueue(), name = "dv-queue"),
     url(r'^song/(?P<song_id>\d+)/queue/$',         views.AddQueue(), name = "dv-add_queue"),
+    url(r'^song/(?P<song_id>\d+)/screenshot/$',    views.SongAddScreenshot(), name = "dv-add_screenshot"),
     url(r'^song/(?P<song_id>\d+)/play/$',          views.PlaySong(), name = "dv-play_song"),
     url(r'^comment/add/(?P<song_id>\d+)/$',        views.addComment(), name = "dv-addcomment"),
     url(r'^tags/$',                                views.tagCloud(), name = "dv-tagcloud"),

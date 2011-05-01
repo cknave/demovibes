@@ -20,6 +20,13 @@
     {%- endif -%}
 {% endmacro %}
 
+{% macro screenshot(scr) %}
+    <div class="screenshot">
+        <a href="{{ url ("dv-screenshot", scr.id) }}">{% if scr.thumbnail %}<img src="{{ scr.thumbnail.url }}" alt="{{ scr.name|e }}" />{% else %}(No Thumbnail!){% endif %}</a><br />
+        <span class="screenshotname">{{ scr.name|e }}</span>
+    </div>
+{% endmacro %}
+
 {% macro license(lic) %}
         <a href="{{ lic.get_absolute_url() }}">
             {% if lic.icon %}

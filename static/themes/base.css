@@ -95,3 +95,17 @@ div.taglist p:first-child { margin-top: 0; }
 #statistics   {background-image: url("/static/statistics.png");}
 
 #lic-info {float: right; width: 60%;}
+
+div.screenshot {
+    padding: 2px;
+    text-align: center;
+    margin: 4px;
+    float: left;
+}
+span.screenshotname {
+    font-weight: bold;
+    font-style: italic;
+}
+div.clear {
+    clear: both;
+}

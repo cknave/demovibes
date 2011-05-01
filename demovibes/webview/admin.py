@@ -45,16 +45,13 @@ class SongMetaAdmin(admin.ModelAdmin):
     exclude = ["active", "user", "song"]
 
 class SongAdmin(admin.ModelAdmin):
-    list_display = ['title', 'status', 'artist', 'uploader', 'bitrate', 'added', 'pouetid', 'explicit']
+    list_display = ['title', 'status', 'artist', 'uploader', 'bitrate', 'added', 'explicit']
     list_editable = ['status']
     search_fields = ['title', 'status']
     list_filter = ['status']
-    filter_horizontal = ['artists', 'groups', 'labels']
     fieldsets = [
         ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status', 'license']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
-        ("Old info"       ,{'classes': ('collapse',), 'fields': ['ytvidid', 'ytvidoffset', 'release_year', 'remix_of_id', 'artists', 'groups', 'labels', 'type', 'platform', 'info']}),
-        ("Old links"      ,{'classes': ('collapse',), 'fields': ['dtv_id', 'wos_id', 'zxdemo_id', 'lemon_id', 'projecttwosix_id', 'hol_id', 'al_id', 'hvsc_url']}),
     ]
     inlines = [DownloadInline, SongLinkInline]
     date_hierarchy = 'added'

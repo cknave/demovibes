@@ -4,11 +4,12 @@
 
 {% block main %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Create New Screenshot") }}</h2>
+<p>Add a new screenshot for <a href="{{ obj.get_absolute_url()}}">{{ obj }}</a></p>
 <p>{{ gettext("Use this form to create a new screenshot. All entries are checked by a moderator before being approved. Please try to fill in as much information as you can about the entry to make the job easier on the moderators. If you have any questions, please ask a moderator.") }}</p>
 
 <br />
 
-<form action="." method="post" enctype="multipart/form-data">
+<form action="{{ url ("dv-createscreenshot") }}" method="post" enctype="multipart/form-data">
 <table>
 {{ form.as_table() }}
 </table>

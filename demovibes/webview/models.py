@@ -681,11 +681,15 @@ class Screenshot(models.Model):
             ('R', 'Rejected')
         )
 
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    obj = generic.GenericForeignKey('content_type', 'object_id')
+
     added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
     description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
     image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
     last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
+    name = models.CharField(unique = True, max_length=20, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
@@ -711,10 +715,10 @@ class Screenshot(models.Model):
           return None
 
         # Some variables used for scaling
-        thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
-        thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 200)
-        quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 85)
-        format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'png')
+        thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 100)
+        thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 100)
+        quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 70)
+        format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'jpeg')
 
         res = cStringIO.StringIO()
         size=(thumbwidth, thumbheight)
@@ -729,7 +733,6 @@ class Screenshot(models.Model):
         res.seek(0) # Move pointer back to the beginning of the buffer
         thumb = SimpleUploadedFile(os.path.basename(self.image.path), res.read()) # Save it somewhere on the disk
         self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
-        return
 
     @models.permalink
     def get_absolute_url(self):
@@ -753,7 +756,6 @@ class SongMetaData(models.Model):
     remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True)
     ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing")
     ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset")
-    screenshot = models.ForeignKey(Screenshot, null = True, blank = True, verbose_name = "Screenshot", help_text = "Select a screenshot that applies directly to this song. If it doesn't exist, create it first.")
     pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID")
 
     comment = models.TextField(blank=True, help_text="Extra information. Only visible to moderators")
@@ -771,7 +773,7 @@ class SongMetaData(models.Model):
     def get_changelist(self):
         if self.active:
             return []
-        fields = ["artists", "groups", "labels", "info", "platform", "release_year", "type", "remix_of_id", "ytvidid", "ytvidoffset", "screenshot", "pouetid"]
+        fields = ["artists", "groups", "labels", "info", "platform", "release_year", "type", "remix_of_id", "ytvidid", "ytvidoffset", "pouetid"]
         mfields = ["artists", "groups", "labels"]
         meta = self.song.get_metadata()
         result = []
@@ -844,56 +846,35 @@ class Song(models.Model):
             ('K', 'Kaput') # file doesn't exist or scanner didn't like the song
         )
     added = models.DateTimeField(auto_now_add=True)
-    al_id = models.IntegerField(blank=True, null = True, verbose_name="Atari Legends ID", help_text="Atari Legends ID Number (Atari) - See http://www.atarilegend.com")
-    artists = models.ManyToManyField(Artist, null = True, blank = True, help_text="Select all artists involved with creating this song. ") #a
     bitrate = models.IntegerField(blank = True, null = True)
-    cvgm_id = models.IntegerField(blank = True, null = True, verbose_name = "CVGM SongID", help_text="SongID on CVGM (Link will be provided)")
-    dtv_id = models.IntegerField(blank=True, null = True, help_text="Demoscene TV number (id_prod= number) from Demoscene.tv", verbose_name="Demoscene.TV")
     explicit = models.BooleanField(default=False, verbose_name = "Explicit Lyrics?", help_text="Place a checkmark in the box to flag this song as having explicit lyrics/content")
     file = models.FileField(upload_to=createSongPath, verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
-    groups = models.ManyToManyField(Group, null = True, blank = True) #a
-    hol_id = models.IntegerField(blank=True, null = True, verbose_name="H.O.L. ID", help_text="Hall of Light ID number (Amiga) - See http://hol.abime.net")
-    hvsc_url = models.URLField(blank=True, verbose_name="HVSC Link", help_text="Link to HVSC SID file as a complete URL (C64) - See HVSC or alt. mirror (such as www.andykellett.com/music )")
-    info = models.TextField(blank = True, help_text="Additional Song information. BBCode tags are supported. No HTML.") #a
-    labels = models.ManyToManyField(Label, null = True, blank = True) #a Production labels
     last_changed = models.DateTimeField(auto_now = True)
-    lemon_id = models.IntegerField(blank=True, null = True, verbose_name="Lemon64 ID", help_text="Lemon64 Game ID (C64 Only) - See http://www.lemon64.com")
     locked_until = models.DateTimeField(blank = True, null = True)
     loopfade_time = models.PositiveIntegerField(default = 0, verbose_name = "Loop fade time", help_text = "In seconds, 0 = disabled")
-    necta_id = models.IntegerField(blank = True, null = True, verbose_name = "Necta SongID", help_text="SongID on Nectarine (Link will be provided)")
     num_favorited = models.IntegerField(default = 0)
-    platform = models.ForeignKey(SongPlatform, null = True, blank = True) #a
-    pouetid = models.IntegerField(blank=True, null = True, help_text="Pouet number (which= number) from Pouet.net", verbose_name="Pouet ID") #a
-    projecttwosix_id = models.IntegerField(blank=True, null = True, verbose_name="Project2612 ID", help_text="Project2612 ID Number (Genesis / Megadrive) - See http://www.project2612.org")
     rating = models.FloatField(blank = True, null = True)
     rating_total = models.IntegerField(default = 0)
     rating_votes = models.IntegerField(default = 0)
     replay_gain = models.FloatField(default = 0, verbose_name = _("Replay gain"))
-    release_year = models.CharField(blank = True, null = True, verbose_name="Release Year", help_text="Year the song was released (Ex: 1985)", max_length="4", db_index=True) #a
-    remix_of_id = models.IntegerField(blank = True, null = True, verbose_name = "Mix SongID", help_text="Song number (such as: 252) of the original song this is mixed from.", db_index=True) #a
     samplerate = models.IntegerField(blank = True, null = True)
-    screenshot = models.ForeignKey(Screenshot, null = True, blank = True, verbose_name = "Screenshot", help_text = "Select a screenshot that applies directly to this song. If it doesn't exist, create it first.")
     song_length = models.IntegerField(blank = True, null = True)
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index=True)
     times_played = models.IntegerField(null = True, default = 0)
     title = models.CharField(verbose_name="* Song Name", help_text="The name of this song, as it should appear in the database", max_length=80, db_index = True)
-    type = models.ForeignKey(SongType, null = True, blank = True, verbose_name = 'Source') #a
     uploader = models.ForeignKey(User,  null = True, blank = True)
-    wos_id = models.CharField(max_length=8, blank=True, null = True, verbose_name="W.O.S. ID", help_text="World of Spectrum ID Number (Spectrum) such as 0003478 (leading 0's are IMPORTANT!) - See http://www.worldofspectrum.org")
     pouetlink = models.CharField(max_length=200, blank = True)
     pouetss = models.CharField(max_length=100, blank = True)
     pouetgroup = models.CharField(max_length=100, blank = True)
     pouettitle = models.CharField(max_length=100, blank = True)
-    ytvidid = models.CharField(max_length=30, blank = True, verbose_name="YouTube video ID", help_text="For showing YouTube vid in currently playing") #a
-    ytvidoffset = models.PositiveIntegerField(default=0, verbose_name="YouTube start offset") #a
-    zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
     license = models.ForeignKey("SongLicense", blank=True, null=True)
 
     objects = models.Manager()
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
+    screenshots = generic.GenericRelation(Screenshot)
 
     def is_connected_to(self, user):
         if user and user.is_authenticated():
@@ -922,6 +903,12 @@ class Song(models.Model):
         Return all active download links
         """
         return self.songdownload_set.filter(status=0)
+
+    def get_screenshots(self):
+        """
+        Return all active download links
+        """
+        return self.screenshots.filter(status='A')
 
     def get_active_links(self):
         """
@@ -1289,6 +1276,8 @@ class Compilation(models.Model):
     wiki_link = models.URLField(blank=True, help_text="URL to wikipedia entry (if available)")
     youtube_link = models.URLField(help_text="Link to Youtube/Google Video Link (external)", blank = True) # Link to a video of the production
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
+
+    screenshots = generic.GenericRelation(Screenshot)
 
     def log(self, user, message):
         return ObjectLog.objects.create(obj=self, user=user, text=message)

@@ -155,8 +155,8 @@ MAX_GROUP_AVATAR_WIDTH = 250
 # Width & Height of those images here. These same values are used to verify newly added
 # Screenshots. Larger images are scaled down to fit the width, and smaller images are scaled
 # Upwards to fit within the frame.
-SCREEN_DISPLAY_WIDTH = 200
-SCREEN_DISPLAY_HEIGHT = 200
+SCREEN_DISPLAY_WIDTH = 128
+SCREEN_DISPLAY_HEIGHT = 128
 SCREEN_DISPLAY_BORDER = 0
 
 # We can also limit the size of the original sized image

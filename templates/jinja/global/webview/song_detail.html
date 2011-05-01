@@ -178,6 +178,15 @@ Author:
 {% for mix in remix %}{{ dv.get_song_queue_tag_j(mix) }}<br />{% endfor %}
 {% endif %}
 
+<h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshots") }}</h2>
+{% if object.screenshots %}
+    {% for ss in object.get_screenshots() %}
+        {{ display.screenshot(ss) }}
+    {% endfor %}
+{% endif %}
+<div class="clear"></div>
+<a href="{{ url('dv-add_screenshot', object.id) }}">Add new screenshot</a>
+
 <h2><img class="icon_header" src="{{ STATIC_URL }}link_edit.png" alt="" />{{ gettext("Song Corrections &amp; Updates") }}</h2>
 <p><a href="{{ url ("dv-song-edit", object.id) }}">[{{ gettext("Edit Information") }}]</a> - <a href="{{ url ("dv-song-addlink", object.id) }}">[{{ gettext("Add Links") }}]</a>
 {% if user.is_staff %}
