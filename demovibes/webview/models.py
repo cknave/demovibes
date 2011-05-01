@@ -27,7 +27,7 @@ import cStringIO
 from PIL import Image
 
 import tagging
-import time, hashlib
+import time, hashlib, urllib
 log = logging.getLogger("webview.models")
 
 CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
@@ -68,6 +68,7 @@ def get_cherokee_limit(user):
 
 def secure_download (url, user=None):
     if CHEROKEE_SECRET:
+        url = urllib.unquote(url)
         limits = get_cherokee_limit(user)
         if limits:
             key = "urlgenlimit_%s" % user.id
@@ -453,13 +454,13 @@ class Userprofile(models.Model):
         """
         countlist = SongVote.objects.filter(user=self.user)
         return len(countlist);
-        
+
     def get_uploadcount(self):
-	countlist = Song.objects.filter(uploader=self.user)
+        countlist = Song.objects.filter(uploader=self.user)
         return len(countlist);
-        
+
     def get_onelinercount(self):
-	countlist = Oneliner.objects.filter(user=self.user)
+        countlist = Oneliner.objects.filter(user=self.user)
         return len(countlist);
 
     @models.permalink
@@ -670,7 +671,7 @@ class Logo(models.Model):
 
     def get_absolute_url(self):
         return self.file.url
-        
+
 class Screenshot(models.Model):
     STATUS_CHOICES = (
             ('A', 'Active'),
@@ -679,19 +680,19 @@ class Screenshot(models.Model):
             ('U', 'Uploaded'),
             ('R', 'Rejected')
         )
-        
+
     added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
     description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
     image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
     last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily. A thumbnail will automatically be created for this image after it is uploaded.")
+    name = models.CharField(unique = True, max_length=80, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
 
     def __unicode__(self):
         return self.name
-        
+
     def save(self, *args, **kwargs):
         S = self.name[0].lower()
         if not S in alphalist:
@@ -701,35 +702,35 @@ class Screenshot(models.Model):
         return super(Screenshot, self).save(*args, **kwargs)
 
     def create_thumbnail(self):
-	"""
-	Simple function for creating a thumbnail from an existing image. Most parameters can be changed in
-	Settings_local.py for complete customization. JPEG is not always available on all systems by default,
-	Unless libjpeg is installed and PIL is recompiled with it.
-	"""
-	if not self.image:
-	  return None
-	  
-	# Some variables used for scaling
-	thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
-	thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 200)
-	quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 85)
-	format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'png')
+        """
+        Simple function for creating a thumbnail from an existing image. Most parameters can be changed in
+        Settings_local.py for complete customization. JPEG is not always available on all systems by default,
+        Unless libjpeg is installed and PIL is recompiled with it.
+        """
+        if not self.image:
+          return None
 
-	res = cStringIO.StringIO()
-	size=(thumbwidth, thumbheight)
-	
-	img = Image.open(self.image.path)
-	img.thumbnail(size, Image.ANTIALIAS)
+        # Some variables used for scaling
+        thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 200)
+        thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 200)
+        quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 85)
+        format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'png')
 
-	if img.mode != "RGB":
-	    img = img.convert("RGB")
+        res = cStringIO.StringIO()
+        size=(thumbwidth, thumbheight)
 
-	img.save(res, format, quality=quality) # Dump the scaled image to a buffer
-	res.seek(0)	# Move pointer back to the beginning of the buffer
-	thumb = SimpleUploadedFile(os.path.basename(self.image.path), res.read()) # Save it somewhere on the disk
-	self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
-	return
-    
+        img = Image.open(self.image.path)
+        img.thumbnail(size, Image.ANTIALIAS)
+
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        img.save(res, format, quality=quality) # Dump the scaled image to a buffer
+        res.seek(0) # Move pointer back to the beginning of the buffer
+        thumb = SimpleUploadedFile(os.path.basename(self.image.path), res.read()) # Save it somewhere on the disk
+        self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
+        return
+
     @models.permalink
     def get_absolute_url(self):
         return ('dv-screenshot', [str(self.id)])
@@ -810,7 +811,21 @@ class ObjectLog(models.Model):
 
     def display(self):
         return unicode(self.obj)
-        
+
+def createSongPath(instance, filename):
+    lowfile = filename.lower()
+    base = "media/music"
+    if len(lowfile) > 4:
+        firstchar = lowfile[0]
+        secchar = lowfile[1]
+        if firstchar not in alphalist:
+            firstchar = "-"
+        if secchar not in alphalist:
+            secchar = "-"
+        return "%s/%s/%s/%s" % (base, firstchar, secchar, filename)
+    return "%s/shortname/%s" % (base, filename)
+
+
 class Song(models.Model):
     STATUS_CHOICES = (
             ('A', 'Active'),
@@ -835,7 +850,7 @@ class Song(models.Model):
     cvgm_id = models.IntegerField(blank = True, null = True, verbose_name = "CVGM SongID", help_text="SongID on CVGM (Link will be provided)")
     dtv_id = models.IntegerField(blank=True, null = True, help_text="Demoscene TV number (id_prod= number) from Demoscene.tv", verbose_name="Demoscene.TV")
     explicit = models.BooleanField(default=False, verbose_name = "Explicit Lyrics?", help_text="Place a checkmark in the box to flag this song as having explicit lyrics/content")
-    file = models.FileField(upload_to='media/music', verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
+    file = models.FileField(upload_to=createSongPath, verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
     groups = models.ManyToManyField(Group, null = True, blank = True) #a
     hol_id = models.IntegerField(blank=True, null = True, verbose_name="H.O.L. ID", help_text="Hall of Light ID number (Amiga) - See http://hol.abime.net")
     hvsc_url = models.URLField(blank=True, verbose_name="HVSC Link", help_text="Link to HVSC SID file as a complete URL (C64) - See HVSC or alt. mirror (such as www.andykellett.com/music )")
@@ -1046,12 +1061,12 @@ class Song(models.Model):
 
             except:
                 return "Couldn't pull Pouet info!"
-                
+
     def get_pouet_screenshot_img(self):
-	"""
-	Modified version of the above function, except will return the path to the image so
-	We can use it in multiple locations easily.
-	"""
+        """
+        Modified version of the above function, except will return the path to the image so
+        We can use it in multiple locations easily.
+        """
         pouetid = self.get_pouetid()
         if pouetid:
             try:
