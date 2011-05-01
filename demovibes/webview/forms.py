@@ -78,8 +78,8 @@ class CreateSessionForm(forms.Form):
     time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
 
 class CreateScreenshotForm(forms.ModelForm):
-    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.Textarea)
-    object_id = forms.CharField(widget=forms.Textarea)
+    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.HiddenInput)
+    object_id = forms.CharField(widget=forms.HiddenInput)
 
     class Meta:
         model = Screenshot

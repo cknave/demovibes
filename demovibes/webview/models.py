@@ -694,6 +694,9 @@ class Screenshot(models.Model):
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
 
+    class Meta:
+        ordering = ["name"]
+
     def __unicode__(self):
         return self.name
 
