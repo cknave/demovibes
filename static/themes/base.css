@@ -122,3 +122,6 @@ div#songinfo-title {
     font-weight: bold;
     margin-bottom: 5px;
 }
+div#screenshot-connected li {
+    list-style-type: none;
+}
