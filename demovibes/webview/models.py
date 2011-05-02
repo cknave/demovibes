@@ -1079,8 +1079,9 @@ class Song(models.Model):
             desc1 = "%s by %s" % (title, aa)
             desc = "%s\nFetched from Pouet id [url=http://www.pouet.net/prod.php?which=%s]%s[/url]" % (desc1, self.get_pouetid(), self.get_pouetid())
 
-            s = Screenshot(obj=self, name=title, description=desc)
+            s = Screenshot(name=title, description=desc)
             s.image.save(os.path.basename(img_url), image, save=True)
+            ScreenshotObjectLink.objects.create(obj=self, image=s)
             #s.save()
             s.create_thumbnail()
             s.save()
@@ -1765,6 +1766,7 @@ def set_song_values(sender, **kwargs):
         song.add_pouet_img_as_screenshot()
     except:
         pass
+
 
     if (not song.song_length) and song.status != 'K' and os.path.isfile(song.file.path):
         try:
