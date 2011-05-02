@@ -102,6 +102,7 @@ div.screenshot {
     margin: 4px;
     float: left;
     height: 135px;
+    width: 128px;
 }
 span.screenshotname {
     font-weight: bold;

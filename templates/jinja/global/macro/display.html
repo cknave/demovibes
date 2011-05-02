@@ -292,3 +292,6 @@
   </table>
 {% endmacro %}
 
+{% macro showobject(o) %}
+    <a href="{{o.obj.get_absolute_url()}}">{{ o.obj }}</a>
+{% endmacro  %}

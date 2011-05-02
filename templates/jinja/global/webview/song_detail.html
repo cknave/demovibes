@@ -181,7 +181,7 @@ Author:
 <h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Screenshots") }}</h2>
 {% if object.screenshots %}
     {% for ss in object.get_screenshots() %}
-        {{ display.screenshot(ss) }}
+        {{ display.screenshot(ss.image) }}
     {% endfor %}
 {% endif %}
 <div class="clear"></div>

@@ -77,13 +77,15 @@ class CreateSessionForm(forms.Form):
     description = forms.CharField(required=False, label = "Description")
     time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
 
-class CreateScreenshotForm(forms.ModelForm):
+class GenericInfoForm(forms.Form):
     content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.HiddenInput)
     object_id = forms.CharField(widget=forms.HiddenInput)
 
+class CreateScreenshotForm(forms.ModelForm):
+
     class Meta:
         model = Screenshot
-        fields = ["name", "image", "description", "content_type", "object_id"]
+        fields = ["name", "image", "description"]
 
     def clean_image(self):
         image = self.cleaned_data['image']

@@ -1240,6 +1240,7 @@ def create_screenshot(request, obj=None):
     Simple form to allow registereed users to create a new screenshot entry.
     """
     auto_approve = getattr(settings, 'ADMIN_AUTO_APPROVE_SCREENSHOT', 0)
+    error=""
 
     if request.method == 'POST':
         # Check to see if moderation settings allow for the check
@@ -1252,28 +1253,54 @@ def create_screenshot(request, obj=None):
     if request.method == 'POST':
         l = Screenshot(added_by = request.user, status = status)
 
+        new_screenshot = False
+
         form = CreateScreenshotForm(request.POST, request.FILES, instance = l)
+        form2 = GenericInfoForm(request.POST)
 
-        if form.is_valid():
-            new_screenshot = form.save(commit=False)
-            new_screenshot.save()
-            form.save_m2m()
+        if form2.is_valid():
+            connectval = request.POST.get("connectto")
 
-            # Generate a request for the thumbnail
-            new_screenshot.create_thumbnail()
-            new_screenshot.save()
+            ct = form2.cleaned_data['content_type']
+            id = form2.cleaned_data['object_id']
 
-            # Leave this place :)
-            return HttpResponseRedirect(new_screenshot.get_absolute_url())
+            if connectval: #if con
+                try:
+                    if connectval.isdigit():
+                        new_screenshot = Screenshot.objects.get(id=connectval)
+                    else:
+                        new_screenshot = Screenshot.objects.get(name=connectval)
+
+                    ScreenshotObjectLink.objects.create(content_type=ct, object_id=id, image=new_screenshot)
+                    new_screenshot.save()
+                except:
+                    error = "Screenshot not found!"
+
+            if not connectval and form.is_valid():
+                new_screenshot = form.save(commit=False)
+                new_screenshot.save()
+                form.save_m2m()
+
+                ScreenshotObjectLink.objects.create(content_type=ct, object_id=id, image=new_screenshot)
+
+                # Generate a request for the thumbnail
+                new_screenshot.create_thumbnail()
+                new_screenshot.save()
+
+                # Leave this place :)
+
+            if new_screenshot:
+                return HttpResponseRedirect(new_screenshot.get_absolute_url())
     else:
         if obj:
             ct = ContentType.objects.get_for_model(obj.__class__)
-            i = {'content_type': ct, 'object_id': obj.id}
+            i = {'content_type': ct, 'object_id': obj.id, 'error':error}
         else:
             i = {}
-        form = CreateScreenshotForm(initial=i)
+        form = CreateScreenshotForm()
+        form2 = GenericInfoForm(initial=i)
     return j2shim.r2r('webview/create_screenshot.html', \
-        {'form' : form, "obj":obj }, \
+        {'form' : form, 'form2': form2, "obj":obj }, \
         request=request)
 
 @permission_required('webview.change_screenshot')

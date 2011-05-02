@@ -681,15 +681,11 @@ class Screenshot(models.Model):
             ('R', 'Rejected')
         )
 
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    obj = generic.GenericForeignKey('content_type', 'object_id')
-
     added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
-    description = models.TextField(verbose_name="Description", help_text="Brief description about this image, and any other applicable notes.")
+    description = models.TextField(verbose_name="Description", blank = True, help_text="Brief description about this image, and any other applicable notes.")
     image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
     last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=20, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
+    name = models.CharField(unique = True, max_length=30, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
@@ -707,6 +703,9 @@ class Screenshot(models.Model):
         self.startswith = S
         self.last_updated = datetime.datetime.now()
         return super(Screenshot, self).save(*args, **kwargs)
+
+    def get_objects(self):
+        return self.screenshotobjectlink_set.all()
 
     def create_thumbnail(self):
         """
@@ -741,6 +740,15 @@ class Screenshot(models.Model):
     def get_absolute_url(self):
         return ('dv-screenshot', [str(self.id)])
 
+class ScreenshotObjectLink(models.Model):
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    obj = generic.GenericForeignKey('content_type', 'object_id')
+
+    image = models.ForeignKey(Screenshot)
+
+    class Meta:
+        unique_together = ["content_type", "object_id", "image"]
 
 class SongMetaData(models.Model):
     user = models.ForeignKey(User, blank = True, null = True)
@@ -877,7 +885,7 @@ class Song(models.Model):
     active = ActiveSongManager()
 
     links = generic.GenericRelation(GenericLink)
-    screenshots = generic.GenericRelation(Screenshot)
+    screenshots = generic.GenericRelation(ScreenshotObjectLink)
 
     def is_connected_to(self, user):
         if user and user.is_authenticated():
@@ -911,7 +919,7 @@ class Song(models.Model):
         """
         Return all active download links
         """
-        return self.screenshots.filter(status='A')
+        return self.screenshots.filter(image__status='A')
 
     def get_active_links(self):
         """
@@ -1065,8 +1073,11 @@ class Song(models.Model):
             image = SimpleUploadedFile(os.path.basename(img_url), img.read())
 
             title = self.grab_pouet_info("name", False)
-            desc1 = "%s by %s" % (title, self.grab_pouet_info("authors"))
-            desc = "%s\nFetched from pouet id %s" % (desc1, self.get_pouetid())
+            aa = self.grab_pouet_info("authors")
+            if not aa:
+                aa = "a mystical unknown entity"
+            desc1 = "%s by %s" % (title, aa)
+            desc = "%s\nFetched from Pouet id [url=http://www.pouet.net/prod.php?which=%s]%s[/url]" % (desc1, self.get_pouetid(), self.get_pouetid())
 
             s = Screenshot(obj=self, name=title, description=desc)
             s.image.save(os.path.basename(img_url), image, save=True)
@@ -1305,7 +1316,7 @@ class Compilation(models.Model):
     youtube_link = models.URLField(help_text="Link to Youtube/Google Video Link (external)", blank = True) # Link to a video of the production
     zxdemo_id = models.IntegerField(blank=True, null = True, verbose_name="ZXDemo ID", help_text="ZXDemo Production ID Number (Spectrum) - See http://www.zxdemo.org")
 
-    screenshots = generic.GenericRelation(Screenshot)
+    screenshots = generic.GenericRelation(ScreenshotObjectLink)
 
     def log(self, user, message):
         return ObjectLog.objects.create(obj=self, user=user, text=message)
