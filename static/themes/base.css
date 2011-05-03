@@ -97,11 +97,11 @@ div.taglist p:first-child { margin-top: 0; }
 #lic-info {float: right; width: 60%;}
 
 div.screenshot {
-    padding: 2px;
+    padding: 3px;
     text-align: center;
     margin: 4px;
     float: left;
-    height: 135px;
+    height: 150px;
     width: 128px;
 }
 span.screenshotname {
@@ -124,4 +124,10 @@ div#songinfo-title {
 }
 div#screenshot-connected li {
     list-style-type: none;
+}
+
+div.screenshot:hover {
+    background-color: #ddd;
+    border: 1px solid #333;
+    padding: 2px;
 }

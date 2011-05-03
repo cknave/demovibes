@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
@@ -862,7 +863,11 @@ class Song(models.Model):
     file = models.FileField(upload_to=createSongPath, verbose_name="File", max_length=200, help_text="Select a module (mod, xm, etc...) or audio file (mp3, ogg, etc...) to upload. See FAQ for details.")
     last_changed = models.DateTimeField(auto_now = True)
     locked_until = models.DateTimeField(blank = True, null = True)
-    loopfade_time = models.PositiveIntegerField(default = 0, verbose_name = "Loop fade time", help_text = "In seconds, 0 = disabled")
+    loopfade_time = models.PositiveIntegerField(default = 0, verbose_name = "Forced play time", help_text = "In seconds, 0 = disabled")
+    playback_fadeout = models.BooleanField(default=True, verbose_name = "Fadeout at end", help_text = "Only active if Forced play time is set")
+    playback_bass_mode = models.CharField(max_length=3, choices=(("pt1", "ProTracker 1"), ("ft2", "FastTracker2")), blank = True, verbose_name = "Playback mode")
+    playback_bass_inter = models.CharField(max_length=6, choices=(("off", "Off"), ("linear", "Linear"), ("sinc", "Sinc")), blank = True, verbose_name = "Playback interpolation")
+    playback_bass_ramp = models.CharField(max_length=3, choices=(("off", "Off"), ("normal", "Normal"), ("sensitive", "Sensitive")), blank = True, verbose_name = "Playback RAMPAGE!")
     num_favorited = models.IntegerField(default = 0)
     rating = models.FloatField(blank = True, null = True)
     rating_total = models.IntegerField(default = 0)
@@ -942,6 +947,21 @@ class Song(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("dv-song", [str(self.id)])
+
+    def get_playoptions(self):
+        """
+        Return options for playback
+        """
+        r = {}
+
+        r['bass_inter'] = self.playback_bass_inter or "auto"
+        r['bass_mode'] = self.playback_bass_mode or "auto"
+        r['bass_ramp'] = self.playback_bass_ramp or "auto"
+
+        if self.loopfade_time:
+            r['fade_out'] = self.playback_fadeout
+            r['length'] = self.loopfade_time
+        return r
 
     def length(self):
         """

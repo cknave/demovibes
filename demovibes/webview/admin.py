@@ -32,6 +32,10 @@ class UserprofileAdmin(admin.ModelAdmin):
     list_display = ['user', 'country', 'custom_css']
     inlines = [UserLinkInline]
 
+class ScreenshotInline(admin.TabularInline):
+    model = ScreenshotObjectLink
+    extra = 1
+
 class DownloadInline(admin.TabularInline):
     model = SongDownload
     extra = 3
@@ -51,7 +55,8 @@ class SongAdmin(admin.ModelAdmin):
     list_filter = ['status']
     fieldsets = [
         ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status', 'license']}),
-        ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain','loopfade_time']}),
+        ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain']}),
+        ("Playback"    ,{ 'fields' : ['loopfade_time', "playback_fadeout", "playback_bass_mode", "playback_bass_inter", "playback_bass_ramp",]}),
     ]
     inlines = [DownloadInline, SongLinkInline]
     date_hierarchy = 'added'
@@ -115,6 +120,9 @@ class FaqAdmin(admin.ModelAdmin):
 class ScreenshotAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_display = ('name', 'image', 'last_updated', 'description', 'status')
+    inlines = [
+        ScreenshotInline,
+    ]
 
 class RadioStreamAdmin(admin.ModelAdmin):
     search_fields = ('name', 'user', 'country_code')

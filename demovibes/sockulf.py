@@ -71,10 +71,10 @@ class pyWhisperer(object):
             'path': self.command_getsong(),
             'artist': self.command_artist(),
             'title': self.command_title(),
-            'loop': self.command_getloop(),
             'gain': self.command_getgain(),
-            'meta': self.command_getmeta(),
         }
+        moredata = self.player.song.get_playoptions()
+        data.update(moredata)
         return self.encode(data)
 
     def command_artist(self):
