@@ -7,12 +7,20 @@
 <p>{{ gettext("The following compilations have their status as 'Uploaded'. Moderators should verify the information for each entry to make sure it's ok.") }}</p>
 <br />
 {% for compilation in compilations.all() %}
+	{% set ss = compilation.get_master_screenshot()|random %}
+	<h2><img class="icon_header" src="{{ STATIC_URL }}recplay_ico.png" alt="" />{{ gettext("Compilation Details For '") }}{{ compilation.name|e }}'</h2>
     <table>
     <tr>
-    <td>
-    {% if compilation.cover_art %}<img class="cover_art" src="{{ compilation.cover_art.url }}" title="{{ compilation.name|e }}" alt="{{ compilation.name|e }}" />{% else %}<img class="cover_art" src="{{ STATIC_URL }}no_picture.png" height="100" title="No Picture" alt="No Picture" />{% endif %}
-    </td>
-    <td>
+    <td class="compilation_summary">
+	<table>
+	<tr><td>
+    {% if ss %}
+		{{ display.screenshot(ss.image) }}
+	{% else %}
+		(No Image!)
+	{% endif %}
+	</td></tr>
+	<tr><td>
     <b><i>{{ gettext("Compilation Summary") }}:</i></b><br />
     Name: {{ compilation.name|e }}<br />
     {% if compilation.label %}{{ gettext("Label") }}: {{ compilation.label|e }}<br />{% endif %}
@@ -27,7 +35,8 @@
     {% if compilation.bar_code %}{{ gettext("UPC") }}: {{ compilation.bar_code|e }}<br />{% endif %}
     {% if compilation.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ compilation.pouet }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
     {% if compilation.date_added %}<br />{{ gettext("Added On") }}: {{ compilation.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if compilation.created_by %} {{ display.user(compilation.created_by) }}{% endif %}<br />{% endif %}
-    </td>
+	</td></tr>
+	</table>
     <td class="compilation_description">
     <b><i>{{ gettext("Compilation Details For") }} {{ compilation.name|e }}:</i></b><br />
     {% if compilation.info %}<p><i>{{ compilation.info|urlize|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}

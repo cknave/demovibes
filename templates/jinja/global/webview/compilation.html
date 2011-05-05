@@ -6,9 +6,6 @@
 <h2>
     <img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="{{ STATIC_URL }}recplay_ico.png"{% endif %} alt="Compilation" />
     {{ gettext("Compilation") }}: {{ comp.name|e }}
-    {% if user.is_staff %}
-        [<a href="/admin/webview/compilation/{{ comp.id }}/">{{ gettext("Edit Info") }}</a>]
-    {% endif %}
 </h2>
 
 <table>
