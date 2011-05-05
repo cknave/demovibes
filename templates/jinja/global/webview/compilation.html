@@ -36,7 +36,7 @@ Name: {{ comp.name|e }}<br />
 {% if comp.bar_code %}{{ gettext("UPC") }}: {{ comp.bar_code|e }}<br />{% endif %}
 {% if comp.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
 {% if comp.date_added %}<br />{{ gettext("Added On") }}: {{ comp.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
-<a href="{{ url('dv-add_comp_screenshot', comp.id) }}">Add Album Art</a>
+<br /><a href="{{ url('dv-add_comp_screenshot', comp.id) }}">[Add Album Art]</a>
 </p><br />
 {% if sessionform %}
 <h1>{{ gettext("Session making maker!") }}</h1>

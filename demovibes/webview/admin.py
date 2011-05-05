@@ -100,8 +100,9 @@ class CompilationAdmin(admin.ModelAdmin):
     filter_horizontal = ['prod_groups', 'prod_artists']
     list_filter = ['status']
     raw_id_fields = ["prod_artists", "prod_groups"]
+    exclude = ["cover_art"]
     inlines = [
-        CompilationSongInline,
+        CompilationSongInline, 
     ]
 
 class LabelAdmin(admin.ModelAdmin):

@@ -215,7 +215,7 @@ class CreateLinkForm(forms.ModelForm):
 class CreateCompilationForm(forms.ModelForm):
     class Meta:
         model = Compilation
-        exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status"]
+        exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status", "cover_art"]
 
 class SLForm(object):
     class Media:
