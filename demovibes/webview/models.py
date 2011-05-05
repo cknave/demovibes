@@ -681,15 +681,21 @@ class Screenshot(models.Model):
             ('U', 'Uploaded'),
             ('R', 'Rejected')
         )
+        
+    IMAGE_CHOICES = (
+            ('0', 'Normal'),
+            ('1', 'Main')       # Master Image in the set for the object (like an album cover)
+        )
 
     added_by = models.ForeignKey(User, blank = True, null = True, related_name="screenshoit_addedby")
     description = models.TextField(verbose_name="Description", blank = True, help_text="Brief description about this image, and any other applicable notes.")
     image = models.ImageField(upload_to = 'media/screenshot/image', blank = True, null = True) # Large, unscaled image
     last_updated = models.DateTimeField(editable = False, blank = True, null = True)
-    name = models.CharField(unique = True, max_length=30, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
+    name = models.CharField(unique = True, max_length=40, verbose_name="Screen/Image Name", help_text="Name/Title of this image. Be verbose, to make it easier to find later. Use a real name like 'fr-041: Debris' that people can find easily")
     startswith = models.CharField(max_length=1, editable = False, db_index = True)
     status = models.CharField(max_length = 1, choices = STATUS_CHOICES, default = 'A', db_index = True)
     thumbnail = models.ImageField(upload_to = 'media/screenshot/thumb', blank = True, null = True) # Thumbnail version of the master image
+    type = models.CharField(max_length = 1, choices = IMAGE_CHOICES, default = '0', db_index = True, verbose_name="Image Type", help_text="Determine the type of image this should appear as in the associated set") # Determines if this thumbnail is the 'Master' thumbnail in the set for the given object
 
     class Meta:
         ordering = ["name"]
@@ -1345,6 +1351,26 @@ class Compilation(models.Model):
     def get_logs(self):
         obj_type = ContentType.objects.get_for_model(self)
         return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
+        
+    def get_screenshots(self):
+        """
+        Return all active screenshots
+        """
+        return self.screenshots.filter(image__status='A')
+        
+    def get_master_screenshot(self):
+        """
+        Once use of the Master field is enabled, this will return the 'highlighted'
+        Screenshot of the compilation, or, the main cover picture. If it doesn't exist
+        Yet, it will just randomly pick one of the other pictures.
+        """
+        mainshot = self.screenshots.filter(image__status='A', image__type='1')
+            
+        # Did we find an image?
+        if not mainshot:
+            return self.screenshots.filter(image__status='A')
+        
+        return mainshot
 
     def reset_songs(self):
         CompilationSongList.objects.filter(compilation = self).delete()
@@ -1354,6 +1380,29 @@ class Compilation(models.Model):
 
     def add_song(self, song, index=0):
         return CompilationSongList.objects.create(compilation=self, song=song, index=index)
+        
+    def convert_screenshot(self):
+        """
+        Takes the existing old-style screenshot image, and converts to a new Screenshot object
+        """
+        if not self.cover_art:
+            return  # Nothing to convert!
+        
+        # Set up the basic field information
+        desc = "From The Album '%s'" % (self.name)
+        title = self.name
+        
+        # Move the image to the new folder structure
+        data = open(self.cover_art.path) 
+        image = SimpleUploadedFile(os.path.basename(self.cover_art.path), data.read())
+        
+        # Create screenshot, and link this compilation to the object
+        s = Screenshot(name=title, description=desc)
+        s.image.save(os.path.basename(self.cover_art.path), image, save=True)
+        ScreenshotObjectLink.objects.create(obj=self, image=s)
+        s.create_thumbnail()
+        s.save()
+        return
 
     class Meta:
         ordering = ['name']

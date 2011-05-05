@@ -46,6 +46,17 @@ class SongAddScreenshot(SongView):
 
     def GET(self):
         return create_screenshot(self.request, self.song)
+        
+class CompilationView(WebView):
+
+    def initialize(self):
+        compid = self.kwargs['compilation_id']
+        self.context['compilation'] = self.compilation = get_object_or_404(Compilation, id=compid)
+
+class CompilationAddScreenshot(CompilationView):
+
+    def GET(self):
+        return create_screenshot(self.request, self.compilation)
 
 class ProfileView(WebView):
     def initialize(self):
@@ -472,6 +483,7 @@ def view_compilation(request, comp_id):
     """
     permission = request.user.has_perm("webview.make_session")
     comp = get_object_or_404(Compilation, id=comp_id) # Find it, or return a 404 error
+
     if permission:
         sessionform = CreateSessionForm()
     else:

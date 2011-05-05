@@ -185,6 +185,7 @@ urlpatterns = patterns('',
     url(r'^compilations/$',                             views.ListComilations(), name = "dv-compilations"),
     url(r'^compilations/new/$',                     views.AddCompilation(), name = "dv-newcomp"),
     url(r'^compilations/(?P<letter>.)/$',               views.ListComilations(), name = "dv-compilations_letter"),
+    url(r'^compilation/(?P<compilation_id>\d+)/screenshot/$',    views.CompilationAddScreenshot(), name = "dv-add_comp_screenshot"),
 
     url(r'^user/$',                                views.MyProfile(), name = "dv-my_profile"),
     url(r'^online/$',                              'demovibes.webview.views.users_online', name = "dv-users_online"),

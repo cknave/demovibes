@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% block title %}{{ gettext("Compilation") }}: {{ comp.name|e }}{% if comp.label %} {{ gettext("from") }} {{ comp.label|e }}{% endif %}{% endblock %}
 {% import "macro/display.html" as display -%}
-
+{% set su = comp.get_master_screenshot()|random %}
 {% block main %}
 <h2>
     <img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="{{ STATIC_URL }}recplay_ico.png"{% endif %} alt="Compilation" />
@@ -14,11 +14,13 @@
 <table>
 <tr>
 <td class="compilation_summary">
-{% if comp.cover_art %}
- <img class="compilation_screenshot" src="{{ comp.cover_art.url }}" alt="[Cover Art]" /><br />
-{% else %}
- <img class="compilation_screenshot" src="{{ STATIC_URL }}no_picture.png" alt="[No Cover Art]" /><br />
+<table>
+<tr><td>
+{% if su %}
+    {{ display.screenshot(su.image) }}
 {% endif %}
+</td></tr>
+<tr><td>
 <p class="compilation_details_s.all()">
 <b><i>{{ gettext("Compilation Summary") }}:</i></b><br />
 Name: {{ comp.name|e }}<br />
@@ -34,7 +36,8 @@ Name: {{ comp.name|e }}<br />
 {% if comp.bar_code %}{{ gettext("UPC") }}: {{ comp.bar_code|e }}<br />{% endif %}
 {% if comp.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
 {% if comp.date_added %}<br />{{ gettext("Added On") }}: {{ comp.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
-</p>
+<a href="{{ url('dv-add_comp_screenshot', comp.id) }}">Add Album Art</a>
+</p><br />
 {% if sessionform %}
 <h1>{{ gettext("Session making maker!") }}</h1>
 <form method="post" action=".">
@@ -42,6 +45,8 @@ Name: {{ comp.name|e }}<br />
 <input type="submit" value="{{ gettext("Make session") }}"/>
 </form>
 {% endif %}
+</td></tr>
+</table>
 </td>
 <td class="compilation_description">
 <b><i>{{ gettext("Compilation Details For") }} {{ comp.name|e }}:</i></b><br />
@@ -73,5 +78,11 @@ Name: {{ comp.name|e }}<br />
 </td>
 </tr>
 </table>
+<h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("All Images For This Compilation") }}</h2>
+{% if comp.screenshots %}
+    {% for ss in comp.get_screenshots() %}
+        {{ display.screenshot(ss.image) }}
+    {% endfor %}
+{% endif %}
 {% endblock %}
 
