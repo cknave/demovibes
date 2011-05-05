@@ -67,10 +67,13 @@
             {% if perms.webview.change_group %}
                 <li id="unap-groups"><a href="{{ url ("dv-newgroups") }}">{{ gettext("Pending Groups") }}</a> {{ dv.pending("groups")}}</li>
             {% endif %}
+            {% if perms.webview.change_compilation %}
+                <li id="unap-compilations"><a href="{{ url ("dv-newcompilations") }}">{{ gettext("Pending Compilations") }}</a> {{ dv.pending("compilations")}}</li>
+            {% endif %}
             {% if perms.webview.change_label %}
                 <li id="unap-labels"><a href="{{ url ("dv-newlabels") }}">{{ gettext("Pending Labels") }}</a> {{ dv.pending("labels")}}</li>
             {% endif %}
-        {% if perms.webview.change_screenshot %}
+            {% if perms.webview.change_screenshot %}
                 <li id="unap-screenshots"><a href="{{ url ("dv-newscreenshots") }}">{{ gettext("Pending Screenshots") }}</a> {{ dv.pending("screenshots")}}</li>
             {% endif %}
             {% if perms.webview.change_link %}

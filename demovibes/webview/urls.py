@@ -217,6 +217,7 @@ urlpatterns = patterns('',
     url(r'^new_artists/$',                      'demovibes.webview.views.activate_artists', name = "dv-newartists"),
     url(r'^group/create/$',                     'demovibes.webview.views.create_group', name = "dv-creategroup"),
     url(r'^new_groups/$',                       'demovibes.webview.views.activate_groups', name = "dv-newgroups"),
+    url(r'^new_compilations/$',                 'demovibes.webview.views.activate_compilations', name = "dv-newcompilations"),
 
     # Production label URL's (Labels/Producers Specific)
     url(r'^labels/$',                             views.ListLabels(), name = "dv-labels"),

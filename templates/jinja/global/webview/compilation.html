@@ -78,6 +78,10 @@ Name: {{ comp.name|e }}<br />
 </td>
 </tr>
 </table>
+{% if user.is_staff %}
+    <h2><img class="icon_header" src="{{ STATIC_URL }}link_edit.png" alt="" />{{ gettext("Compilation Corrections &amp; Updates") }}</h2>
+    <a href="edit">[{{ gettext("Edit compilation") }}]</a>
+{% endif %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("All Images For This Compilation") }}</h2>
 {% if comp.screenshots %}
     {% for ss in comp.get_screenshots() %}

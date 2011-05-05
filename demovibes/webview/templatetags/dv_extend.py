@@ -212,6 +212,7 @@ def pending(category):
         'songs': Song.objects.filter(status="U"),
         'artists': Artist.objects.filter(status="U"),
         'groups': Group.objects.filter(status="U"),
+        'compilations': Compilation.objects.filter(status="U"),
         'labels': Label.objects.filter(status="U"),
         'links': Link.objects.filter(status="P"),
         'info': SongMetaData.objects.filter(checked=False),

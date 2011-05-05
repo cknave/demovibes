@@ -65,7 +65,7 @@ class BasicTest(TestCase):
         restricted.append(reverse("dv-upload", args = [self.artist.id]))
 
         admin = ["dv-newlinks", "dv-newlabels", "dv-newgroups",
-                "dv-newartists", "dv-uploads"]
+                "dv-newcompilations", "dv-newartists", "dv-uploads"]
         admin = [reverse(a) for a in admin]
 
         for page in pages:

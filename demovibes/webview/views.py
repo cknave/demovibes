@@ -1174,6 +1174,43 @@ def activate_groups(request):
     groups =Group.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_groups.html', { 'groups': groups }, request=request)
 
+@permission_required('webview.change_compilation')
+def activate_compilations(request):
+    """
+    Shows the most recently added compilations who have a 'U' status in their upload marker
+    """
+    if "compilation" in request.GET and "status" in request.GET:
+        compilationid = int(request.GET['compilation'])
+        status = request.GET['status']
+        compilation = Compilation.objects.get(id=compilationid)
+
+        if status == 'A':
+            stat = "Accepted"
+            compilation.status = "A"
+        if status == 'R':
+            stat = "Rejected"
+            compilation.status = 'R'
+
+        # Prepare a mail template to inform user of the status of their request
+        mail_tpl = loader.get_template('webview/email/compilation_approval.txt')
+        c = Context({
+                'compilation' : compilation,
+                'site' : Site.objects.get_current(),
+                'stat' : stat,
+        })
+        compilation.save()
+
+        # Send the email to inform the user of their request status
+        if compilation.created_by.get_profile().email_on_group_add and status == 'A' or status == 'R':
+            compilation.created_by.get_profile().send_message(
+                sender = request.user,
+                message = mail_tpl.render(c),
+                subject = "Compilation Request Status Changed To: %s" % stat
+            )
+
+    compilations = Compilation.objects.filter(status = "U").order_by('last_updated')
+    return j2shim.r2r('webview/pending_compilations.html', { 'compilations': compilations }, request=request)
+
 @login_required
 def create_label(request):
     """
