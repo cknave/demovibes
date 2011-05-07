@@ -61,6 +61,7 @@ FILTERS = {
     'timeuntil': timeuntil,
     'floatformat': defaultfilters.floatformat,
     'linebreaks': defaultfilters.linebreaks,
+    'linebreaksbr': defaultfilters.linebreaksbr,
     'smileys': dv_extend.smileys,
     'smileys_oneliner': dv_extend.smileys_oneliner,
     'oneliner_mediaparse': dv_extend.oneliner_mediaparse,

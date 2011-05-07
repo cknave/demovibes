@@ -131,3 +131,56 @@ div.screenshot:hover {
     border: 1px solid #333;
     padding: 2px;
 }
+
+.ytvidlink {
+    width: 120px;
+    border: 1px solid #000;
+    text-align: center;
+}
+.ytvidlink span.yttitle {
+    margin: 2px;
+    visibility: hidden;
+    font-size: 0.8em;
+    position:absolute;
+    bottom:0;
+    left: 0;
+    width: 120px;
+    color: #fff;
+    opacity: 0.5;
+
+}
+.ytvidlink span.yttitle:hover {
+    background-color: #000;
+    opacity: 1.0;
+}
+.ytvidlink span.overlay {
+    position:absolute;
+    bottom:1px;
+    right:1px;
+    filter:alpha(opacity=50);
+  -moz-opacity:0.5;
+  -khtml-opacity: 0.5;
+  opacity: 0.5;
+}
+.youtube-link {
+position: relative;
+display: inline-block;
+vertical-align: middle;
+background-color: #eee;
+}
+
+.editbar {
+    padding-left: 10px;
+}
+.editButton {
+padding: 2px;
+}
+
+.ytpopupdesc {
+    font-size: 0.95em;
+    padding: 5px;
+    padding-top: 0;
+}
+.ytpopupdata {
+    text-align: center;
+}

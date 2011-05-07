@@ -31,9 +31,9 @@
         {{ dv.j_get_post_count(post.author) }} Posts<br />
         <a href="{{ post.get_absolute_url() }}">#{{ post.id }}</a> <span>({{ post.time|timesince }} ago)</span><br />
     </td>
-    <td class="post">{# {% cache 600 "forumpost" post.id post.edited %} #}
-        {{ post.body|mksafe|linebreaks|bbcode|wordwrap(100)|smileys }}
-    {# {% endcache %} #}</td>
+    <td class="post"><div>{# {% cache 600 "forumpost" post.id post.edited %} #}
+        {{ post.body|mksafe|linebreaksbr|bbcode|smileys }}
+    {# {% endcache %} #}</div></td>
 </tr>
 <tr class='postfooter'>
     <td></td>

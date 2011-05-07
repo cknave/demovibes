@@ -8,10 +8,9 @@
 
 {% set objs, paging = dv.paginate(object_list) %}
 <br />
-<table class="screenshotlist">
 {% for scr in objs %}
     {{ display.screenshot(scr) }}
 {% endfor %}
-</table>
+
 <br />{{ paging }}
 {% endblock %}

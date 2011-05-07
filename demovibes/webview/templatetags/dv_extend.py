@@ -1084,6 +1084,14 @@ def bb_youtube(hit):
     video = hit.group(1)
     return '<object width="425" height="350"><param name="movie" value="http://www.youtube.com/v/%s"></param><param name="wmode" value="transparent"></param><embed src="http://www.youtube.com/v/%s" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350"></embed></object>' % (video, video)
 
+def bb_youtube2(hit):
+    """
+    Simplified YouTube video sharing tab. Embed the ID of the video into the [youtube]
+    Tag like so: [youtube]S-T8h0T0SK8[/youtube]
+    """
+    video = hit.group(1)
+    return """<div class="youtube-link" data-ytid="%s"><a href="http://www.youtube.com/watch?v=%s" target="_blank">Youtube video</a></div>""" % (video, video)
+
 def bb_compilation(hit):
     """
     Attempt to find a compilation by it's ID number
@@ -1475,6 +1483,7 @@ bbdata_full = [
 
         # Experimental BBCode tags
         (r'\[youtube\](.+?)\[/youtube\]', bb_youtube),
+        (r'\[yt\](.+?)\[/yt\]', bb_youtube2),
         (r'\[gvideo\](.+?)\[/gvideo\]', bb_gvideo),
     ]
 

@@ -12,6 +12,28 @@ function requestsong(no) {
     $.get(ajaxurl+'song/'+no+'/queue/?'+ajaxeventid);
 }
 
+function format_time(s) {
+            var r = "NaN";
+            var h=Math.round(Math.floor(s/(60.0*60.0)));
+            s%=(60*60);
+            var m=Math.round(Math.floor(s/60.0));
+            s%=(60);
+            if (s<10) {
+                s="0"+s;
+            }
+            if (h>0 && m<10) {
+                m="0"+m;
+            }
+            try {
+                if (h>0) {
+                   r = h+":"+m+":"+s;
+                }else{
+                   r = m+":"+s;
+                }
+            }catch(err){} // ignore error
+            return r;
+        }
+
 // added support for multiple counter spans with arbitrary direction
 function counter() {
     $("[data-name='counter']").each( function (n) {
@@ -121,3 +143,54 @@ function voteshow(id,value)
         }
     }
 }
+
+function updateElement(element, data, ytid) {
+    var title = data.data.title;
+    var link = $(element).find("a").attr("href");
+    var content = "<div class='ytvidlink ytv"+ytid+"'><a href='"+link+"' target='_blank'><img src='"+data.data.thumbnail.sqDefault+"'><span class='overlay'><img src='/static/icon_youtube.png' /></span></a></div>";
+    $(element).empty();
+    $(element).append(content);
+    var desc = data.data.description.replace(/\n/, "<br />");
+    if (!desc) { desc = "<i>No description</i>" }
+    desc = "<div class='ytpopupdesc'>" + desc + "</div>";
+    desc = desc + "<div class='ytpopupdata'>Rating : "+ data.data.rating.toPrecision(2)+" | Views : "+ data.data.viewCount +" | Duration : " + format_time(data.data.duration);
+    $(".ytv"+ytid).qtip({
+        "content": {
+            "text": desc,
+            "title": {
+                "text": title + " by " + data.data.uploader
+            }
+        },
+        "position": {
+            "my" : "top center",
+            "at" : "bottom center"
+        },
+           "style": {
+               "classes": 'ui-tooltip-shadow ui-tooltip-jtools'
+            }
+    })
+}
+
+$(document).ready( function () {
+    var cachekey = "ytcacheX-";
+    var datagrab="https://gdata.youtube.com/feeds/api/videos/!YTID!?v=2&alt=jsonc&callback=?"
+    $(".youtube-link").each( function(i, element) {
+        var ytid = $(element).data("ytid");
+        var content = localStorage.getItem(cachekey + ytid);
+
+        if (!content) {
+            $(element).append("<img src='/static/ajax-loader.gif' />");
+            $.getJSON(datagrab.replace("!YTID!", ytid), function(data) {
+                if ((data) && (data.data)) {
+                    localStorage.setItem(cachekey + ytid, JSON.stringify(data));
+                    updateElement(element, data, ytid);
+                } else {
+                    $(element).find("img").remove();
+                }
+            });
+        } else {
+            var data = JSON.parse(content);
+            updateElement(element, data, ytid);
+        }
+    });
+});
