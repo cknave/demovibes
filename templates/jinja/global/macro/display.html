@@ -293,5 +293,9 @@
 {% endmacro %}
 
 {% macro showobject(o) %}
-    <a href="{{o.obj.get_absolute_url()}}">{{ o.obj }}</a>
+    {% if o.obj|attr("display") is defined %}
+        {{ o.obj.display() }}
+     {% else %}
+        <a href="{{o.obj.get_absolute_url()}}">{{ o.obj }}</a>
+    {% endif %}
 {% endmacro  %}

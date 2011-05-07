@@ -681,7 +681,7 @@ class Screenshot(models.Model):
             ('U', 'Uploaded'),
             ('R', 'Rejected')
         )
-        
+
     IMAGE_CHOICES = (
             ('0', 'Normal'),
             ('1', 'Main')       # Master Image in the set for the object (like an album cover)
@@ -897,6 +897,9 @@ class Song(models.Model):
 
     links = generic.GenericRelation(GenericLink)
     screenshots = generic.GenericRelation(ScreenshotObjectLink)
+
+    #def display(self):
+    #    return "song"
 
     def is_connected_to(self, user):
         if user and user.is_authenticated():
@@ -1351,13 +1354,13 @@ class Compilation(models.Model):
     def get_logs(self):
         obj_type = ContentType.objects.get_for_model(self)
         return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
-        
+
     def get_screenshots(self):
         """
         Return all active screenshots
         """
         return self.screenshots.filter(image__status='A')
-        
+
     def get_master_screenshot(self):
         """
         Once use of the Master field is enabled, this will return the 'highlighted'
@@ -1365,11 +1368,11 @@ class Compilation(models.Model):
         Yet, it will just randomly pick one of the other pictures.
         """
         mainshot = self.screenshots.filter(image__status='A', image__type='1')
-            
+
         # Did we find an image?
         if not mainshot:
             return self.screenshots.filter(image__status='A')
-        
+
         return mainshot
 
     def reset_songs(self):
@@ -1380,22 +1383,22 @@ class Compilation(models.Model):
 
     def add_song(self, song, index=0):
         return CompilationSongList.objects.create(compilation=self, song=song, index=index)
-        
+
     def convert_screenshot(self):
         """
         Takes the existing old-style screenshot image, and converts to a new Screenshot object
         """
         if not self.cover_art:
             return  # Nothing to convert!
-        
+
         # Set up the basic field information
         desc = "From The Album '%s'" % (self.name)
         title = self.name
-        
+
         # Move the image to the new folder structure
-        data = open(self.cover_art.path) 
+        data = open(self.cover_art.path)
         image = SimpleUploadedFile(os.path.basename(self.cover_art.path), data.read())
-        
+
         # Create screenshot, and link this compilation to the object
         s = Screenshot(name=title, description=desc)
         s.image.save(os.path.basename(self.cover_art.path), image, save=True)

@@ -1086,11 +1086,10 @@ def bb_youtube(hit):
 
 def bb_youtube2(hit):
     """
-    Simplified YouTube video sharing tab. Embed the ID of the video into the [youtube]
-    Tag like so: [youtube]S-T8h0T0SK8[/youtube]
+    Simplified YouTube video sharing tab v2.
     """
     video = hit.group(1)
-    return """<div class="youtube-link" data-ytid="%s"><a href="http://www.youtube.com/watch?v=%s" target="_blank">Youtube video</a></div>""" % (video, video)
+    return """<a data-ytid="%s" class="ytlink" href="http://www.youtube.com/watch?v=%s" target="_blank">http://www.youtube.com/watch?v=%s</a>""" % (video, video, video)
 
 def bb_compilation(hit):
     """
@@ -1143,7 +1142,7 @@ def bb_youtube_ol(hit):
     Tag like so: [yt]S-T8h0T0SK8[/yt]. This version is oneliner specific
     """
     video = hit.group(1)
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0" /> YouTube Link</a>' % (video, STATIC)
+    return '<a class="ytlinkol" data-ytid="%s" href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0" /> <span class="yttitle">YouTube Link</span></a>' % (video, video, STATIC)
 
 def bb_googlevideo_ol(hit):
     """
@@ -1176,7 +1175,7 @@ def oneliner_mediaparse(value):
     """
     medialinks = [
         # YouTube auto scraping
-        (r'(^|\s)https?://(www\.|)youtube.com/(watch/?\?v=|v/)([\w&;=#-]+)', r'[yt]\4[/yt]'),
+        (r'(^|\s)https?://(www\.|)youtube.com/(watch/?\?v=|v/)([\w;&=#-]+)', r'[yt]\4[/yt]'),
         # Google Video Scraping
         (r'(^|\s)http://video.google.com/videoplay\?docid=([\w&;=-]+)', r'[gv]\2[/gv]'),
     ]
