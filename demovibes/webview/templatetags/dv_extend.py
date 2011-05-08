@@ -1526,3 +1526,8 @@ oneliner_mediaparse.is_safe = True
 wordwrap.is_safe = True
 get_rating_stars_song_avg.is_safe = True
 dv_urlize.is_safe = True
+
+try:
+	from dv_extend_local import *
+except:
+	pass
