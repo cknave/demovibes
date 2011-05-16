@@ -10,7 +10,7 @@
 
 * {
 	font-family: Tahoma, Verdana, sans-serif;
-	font-size: 11px;
+	font-size: 12px;
 	text-shadow: #222 1px 1px 0.1px;
 }
 
@@ -465,7 +465,7 @@ hr {
 }
 
 .onelinertext, .onelinertext * {
-	font-size: 10px;
+	font-size: 12px;
 }
 
 .onelinertext img {
@@ -927,4 +927,8 @@ table#djangoForumThreadPosts .post {
 
 #linksform tr:hover {
     background-color: #0085B9;
+}
+
+div.screenshot:hover {
+	background: #048 !important;
 }
