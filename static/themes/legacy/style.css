@@ -925,3 +925,6 @@ table#djangoForumThreadPosts .post {
         display: none; /* keeps the popup hidden if no JS available */
 }
 
+#linksform tr:hover {
+    background-color: #0085B9;
+}
