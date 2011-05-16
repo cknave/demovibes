@@ -289,11 +289,12 @@ hr {
 #login		{background-image: url("/static/door_in.png");}
 #admin		{background-image: url("/static/door.png");}
 #inbox		{background-image: url("/static/email.png");}
-#unap-artists   {background-image: url("/static/user_green.png");}
-#unap-groups    {background-image: url("/static/group.png");} 
-#unap-labels    {background-image: url("/static/transmit_blue.png");}
-#unap-links     {background-image: url("/static/link.png");}
-#groups         {background-image: url("/static/group.png");} 
+#unap-artists	{background-image: url("/static/user_green.png");}
+#unap-groups	{background-image: url("/static/group.png");} 
+#unap-compilations	{background-image: url("/static/recplay_ico.png");}
+#unap-labels	{background-image: url("/static/transmit_blue.png");}
+#unap-links	{background-image: url("/static/link.png");}
+#groups		{background-image: url("/static/group.png");} 
 #labels		{background-image: url("/static/transmit_blue.png");}
 #links		{background-image: url("/static/link.png");}
 #faq		{background-image: url("theme-images/help.png");}
