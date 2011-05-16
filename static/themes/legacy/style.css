@@ -38,9 +38,10 @@ h1, h2 img {
 	right: 2px;
 }
 
-input, textarea, keygen, select, button, isindex, datagrid {
-	text-shadow: #000 0px 0px 0px;
+input, textarea, keygen, select, button, isindex, datagrid, option {
+	text-shadow: none !important;
 	font-size: 10px;
+	border: 1px #037 solid !important;
 }
 
 #maincontent input[type=text], #maincontent textarea {
@@ -412,7 +413,7 @@ hr {
 	top: 2px;
 	right: 27px;
 	width: 16px;
-	border: none;
+	border: none !important;
 	padding-left: 8px;
 	padding-right: 8px;
 	background-color: transparent;
@@ -516,6 +517,11 @@ hr {
 /* Tag block shown on a song's info page */
 .taglist {
 	overflow: auto;
+	background: #004579 !important;
+	border: #37C 1px solid !important;
+	-moz-border-radius: 2px !important;
+	-webkit-border-radius: 2px !important;
+	border-radius: 2px 2px !important;
 }
 
 .taglist p {
