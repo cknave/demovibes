@@ -272,32 +272,32 @@ hr {
 }
 
 /* All the top right and left menu images */
-#home 		{background-image: url("/static/house.png");}
-#songs		{background-image: url("/static/music.png");}
-#song-platform	{background-image: url("theme-images/joystick.png");}
-#artists	{background-image: url("/static/user_green.png");}
-#compilations   {background-image: url("/static/recplay_ico.png");}
-#tagcloud        {background-image: url("theme-images/tag_yellow.png");}
-#recent	        {background-image: url("/static/new.png");}
-#menuqueue	{background-image: url("/static/script.png");}
-#search		{background-image: url("/static/find.png");}
-#forum		{background-image: url("/static/user_comment.png");}
-#profile	{background-image: url("theme-images/vcard_edit.png");}
-#favorites	{background-image: url("/static/heart.png");}
-#register	{background-image: url("/static/page_white_edit.png");}
-#logout		{background-image: url("/static/door_out.png");}
-#login		{background-image: url("/static/door_in.png");}
-#admin		{background-image: url("/static/door.png");}
-#inbox		{background-image: url("/static/email.png");}
-#unap-artists	{background-image: url("/static/user_green.png");}
-#unap-groups	{background-image: url("/static/group.png");} 
-#unap-compilations	{background-image: url("/static/recplay_ico.png");}
-#unap-labels	{background-image: url("/static/transmit_blue.png");}
-#unap-links	{background-image: url("/static/link.png");}
-#groups		{background-image: url("/static/group.png");} 
-#labels		{background-image: url("/static/transmit_blue.png");}
-#links		{background-image: url("/static/link.png");}
-#faq		{background-image: url("theme-images/help.png");}
+#home			{background-image: url("theme-images/house.png");}
+#songs			{background-image: url("theme-images/music.png");}
+#song-platform		{background-image: url("theme-images/joystick.png");}
+#artists		{background-image: url("theme-images/user_green.png");}
+#compilations		{background-image: url("theme-images/recplay_ico.png");}
+#tagcloud		{background-image: url("theme-images/tag_yellow.png");}
+#recent			{background-image: url("theme-images/new.png");}
+#menuqueue		{background-image: url("theme-images/script.png");}
+#search			{background-image: url("theme-images/find.png");}
+#forum			{background-image: url("theme-images/user_comment.png");}
+#profile		{background-image: url("theme-images/vcard_edit.png");}
+#favorites		{background-image: url("theme-images/heart.png");}
+#register		{background-image: url("theme-images/page_white_edit.png");}
+#logout			{background-image: url("theme-images/door_out.png");}
+#login			{background-image: url("theme-images/door_in.png");}
+#admin			{background-image: url("theme-images/door.png");}
+#inbox			{background-image: url("theme-images/email.png");}
+#unap-artists		{background-image: url("theme-images/user_green.png");}
+#unap-groups		{background-image: url("theme-images/group.png");} 
+#unap-compilations	{background-image: url("theme-images/recplay_ico.png");}
+#unap-labels		{background-image: url("theme-images/transmit_blue.png");}
+#unap-links		{background-image: url("theme-images/link.png");}
+#groups			{background-image: url("theme-images/group.png");} 
+#labels			{background-image: url("theme-images/transmit_blue.png");}
+#links			{background-image: url("theme-images/link.png");}
+#faq			{background-image: url("theme-images/help.png");}
 #song-source		{background-image: url("theme-images/server_connect.png");}
 
 #main {
