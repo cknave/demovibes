@@ -17,7 +17,7 @@
             <li id="screenshots"><a href="{{ url ("dv-screenshots") }}">{{ gettext("Images") }}</a></li>
             <li id="licenses"><a href="{{ url ("dv-licenses") }}">{{ gettext("Licenses") }}</a></li>
             {% if not user.is_authenticated() or user.get_profile().use_tags %}<li id="tagcloud"><a href="{{ url('dv-tagcloud') }}">{{ gettext("Tag cloud") }}</a></li>{% endif %}
-            <li id="statistics"><a href="{{ url ("dv-stats-index") }}">{{ gettext("Statistics") }}</a></li>
+	    <li id="statistics"><a href="{{ url ("dv-stats-index") }}">{{ gettext("Statistics") }}</a></li>
             <li>&nbsp;</li>
             <li id="menuqueue"><a href="{{ url ("dv-queue") }}">{{ gettext("Queue") }}</a></li>
             <li>&nbsp;</li>
@@ -101,7 +101,8 @@
 
     <div id="main">
     <h1>{{ dv.site_name() }}</h1>
-    <div style="overflow:hidden">{{ dv.logo() }}</div>
+    <div style="overflow:hidden">{{ dv.logo() }}
+    </div>
     <div style="overflow:auto" id="maincontent">
         {% block main %}{% endblock %}
     </div>
