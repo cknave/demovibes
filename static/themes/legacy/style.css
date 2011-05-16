@@ -277,7 +277,10 @@ hr {
 #song-platform		{background-image: url("theme-images/joystick.png");}
 #artists		{background-image: url("theme-images/user_green.png");}
 #compilations		{background-image: url("theme-images/recplay_ico.png");}
+#screenshots		{background-image: url("theme-images/pictures.png");}
+#licenses		{background-image: url("theme-images/page.png");}
 #tagcloud		{background-image: url("theme-images/tag_yellow.png");}
+#statistics   		{background-image: url("theme-images/chart_bar.png");}
 #recent			{background-image: url("theme-images/new.png");}
 #menuqueue		{background-image: url("theme-images/script.png");}
 #search			{background-image: url("theme-images/find.png");}
@@ -290,15 +293,18 @@ hr {
 #admin			{background-image: url("theme-images/door.png");}
 #inbox			{background-image: url("theme-images/email.png");}
 #unap-artists		{background-image: url("theme-images/user_green.png");}
-#unap-groups		{background-image: url("theme-images/group.png");} 
+#unap-groups		{background-image: url("theme-images/group.png");}
 #unap-compilations	{background-image: url("theme-images/recplay_ico.png");}
 #unap-labels		{background-image: url("theme-images/transmit_blue.png");}
 #unap-links		{background-image: url("theme-images/link.png");}
-#groups			{background-image: url("theme-images/group.png");} 
+#groups			{background-image: url("theme-images/group.png");}
 #labels			{background-image: url("theme-images/transmit_blue.png");}
 #links			{background-image: url("theme-images/link.png");}
 #faq			{background-image: url("theme-images/help.png");}
 #song-source		{background-image: url("theme-images/server_connect.png");}
+#recentchanges		{background-image: url("theme-images/time.png");}
+#chat			{background-image: url("theme-images/user.png");}
+
 
 #main {
 	margin-left: 265px;
