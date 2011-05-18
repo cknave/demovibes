@@ -335,7 +335,7 @@ hr {
 	z-index: -1;
 	margin: 0;
 	overflow: visible;
-	text-indent: -999999px;
+	text-indent: -9999px;
 }
 
 #main h3 {
