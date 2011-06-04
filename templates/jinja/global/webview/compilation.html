@@ -6,8 +6,8 @@
 <h2>
     <img class="icon_header" {% if comp.comp_icon %}src="{{ comp.comp_icon.url }}"{% else %}src="{{ STATIC_URL }}recplay_ico.png"{% endif %} alt="Compilation" />
     {{ gettext("Compilation") }}: {{ comp.name|e }}
-    {% if user.is_staff %}		
-        [<a href="/admin/webview/compilation/{{ comp.id }}/">{{ gettext("Admin Edit Info") }}</a>]		
+    {% if user.is_staff %}
+        [<a href="/admin/webview/compilation/{{ comp.id }}/">{{ gettext("Admin Edit Info") }}</a>]
     {% endif %}
 </h2>
 
@@ -74,7 +74,7 @@ Name: {{ comp.name|e }}<br />
   <span data-name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
  {% endfor %}
 {% endif %}<br />
-{% if comp.prod_notes %}<i><b>{{ gettext("Production Notes") }}: </b>{{ comp.prod_notes|urlize|bbcode|linebreaks|smileys }}</i><br />{% endif %}
+{% if comp.prod_notes %}<i><b>{{ gettext("Production Notes") }}: </b>{{ comp.prod_notes|urlize|linebreaks|bbcode|smileys }}</i><br />{% endif %}
 </td>
 </tr>
 </table>

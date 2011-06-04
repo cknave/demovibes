@@ -17,8 +17,33 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyElementPresent</td>
+	<td>link=Symphony 1 part 3</td>
+	<td></td>
+</tr>
+<tr>
 	<td>assertTextPresent</td>
 	<td>retrorespect</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=View</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>deactivate</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/demovibes/newshit/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementNotPresent</td>
+	<td>link=Symphony 1 part 3</td>
 	<td></td>
 </tr>
 <tr>
@@ -51,7 +76,6 @@
 	<td>MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

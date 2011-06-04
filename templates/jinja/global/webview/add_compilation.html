@@ -2,102 +2,14 @@
 
 {% import "macro/display.html" as display %}
 
+{% block earlyheadblock %}
+  <link href="{{ STATIC_URL }}themes/compilation.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
 {% block headblock %}
   <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-
-<script>
-function updateinput () {
-    var arr = $("#sortsonglist").sortable("toArray");
-    var idstr = "";
-    var len = 0;
-    for (id  in arr) {
-        idstr = idstr + arr[id].replace("song-", "") + ",";
-        len = len + parseInt($("#"+arr[id]).attr("songlength"));
-    }
-    $("#songsinput").val(idstr.slice(0,-1));
-    $("#timelength").text(hms(len));
-}
-
-function hms(secs){
-    secs = secs % 86400;
-    var time = [0,0,secs];
-    for(var i=2;i>0;i--){
-        time[i-1]=Math.floor(time[i]/60);
-        time[i]=time[i]%/**/60;
-        if(time[i]<10)
-        time[i]='0'+time[i];
-    }
-    return time.join(':')
-}
-
-function addsongs (target, data) {
-                target.empty();
-                target.hide();
-                $.each(data, function (i, sdata) {
-
-                    var li = $("<li></li>");
-                    var kill = $("<span>[x]</span>");
-                    kill.css({
-                        "color": "#f00",
-                        "cursor": "pointer"
-                    });
-                    li.css({
-                        "cursor": "move"
-                    });
-                    kill.click(function () {
-                        li.slideUp(170, function () {li.remove(); updateinput();});
-                    });
-                    li.html("<a href='"+sdata.url+"' target='songinfo'>"+sdata.title + "</a> by " + sdata.artists + " ");
-                    li.attr("id", "song-"+sdata.id);
-                    li.attr("songlength", sdata.slength);
-                    li.append(kill);
-                    li.appendTo(target);
-                    updateinput();
-                });
-                target.slideDown(100);
-}
-
-  $(document).ready(function() {
-
-    $("#sortsongsearchlist").sortable({
-        "connectWith": "#sortsonglist",
-        "containment": "#dragarea"
-    });
-    $("#sortsonglist").sortable({
-        "containment": "#dragarea",
-        "update": function (event, ui) {
-            updateinput();
-        }
-    });
-    $("#addsongform").submit( function() {
-        var songval = $("#songid").val();
-        $.getJSON('{{ url("dv-ax-songinfo") }}', {"q": songval}, function(data) {
-            if (data.error) {
-                $("#errr").text(data.error).stop(true, true).show().fadeOut(3000);
-            } else {
-                addsongs($("#sortsongsearchlist"), data);
-            }
-        });
-        return false;
-    });
-
-    $("#compilationsubmitform").submit( function(i) {
-        if (!$("#songsinput").val()) {
-            i.preventDefault();
-            alert("Quite a short compilation you got there, buddy!\n\n(Hint... Add some songs maybe?)");
-        }
-    });
-
-    var loadstr = "{{ songsinput }}";
-    if (loadstr) {
-        $.getJSON('{{ url("dv-ax-songinfo") }}', {"q": loadstr}, function(data) {
-            addsongs($("#sortsonglist"), data);
-            updateinput();
-        });
-    }
-  });
-</script>
+  <script src="{{ STATIC_URL }}js/compilation.js"></script>
 {% endblock %}
 
 {% block title %}{{ gettext("Add compilation") }}{% endblock %}
@@ -111,7 +23,7 @@ function addsongs (target, data) {
     </form>
 </p>
 
-<div id="help" style="float: right; font-size:1.3em;">
+<div id="help">
 {{ gettext("Hint : Drag... and drop!") }}
 </div>
 <div id="dragarea">
@@ -119,7 +31,7 @@ function addsongs (target, data) {
 <ul id="sortsongsearchlist">
 </ul>
 <p>{{ gettext("Songs in compilation") }} (<span id="timelength">0:00:00</span>)</p>
-<ol id="sortsonglist" style="min-height: 30px; background-color: #eee; width:100%; padding-top:5px;">
+<ol id="sortsonglist">
 </ol>
 
 </div>
@@ -127,7 +39,7 @@ function addsongs (target, data) {
 <form id="compilationsubmitform" action="." method="post">
 
 <h2>{{ gettext("Compilation info") }}</h2>
-<input id="songsinput" name="songsinput" type="hidden"/>
+<input id="songsinput" name="songsinput" type="hidden" value="{{ songsinput }}"/>
 <table>
     {{ compform }}
 </table>
