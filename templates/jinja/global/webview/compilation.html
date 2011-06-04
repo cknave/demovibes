@@ -50,7 +50,7 @@ Name: {{ comp.name|e }}<br />
 </td>
 <td class="compilation_description">
 <b><i>{{ gettext("Compilation Details For") }} {{ comp.name|e }}:</i></b><br />
-{% if comp.info %}<p><i>{{ comp.info|urlize|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}
+{% if comp.info %}<p><i>{{ comp.info|urlize|linebreaks|bbcode|smileys }}</i></p><br />{% endif %}
 {% if comp.prod_artists.count != 0 %}
  <b><i>{{ gettext("Compilation Artists") }}: </i></b>
  {% for artist in comp.prod_artists.all() %}
