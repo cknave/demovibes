@@ -15,6 +15,8 @@ from smileys import SMILEYS
 
 LOGIN_URL = "/account/signin/"
 
+DEMOVIBES_VERSION = "1.0.0"
+
 DEBUG = True
 TEMPLATE_DEBUG = False
 
