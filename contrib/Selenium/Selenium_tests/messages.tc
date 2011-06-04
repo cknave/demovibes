@@ -47,7 +47,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Test message 1212</td>
 	<td></td>
 </tr>
@@ -57,7 +57,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Mooooooooo asdf</td>
 	<td></td>
 </tr>

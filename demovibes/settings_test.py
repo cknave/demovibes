@@ -3,6 +3,8 @@ from settings import *
 INSTALLED_APPS = list(INSTALLED_APPS)
 INSTALLED_APPS.remove("south")
 
+UWSGI_EVENT_SERVER = None
+
 DISABLE_AJAX = True
 
 MEDIA_URL = 'http://www.scenemusic.net/static/'

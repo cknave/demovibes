@@ -37,7 +37,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Monday monday test</td>
 	<td></td>
 </tr>
@@ -47,7 +47,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Already In Your Favourites List!</td>
 	<td></td>
 </tr>
@@ -62,7 +62,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextNotPresent</td>
+	<td>assertTextNotPresent</td>
 	<td>Monday monday test</td>
 	<td></td>
 </tr>

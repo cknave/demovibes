@@ -87,7 +87,9 @@ def secure_download (url, user=None):
             except:
                 url = url.encode("utf8")
             url = re.sub(*CHEROKEE_REGEX + (url,))
-        return CHEROKEE_PATH + "/%s/%s/%s" % (hashlib.md5(CHEROKEE_SECRET + "/" + url + t).hexdigest(), t, url)
+        mu = CHEROKEE_PATH + "/%s/%s/%s" % (hashlib.md5(CHEROKEE_SECRET + "/" + url + t).hexdigest(), t, url)
+        return mu.decode("utf8")
+        #return mu
     return url
 
 if getattr(settings, "LOOKUP_COUNTRY", True):
@@ -1162,7 +1164,7 @@ class Song(models.Model):
                 pass
 
     def save(self, *args, **kwargs):
-        if not os.path.isfile(self.file.path):
+        if not os.path.isfile(self.file.path.encode("utf8")):
             self.song_length = None
             self.bitrate = None
             self.samplerate = None
@@ -1531,7 +1533,13 @@ class Queue(models.Model):
                     pass
                 return self.playtime
         for q in baseq_lt.filter(playtime = None, priority = False):
-            playtime = playtime + q.song.song_length
+            if not q.song.song_length:
+                q.song.set_song_data()
+                q.song.save()
+            try:
+                playtime = playtime + q.song.song_length
+            except:
+                pass
         for q in baseq.filter(priority = True):
             playtime = playtime + q.song.song_length
         eta = datetime.datetime.now() + datetime.timedelta(seconds=playtime)

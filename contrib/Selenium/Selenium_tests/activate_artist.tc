@@ -17,7 +17,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>ManBearPig (HeardMyNAme)</td>
 	<td></td>
 </tr>
@@ -27,7 +27,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextNotPresent</td>
+	<td>assertTextNotPresent</td>
 	<td>ManBearPig (HeardMyNAme)</td>
 	<td></td>
 </tr>
@@ -42,7 +42,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Upload a new song by this artist</td>
 	<td></td>
 </tr>

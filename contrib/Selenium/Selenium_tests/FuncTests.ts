@@ -25,6 +25,7 @@
 <tr><td><a href="statistics.tc">Statistics</a></td></tr>
 <tr><td><a href="log_out.tc">Log out</a></td></tr>
 <tr><td><a href="relogin_admin.tc">Login Admin</a></td></tr>
+<tr><td><a href="test_site_links.tc">TestSiteLinks</a></td></tr>
 <tr><td><a href="activate_artist.tc">Activate Artist</a></td></tr>
 <tr><td><a href="activate_group.tc">Activate Group</a></td></tr>
 <tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>

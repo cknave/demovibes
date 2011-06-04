@@ -92,7 +92,10 @@ def forum(request, slug):
     # Pagination
     t = f.thread_set.all()
     paginator = Paginator(t, settings.FORUM_PAGINATE)
-    page = int(request.GET.get('page', 1))
+    try:
+        page = int(request.GET.get('page', 1))
+    except:
+        page = 1
     try:
         threads = paginator.page(page)
     except (EmptyPage, InvalidPage):
@@ -148,7 +151,11 @@ def thread(request, thread):
 
     # Pagination
     paginator = Paginator(p, settings.FORUM_PAGINATE)
-    page = int(request.GET.get('page', paginator.num_pages))
+    try:
+        page = int(request.GET.get('page', paginator.num_pages))
+    except:
+        page = paginator.num_pages
+
     try:
         posts = paginator.page(page)
     except (EmptyPage, InvalidPage):

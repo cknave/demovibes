@@ -17,7 +17,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>No Votes Yet</td>
 	<td></td>
 </tr>
@@ -37,7 +37,7 @@
 	<td>on</td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Rating: 3</td>
 	<td></td>
 </tr>
@@ -52,7 +52,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>Rating: 5</td>
 	<td></td>
 </tr>

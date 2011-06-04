@@ -191,6 +191,13 @@ def get_text_links(parser, token):
         raise template.TemplateSyntaxError, "%r tag requires exactly one argument" % token.contents.split()[0]
     return GetTextLinkEntries(slugname)
 
+
+def j_count_text_links(slug):
+    slug_id = LinkCategory.objects.get(id_slug = slug)
+    return Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=slug_id).order_by('-priority').count()
+
+
+
 @register.tag
 def count_text_links(parser, token):
     """
@@ -572,7 +579,8 @@ def get_text_link_entries(slug):
             return None
 
         # We have a slug; Now to see if it has any links
-        try:
+        #try:
+        if True:
             site_links = Link.objects.filter(status="A").filter(link_type="T").filter(url_cat=slug_id).order_by('-priority')
 
             # Filter out categories which have no links in them!
@@ -592,7 +600,8 @@ def get_text_link_entries(slug):
 
             mu = js.r2s('webview/links_text_all.html', { 'text_links' : site_links })
             return header + mu
-        except:
+        #except:
+        else:
             # Something borked!
             return None
 
@@ -1528,6 +1537,6 @@ get_rating_stars_song_avg.is_safe = True
 dv_urlize.is_safe = True
 
 try:
-	from dv_extend_local import *
+    from dv_extend_local import *
 except:
-	pass
+    pass

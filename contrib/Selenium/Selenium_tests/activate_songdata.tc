@@ -17,7 +17,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>retrorespect</td>
 	<td></td>
 </tr>
@@ -27,7 +27,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>artists, groups, labels, info</td>
 	<td></td>
 </tr>
@@ -37,7 +37,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextNotPresent</td>
+	<td>assertTextNotPresent</td>
 	<td>artists, groups, labels, info</td>
 	<td></td>
 </tr>
@@ -47,7 +47,7 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO!</td>
 	<td></td>
 </tr>

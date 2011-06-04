@@ -37,12 +37,12 @@
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>TestMyGroupThingy!</td>
 	<td></td>
 </tr>
 <tr>
-	<td>verifyTextPresent</td>
+	<td>assertTextPresent</td>
 	<td>This group is part of a clinical experiment</td>
 	<td></td>
 </tr>
