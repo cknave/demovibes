@@ -275,6 +275,13 @@ class GenericLink(models.Model):
     comment = models.TextField(blank=True)
     user = models.ForeignKey(User, blank=True, null=True)
 
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
+
     def __unicode__(self):
         return u"%s for %s" % (self.link, self.content_object)
 
@@ -348,6 +355,13 @@ class Userprofile(models.Model):
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
 
     links = generic.GenericRelation(GenericLink)
+
+    def log(self, user, message):
+        return ObjectLog.objects.create(obj=self, user=user, text=message)
+
+    def get_logs(self):
+        obj_type = ContentType.objects.get_for_model(self)
+        return ObjectLog.objects.filter(content_type__pk=obj_type.id, object_id=self.id)
 
     def set_flag_from_ip(self, ip):
         if ipccdb and not self.country:
