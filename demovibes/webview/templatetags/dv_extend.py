@@ -826,7 +826,7 @@ def bb_artist(hit):
 
         return mu
     except:
-        return "[artist]%s[/artist]" % artistid
+        return u"[artist]%s[/artist]" % artistid
 
 def bb_queue(hit):
     """
@@ -868,7 +868,7 @@ def bb_song(hit):
         songid = hit.group(1)
         song = Song.objects.get(id=songid)
     except:
-        return "[song]%s[/song]" % songid
+        return u"[song]%s[/song]" % songid
 
     # Use the existing Songname template already present in code
     t = loader.get_template('webview/t/songname.html')
@@ -891,10 +891,10 @@ def bb_flag(hit):
     flag = flagcode.lower().encode('ascii', 'ignore')
 
     if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
-        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
+        return u"<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
 
     # No flag image found, so default to Necta flag
-    return "<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (STATIC)
+    return u"<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (STATIC)
 
 def bb_user(hit):
     """
@@ -915,7 +915,7 @@ def bb_user(hit):
     except:
         # This is normally thrown when the user is invalid. Return the original result,
         # Only we add an icon to indicate an invalid user.
-        return '<img src="'+ STATIC + 'user_error.png" alt="user" border="0" />%s' % (user)
+        return '<img src="%suser_error.png" alt="user" border="0" />%s' % (STATIC, user)
 
 def bb_artistname(hit):
     """
@@ -933,7 +933,7 @@ def bb_artistname(hit):
     except:
         # This is normally thrown when the artist is invalid. Return the original result,
         # Only we add an icon to indicate an invalid artist.
-        return '<img src="'+ STATIC + 'user_error.png" alt="artist" border="0" /> %s' % (artist)
+        return u'<img src="%suser_error.png" alt="artist" border="0" /> %s' % (STATIC, artist)
 
 def bb_group(hit):
     """
@@ -967,7 +967,7 @@ def bb_groupname(hit):
     except:
         # This is normally thrown when the group is invalid. Return the original result,
         # Only we add an icon to indicate an invalid group.
-        return '<img src="'+ STATIC + 'user_error.png" alt="user" border="0" /> %s' % (group)
+        return u'<img src="%suser_error.png" alt="user" border="0" /> %s' % (STATIC, group)
 
 def bb_label(hit):
     """
@@ -1001,7 +1001,7 @@ def bb_labelname(hit):
         return T.render(C)
     except:
         # This will throw if the requested label is spelt incorrectly, or doesnt exist
-        return '<img src="'+ STATIC + 'transmit.png" alt="Invalid Label" border="0" /> %s' % (real_name)
+        return u'<img src="'+ STATIC + 'transmit.png" alt="Invalid Label" border="0" /> %s' % (real_name)
 
 def bb_platform(hit):
     """
@@ -1035,7 +1035,7 @@ def bb_platformname(hit):
         return T.render(C)
     except:
         # This will throw if the requested platform is spelt incorrectly, or doesnt exist
-        return '[platform]%s[/platform]' % (plat_name)
+        return u'[platform]%s[/platform]' % (plat_name)
 
 def bb_thread(hit):
     """
@@ -1045,9 +1045,9 @@ def bb_thread(hit):
     try:
         post_id = hit.group(1)
         t = Thread.objects.get(id=post_id)
-        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (t.get_absolute_url(), STATIC, t)
+        return u'<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (t.get_absolute_url(), STATIC, t)
     except:
-        return "[thread]%s[/thread]" % (post_id)
+        return u"[thread]%s[/thread]" % (post_id)
 
 def bb_forum(hit):
     """
@@ -1056,9 +1056,9 @@ def bb_forum(hit):
     try:
         forum_slug = hit.group(1)
         f = Forum.objects.get(slug=forum_slug)
-        return '<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (f.get_absolute_url(), STATIC, f)
+        return u'<a href="%s"><img src="%snewspaper.png" alt="forum" border="0" /> %s</a>' % (f.get_absolute_url(), STATIC, f)
     except:
-        return "[forum]%s[/forum]" % (forum_slug)
+        return u"[forum]%s[/forum]" % (forum_slug)
 
 def bb_size(hit):
     """
@@ -1077,13 +1077,13 @@ def bb_size(hit):
     # Users requesting a size too small to be visible, or too large and take up the whole screen!
     # This could eventually go into the settings.py file, hehe.
     if(int(size) < minimum):
-        return '<span style="font-size: %dpx">%s [Too Small, Upscaled To 6]</span>' % (minimum, text)
+        return u'<span style="font-size: %dpx">%s [Too Small, Upscaled To 6]</span>' % (minimum, text)
 
     if(int(size) > maximum):
-        return '<span style="font-size: %dpx">%s [Too Large, Reduced To 50]</span>' % (maximum, text)
+        return u'<span style="font-size: %dpx">%s [Too Large, Reduced To 50]</span>' % (maximum, text)
 
     # Return the normal text size
-    return '<span style="font-size: %dpx">%s</span>' % (int(size), text)
+    return u'<span style="font-size: %dpx">%s</span>' % (int(size), text)
 
 def bb_youtube(hit):
     """
@@ -1130,7 +1130,7 @@ def bb_compilation_name(hit):
         Co = Context({'C' : C})
         return T.render(Co)
     except:
-        return '[album]%s[/album]' % (comp)
+        return u'[album]%s[/album]' % (comp)
 
 def bb_faq(hit):
     """
@@ -1143,7 +1143,7 @@ def bb_faq(hit):
         Q = Context({'F' : F})
         return T.render(Q)
     except:
-        return '[faq]%s[/faq]' % (faqq)
+        return u'[faq]%s[/faq]' % (faqq)
 
 def bb_youtube_ol(hit):
     """
@@ -1151,13 +1151,13 @@ def bb_youtube_ol(hit):
     Tag like so: [yt]S-T8h0T0SK8[/yt]. This version is oneliner specific
     """
     video = hit.group(1)
-    return '<a class="ytlinkol" data-ytid="%s" href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0" /> <span class="yttitle">YouTube Link</span></a>' % (video, video, STATIC)
+    return u'<a class="ytlinkol" data-ytid="%s" href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0" /> <span class="yttitle">YouTube Link</span></a>' % (video, video, STATIC)
 
 def bb_googlevideo_ol(hit):
     """
     """
     video = hit.group(1)
-    return '<a href="http://video.google.com/videoplay?docid=%s" target="_blank"><img src="%sgooglevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video, STATIC)
+    return u'<a href="http://video.google.com/videoplay?docid=%s" target="_blank"><img src="%sgooglevideo_icon.png" title="Google Video" alt="Google Video" border="0"> Google Video Link</a>' % (video, STATIC)
 
 def bb_youtube_name_ol(hit):
     """
@@ -1168,7 +1168,7 @@ def bb_youtube_name_ol(hit):
     video = hit.group(1)
     title = hit.group(2)
 
-    return '<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, STATIC, video)
+    return u'<a href="http://www.youtube.com/watch?v=%s" target="_blank"><img src="%syoutube_icon.png" title="YouTube" alt="YouTube" border="0"> %s</a>' % (title, STATIC, video)
 
 def bb_gvideo(hit):
     """
@@ -1176,7 +1176,7 @@ def bb_gvideo(hit):
     We still add the video in pretty mush the same way: [gvideo]1199004375595376444[/gvideo]
     """
     video = hit.group(1)
-    return '<object width="400" height="326"><param name="movie" value="http://video.google.com/googleplayer.swf?docId=%s"></param><param name="wmode" value="transparent"></param><embed src="http://video.google.com/googleplayer.swf?docId=%s" wmode="transparent" style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" flashvars=""></embed></object>' % ( video, video )
+    return u'<object width="400" height="326"><param name="movie" value="http://video.google.com/googleplayer.swf?docId=%s"></param><param name="wmode" value="transparent"></param><embed src="http://video.google.com/googleplayer.swf?docId=%s" wmode="transparent" style="width:400px; height:326px;" id="VideoPlayback" type="application/x-shockwave-flash" flashvars=""></embed></object>' % ( video, video )
 
 @register.filter
 def oneliner_mediaparse(value):
