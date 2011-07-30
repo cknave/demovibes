@@ -1124,15 +1124,17 @@ class Song(models.Model):
             desc1 = "%s by %s" % (title, aa)
             desc = "%s\nFetched from Pouet id [url=http://www.pouet.net/prod.php?which=%s]%s[/url]" % (desc1, self.get_pouetid(), self.get_pouetid())
 
-            s = Screenshot(name=title, description=desc)
-            s.image.save(os.path.basename(img_url), image, save=True)
+            Q = Screenshot.objects.filter(name=title, description__contains=self.get_pouetid())
+            if Q:
+                s = Q[0]
+            else:
+                s = Screenshot(name=title, description=desc)
+                s.image.save(os.path.basename(img_url), image, save=True)
+                s.save()
+                s.create_thumbnail()
+                s.save()
+
             ScreenshotObjectLink.objects.create(obj=self, image=s)
-            #s.save()
-            s.create_thumbnail()
-            s.save()
-
-            #self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
-
 
     def get_pouet_screenshot_img(self):
         """
