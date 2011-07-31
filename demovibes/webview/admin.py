@@ -102,7 +102,7 @@ class CompilationAdmin(admin.ModelAdmin):
     raw_id_fields = ["prod_artists", "prod_groups"]
     exclude = ["cover_art"]
     inlines = [
-        CompilationSongInline, 
+        CompilationSongInline,
     ]
 
 class LabelAdmin(admin.ModelAdmin):
@@ -143,7 +143,7 @@ class LicenseAdmin(admin.ModelAdmin):
 
 class ObjLogAdmin(admin.ModelAdmin):
     list_display = ['obj', 'user', "content_type", "added", "text"]
-    search_fields = ['user__username', "text"]
+    search_fields = ['user__username', "text", "extra"]
     date_hierarchy = 'added'
 
 admin.site.register(Group, GroupAdmin)

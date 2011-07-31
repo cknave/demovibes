@@ -841,6 +841,7 @@ class ObjectLog(models.Model):
     user = models.ForeignKey(User)
     added = models.DateTimeField(default=datetime.datetime.now())
     text = models.TextField()
+    extra = models.TextField(blank=True)
 
     def __unicode__(self):
         return unicode(self.obj)
