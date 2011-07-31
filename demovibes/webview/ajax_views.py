@@ -143,10 +143,9 @@ def songupdate(request, song_id):
         },  request)
 
 def words(request, prefix):
-    extrawords=['boobies','boobietrap','nectarine'];
-    words= [a.user.username for a in Userprofile.objects.filter(user__username__istartswith=prefix).order_by("-last_activity")[:10]];
-    words.extend([a.handle for a in Artist.objects.filter(handle__istartswith=prefix)]);
-    words.extend([a.name for a in Artist.objects.filter(name__istartswith=prefix)]);
-    words.extend([a.name for a in Group.objects.filter(name__istartswith=prefix)]);
-    words.extend([a for a in extrawords if a.lower().startswith(prefix.lower())]);
-    return HttpResponse(",".join(words));
+    extrawords = ['boobies', 'boobietrap', 'nectarine']
+    words = [a.user.username for a in Userprofile.objects.filter(user__username__istartswith = prefix).order_by("-last_activity")[:20] ]
+    words.extend( [a.handle for a in Artist.objects.filter(handle__istartswith = prefix)[:20] ] )
+    words.extend( [a.name for a in Group.objects.filter(name__istartswith = prefix)[:20] ] )
+    words.extend( [a for a in extrawords if a.lower().startswith( prefix.lower() ) ] )
+    return HttpResponse(",".join(words))
