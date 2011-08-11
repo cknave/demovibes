@@ -15,7 +15,7 @@ class XMLView(MyBaseView):
     content_type = "application/xml"
     basetemplate = 'webview/xml/'
 
-@ratelimit(3, 60) # 3 queries max per 60 seconds
+@ratelimit(20, 600) # 20 queries max per 10 minutes (average 1 query per 30 second)
 @cache_page(15)
 def queue(request):
     try :
