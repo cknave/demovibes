@@ -2,5 +2,5 @@
    {% for artist in sd.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country|safe }}">{{ artist.handle }}</artist>{% endfor %}
    <song id="{{ entry.song.id }}" length="{{ entry.song.length }}">{{ entry.song.title }}</song>
    <requester flag="{{ entry.requested_by.get_profile.country|safe }}">{{ entry.requested_by }}</requester>
-   {% if entry.time_played %}<playstart>{{ entry.time_played }}</playstart>{% else %}<playstart>{{ now_playing.eta }}</playstart>{% endif %}
+   {% if entry.time_played %}<playstart>{{ entry.time_played }}</playstart>{% else %}<playstart>{{ entry.eta }}</playstart>{% endif %}
   </entry>{% endwith %}
