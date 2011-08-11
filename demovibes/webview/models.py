@@ -135,6 +135,9 @@ def add_event(event = None, user = None, eventlist = [], metadata = {}):
 
     Either event or eventlist must be supplied
     """
+
+    cache.delete("curr_event")
+
     if not event and not eventlist:
         return False
 

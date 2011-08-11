@@ -11,8 +11,8 @@ MEDIA_URL = 'http://www.scenemusic.net/static/'
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
-}
+#CACHES = {
+#    'default': {
+#        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+#    }
+#}

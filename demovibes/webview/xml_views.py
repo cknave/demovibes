@@ -1,8 +1,9 @@
 from demovibes.webview.models import *
-from demovibes.webview.common import get_now_playing_song
+from demovibes.webview.common import get_now_playing_song, ratelimit
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from mybaseview import MyBaseView
+from django.views.decorators.cache import cache_page
 
 #
 # Note: Only the class based views use jinja templates.
@@ -14,6 +15,8 @@ class XMLView(MyBaseView):
     content_type = "application/xml"
     basetemplate = 'webview/xml/'
 
+@ratelimit(3, 60) # 3 queries max per 60 seconds
+@cache_page(15)
 def queue(request):
     try :
         now_playing = get_now_playing_song()
@@ -38,6 +41,7 @@ def oneliner(request):
         {'oneliner_data' : oneliner_data}, \
         context_instance=RequestContext(request), mimetype = "application/xml")
 
+@cache_page(60)
 def online(request):
     try:
         timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)

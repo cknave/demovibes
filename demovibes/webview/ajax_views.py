@@ -27,7 +27,6 @@ use_eventful = getattr(settings, 'USE_EVENTFUL', False)
 class AjaxView(MyBaseView):
     basetemplate = "webview/js/"
 
-
 class LicenseView(AjaxView):
     template = "license.html"
 

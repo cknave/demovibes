@@ -3,7 +3,6 @@
 
  <now>
   {% with now_playing as entry %}{% include "webview/xml/t_queue.xml" %}{% endwith %}
-  <timeleft>{{ now_playing.timeleft }}</timeleft>
  </now>
 
  <queue>

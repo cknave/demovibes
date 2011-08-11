@@ -2,12 +2,35 @@ from webview import models
 from django.conf import settings
 from django.core.cache import cache
 from django.conf import settings
+from django.http import HttpResponseForbidden
+from functools import wraps
+from django.utils.decorators import available_attrs
+
 import logging
 import socket
 import datetime
 import j2shim
 
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
+
+def ratelimit(limit=10,length=86400):
+    """ The length is in seconds and defaults to a day"""
+    def decorator(func):
+        def inner(request, *args, **kwargs):
+            ip_hash = str(hash(request.META['REMOTE_ADDR']))
+            result = cache.get(ip_hash)
+            if result:
+                result = int(result)
+                if result == limit:
+                    return HttpResponseForbidden("Ooops too many requests today!")
+                else:
+                    result +=1
+                    cache.set(ip_hash,result,length)
+                    return func(request,*args,**kwargs)
+            cache.add(ip_hash,1,length)
+            return func(request, *args, **kwargs)
+        return wraps(func, assigned=available_attrs(func))(inner)
+    return decorator
 
 def play_queued(queue):
     queue.song.times_played = queue.song.times_played + 1
@@ -174,6 +197,13 @@ def get_profile(user):
     return profile
 
 def get_latest_event():
+    curr = cache.get("curr_event")
+    if not curr:
+        curr = get_latest_event_lookup()
+        cache.set("curr_event", curr, 30)
+    return curr
+
+def get_latest_event_lookup():
     use_eventful = getattr(settings, 'USE_EVENTFUL', False)
     if use_eventful:
         host = getattr(settings, 'EVENTFUL_HOST', "127.0.0.1")
