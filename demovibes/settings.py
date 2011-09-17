@@ -24,6 +24,9 @@ TEMPLATE_DEBUG = False
 LOOKUP_COUNTRY = True
 DEFAULT_FLAG = "nectaflag"
 
+# URL to use for Flash streaming.
+#FLASH_STREAM_URL = "http://server:port/stream"
+
 #To make this work you need:
 #  1. uWSGI
 #  2. start the uwsgi_eventhandler module

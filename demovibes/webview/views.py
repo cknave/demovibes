@@ -46,7 +46,7 @@ class SongAddScreenshot(SongView):
 
     def GET(self):
         return create_screenshot(self.request, self.song)
-        
+
 class CompilationView(WebView):
 
     def initialize(self):
@@ -1621,6 +1621,19 @@ class Login(MyBaseView):
         else:
             self.add_to_limit((key1, key2))
             self.context['error'] = _(u"I'm sorry, the username or password seem to be wrong.")
+
+def play_stream(request):
+    streamurl = getattr(settings, "FLASH_STREAM_URL", False)
+    if not streamurl:
+        surl = RadioStream.objects.filter(streamtype="M").order_by('?')
+        if surl:
+            streamurl = surl[0].url
+        else:
+            streamurl = "No MP3 Streams!"
+    return j2shim.r2r(
+        'webview/radioplay.html', dict(
+            streamurl=streamurl,
+        ), request=request)
 
 def upload_progress(request):
     """

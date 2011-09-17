@@ -119,8 +119,10 @@ urlpatterns = patterns('',
     url(r'^inbox/(?P<pm_id>\d+)/$',                'demovibes.webview.views.read_pm', name = "dv-read_pm"),
     url(r'^inbox/send/$',                          'demovibes.webview.views.send_pm', name = "dv-send_pm"),
 
-    url(r'^play/$',                                'django.views.generic.simple.direct_to_template', \
-                { 'template':'webview/radioplay.html'}, name = "dv-play_stream"),
+    url(r'^play/$',                                'demovibes.webview.views.play_stream', name = "dv-play_stream"),
+
+    #url(r'^play/$',                                'django.views.generic.simple.direct_to_template', \
+    #            { 'template':'webview/radioplay.html'}, name = "dv-play_stream"),
     url(r'^$',                                     'django.views.generic.list_detail.object_list',     news_dict, name = "dv-root"),
     url(r'^streams/streams.txt$',                  'django.views.generic.list_detail.object_list',     streams_dict_txt, name = "dv-streams.txt"),
     url(r'^streams/streams.m3u$',                  'django.views.generic.list_detail.object_list',     streams_dict_m3u, name = "dv-streams.m3u"),
