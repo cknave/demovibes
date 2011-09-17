@@ -118,7 +118,7 @@ def oneliner_submit(request):
     return HttpResponse("OK")
 
 def get_tags(request):
-    q = request.GET['q']
+    q = request.GET.get('q')
     if q:
         l = []
         t = Tag.objects.filter(name__istartswith=q)[:20]
