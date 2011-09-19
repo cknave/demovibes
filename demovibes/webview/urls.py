@@ -114,6 +114,7 @@ urlpatterns = patterns('',
     url(r'^login/$',                               views.Login(), name = "dv-login"),
     url(r'^licenses/$',                            views.LicenseList(), name = "dv-licenses"),
     url(r'^license/(?P<id>\d+)/$',                 views.License(), name = "dv-license"),
+    url(r'^smileys/$',                              views.ListSmileys(), name = "dv-smileys"),
 
     url(r'^inbox/$',                               'demovibes.webview.views.inbox', name = "dv-inbox"),
     url(r'^inbox/(?P<pm_id>\d+)/$',                'demovibes.webview.views.read_pm', name = "dv-read_pm"),

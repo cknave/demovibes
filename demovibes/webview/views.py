@@ -97,6 +97,11 @@ class ListByLetter(WebView):
 
 #-------------------------------------------------------
 
+class ListSmileys(WebView):
+    template = "smileys.html"
+    def set_context(self):
+        return {'smileys': settings.SMILEYS}
+
 class PlaySong(SongView):
     template="playsong.html"
 
