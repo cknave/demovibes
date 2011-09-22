@@ -134,6 +134,7 @@ class AddCompilation(WebView):
         if not newcf.id:
             newcf.created_by = self.request.user
             newcf.status = "U"
+        newcf.last_updated = datetime.datetime.now() # Fixes bug of new compilations not appearing in Recent Updates
         newcf.save()
         compdata.save_m2m()
 
