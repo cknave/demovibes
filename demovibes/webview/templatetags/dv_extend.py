@@ -881,6 +881,19 @@ def bb_song(hit):
 
     return mu
 
+def get_flag_path(flag):
+    flag = flag.encode('ascii', 'ignore').lower()
+
+    if not flag.isalnum():
+        flag = ""
+
+    if flag and os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
+        return u"<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
+
+    # No flag image found, so default to Necta flag
+    DEFAULT_FLAG = getattr(settings, "DEFAULT_FLAG", "nectaflag")
+    return u"<img src='%sflags/%s.png' class='countryflag' title='flag' />" % (STATIC, DEFAULT_FLAG)
+
 def bb_flag(hit):
     """
     Allow forum post to return a flag code. Uses standard 2-digit flag code
@@ -888,13 +901,9 @@ def bb_flag(hit):
     Nectaflag is used. Flag created for me by sark76 (Mark Huther). AAK
     """
     flagcode = hit.group(1)
-    flag = flagcode.lower().encode('ascii', 'ignore')
+    #flag = flagcode.lower().encode('ascii', 'ignore')
 
-    if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
-        return u"<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
-
-    # No flag image found, so default to Necta flag
-    return u"<img src='%sflags/nectaflag.png' class='countryflag' title='flag' />" % (STATIC)
+    return get_flag_path(flagcode)
 
 def bb_user(hit):
     """
@@ -1288,11 +1297,7 @@ def flag(value):
     Used. Flag was created for me by sark76 (Mark Huther). AAK
     """
     flag = value.lower().encode('ascii', 'ignore')
-    if os.path.isfile(os.path.join(settings.DOCUMENT_ROOT, "flags", "%s.png" % flag)):
-        return "<img src='%sflags/%s.png' class='countryflag' alt='flag' title='%s' />" % (STATIC, flag, flag)
-
-    # No flag image found, return the Necta flag hehe
-    return "<img src='%sflags/nectaflag.png' class='countryflag' alt='flag' />" % (STATIC)
+    return get_flag_path(flag)
 
 @register.filter
 def getattrs (obj, args):

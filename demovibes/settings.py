@@ -227,6 +227,10 @@ SECRET_KEY = 'replaceThis!'
 
 AUTH_PROFILE_MODULE = 'webview.userprofile'
 
+
+# Default flag to show for people having no flag or mistyped flag
+#DEFAULT_FLAG = "nectaflag"
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
