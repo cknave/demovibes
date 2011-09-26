@@ -46,7 +46,7 @@ class SongMetaAdmin(admin.ModelAdmin):
     list_filter = ['checked', 'active']
     filter_horizontal = ['artists', 'groups', 'labels']
     date_hierarchy = 'added'
-    exclude = ["active", "user", "song"]
+    exclude = ["active"]
 
 class SongAdmin(admin.ModelAdmin):
     list_display = ['title', 'status', 'artist', 'uploader', 'bitrate', 'added', 'explicit']

@@ -29,6 +29,9 @@ from PIL import Image
 
 import tagging
 import time, hashlib, urllib
+
+import random
+
 log = logging.getLogger("webview.models")
 
 CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
@@ -920,6 +923,22 @@ class Song(models.Model):
 
     #def display(self):
     #    return "song"
+
+    def create_lock_time(self):
+        sl = settings.SONG_LOCK_TIME
+        time = datetime.timedelta(**sl)
+
+        random_extra = getattr(settings, "SONG_LOCK_TIME_RANDOM", None)
+        if random_extra:
+            rnd = datetime.timedelta(**random_extra)
+            time = time + datetime.timedelta(seconds = random.randint(0, rnd.seconds))
+
+        vote_extra = getattr(settings, "SONG_LOCK_TIME_VOTE", None)
+        if vote_extra and self.rating:
+            vote = datetime.timedelta(**vote_extra)
+            vote_val = 5 - self.rating
+            time = time + datetime.timedelta(seconds = int((vote.seconds / 4) * vote_val))
+        return time
 
     def is_connected_to(self, user):
         if user and user.is_authenticated():

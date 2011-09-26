@@ -50,11 +50,11 @@ def queue_song(song, user, event = True, force = False):
         models.add_event(event='eval:alert("You can\'t request your own songs!");', user = user, metadata = event_metadata)
         return False
 
-    sl = settings.SONG_LOCK_TIME
     EVS = []
     Q = False
-    time = datetime.timedelta(hours = sl['hours'], days = sl['days'], minutes = sl['minutes'])
+    time = song.create_lock_time()
     result = True
+
     models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
     if not force:
         Q = models.Queue.objects.filter(played=False, requested_by = user)
@@ -88,6 +88,7 @@ def queue_song(song, user, event = True, force = False):
         Q = models.Queue(song=song, requested_by=user, played = False)
         Q.save()
     models.Queue.objects.unlock()
+
     if result:
         Q.eta = Q.get_eta()
         Q.save()

@@ -276,6 +276,8 @@ SONGS_IN_QUEUE = 5
 
 # Time to lock a song until it can be requested again.
 SONG_LOCK_TIME = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
+#SONG_LOCK_TIME_VOTE = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
+#SONG_LOCK_TIME_RANDOM = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
 
 # Need to have at least one song marked as jingle for this to work
 # Will play one every 30 minutes or 10 songs, but not more often than every 20 minutes.
