@@ -1,0 +1,3 @@
+[submodule "demosauce"]
+	path = demosauce
+	url = git@gitorious.org:demovibes/demosauce.git
