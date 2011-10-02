@@ -75,7 +75,6 @@ def queue_song(song, user, event = True, force = False):
     time = song.create_lock_time()
     result = True
 
-    #models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
     if not force:
         Q = models.Queue.objects.filter(played=False, requested_by = user)
         requests = Q.count()
@@ -107,7 +106,6 @@ def queue_song(song, user, event = True, force = False):
         song.save()
         Q = models.Queue(song=song, requested_by=user, played = False)
         Q.save()
-    #models.Queue.objects.unlock()
 
     if result:
         Q.eta = Q.get_eta()
