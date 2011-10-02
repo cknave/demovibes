@@ -24,9 +24,9 @@ def atomic(key, timeout=30, wait=60):
             c = 0
             has_lock = cache.add(lockkey, 1, timeout)
             while not has_lock and c < wait * 10:
-                has_lock = cache.add(lockkey, 1, timeout)
                 c = c + 1
                 time.sleep(0.1)
+                has_lock = cache.add(lockkey, 1, timeout)
             if has_lock:
                 try:
                     return func(*args, **kwargs)
