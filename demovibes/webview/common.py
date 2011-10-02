@@ -15,6 +15,7 @@ import j2shim
 import time
 
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
+LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
 
 def atomic(key, timeout=30, wait=60):
     lockkey = "lock-" + key
@@ -64,14 +65,15 @@ def play_queued(queue):
     temp = get_queue(True)
     models.add_event(eventlist=("queue", "history", "nowplaying"))
 
-# This function should both make cake, and eat it
 @atomic("queue-song")
 def queue_song(song, user, event = True, force = False):
     event_metadata = {'song': song.id, 'user': user.id}
+
     if SELFQUEUE_DISABLED and song.is_connected_to(user):
-        #models.add_event(event='eval:alert("You can\'t request your own songs!");', user = user, metadata = event_metadata)
         models.send_notification("You can't request your own songs!", user)
         return False
+
+    key = "songqueuenum-" + str(user.id)
 
     EVS = []
     Q = False
@@ -79,44 +81,39 @@ def queue_song(song, user, event = True, force = False):
     result = True
 
     if not force:
+        requests = cache.get(key, None)
         Q = models.Queue.objects.filter(played=False, requested_by = user)
-        requests = Q.count()
-        lowrate = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
-        if lowrate and song.rating and song.rating <= lowrate['lowvote']:
-            try:
-                if Q.filter(song__rating__lte = lowrate['lowvote']).count() >= lowrate['limit']:
-                    lowrate = True
-                else:
-                    lowrate = False
-            except:
-                lowrate = False
+        if requests == None:
+            requests = Q.count()
         else:
-            lowrate = False
-
-        if lowrate:
-            #models.add_event(event='eval:alert("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)");', user = user, metadata = event_metadata)
-            models.send_notification("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)", user)
-            result = False
+            requests = num(requests)
 
         if requests >= settings.SONGS_IN_QUEUE:
-            #models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user, metadata = event_metadata)
             models.send_notification("You have reached your queue limit! Please wait for your requests to play.", user)
             result = False
+
         if result and song.is_locked():
             # In a case, this should not append since user (from view) can't reqs song locked
-            #models.add_event(event='eval:alert("You can\'t queue a song locked!");', user = user, metadata = event_metadata)
             models.send_notification("Song is already locked", user)
             result = False
+
+
+        if result and LOWRATE and song.rating and song.rating <= LOWRATE['lowvote']:
+            if Q.filter(song__rating__lte = LOWRATE['lowvote']).count() >= LOWRATE['limit']:
+                models.send_notification("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)", user)
+                result = False
+
     if result:
         song.locked_until = datetime.datetime.now() + time
         song.save()
         Q = models.Queue(song=song, requested_by=user, played = False)
-        Q.save()
-
-    if result:
         Q.eta = Q.get_eta()
         Q.save()
         EVS.append('a_queue_%i' % song.id)
+
+        #Need to add logic to decrease or delete when song gets played
+        #cache.set(key, requests + 1, 600)
+
         if event:
             bla = get_queue(True) # generate new queue cached object
             EVS.append('queue')
