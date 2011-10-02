@@ -10,8 +10,27 @@ import logging
 import socket
 import datetime
 import j2shim
+import time
 
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
+
+def atomic(key, timeout=30, wait=60):
+    lockkey = "lock-" + key
+    def func1(func):
+        def func2(*args, **kwargs):
+            c = 0
+            has_lock = cache.add(lockkey, 1, timeout)
+            while not has_lock and c < wait * 10:
+                has_lock = cache.add(lockkey, 1, timeout)
+                c = c + 1
+                time.sleep(0.1)
+            if has_lock:
+                try:
+                    return func(*args, **kwargs)
+                finally:
+                    cache.delete(lockkey)
+        return func2
+    return func1
 
 def ratelimit(limit=10,length=86400):
     """ The length is in seconds and defaults to a day"""
@@ -22,7 +41,7 @@ def ratelimit(limit=10,length=86400):
             if result:
                 result = int(result)
                 if result == limit:
-                    return HttpResponseForbidden("Ooops too many requests today!")
+                    return HttpResponseForbidden("Ooops, too many requests!")
                 else:
                     result +=1
                     cache.set(ip_hash,result,length)
@@ -44,6 +63,7 @@ def play_queued(queue):
     models.add_event(eventlist=("queue", "history", "nowplaying"))
 
 # This function should both make cake, and eat it
+@atomic("queue-song")
 def queue_song(song, user, event = True, force = False):
     event_metadata = {'song': song.id, 'user': user.id}
     if SELFQUEUE_DISABLED and song.is_connected_to(user):
@@ -55,7 +75,7 @@ def queue_song(song, user, event = True, force = False):
     time = song.create_lock_time()
     result = True
 
-    models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
+    #models.Queue.objects.lock(models.Song, models.User, models.AjaxEvent, models.SongVote)
     if not force:
         Q = models.Queue.objects.filter(played=False, requested_by = user)
         requests = Q.count()
@@ -87,7 +107,7 @@ def queue_song(song, user, event = True, force = False):
         song.save()
         Q = models.Queue(song=song, requested_by=user, played = False)
         Q.save()
-    models.Queue.objects.unlock()
+    #models.Queue.objects.unlock()
 
     if result:
         Q.eta = Q.get_eta()
