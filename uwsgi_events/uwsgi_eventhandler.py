@@ -7,14 +7,13 @@ import threading
 LOCK = threading.Lock()
 import hashlib
 
-#try:
-if True:
+try:
     import local_config
     allowed_ips = getattr(local_config, "allowed_ips", ["127.0.0.1"])
     debug = getattr(local_config, "debug", False)
     secret = getattr(local_config, "UWSGI_ID_SECRET", None)
-#except:
-else:
+except:
+    print "EventHandler: Could not load local settings, using default!"
     debug = False
     secret = None
     allowed_ips = ["127.0.0.1"]
