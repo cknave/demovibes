@@ -6,6 +6,8 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from django.utils.decorators import available_attrs
 
+from django.utils.html import escape
+
 import logging
 import socket
 import datetime
@@ -67,7 +69,8 @@ def play_queued(queue):
 def queue_song(song, user, event = True, force = False):
     event_metadata = {'song': song.id, 'user': user.id}
     if SELFQUEUE_DISABLED and song.is_connected_to(user):
-        models.add_event(event='eval:alert("You can\'t request your own songs!");', user = user, metadata = event_metadata)
+        #models.add_event(event='eval:alert("You can\'t request your own songs!");', user = user, metadata = event_metadata)
+        models.send_notification("You can't request your own songs!", user)
         return False
 
     EVS = []
@@ -91,15 +94,18 @@ def queue_song(song, user, event = True, force = False):
             lowrate = False
 
         if lowrate:
-            models.add_event(event='eval:alert("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)");', user = user, metadata = event_metadata)
+            #models.add_event(event='eval:alert("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)");', user = user, metadata = event_metadata)
+            models.send_notification("Anti-Crap: Song Request Denied (Rating Too Low For Current Queue)", user)
             result = False
 
         if requests >= settings.SONGS_IN_QUEUE:
-            models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user, metadata = event_metadata)
+            #models.add_event(event='eval:alert("You have reached your queue limit! Please wait for your requests to play.");', user = user, metadata = event_metadata)
+            models.send_notification("You have reached your queue limit! Please wait for your requests to play.", user)
             result = False
         if result and song.is_locked():
             # In a case, this should not append since user (from view) can't reqs song locked
-            models.add_event(event='eval:alert("You can\'t queue a song locked!");', user = user, metadata = event_metadata)
+            #models.add_event(event='eval:alert("You can\'t queue a song locked!");', user = user, metadata = event_metadata)
+            models.send_notification("Song is already locked", user)
             result = False
     if result:
         song.locked_until = datetime.datetime.now() + time
@@ -114,6 +120,7 @@ def queue_song(song, user, event = True, force = False):
         if event:
             bla = get_queue(True) # generate new queue cached object
             EVS.append('queue')
+            models.send_notification("%s has been queued. It is expected to play at %s" % (escape(song.title), Q.eta.strftime("%H:%M")), user)
     models.add_event(eventlist=EVS, metadata = event_metadata)
     return Q
 

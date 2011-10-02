@@ -32,6 +32,11 @@ DEFAULT_FLAG = "nectaflag"
 #  2. start the uwsgi_eventhandler module
 #  3. Point /demovibes/ajax/monitor/* urls to it
 #UWSGI_EVENT_SERVER = ("127.0.0.1", 3032)
+
+# To protect private notices from prying eyes, type a random secret here.
+#UWSGI_ID_SECRET = ""
+# Note that the same setting will have to be in local_config.py for
+# uwsgi_eventhandler for it to work.
 #
 #If you have vserver that need a specific url, use this:
 #UWSGI_EVENT_SERVER_HTTP = "http://<hostname>/demovibes/ajax/monitor/new/"
@@ -80,6 +85,13 @@ SITE_ID = 1
 
 ACCOUNT_ACTIVATION_DAYS = 7
 
+
+## Notifications
+
+NOTIFY_NEW_FORUM_POST = False
+NOTIFY_NEW_FORUM_THREAD = False
+NOTIFY_NEW_SONG_APPROVED = False
+NOTIFY_NEW_SONG_COMMENT = False
 # There may be a situation where your server doesn't have a built-in SMTP server, and you
 # Wish to use a 3rd party SMTP server. Uncommenting these boxes and setting them accordingly
 # Will allow this to take place. The default SMTP options may not deliver to outside world, in

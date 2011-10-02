@@ -158,15 +158,15 @@ div.screenshot:hover {
     bottom:1px;
     right:1px;
     filter:alpha(opacity=50);
-  -moz-opacity:0.5;
-  -khtml-opacity: 0.5;
-  opacity: 0.5;
+    -moz-opacity:0.5;
+    -khtml-opacity: 0.5;
+    opacity: 0.5;
 }
 .youtube-link {
-position: relative;
-display: inline-block;
-vertical-align: middle;
-background-color: #eee;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #eee;
 }
 
 .editbar {
@@ -185,4 +185,98 @@ padding: 2px;
     text-align: center;
     margin-top: 10px;
     margin-right: 5px;
+}
+.messageholder {
+    opacity: .6;
+    padding: 0.2em;
+    font-size:14px;
+    background-color: #D1EFC3;
+    cursor: pointer;
+}
+.messageholder:hover {
+    opacity: 1;
+}
+.messagetitle {
+    background-color: #8FC7FF;
+    padding: 2px;
+    padding-right: 1em;
+    padding-left: 1em;
+    cursor: pointer;
+}
+.message-display-settings {
+    cursor: pointer;
+}
+.message-display-settings:hover {
+    color: #5A5A5A;
+}
+.messagebox {
+    width: 100%;
+    position:fixed;
+    top:0;
+    left:0;
+}
+.messagetime,.messagecat {
+ padding-right: 1em;
+ font-size:70%;
+}
+.messagefadeborder {
+    float: right;
+    width: 50px;
+    height: 6px;
+    border: 1px solid #000;
+}
+
+.messagefade {
+    width: 100%;
+    background-color: #0F5979;
+    height: 100%;
+    right: 0;
+    margin-left: auto;
+}
+
+.messagesettingsbox {
+    position:fixed;
+    top: 45%;
+    left: 50%;
+    width: 350px;
+    margin-left: -175px;
+    background-color: #ffF;
+    border: 1px solid #000;
+}
+
+.messagesettings div {
+    padding: 0.5em;
+}
+
+.messagesettings label {
+    padding-right: 0.5em;
+}
+
+.messagesetting-save,.messagesetting-cancel {
+padding: 1em;
+border: 1px solid #000;
+margin: 1em;
+float:left;
+cursor: pointer;
+}
+
+.message_toggle {
+    width: 50%;
+    margin:auto;
+    cursor: pointer;
+    border-bottom: 2px solid #6DC94C;
+}
+.message-disabled-true {
+    border-bottom: 2px solid #C44D37;
+}
+.messagecat {
+    min-width: 4.5em;
+    display: inline-block;
+}
+.messagetitle-flash {
+    background-color: #fff;
+}
+.message-remove  {
+    float: right;
+    cursor: pointer;
 }

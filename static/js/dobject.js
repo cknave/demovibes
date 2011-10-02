@@ -24,6 +24,7 @@ function ajaxmonitorspawn() {
             ajaxmonitorupdate(data);
         },
         error: function(xhr, textStatus, errorThrown){
+            //newMessage("[Updater] Problem with server connection. Retrying in 15 seconds", 15);
             setTimeout('ajaxmonitorspawn()',15000); // wait a bit on fail
         }
      });
@@ -48,7 +49,10 @@ function ajaxmonitorupdate(req) {
         for (i=0;i<event.length;i++) {
             id=event[i];
             if (id != "bye" && id != "") {
-                if (id.substr(0,5)=='eval:') {
+                if (id.substr(0,4)=='msg:') {
+                    newMessage(id.substr(4,id.length));
+                }
+                else if (id.substr(0,5)=='eval:') {
                     eval(id.substr(5,id.length)); // evaluate the expression
                 } else if (id.substr(0,1)=='!') {
                     ajaxeventid=parseInt(id.substr(1,id.length));

@@ -127,6 +127,14 @@ if nodejs_event_server:
     channel.exchange_declare(exchange='events',
                      type='fanout')
 
+def send_notification(message, user, category = 0):
+    d = {
+        "message": message,
+        "category": category,
+    }
+    data = simplejson.dumps(d)
+    add_event("msg:%s" % data, user)
+
 def add_event(event = None, user = None, eventlist = [], metadata = {}):
     """
     Add event(s) to the event handler(s)
@@ -134,7 +142,8 @@ def add_event(event = None, user = None, eventlist = [], metadata = {}):
     Keywords:
     event -- string that will be sent to clients
     user -- optional -- User to receive the event
-    eventlist -- List of events to process
+    eventlist -- List of event strings to process
+    metadata -- Optional metadata to send along
 
     Either event or eventlist must be supplied
     """
@@ -163,9 +172,9 @@ def add_event(event = None, user = None, eventlist = [], metadata = {}):
                       body=e)
 
     if uwsgi_event_server:
-        R = AjaxEvent.objects.filter(user__isnull=True).order_by('-id')[:20] #Should have time based limit here..
-        R = [(x.id, x.event) for x in R]
-        data = (R, ae.id+1)
+        R = AjaxEvent.objects.order_by('-id')[:20] #Should have time based limit here..
+        R = [(x.id, x.event, x.user and x.user.id or "N") for x in R]
+        data = (R, ae.id)
         if uwsgi_event_server:
             if uwsgi_event_server == "HTTP":
                 data = {'data': pickle.dumps(data)}
@@ -1645,7 +1654,7 @@ class Oneliner(models.Model):
         return super(Oneliner, self).save(*args, **kwargs)
 
 class AjaxEvent(models.Model):
-    event = models.CharField(max_length=100)
+    event = models.CharField(max_length=200)
     user = models.ForeignKey(User, blank = True, null = True, default = None)
 
 class News(models.Model):

@@ -2,10 +2,11 @@
 All forum logic is kept here - displaying lists of forums, threads
 and posts, adding new threads, and adding replies.
 """
-
+from django.utils.html import escape
 from forum.models import Forum,Thread,Post,Subscription
 from forum.forms import ThreadForm, ReplyForm, EditForm
 from datetime import datetime
+from webview import models as wm
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseForbidden
 from django.template import Context, loader
@@ -17,6 +18,9 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 import j2shim
+
+NOTIFY_POST = getattr(settings, "NOTIFY_NEW_FORUM_POST", False)
+NOTIFY_THREAD = getattr(settings, "NOTIFY_NEW_FORUM_THREAD", False)
 
 def forum_email_notification(post):
     try:
@@ -79,6 +83,13 @@ def forum(request, slug):
             new_thread = thread_form.save(commit = False)
             new_thread.forum = f
             new_thread.save()
+            if NOTIFY_THREAD and not f.is_private:
+                wm.send_notification("%s created a new thread \"<a href='%s'>%s</a>\" in forum \"%s\"" % (
+                    escape(request.user.username),
+                    new_thread.get_absolute_url(),
+                    escape(new_thread.title),
+                    escape(new_thread.forum.title),
+                ), None, 1)
             Post.objects.create(thread=new_thread, author=request.user,
                 body=thread_form.cleaned_data['body'],
                 time=datetime.now())
@@ -145,6 +156,14 @@ def thread(request, thread):
                 Subscription.objects.filter(thread=t, author=request.user).delete()
             # Send email
             forum_email_notification(new_post)
+            if NOTIFY_POST and not t.forum.is_private:
+                wm.send_notification("%s posted a reply to \"<a href='%s#post%s'>%s</a>\" in forum \"%s\"" % (
+                    escape(request.user.username),
+                    new_post.thread.get_absolute_url(),
+                    new_post.id,
+                    escape(new_post.thread.title),
+                    escape(new_post.thread.forum.title),
+                ), None, 1)
             return HttpResponseRedirect(new_post.get_absolute_url())
     else:
         reply_form = ReplyForm(initial={'subscribe': s})

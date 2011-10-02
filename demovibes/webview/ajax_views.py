@@ -19,10 +19,12 @@ import time, datetime
 from django.core.cache import cache
 import j2shim
 import re
+import hashlib
 
 idlist = re.compile(r'^(\d+,)+\d+$')
 
 use_eventful = getattr(settings, 'USE_EVENTFUL', False)
+UWSGI_ID_SECRET = getattr(settings, 'UWSGI_ID_SECRET', False)
 
 class AjaxView(MyBaseView):
     basetemplate = "webview/js/"
@@ -70,16 +72,21 @@ def songinfo(request):
 def ping(request, event_id):
     if getattr(settings, "DISABLE_AJAX", False):
         raise
+    GET_UID = ""
     if request.user.is_authenticated():
         key = "uonli_%s" % request.user.id
+        GET_UID = "?uid=%s" % request.user.id
+        if UWSGI_ID_SECRET:
+            hash = hashlib.sha1("%s.%s" % (request.user.id, UWSGI_ID_SECRET)).hexdigest()
+            GET_UID = GET_UID + "&sign=" + hash
         get = cache.get(key)
         if not get:
             P = get_profile(request.user)
             P.last_activity = datetime.datetime.now()
-            P.set_flag_from_ip(request.META['REMOTE_ADDR'])
+            P.set_flag_from_ip(request.META.get('REMOTE_ADDR'))
             P.save()
             cache.set(key, "1", 100)
-    return HttpResponseRedirect("/demovibes/ajax/monitor/%s/" % event_id)
+    return HttpResponseRedirect("/demovibes/ajax/monitor/%s/%s" % (event_id, GET_UID))
 
 def monitor(request, event_id):
     for x in range(120):

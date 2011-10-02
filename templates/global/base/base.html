@@ -45,6 +45,7 @@
 
     <div id="rightside">
         <h3>User Menu</h3>
+        <div class="message-display-settings">Notification settings</div>
         <ul>
         {% if user.is_authenticated %}
             <li id="profile"><a href="{% url dv-my_profile %}">Edit My Profile</a></li>

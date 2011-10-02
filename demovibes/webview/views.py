@@ -1,7 +1,7 @@
 from webview.models import *
 from webview.forms import *
 from webview import common
-
+from django.utils.html import escape
 from openid_provider.models import TrustedRoot
 
 from mybaseview import MyBaseView
@@ -228,6 +228,7 @@ def send_pm(request):
             F = form.save(commit=False)
             F.sender=request.user
             F.save()
+            send_notification("%s sent you a <a href='%s'>message</a> with title '%s'" % (escape(F.sender.username), F.get_absolute_url(), escape(F.subject)), F.to)
             return HttpResponseRedirect(reverse('dv-inbox'))
     else:
         title = request.GET.get('title', "")
@@ -268,6 +269,8 @@ class addComment(SongView):
         comment = self.request.POST.get("Comment", "").strip()
         if comment:
             SongComment.objects.create(comment = comment, song = self.song, user = self.request.user)
+            if getattr(settings, "NOTIFY_NEW_SONG_COMMENT", False):
+                send_notification("%s commented on the song <a href='%s'>%s</a>" % (escape(self.request.user.username), self.song.get_absolute_url(), escape(self.song.title)), None, 2)
 
 def site_about(request):
     """
@@ -891,7 +894,11 @@ def activate_upload(request):
                 # Should throw when the song isn't found in the DB
                 Q = SongApprovals(song=song, approved_by=request.user, uploaded_by=song.uploader)
                 Q.save()
-
+            if getattr(settings, "NOTIFY_NEW_SONG_APPROVED", False):
+                send_notification("Song <a href='%s'>%s</a> was accepted and is now avaliable for queuing!" % (
+                    song.get_absolute_url(),
+                    escape(song.title),
+                ), None, 2)
         if song.uploader.get_profile().pm_accepted_upload and status == 'A' or status == 'R':
             song.uploader.get_profile().send_message(
                 sender = request.user,
