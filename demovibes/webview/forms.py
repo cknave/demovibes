@@ -1,4 +1,4 @@
-from webview.models import *
+from webview import models as M
 from django import forms
 from django.conf import settings
 from PIL import Image
@@ -8,7 +8,7 @@ import logging
 
 class UploadForm(forms.ModelForm):
     class Meta:
-        model = Song
+        model = M.Song
         fields = ["file", "title"]
 
     def clean_file(self):
@@ -42,16 +42,16 @@ class UploadForm(forms.ModelForm):
 class SongMetadataForm(forms.ModelForm):
     class Meta:
         fields = ["release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset"]
-        model = SongMetaData
+        model = M.SongMetaData
 
 class EditSongMetadataForm(forms.ModelForm):
     class Meta:
         fields = ["artists", "release_year", "remix_of_id", "groups", "labels", "info", "type", "platform", "pouetid", "ytvidid", "ytvidoffset", "comment"]
-        model = SongMetaData
+        model = M.SongMetaData
 
 class CreateArtistForm(forms.ModelForm):
     class Meta:
-        model = Artist
+        model = M.Artist
         fields = ["handle", "name", "dob", "home_country", "home_location", "hol_id", "twitter_id", "last_fm_id", "info", "artist_pic", "webpage", "wiki_link", "groups", "labels"]
 
     def clean_artist_pic(self):
@@ -78,13 +78,13 @@ class CreateSessionForm(forms.Form):
     time = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], label="Play time", help_text = "Format: YYYY-mm-dd HH:HM")
 
 class GenericInfoForm(forms.Form):
-    content_type = forms.ModelChoiceField(queryset=ContentType.objects.all(), widget=forms.HiddenInput)
+    content_type = forms.ModelChoiceField(queryset = M.ContentType.objects.all(), widget = forms.HiddenInput)
     object_id = forms.CharField(widget=forms.HiddenInput)
 
 class CreateScreenshotForm(forms.ModelForm):
 
     class Meta:
-        model = Screenshot
+        model = M.Screenshot
         fields = ["name", "image", "description"]
 
     def clean_image(self):
@@ -104,7 +104,7 @@ class CreateScreenshotForm(forms.ModelForm):
 
 class CreateLabelForm(forms.ModelForm):
     class Meta:
-        model = Label
+        model = M.Label
         fields = ["name", "webpage", "wiki_link", "logo", "pouetid", "hol_id", "found_date", "cease_date", "info"]
 
     def clean_logo(self):
@@ -128,7 +128,7 @@ class CreateLabelForm(forms.ModelForm):
 
 class CreateGroupForm(forms.ModelForm):
     class Meta:
-        model = Group
+        model = M.Group
         fields = ["name", "group_logo", "webpage", "wiki_link", "pouetid", "found_date", "info"]
 
     def clean_group_logo(self):
@@ -170,7 +170,7 @@ class ProfileForm(forms.ModelForm):
         return self.cleaned_data['avatar']
 
     class Meta:
-        model = Userprofile
+        model = M.Userprofile
         fields = ['infoline', 'visible_to', 'web_page', 'aol_id', 'yahoo_id', 'icq_id', 'twitter_id', 'hol_id', 'country', 'location', 'avatar', 'fave_id', 'email_on_pm', 'email_on_group_add', 'email_on_artist_add', 'pm_accepted_upload', 'paginate_favorites', 'theme', 'custom_css', 'use_tags', 'show_screenshots', 'show_youtube', 'info']
 
 class PmForm(forms.ModelForm):
@@ -179,17 +179,17 @@ class PmForm(forms.ModelForm):
     def clean_to(self):
         data = self.cleaned_data['to']
         try:
-            U = User.objects.get(username=data)
+            U = M.User.objects.get(username=data)
         except:
             raise forms.ValidationError("User does not exist")
         return U
     class Meta:
-        model = PrivateMessage
+        model = M.PrivateMessage
         fields = ('to', 'subject', 'message')
 
 class CreateLinkForm(forms.ModelForm):
     class Meta:
-        model = Link
+        model = M.Link
         fields = ["link_type", "url_cat", "name", "link_title", "link_url", "link_image", "notes"]
 
     def clean_link_image(self):
@@ -214,7 +214,7 @@ class CreateLinkForm(forms.ModelForm):
 
 class CreateCompilationForm(forms.ModelForm):
     class Meta:
-        model = Compilation
+        model = M.Compilation
         exclude = ["songs", "prod_artists", "created_by", "prod_groups", "running_time", "status", "cover_art", "last_updated"]
 
 class SLForm(object):
@@ -223,8 +223,8 @@ class SLForm(object):
 
 class SongLicenseForm(SLForm, forms.ModelForm):
     class Meta:
-        model = Song
+        model = M.Song
         fields = ["license"]
 
 class LicenseForm(SLForm, forms.Form):
-    license = forms.ModelChoiceField(queryset = SongLicense.objects.all(), empty_label="(No license)", required=False)
+    license = forms.ModelChoiceField(queryset = M.SongLicense.objects.all(), empty_label="(No license)", required=False)

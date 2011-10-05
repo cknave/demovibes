@@ -7,7 +7,7 @@ import logging, logging.config
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
-from webview.models import *
+from webview.models import Queue, Song
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from webview import common
@@ -198,8 +198,8 @@ class song_finder(object):
     def tweet(self, user, password, message):
         if len(message) < 140:
             url = 'http://twitter.com/statuses/update.xml'
-            curl = 'curl --connect-timeout 10 -s -u %s:%s -d status="%s" %s' % (user,password,message,url)
+            curl = 'curl --connect-timeout 10 -s -u %s:%s -d status="%s" %s' % (user, password, message, url)
             try:
-                pipe=popen(curl, 'r')
+                popen(curl, 'r')
             except:
                 self.log.warning("Failed To Tweet: %s"% message)

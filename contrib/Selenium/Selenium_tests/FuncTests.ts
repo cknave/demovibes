@@ -15,6 +15,7 @@
 <tr><td><a href="profile.tc">Profile</a></td></tr>
 <tr><td><a href="new_artist.tc">NewArtist</a></td></tr>
 <tr><td><a href="new_group.tc">NewGroup</a></td></tr>
+<tr><td><a href="partial_newsong.tc">PartialSongUpload</a></td></tr>
 <tr><td><a href="new_label.tc">NewLabel</a></td></tr>
 <tr><td><a href="queue_song.tc">QueueSong</a></td></tr>
 <tr><td><a href="favorites.tc">Favorites</a></td></tr>
@@ -28,8 +29,8 @@
 <tr><td><a href="test_site_links.tc">TestSiteLinks</a></td></tr>
 <tr><td><a href="activate_artist.tc">Activate Artist</a></td></tr>
 <tr><td><a href="activate_group.tc">Activate Group</a></td></tr>
-<tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>
 <tr><td><a href="activate_songdata.tc">Activate Songdata</a></td></tr>
+<tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>
 <tr><td><a href="simple_xml_test.tc">SimpleXmlTest</a></td></tr>
 <tr><td><a href="bbcode_simple.tc">Simple BBcode</a></td></tr>
 <tr><td><a href="now_playing_display.tc">NowPlayingDisplay</a></td></tr>

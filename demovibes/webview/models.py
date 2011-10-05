@@ -28,7 +28,7 @@ import cStringIO
 from PIL import Image
 
 import tagging
-import time, hashlib, urllib
+import time, hashlib
 
 import random
 
@@ -189,7 +189,7 @@ def add_event(event = None, user = None, eventlist = [], metadata = {}):
             else:
                 uwsgi.send_uwsgi_message(uwsgi_event_server[0], uwsgi_event_server[1], 33, 17, data, 30)
 
-from managers import *
+from managers import LockingManager, ActiveSongManager
 
 # Create your models here.
 
@@ -330,12 +330,6 @@ class Userprofile(models.Model):
         ('R', 'Registrered users'),
         ('N', 'No one')
     )
-
-    def have_artist(self):
-        try:
-            return self.user.artist
-        except:
-            return False
 
     aol_id = models.CharField(blank = True, max_length = 40, verbose_name = "AOL IM", help_text="AOL IM ID, for people to contact you (optional)")
     avatar = models.ImageField(upload_to = 'media/avatars', blank = True, null = True)
