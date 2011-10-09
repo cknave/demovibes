@@ -1,30 +1,26 @@
 {% if user.is_authenticated() %}
-<table class="vote" name="vote-{{ song.id }}" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});"> 
-<tr> 
+{% import "macro/display.html" as display %}
+<table class="vote" name="vote-{{ song.id }}" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
+<tr>
 {% for v in voterange -%}
     <td onmouseover="voteshow('vote-{{ song.id }}', {{ v }});" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
         <a href="{{ url("dv-vote-autovote", song.id, v) }}">
             <img src="{{ STATIC_URL }}star-{% if v > myvote %}white{% else %}red{% endif %}.png" title="{{ v }} Star" border="0" id="vote-{{ song.id }}-{{ v }}" />
         </a>
-    </td> 
+    </td>
 {% endfor -%}
 
     <td> </td>
     <td>
-    {% if song.is_favorite(user) %} 
-    {% else %}
-        <a href="/demovibes/favorites/add/{{ song.id }}/">
-            <img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" />
-        </a>    
-    {% endif %}
+    {{ display.favorite(song, user) }}
     </td>
     <td>
         <a href="/demovibes/song/{{ song.id }}/votes/">
             <img class="song_head" src="{{ STATIC_URL }}script.png" title="Voting History" />
         </a>
     </td>
-</tr> 
+</tr>
 </table>
 Your Vote: {{ myvote }}<br />
 {% endif %}
-Rating: {{ song.rating|floatformat|default("No votes", true) }} ({{ song.rating_votes }} Votes)<br /> 
+Rating: {{ song.rating|floatformat|default("No votes", true) }} ({{ song.rating_votes }} Votes)<br />

@@ -1,9 +1,9 @@
-{% macro favorite(song, user) %}
+{% macro favorite(song, user, addfavtext="", removefavtext="") %}
     {% if user.is_authenticated() %}
         {% if song.is_favorite(user) %}
-            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Already Loved!" alt="Already a favorite" />
+            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Already Loved!" alt="Already a favorite" /> {{ removefavtext }}</a>
         {% else %}
-            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" alt="Add as favorite"/></a>
+            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" alt="Add as favorite"/> {{addfavtext}}</a>
        {% endif %}
     {% endif %}
 {% endmacro %}

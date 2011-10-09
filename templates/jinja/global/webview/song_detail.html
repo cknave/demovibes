@@ -103,11 +103,7 @@ Author:
  {% else %}
   <img class="song_head" src="{{ STATIC_URL }}add.png" title="Add To Queue!" /> <a href="{{ object.get_absolute_url() }}queue/">{{ gettext("Add To Queue") }}</a>
  {% endif %}<br />
- {% if object.is_favorite(user) %}
-  <img class="song_head" src="{{ STATIC_URL }}heart.png" title="Already Loved!" /> <span>{{ gettext("Already In Your Favourites List!") }}</span>
- {% else %}
-  <img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add To Faves" /> <a href="{{ url ("dv-add_fav", object.id) }}">{{ gettext("Add To Favorites") }}</a>
- {% endif %}
+  {{ display.favorite(object, user, "Add to your favorite list!", "Remove from your favorite list!") }}
  </p>
 {% endif %}
 
