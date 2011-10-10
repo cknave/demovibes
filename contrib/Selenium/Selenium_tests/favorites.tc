@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Add To Favorites</td>
+	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;change&quot;]</td>
 	<td></td>
 </tr>
 <tr>
@@ -47,8 +47,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>Already In Your Favourites List!</td>
+	<td>verifyTextPresent</td>
+	<td>Remove from your favorite list! </td>
 	<td></td>
 </tr>
 <tr>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//img[@alt='Remove From Favorites']</td>
+	<td>//input[@name='change' and @value='remove']</td>
 	<td></td>
 </tr>
 <tr>
@@ -78,7 +78,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>link=Add To Favorites</td>
+	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;change&quot;]</td>
 	<td></td>
 </tr>
 </tbody></table>

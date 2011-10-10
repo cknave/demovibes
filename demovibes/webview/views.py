@@ -574,6 +574,17 @@ def list_favorites(request):
     # Attempt to list all faves at once!
     return j2shim.r2r('webview/favorites.html', { 'songs': songs }, request=request)
 
+class ChangeFavorite(WebView):
+    def POST(self):
+        P = self.request.POST.get
+        S = m.Song.objects.get(id = P("songid"))
+        if P("change") == "remove":
+            m.Favorite.objects.filter(user = self.request.user, song = S).delete()
+        if P("change") == "add":
+            m.Favorite.objects.create(user = self.request.user, song = S)
+        self.redirect(self.request.META.get('HTTP_REFERER') or "dv-favorites")
+
+
 @login_required
 def del_favorite(request, id): # XXX Fix to POST
     """
@@ -748,7 +759,7 @@ class editSonginfo(SongView):
 
     def form_form_init(self):
         if self.method == "POST":
-            meta = m.SongMetaData(song=self.song, user=request.user)
+            meta = m.SongMetaData(song=self.song, user=self.request.user)
         else:
             meta = self.song.get_metadata()
             meta.comment = ""

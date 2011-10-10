@@ -1,9 +1,25 @@
 {% macro favorite(song, user, addfavtext="", removefavtext="") %}
     {% if user.is_authenticated() %}
+    <form name="changefavorite" method="post" action="{{ url ("dv-change_fav") }}">
+        <input type="hidden" value="{{ song.id }}" name="songid" />
         {% if song.is_favorite(user) %}
-            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Already Loved!" alt="Already a favorite" /> {{ removefavtext }}</a>
+            <input type="image" value="remove" name="change" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite">
+            {{ removefavtext }}
         {% else %}
-            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add As Fave" alt="Add as favorite"/> {{addfavtext}}</a>
+            <input type="image" value="add" name="change" src="{{ STATIC_URL }}heart_add.png" title="Add favorite">
+            {{ addfavtext }}
+       {% endif %}
+
+       </form>
+    {% endif %}
+{% endmacro %}
+
+{% macro favorite2(song, user, addfavtext="", removefavtext="") %}
+    {% if user.is_authenticated() %}
+        {% if song.is_favorite(user) %}
+            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite status" alt="Remove favorite status" /> {{ removefavtext }}</a>
+        {% else %}
+            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add as favorite" alt="Add as favorite"/> {{addfavtext}}</a>
        {% endif %}
     {% endif %}
 {% endmacro %}

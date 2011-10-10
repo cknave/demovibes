@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//div[@id='maincontent']/form[1]/input[6]</td>
+	<td>//div[@id='maincontent']/form[2]/input[6]</td>
 	<td></td>
 </tr>
 <tr>
@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//div[@id='maincontent']/form[1]/input[6]</td>
+	<td>//div[@id='maincontent']/form[2]/input[6]</td>
 	<td></td>
 </tr>
 <tr>
@@ -56,7 +56,6 @@
 	<td>Rating: 5</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
