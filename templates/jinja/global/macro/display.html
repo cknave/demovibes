@@ -3,10 +3,12 @@
     <form name="changefavorite" method="post" action="{{ url ("dv-change_fav") }}">
         <input type="hidden" value="{{ song.id }}" name="songid" />
         {% if song.is_favorite(user) %}
-            <input type="image" value="remove" name="change" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite">
-            {{ removefavtext }}
+            <input type="hidden" name="change" value="remove"/>
+            <input type="image" name="img" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite">
+            {{ removefavtext }}
         {% else %}
-            <input type="image" value="add" name="change" src="{{ STATIC_URL }}heart_add.png" title="Add favorite">
+            <input type="hidden" name="change" value="add"/>
+            <input type="image" name="img" src="{{ STATIC_URL }}heart_add.png" title="Add favorite">
             {{ addfavtext }}
        {% endif %}
 
