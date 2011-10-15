@@ -32,8 +32,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;img&quot;]</td>
+	<td>click</td>
+	<td>//div[@id='maincontent']/div[2]/form/input[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,8 +62,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
+	<td>click</td>
 	<td>//table[@id='fd-table-1']/tbody/tr[2]/td[8]/form/input[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=My Favourites</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,8 +87,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>//div[@id='maincontent']/div[2]/form/input[3]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;img&quot;]</td>
+	<td>link=My Favourites</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=retrorespect</td>
 	<td></td>
 </tr>
 </tbody></table>

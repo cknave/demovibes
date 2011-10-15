@@ -28,7 +28,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//div[@id='maincontent']/form[2]/input[6]</td>
+	<td>css=#maincontent &gt; form &gt; input[type=&quot;submit&quot;]</td>
 	<td></td>
 </tr>
 <tr>
@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//div[@id='maincontent']/form[2]/input[6]</td>
+	<td>css=#maincontent &gt; form &gt; input[type=&quot;submit&quot;]</td>
 	<td></td>
 </tr>
 <tr>

@@ -18,7 +18,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//img[@alt='Add To Queue']</td>
+	<td>css=form[name=&quot;queue_song&quot;] &gt; input[name=&quot;img&quot;]</td>
 	<td></td>
 </tr>
 <tr>
@@ -42,8 +42,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>link=Add To Queue</td>
+	<td>click</td>
+	<td>css=input.queuesongbutton</td>
 	<td></td>
 </tr>
 <tr>
@@ -56,12 +56,6 @@
 	<td>retrorespect</td>
 	<td></td>
 </tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Queue</td>
-	<td></td>
-</tr>
-
 </tbody></table>
 </body>
 </html>

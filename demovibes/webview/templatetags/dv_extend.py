@@ -850,7 +850,7 @@ def bb_queue(hit):
         'MEDIA_URL' : STATIC,
         })
 
-    result = t.render(c)
+    #result = t.render(c)
 
     result = js.r2s('webview/queue_tag.html', {
         'song' : song,
