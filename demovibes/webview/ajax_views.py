@@ -142,6 +142,10 @@ def oneliner(request):
 @cache_control(must_revalidate=True, max_age=30)
 def songupdate(request, song_id):
     song = Song.objects.get(id=song_id)
+    return HttpResponse("""<span style="display:none">l</span>
+                <img class="song_tail" src="%slock.png" title="Locked" alt="Locked"/>""" %
+                settings.MEDIA_URL)
+
     return j2shim.r2r('webview/js/generic.html', {
         'song' : song,
         'event' : "a_queue_%i" % song.id,

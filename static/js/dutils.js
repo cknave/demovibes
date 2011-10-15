@@ -236,8 +236,24 @@ function updateOnelinerLinks() {
     });
 }
 
+function hookAjaxForms() {
+    $(".ajaxify").each(function (i, element) {
+        var E = $(element);
+        E.unbind("submit");
+        E.submit(function (eo) {
+            var url = E.attr("action");
+            $.post(url, E.serialize(), function(data) {
+                if (data) { E.replaceWith(data); }
+                hookAjaxForms();
+            });
+            return false;
+        });
+    });
+}
+
 $(document).ready( function() {
     updateOnelinerLinks();
+    hookAjaxForms();
     $(".ytlink").each( function(i, element) {
         var ytid = $(element).data("ytid");
         $(element).append("<img src='/static/ajax-loader.gif' />");

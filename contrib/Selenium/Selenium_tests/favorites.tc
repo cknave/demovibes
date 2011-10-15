@@ -27,8 +27,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>verifyTextPresent</td>
+	<td>Add to your favorite list</td>
+	<td></td>
+</tr>
+<tr>
 	<td>clickAndWait</td>
-	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;change&quot;]</td>
+	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;img&quot;]</td>
 	<td></td>
 </tr>
 <tr>
@@ -48,7 +53,7 @@
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
-	<td>Remove from your favorite list! </td>
+	<td>Remove from your favorite list!</td>
 	<td></td>
 </tr>
 <tr>
@@ -58,7 +63,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//input[@name='change' and @value='remove']</td>
+	<td>//table[@id='fd-table-1']/tbody/tr[2]/td[8]/form/input[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -78,7 +83,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;change&quot;]</td>
+	<td>css=#maincontent &gt; form[name=&quot;changefavorite&quot;] &gt; input[name=&quot;img&quot;]</td>
 	<td></td>
 </tr>
 </tbody></table>

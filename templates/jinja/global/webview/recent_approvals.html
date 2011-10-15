@@ -35,7 +35,7 @@
             {{ display.user(songr.uploaded_by) }}
         </td>
             <td>
-                <span data-name="a_queue_{{ songr.song.id }}">{{ display.songspan_noauth(songr.song) }}</span>
+                {{ display.queue_song(songr.song, user) }}
                 {{ display.favorite(songr.song, user) }}
             </td>
         </tr>

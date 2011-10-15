@@ -19,13 +19,7 @@
  </td>
  {% endcache %}
  <td>
-  <span data-name="a_queue_{{ song.id }}">
-   {% if user.is_authenticated() %}
-    {% include "webview/t/songlist_span.html" %}
-   {% else %}
-    <img class="song_head" src="{{ STATIC_URL }}lock.png" title="Song Locked" />
-   {% endif %}
-  </span>
+    {{ display.queue_song(song, user) }}
  </td>
  <td>
    <span class="lastreqdate">{% if song.last_queued != "Never" %}{{ song.last_queued()|date("Y-m-d") }}{% else %}Never!{% endif %}</span>

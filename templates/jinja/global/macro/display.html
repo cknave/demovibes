@@ -1,14 +1,14 @@
 {% macro favorite(song, user, addfavtext="", removefavtext="") %}
     {% if user.is_authenticated() %}
-    <form name="changefavorite" method="post" action="{{ url ("dv-change_fav") }}">
+    <form name="changefavorite" method="post" action="{{ url ("dv-change_fav") }}" class="ajaxify linkform">
         <input type="hidden" value="{{ song.id }}" name="songid" />
         {% if song.is_favorite(user) %}
             <input type="hidden" name="change" value="remove"/>
-            <input type="image" name="img" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite">
+            <input type="image" name="img" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite"/>
             {{ removefavtext }}
         {% else %}
             <input type="hidden" name="change" value="add"/>
-            <input type="image" name="img" src="{{ STATIC_URL }}heart_add.png" title="Add favorite">
+            <input type="image" name="img" src="{{ STATIC_URL }}heart_add.png" title="Add favorite"/>
             {{ addfavtext }}
        {% endif %}
 
@@ -16,14 +16,33 @@
     {% endif %}
 {% endmacro %}
 
-{% macro favorite2(song, user, addfavtext="", removefavtext="") %}
-    {% if user.is_authenticated() %}
-        {% if song.is_favorite(user) %}
-            <a href="{{ url ("dv-del_fav", song.id) }}"><img class="song_head" src="{{ STATIC_URL }}heart_delete.png" title="Remove favorite status" alt="Remove favorite status" /> {{ removefavtext }}</a>
+{% macro queue_song(song, user = None, locktext="", addtext="") %}
+<span data-name="a_queue_{{ song.id }}">
+  {% if song.is_locked() %}
+        <span style="display:none">l</span>
+        <img class="song_tail" src="{{ STATIC_URL }}lock.png" title="Locked" alt="Locked"/> {{ locktext }}
+    {% else %}
+      {% if not user or user.is_authenticated() %}
+         <form name="queue_song" method="post" action="{{ url ("dv-queue-song") }}" class="ajaxify linkform">
+            <span style="display:none">u</span>
+            <input type="hidden" value="{{ song.id }}" name="songid" />
+            {% if addtext %}
+             <input type="submit" value="{{ addtext }}" class="queuesongbutton"/>
+            {% else %}
+             <input type="image" name="img" src="{{ STATIC_URL }}add.png" title="Queue song" class="queuesongimage" />
+            {% endif %}
+       </form>
+    {% else %}
+        <a href="/account/signin/">
+        {% if addtext %}
+            Log in to queue
         {% else %}
-            <a href="{{ url ("dv-add_fav", song.id) }}/"><img class="song_head" src="{{ STATIC_URL }}heart_add.png" title="Add as favorite" alt="Add as favorite"/> {{addfavtext}}</a>
-       {% endif %}
+            <img src="{{ STATIC_URL }}door_in.png" alt="Log in to queue" title="Log in to queue"/>
+        {% endif %}
+        </a>
     {% endif %}
+  {% endif %}
+</span>
 {% endmacro %}
 
 {% macro artists(song) -%}
@@ -67,14 +86,6 @@
     {% for tartist in meta.artists.all() %}
     {{ artist(tartist) }}{% if loop.last %} {% else %}, {% endif %}
     {% endfor %}
-{% endmacro %}
-
-{% macro songspan_noauth(song) %}
-    {% if song.is_locked() %}
-        <img class="song_tail" src="{{ STATIC_URL }}lock.png" title="Locked" alt="Locked"/>
-    {% else %}
-        <a href="{{ url ("dv-add_queue", song.id) }}" onclick="requestsong({{ song.id }}); return false;"><img class="song_tail" src="{{ STATIC_URL }}add.png" title="Add To Queue" alt="Add to queue"/></a>
-    {% endif %}
 {% endmacro %}
 
 {% macro artist(A) -%}
@@ -236,7 +247,6 @@
 {% endmacro %}
 
 {% macro songslist(objs, user) %}
-
     {% include "webview/t/songheader.html" %}
     {% for songy in objs %}
      <tr class="{{ loop.cycle ('row1','row2') }}">
@@ -261,22 +271,7 @@
      </td>
      {% endcache %}
      <td>
-      <span data-name="a_queue_{{ songy.id }}">
-       {% if user.is_authenticated() %}
-        {% if songy.is_locked() %}
-         <span style="display:none">l</span>
-         <img class="song_tail" src="{{ STATIC_URL }}lock.png" alt="Locked" title="Locked" />
-        {% else %}
-         <span style="display:none">u</span>
-         {% if user.is_authenticated() %}
-          <a href="{{ url ("dv-add_queue", songy.id) }}" onclick="requestsong({{ songy.id }});return false;">
-          <img class="song_tail" src="{{ STATIC_URL }}add.png" alt="Add To Queue" title="Add To Queue" /></a>
-         {% endif %}
-        {% endif %}
-       {% else %}
-        <img class="song_head" src="{{ STATIC_URL }}lock.png" title="Song Locked" />
-       {% endif %}
-      </span>
+       {{ queue_song(songy, user) }}
      </td>
      <td>
        <span class="lastreqdate">{% if songy.last_queued != "Never" %}{{ songy.last_queued()|date("Y-m-d") }}{% else %}Never!{% endif %}</span>
@@ -284,7 +279,6 @@
      </tr>
     {% endfor %}
     </table>
-
 {% endmacro %}
 
 {% macro screenshotslist(objs, user) %}

@@ -29,3 +29,8 @@ def r2s(template_name, context=None, request=None, processors=None):
     C = Context (context)
     result = T.render(C)
     return result
+
+def render_string(string, context):
+    pad = """{%- import "macro/display.html" as display -%}"""
+    template = djangojinja2.get_env().from_string(pad + string)
+    return template.render(context)

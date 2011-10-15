@@ -241,22 +241,6 @@ def send_pm(request):
         form = f.PmForm(initial= {'to': U, 'subject' : title})
     return j2shim.r2r('webview/pm_send.html', {'form' : form}, request)
 
-class AddQueue(SongView):
-    """
-    Add a song to the queue
-    """
-    template = "song_queued.html"
-    login_required = True
-
-    def GET(self):
-        ref = self.request.META.get('HTTP_REFERER', False)
-        url = self.song.get_absolute_url()
-        if not self.request.is_ajax() and ref and not ref.endswith(url):
-            return self.redirect(url)
-        common.queue_song(self.song, self.request.user)
-        if self.request.is_ajax():
-            return HttpResponse("OK")
-
 class addComment(SongView):
     """
     Add a comment to a song.
@@ -511,21 +495,6 @@ def view_compilation(request, comp_id):
         { 'comp' : comp, 'user' : request.user , 'sessionform': sessionform},
         request=request)
 
-@login_required
-def add_favorite(request, id): # XXX Fix to POST
-    """
-    Add a song to the user's favorite. Takes one argument, song id.
-    """
-    user = request.user
-    song = get_object_or_404(m.Song, id=id)
-    Q = m.Favorite.objects.filter(user = user, song = song)
-    if not Q: # Does the user already have this as favorite?
-        fav = m.Favorite(user=user, song=song)
-        fav.save()
-    #return HttpResponseRedirect(reverse('dv-favorites'))
-    refer = 'HTTP_REFERER' in request.META and request.META['HTTP_REFERER'] or False
-    return HttpResponseRedirect(refer or reverse("dv-favorites"))
-
 def oneliner(request):
     oneliner = m.Oneliner.objects.select_related(depth=1).order_by('-id')[:20]
     return j2shim.r2r('webview/oneliner.html', {'oneliner' : oneliner}, \
@@ -571,34 +540,55 @@ def list_favorites(request):
           {'songs': songlist.object_list, 'page' : page, 'page_range' : paginator.page_range}, \
           request=request)
 
-    # Attempt to list all faves at once!
     return j2shim.r2r('webview/favorites.html', { 'songs': songs }, request=request)
 
-class ChangeFavorite(WebView):
+class QueueSong(WebView):
+
+    def GET(self):
+        self.redirect("dv-root")
+
     def POST(self):
+        P = self.request.POST.get
+        S = m.Song.objects.get(id = P("songid"))
+        if not self.request.user.is_authenticated():
+            if self.request.is_ajax():
+                return HttpResponse("<a href='/account/signin/'>LogIn</a>")
+            else:
+                return self.redirect("/account/signin/")
+        r = common.queue_song(S, self.request.user)
+        if self.request.is_ajax():
+            if r:
+                return HttpResponse("""<span style="display:none">l</span>
+                <img class="song_tail" src="%slock.png" title="Locked" alt="Locked"/>""" %
+                settings.MEDIA_URL)
+            else:
+                return HttpResponse("")
+        self.redirect(self.request.META.get('HTTP_REFERER') or "dv-queue")
+
+class ChangeFavorite(WebView):
+
+    def GET(self):
+        self.redirect("dv-root")
+
+    def POST(self):
+        if not self.request.user.is_authenticated():
+            return HttpResponse("")
         P = self.request.POST.get
         S = m.Song.objects.get(id = P("songid"))
         if P("change") == "remove":
             m.Favorite.objects.filter(user = self.request.user, song = S).delete()
+            m.send_notification("Song removed from your favorites", self.request.user)
         if P("change") == "add":
-            m.Favorite.objects.create(user = self.request.user, song = S)
+            try:
+                m.Favorite.objects.create(user = self.request.user, song = S)
+                m.send_notification("Song added to your favorites", self.request.user)
+            except:
+                pass
+        if self.request.is_ajax():
+            s = "{{ display.favorite(song, user) }}"
+            c = {'song': S, 'user': self.request.user}
+            return HttpResponse(j2shim.render_string(s, c))
         self.redirect(self.request.META.get('HTTP_REFERER') or "dv-favorites")
-
-
-@login_required
-def del_favorite(request, id): # XXX Fix to POST
-    """
-    Removes a favorite from the user's list.
-    """
-    S = m.Song.objects.get(id=id)
-    Q = m.Favorite.objects.filter(user = request.user, song = S)
-    if Q:
-        Q[0].delete()
-    try:
-        refer = request.META['HTTP_REFERER']
-        return HttpResponseRedirect(refer)
-    except:
-        return HttpResponseRedirect(reverse('dv-favorites'))
 
 class LinkCheck(object):
     def __init__(self, linktype, object = None, status = 0, user = None, add=False):

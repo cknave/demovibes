@@ -140,7 +140,7 @@ CHEROKEE_SECRET_DOWNLOAD_PATH=""
 #MAX_SONG_LENGTH = 480
 
 #location of demosauce scan tool
-DEMOSAUCE_SCAN = '../demosauce/scan'
+DEMOSAUCE_SCAN = pj("demosauce", "scan")
 
 # a value that decides if a module is likely to be loopded. 0.1 seems to be good for starters
 # only required if demosauce scan is used

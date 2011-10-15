@@ -7,20 +7,20 @@
 <p>{{ gettext("The following compilations have their status as 'Uploaded'. Moderators should verify the information for each entry to make sure it's ok.") }}</p>
 <br />
 {% for compilation in compilations.all() %}
-	{% set ss = compilation.get_master_screenshot()|random %}
-	<h2><img class="icon_header" src="{{ STATIC_URL }}recplay_ico.png" alt="" />{{ gettext("Compilation Details For '") }}{{ compilation.name|e }}'</h2>
+    {% set ss = compilation.get_master_screenshot()|random %}
+    <h2><img class="icon_header" src="{{ STATIC_URL }}recplay_ico.png" alt="" />{{ gettext("Compilation Details For '") }}{{ compilation.name|e }}'</h2>
     <table>
     <tr>
     <td class="compilation_summary">
-	<table>
-	<tr><td>
+    <table>
+    <tr><td>
     {% if ss %}
-		{{ display.screenshot(ss.image) }}
-	{% else %}
-		(No Image!)
-	{% endif %}
-	</td></tr>
-	<tr><td>
+        {{ display.screenshot(ss.image) }}
+    {% else %}
+        (No Image!)
+    {% endif %}
+    </td></tr>
+    <tr><td>
     <b><i>{{ gettext("Compilation Summary") }}:</i></b><br />
     Name: {{ compilation.name|e }}<br />
     {% if compilation.label %}{{ gettext("Label") }}: {{ compilation.label|e }}<br />{% endif %}
@@ -35,8 +35,8 @@
     {% if compilation.bar_code %}{{ gettext("UPC") }}: {{ compilation.bar_code|e }}<br />{% endif %}
     {% if compilation.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ compilation.pouet }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
     {% if compilation.date_added %}<br />{{ gettext("Added On") }}: {{ compilation.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if compilation.created_by %} {{ display.user(compilation.created_by) }}{% endif %}<br />{% endif %}
-	</td></tr>
-	</table>
+    </td></tr>
+    </table>
     <td class="compilation_description">
     <b><i>{{ gettext("Compilation Details For") }} {{ compilation.name|e }}:</i></b><br />
     {% if compilation.info %}<p><i>{{ compilation.info|urlize|bbcode|linebreaks|smileys }}</i></p><br />{% endif %}
@@ -59,8 +59,7 @@
     {% if compilation.songs.count != 0 %}
      <b><i>{{ gettext("Songs In This Production (%(num)d Total)", num=compilation.songs.count()) }} :</i></b><br /><br />
      {% for song in compilation.get_songs() %}
-      {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song) }}
-      <span data-name="a_queue_{{ song.id }}">{% include "webview/t/songlist_span_noauth.html" %}</span><br />
+      {{ display.song(song) }} {{ gettext("by") }} {{ display.artists(song) }} {{ display.queue_song(song, user) }}<br />
      {% endfor %}
     {% endif %}<br />
     {% if compilation.prod_notes %}<i><b>{{ gettext("Production Notes") }}: </b>{{ compilation.prod_notes|urlize|bbcode|linebreaks|smileys }}</i><br />{% endif %}

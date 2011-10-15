@@ -118,8 +118,8 @@ def queue_song(song, user, event = True, force = False):
             bla = get_queue(True) # generate new queue cached object
             EVS.append('queue')
             models.send_notification("%s has been queued. It is expected to play at %s" % (escape(song.title), Q.eta.strftime("%H:%M")), user)
-    models.add_event(eventlist=EVS, metadata = event_metadata)
-    return Q
+        models.add_event(eventlist=EVS, metadata = event_metadata)
+        return Q
 
 
 def get_now_playing_song(create_new=False):
