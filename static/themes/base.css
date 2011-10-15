@@ -280,3 +280,7 @@ cursor: pointer;
     float: right;
     cursor: pointer;
 }
+
+.linkform {
+    display:inline;
+}
