@@ -287,11 +287,12 @@ cursor: pointer;
 
 .starbutton {
     border: 0;
-    height: 24px;
+    height: 25px;
     cursor: pointer;
     width: 24px;
-    padding: 6px;
+    padding: 10px;
     margin: 0;
+    float: left;
     font-size: 70%;
     background: url('../star-white.png') no-repeat;
 }
