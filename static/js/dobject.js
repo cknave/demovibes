@@ -57,10 +57,11 @@ function ajaxmonitorupdate(req) {
                 } else if (id.substr(0,1)=='!') {
                     ajaxeventid=parseInt(id.substr(1,id.length));
                 } else {
-                    $("[data-name='"+id+"']").load(ajaxurl+id+'/?event='+ajaxeventid, function() {updateOnelinerLinks();})
+                    $("[data-name='"+id+"']").load(ajaxurl+id+'/?event='+ajaxeventid, function() {applyHooks();})
                 }
             }
         }
         ajaxmonitorrequest=false;
+        applyHooks()
         setTimeout('ajaxmonitorspawn()',100); // we get a nice return ask again right away
 }

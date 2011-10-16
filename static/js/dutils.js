@@ -280,10 +280,14 @@ function hookStarHover() {
     });
 }
 
-$(document).ready( function() {
+function applyHooks() {
     updateOnelinerLinks();
     hookAjaxForms();
     hookStarHover();
+}
+
+$(document).ready( function() {
+    applyHooks();
     $(".ytlink").each( function(i, element) {
         var ytid = $(element).data("ytid");
         $(element).append("<img src='/static/ajax-loader.gif' />");
