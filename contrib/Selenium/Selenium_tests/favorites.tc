@@ -28,6 +28,11 @@
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
+	<td>A total of 0 users have this song on their favourites list.</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
 	<td>Add to your favorite list</td>
 	<td></td>
 </tr>
@@ -49,6 +54,11 @@
 <tr>
 	<td>clickAndWait</td>
 	<td>link=Monday monday test</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>A total of 1 users have this song on their favourites list.</td>
 	<td></td>
 </tr>
 <tr>
@@ -99,6 +109,21 @@
 <tr>
 	<td>verifyElementPresent</td>
 	<td>link=retrorespect</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Songs</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Monday monday test</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>A total of 0 users have this song on their favourites list.</td>
 	<td></td>
 </tr>
 </tbody></table>

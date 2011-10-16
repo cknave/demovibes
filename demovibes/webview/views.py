@@ -589,7 +589,9 @@ class ChangeFavorite(AjaxifyView):
         P = form.get
 
         if P("change") == "remove":
-            m.Favorite.objects.filter(user = self.request.user, song = self.song).delete()
+            Q = m.Favorite.objects.filter(user = self.request.user, song = self.song)
+            for x in Q:
+                x.delete() # For running Favorite.delete() logic
             m.send_notification("Song removed from your favorites", self.request.user)
         if P("change") == "add":
             try:
