@@ -33,7 +33,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='maincontent']/div[2]/form/input[3]</td>
+	<td>//div[2]/div/form/input[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,7 +63,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//table[@id='fd-table-1']/tbody/tr[2]/td[8]/form/input[3]</td>
+	<td>//td[8]/div/form/input[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -88,7 +88,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='maincontent']/div[2]/form/input[3]</td>
+	<td>//div[2]/div/form/input[3]</td>
 	<td></td>
 </tr>
 <tr>

@@ -241,12 +241,41 @@ function hookAjaxForms() {
         var E = $(element);
         E.unbind("submit");
         E.submit(function (eo) {
+            E.parent().addClass("ajax-working");
             var url = E.attr("action");
             $.post(url, E.serialize(), function(data) {
-                if (data) { E.replaceWith(data); }
+                E.parent().removeClass("ajax-working");
+                if (data) { E.parent().replaceWith(data); }
                 hookAjaxForms();
+                hookStarHover();
             });
             return false;
+        });
+    });
+}
+
+function hookStarHover() {
+    $(".starbutton").unbind("hover");
+    $(".starbutton").hover(function () {
+        // Mouse hover
+        var t = $(this);
+        t.parent().find(".ajaxhax").val(t.val());
+        t.prevAll().andSelf().addClass("star-selected");
+        t.nextAll().removeClass("star-selected");
+    },
+    function () {
+        // Mouse out
+        var t = $(this);
+        var parent = t.parent();
+        var vote = parseInt(parent.data("vote"));
+        var elements = parent.find(".starbutton");
+        elements.removeClass("star-selected");
+
+        elements.each(function (i, elem) {
+            var E = $(elem);
+            if (i < vote) {
+                E.addClass("star-selected");
+            }
         });
     });
 }
@@ -254,6 +283,7 @@ function hookAjaxForms() {
 $(document).ready( function() {
     updateOnelinerLinks();
     hookAjaxForms();
+    hookStarHover();
     $(".ytlink").each( function(i, element) {
         var ytid = $(element).data("ytid");
         $(element).append("<img src='/static/ajax-loader.gif' />");

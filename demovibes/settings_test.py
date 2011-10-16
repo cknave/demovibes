@@ -7,7 +7,7 @@ UWSGI_EVENT_SERVER = None
 
 DISABLE_AJAX = True
 
-MEDIA_URL = 'http://www.scenemusic.net/static/'
+MEDIA_URL = 'http://demovibes.thelazy.net/static/'
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 

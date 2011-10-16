@@ -140,14 +140,7 @@ Author:
 {% endif %}
 
 {% if user.is_authenticated() %}
-{% set vote_value = object.get_vote(user) %}
- {{ gettext("Your Vote") }} : {{ vote_value|default(gettext("You have not voted yet!!")) }} <br/>
-  <form action="{{ url ("dv-vote", object.id) }}" method="post">
- {% for v in vote_range %}
-   <input type="radio" name="Rating" value="{{ v }}" {% if vote_value == v %}checked{% endif %} />{{ v }}
- {% endfor %}
-  <input type="submit" />
-  </form>
+{{ display.song_vote(object, object.get_vote(user)) }}
 {% endif %}
 
 {% cache 86400 mkstr(object.id, object.last_changed, "songinfo3") %}

@@ -1,4 +1,19 @@
+{% macro song_vote(song, myvote) %}
+<div class="starview">
+    <form data-vote="{{ myvote }}" method="post" action="{{ url ("dv-formvote") }}" class="ajaxify">
+        <input type="hidden" value="{{ song.id }}" name="songid" />
+        <input type="hidden" value="{{ song.id }}" name="ajaxvote" class="ajaxhax"/>
+        {% for v in range(1,6) -%}
+            <button type="submit" value="{{ v }}" name="vote" class="starbutton {% if v <= myvote %}star-selected{% endif %}">
+                {{ v }}
+            </button>
+        {% endfor -%}
+    </form>
+</div>
+{% endmacro %}
+
 {% macro favorite(song, user, addfavtext="", removefavtext="") %}
+    <div id="formvote">
     {% if user.is_authenticated() %}
     <form name="changefavorite" method="post" action="{{ url ("dv-change_fav") }}" class="ajaxify linkform">
         <input type="hidden" value="{{ song.id }}" name="songid" />
@@ -14,6 +29,7 @@
 
        </form>
     {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro queue_song(song, user = None, locktext="", addtext="") %}

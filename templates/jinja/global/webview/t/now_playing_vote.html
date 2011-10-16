@@ -1,15 +1,10 @@
 {% if user.is_authenticated() %}
 {% import "macro/display.html" as display %}
-<table class="vote" name="vote-{{ song.id }}" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
+<table class="vote">
 <tr>
-{% for v in voterange -%}
-    <td onmouseover="voteshow('vote-{{ song.id }}', {{ v }});" onmouseout="voteshow('vote-{{ song.id }}', {{ myvote }});">
-        <a href="{{ url("dv-vote-autovote", song.id, v) }}">
-            <img src="{{ STATIC_URL }}star-{% if v > myvote %}white{% else %}red{% endif %}.png" title="{{ v }} Star" border="0" id="vote-{{ song.id }}-{{ v }}" />
-        </a>
-    </td>
-{% endfor -%}
-
+<td>
+{{ display.song_vote(song, myvote) }}
+</td>
     <td> </td>
     <td>
     {{ display.favorite(song, user) }}
@@ -21,6 +16,5 @@
     </td>
 </tr>
 </table>
-Your Vote: {{ myvote }}<br />
 {% endif %}
 Rating: {{ song.rating|floatformat|default("No votes", true) }} ({{ song.rating_votes }} Votes)<br />

@@ -284,3 +284,21 @@ cursor: pointer;
 .linkform {
     display:inline;
 }
+
+.starbutton {
+    border: 0;
+    height: 24px;
+    cursor: pointer;
+    width: 24px;
+    padding: 6px;
+    margin: 0;
+    font-size: 70%;
+    background: url('../star-white.png') no-repeat;
+}
+
+.star-selected,.starbutton:hover {
+    background: url('../star-gold.png') no-repeat;
+}
+.ajax-working {
+    opacity:0.4;
+}

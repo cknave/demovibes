@@ -96,6 +96,33 @@ class ListByLetter(WebView):
             return {'object_list': results }
         return {}
 
+class AjaxifyView(WebView):
+    redirect_to = "dv-root"
+
+    def GET(self):
+        if not self.request.is_ajax():
+            self.redirect(self.redirect_to)
+        return HttpResponse("")
+
+    def make_ajax_return(self):
+        return HttpResponse("You forgot to define 'make_ajax_return', mate!")
+
+    def POST(self):
+        if not self.request.user.is_authenticated():
+            if self.request.is_ajax():
+                return HttpResponse("")
+            return self.redirect("/account/signin/")
+        songid = self.request.POST.get("songid")
+        if songid:
+            self.song = m.Song.objects.get(id = songid)
+
+        self.handle_form(self.request.POST)
+
+        if self.request.is_ajax():
+            return self.make_ajax_return()
+
+        self.redirect(self.request.META.get('HTTP_REFERER') or self.redirect_to)
+
 #-------------------------------------------------------
 
 class ListSmileys(WebView):
@@ -542,53 +569,52 @@ def list_favorites(request):
 
     return j2shim.r2r('webview/favorites.html', { 'songs': songs }, request=request)
 
-class QueueSong(WebView):
+class QueueSong(AjaxifyView):
+    redirect_to = "dv-queue"
 
-    def GET(self):
-        self.redirect("dv-root")
+    def handle_form(self, form):
+        self.r = common.queue_song(self.song, self.request.user)
 
-    def POST(self):
-        P = self.request.POST.get
-        S = m.Song.objects.get(id = P("songid"))
-        if not self.request.user.is_authenticated():
-            if self.request.is_ajax():
-                return HttpResponse("<a href='/account/signin/'>LogIn</a>")
-            else:
-                return self.redirect("/account/signin/")
-        r = common.queue_song(S, self.request.user)
-        if self.request.is_ajax():
-            if r:
-                return HttpResponse("""<span style="display:none">l</span>
+    def make_ajax_return(self):
+        if self.r:
+            return HttpResponse("""<span style="display:none">l</span>
                 <img class="song_tail" src="%slock.png" title="Locked" alt="Locked"/>""" %
                 settings.MEDIA_URL)
-            else:
-                return HttpResponse("")
-        self.redirect(self.request.META.get('HTTP_REFERER') or "dv-queue")
+        return HttpResponse("")
 
-class ChangeFavorite(WebView):
+class ChangeFavorite(AjaxifyView):
+    redirect_to = "dv-favorites"
 
-    def GET(self):
-        self.redirect("dv-root")
+    def handle_form(self, form):
+        P = form.get
 
-    def POST(self):
-        if not self.request.user.is_authenticated():
-            return HttpResponse("")
-        P = self.request.POST.get
-        S = m.Song.objects.get(id = P("songid"))
         if P("change") == "remove":
-            m.Favorite.objects.filter(user = self.request.user, song = S).delete()
+            m.Favorite.objects.filter(user = self.request.user, song = self.song).delete()
             m.send_notification("Song removed from your favorites", self.request.user)
         if P("change") == "add":
             try:
-                m.Favorite.objects.create(user = self.request.user, song = S)
+                m.Favorite.objects.create(user = self.request.user, song = self.song)
                 m.send_notification("Song added to your favorites", self.request.user)
             except:
                 pass
-        if self.request.is_ajax():
-            s = "{{ display.favorite(song, user) }}"
-            c = {'song': S, 'user': self.request.user}
-            return HttpResponse(j2shim.render_string(s, c))
-        self.redirect(self.request.META.get('HTTP_REFERER') or "dv-favorites")
+
+    def make_ajax_return(self):
+        s = "{{ display.favorite(song, user) }}"
+        c = {'song': self.song, 'user': self.request.user}
+        return HttpResponse(j2shim.render_string(s, c))
+
+class VoteSong(AjaxifyView):
+    redirect_to = "dv-root"
+
+    def handle_form(self, form):
+        self.int_vote = int(form.get("vote", form.get("ajaxvote")))
+        if self.int_vote <= 5 and self.int_vote > 0:
+            self.song.set_vote(self.int_vote, self.request.user)
+
+    def make_ajax_return(self):
+        s = "{{ display.song_vote(song, value) }}"
+        c = {'song': self.song, 'value': self.int_vote}
+        return HttpResponse(j2shim.render_string(s, c))
 
 class LinkCheck(object):
     def __init__(self, linktype, object = None, status = 0, user = None, add=False):

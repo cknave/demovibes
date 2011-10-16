@@ -4,26 +4,11 @@ from django.conf import settings
 from demovibes.webview import views
 import djangojinja2
 
-song_dict = {
-    'queryset': Song.objects.select_related(depth=1).all(),
-    'extra_context': {  'a_test' : "True", 'vote_range': [1, 2, 3, 4, 5]},
-    'template_loader': djangojinja2._jinja_env,
-}
-
-screenshot_dict = {
-    'queryset': Screenshot.objects.filter(status="A"),
-    'template_loader': djangojinja2._jinja_env,
-}
-
 oneliner_dict = {
     'queryset': Oneliner.objects.all(),
     'template_loader': djangojinja2._jinja_env,
 }
 
-artist_dict = {
-    'queryset': Artist.objects.filter(status="A"),
-    'template_loader': djangojinja2._jinja_env,
-}
 
 """
 Access any artist object.
@@ -33,24 +18,11 @@ artist_a_dict = {
     'template_loader': djangojinja2._jinja_env,
 }
 
-group_dict = {
-    'queryset': Group.objects.filter(status="A"),
-    'template_loader': djangojinja2._jinja_env,
-}
-
 """
 Access any group object.
 """
 group_a_dict = {
     'queryset': Group.objects.all(),
-    'template_loader': djangojinja2._jinja_env,
-}
-
-"""
-Shows all active lables in the system
-"""
-labels_all_dict = {
-    'queryset': Label.objects.filter(status="A"),
     'template_loader': djangojinja2._jinja_env,
 }
 
@@ -64,11 +36,6 @@ labels_a_dict = {
 
 news_dict = {
     'queryset': News.objects.all(),
-    'template_loader': djangojinja2._jinja_env,
-}
-
-comp_dict = {
-    'queryset': Compilation.objects.filter(status="A"),
     'template_loader': djangojinja2._jinja_env,
 }
 
@@ -176,13 +143,8 @@ urlpatterns = patterns('',
     url(r'^artist/(?P<object_id>\d+)/$',           'django.views.generic.list_detail.object_detail',       artist_a_dict, name = "dv-artist"),
     url(r'^artist/(?P<artist_id>\d+)/upload/$',    'demovibes.webview.views.upload_song', name = "dv-upload"),
 
-    # New voting system, works differently so contains its own views. This is for URL voting. A
-    # Vote can be passed via URL, such as a 3rd party app, in the form of:
-    # http://site/demovibes/song/12/vote/1/
-    url(r'^song/(?P<song_id>\d+)/vote/(?P<user_rating>\d+)/$',          'demovibes.webview.views.set_rating_autovote', name = "dv-vote-autovote"),
 
-    # We also want to keep traditional voting support, for non-playing songs
-    url(r'^song/(?P<song_id>\d+)/vote/$',          'demovibes.webview.views.set_rating', name = "dv-vote"),
+    url(r'^song/vote/$',          views.VoteSong(), name = "dv-formvote"),
 
     # Add support for displaying all compilations
     url(r'^compilations/$',                             views.ListComilations(), name = "dv-compilations"),
