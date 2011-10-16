@@ -284,7 +284,9 @@ cursor: pointer;
 .linkform {
     display:inline;
 }
-
+.starview {
+height: 28px;
+}
 .starbutton {
     border: 0;
     height: 25px;
