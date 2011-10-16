@@ -1325,7 +1325,7 @@ class Song(models.Model):
         vote = SongVote.objects.filter(song=self, user=user)
         if vote:
             return vote[0].vote
-        return ""
+        return 0
 
 try:
     tagging.register(Song)
