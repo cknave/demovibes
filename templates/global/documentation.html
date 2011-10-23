@@ -38,7 +38,14 @@
 
 <hr/>
 <h2>Interfaces</h2>
-        {% for doc in docs|dictsort:"name" %}
+<p>
+Request type to function mapping:</p>
+<p>
+GET = read<br/>
+POST = create<br/>
+PUT = update<br/>
+</p>
+        {% for doc in docs|dictsort:"get_resource_uri_template" %}
 
             <h3>{{ doc.name|cut:"Handler" }}:</h3>
 
