@@ -4,7 +4,7 @@ from api.handlers import SongHandler, AuthQueueHandler, AuthUserHandler, ArtistH
 from piston.doc import documentation_view
 from piston.authentication import HttpBasicAuthentication
 
-auth = HttpBasicAuthentication(realm="My Realm")
+auth = HttpBasicAuthentication(realm="Demovibes API")
 ad = { 'authentication': auth }
 
 profile_handler = Resource(AuthProfile, **ad)
