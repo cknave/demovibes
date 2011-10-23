@@ -7,6 +7,9 @@ from piston.utils import validate, rc
 #Re-used fields:
 fUSER = ("user", ("username",))
 
+#Re-used fields:
+fUSER = ("user", ("username",))
+
 class SongHandler(BaseHandler):
     """
     Fetch information about songs in database
