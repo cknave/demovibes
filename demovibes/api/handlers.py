@@ -260,7 +260,7 @@ class BaseSongVotesHandler(object):
 
     @staticmethod
     def resource_uri():
-        return ('api_song_handler', ['id'])
+        return ('api_votes_handler', ['id'])
 
 class AnonSongVotesHandler(BaseSongVotesHandler, AnonymousBaseHandler):
     pass
