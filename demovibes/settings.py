@@ -338,6 +338,7 @@ INSTALLED_APPS = [
     'openid_provider',
     'demovibes.search',
     'django_authopenid',
+    "piston",
 ]
 
 try:
