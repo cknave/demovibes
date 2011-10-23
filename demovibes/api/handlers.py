@@ -1,9 +1,12 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from webview.models import Song, Queue, User, Artist, Userprofile
+from webview.models import Song, Queue, User, Artist, Userprofile, Oneliner, SongVote
 from django import forms
 from webview import common
 from webview import forms as webforms
 from piston.utils import validate, rc
+
+#Re-used fields:
+fUSER = ("user", ("username",))
 
 class SongHandler(BaseHandler):
     """
@@ -83,18 +86,32 @@ class ArtistHandler(BaseHandler):
 class QueueSongForm(forms.Form):
     song = forms.ModelChoiceField(queryset=Song.objects.all())
 
+fQ_common = (
+    "requested",
+    "eta",
+    "time_played",
+    ("song",
+        ("title", "song_length", "rating")
+    ),
+    ("requested_by",
+        ("username",)
+    )
+)
 class BaseQueueHandler(object):
     """
     For handling the play queue
     """
     allowed_methods = ('GET',)
     model = Queue
+    fields = (fQ_common)
 
     def read(self, request):
         """
         Get 20 latest songs in queue
         """
-        return Queue.objects.all()[:20]
+        up = Queue.objects.filter(played = False)
+        dn = Queue.objects.filter(played = True).order_by("-id")[:20]
+        return {'queue':up, 'played':dn}
 
     @staticmethod
     def resource_uri():
@@ -173,3 +190,93 @@ class AuthProfile(BaseHandler):
     @staticmethod
     def resource_uri():
         return ('api_profile_handler', [])
+
+class OnelinerForm(forms.Form):
+    message = forms.CharField(max_length=256)
+
+class BaseOnelinerHandler(object):
+    """
+    Handle oneliner access
+    """
+    model = Oneliner
+    allowed_methods = ('GET',)
+    fields = ["message", "added", fUSER]
+
+    def read(self, request):
+        """
+        Get 20 latest oneliner entries
+        """
+        return Oneliner.objects.all()[:20]
+
+    @staticmethod
+    def resource_uri():
+        return ('api_oneliner_handler', [])
+
+class AnonOnelinerHandler(BaseOnelinerHandler, AnonymousBaseHandler):
+    """
+    Handle oneliner access
+
+    Anonymous requests
+    """
+    pass
+
+class AuthOnelinerHandler(BaseOnelinerHandler, BaseHandler):
+    """
+    Handle oneliner access
+
+    Authenticated requests
+    """
+    anonymous = AnonOnelinerHandler
+    allowed_methods = ('GET', 'POST')
+
+    @validate(OnelinerForm)
+    def create(self, request):
+        """
+        Post new oneliner.
+
+        POST Data : "message"
+        """
+        line = request.POST.get("message")
+        common.add_oneliner(request.user, line)
+        return rc.CREATED
+
+class VoteForm(forms.Form):
+    vote = forms.ChoiceField(choices=(range(1, 6), range(1, 6)))
+
+class BaseSongVotesHandler(object):
+    """
+    Handle data for song votes
+    """
+    model = SongVote
+    allowed_methods = ('GET',)
+    fields = ["vote", "added", fUSER]
+
+    def read(self, request, song_id):
+        """
+        Get votes for song
+        """
+        song = Song.objects.get(id=song_id)
+        return SongVote.objects.filter(song=song)
+
+    @staticmethod
+    def resource_uri():
+        return ('api_song_handler', ['id'])
+
+class AnonSongVotesHandler(BaseSongVotesHandler, AnonymousBaseHandler):
+    pass
+
+class AuthSongVotesHandler(BaseSongVotesHandler, BaseHandler):
+    allowed_methods = ('GET', "POST")
+    anonymous = AnonSongVotesHandler
+    @validate(VoteForm)
+    def create(self, request, song_id):
+        """
+        Add or update vote on song
+
+        POST values:
+            vote : range 1-5
+        """
+        song = Song.objects.get(id=song_id)
+        vote = int(request.POST.get("vote"))
+        v = song.set_vote(vote, request.user)
+        return v or rc.FORBIDDEN

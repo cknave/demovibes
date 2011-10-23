@@ -1316,7 +1316,7 @@ class Song(models.Model):
             obj.save()
 
         self.save()
-        return True
+        return obj
 
     def get_vote(self, user):
         """
@@ -1638,6 +1638,7 @@ class Oneliner(models.Model):
     message = models.CharField(max_length=256)
     user = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True, db_index=True)
+
     class Meta:
         ordering = ['-added']
         permissions = (
