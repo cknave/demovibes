@@ -1348,7 +1348,7 @@ class Song(models.Model):
         if self == get_now_playing_song().song:
             add_event("vote:%.2f|%d" % (self.rating, self.rating_votes))
             cache.delete("nowplaysong")
-        return True
+        return obj
 
     def get_vote(self, user):
         """
@@ -1670,6 +1670,7 @@ class Oneliner(models.Model):
     message = models.CharField(max_length=256)
     user = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True, db_index=True)
+
     class Meta:
         ordering = ['-added']
         permissions = (

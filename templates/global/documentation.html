@@ -23,11 +23,20 @@
         </p>
 
         <h3>Output formats:</h3>
+        <p>GET parameters:</p>
         <ul>
         <li>?format=xml</li>
         <li>?format=json</li>
         </ul>
 
+        <h3>Auth / Anon interfaces</h3>
+        <p>
+            Most interfaces support either authenticated requests or anonymous requests.<br/>
+            The request is routed to either Anon* or Auth* depending on if authentication is sent with the request
+        </p>
+
+<hr/>
+<h2>Interfaces</h2>
         {% for doc in docs %}
 
             <h3>{{ doc.name|cut:"Handler" }}:</h3>
