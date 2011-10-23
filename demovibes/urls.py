@@ -22,8 +22,18 @@ urlpatterns = patterns('',
     (r'^accounts/', include('demovibes.registration.urls')),
     (r'^account/', include('django_authopenid.urls')),
     (r'^forum/', include('forum.urls')),
+    (r'^api/', include('api.urls')),
+
+
 
     #Only use this under development!! Only for serving static files with dev server!
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^about/(\w+)/$', about_pages),
+)
+
+urlpatterns += patterns(
+    'piston.authentication',
+    url(r'^oauth/request_token/$','oauth_request_token'),
+    url(r'^oauth/authorize/$','oauth_user_auth'),
+    url(r'^oauth/access_token/$','oauth_access_token'),
 )
