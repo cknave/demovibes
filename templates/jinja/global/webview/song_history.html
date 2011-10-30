@@ -16,7 +16,7 @@
 {% for request in objs %}
  <tr>
   <td>{{ display.user(request.requested_by) }}</td>
-  <td>{{ request.requested|date("j.N Y G:i")}}</td>
+  <td>{{ display.datetime(request.requested) }}</td>
  </tr>
 {% endfor %}
 </table>

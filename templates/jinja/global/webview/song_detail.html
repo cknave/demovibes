@@ -97,7 +97,7 @@ Author:
   <i>
    {{ gettext("Song is currently locked for queuing.") }}
    {% if object.locked_until and object.is_active() %}
-    {{ gettext("It will be available for request again") }} {{ object.locked_until }}
+    {{ gettext("It will be available for request again") }} {{ display.datetime(object.locked_until) }}
    {% endif %}
   </i>
   {% endif %}<br />

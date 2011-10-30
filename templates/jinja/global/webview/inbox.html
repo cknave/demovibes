@@ -17,7 +17,7 @@
  <td><a href="{{ mail.get_absolute_url() }}">{{ mail.subject|e }}</a>{% if mail.unread %} <img src="{{ STATIC_URL }}new.png" alt="[New Message]" />{% endif %}</td>
  <td>{{ display.user(mail.sender) }}</td>
  <td>{{ display.user(mail.to) }}</td>
- <td>{{ mail.sent }}</td>
+ <td>{{ display.datetime(mail.sent) }}</td>
  {% if pms != "sent" %}<td><a href=".?delete={{ mail.id }}">{{ gettext("Delete") }}</a></td>{% endif %}
 </tr>
 {% endfor %}

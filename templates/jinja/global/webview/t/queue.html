@@ -10,10 +10,10 @@
   {{ req.song.length() }}
  </td>
  <td>
-  <span class="tzinfo">{{ req.requested|time("H:i") }}</span>{% if req.playtime %} [<span class="tzinfo">{{ req.playtime|time("H:i") }}</span>]{% endif %}
+  {{ display.time(req.requested) }}{% if req.playtime %} [{{ display.time(req.playtime) }}]{% endif %}
  </td>
  <td>
-  <span class="tzinfo">{{ req.eta|time("H:i") }}</span>
+  {{ display.time(req.eta) }}
  </td>
  <td>
   {{ display.user(req.requested_by) }}

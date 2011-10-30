@@ -25,7 +25,7 @@
 
 </td>
 <td class="artist_information">
-<strong>{{ object.handle|e }}</strong> {% if object.is_deceased %}<img src="{{ STATIC_URL }}deceased.png" class="countryflag" alt="Deceased {% if object.deceased_date %}[On {{ object.deceased_date|date("F j, Y") }}]{% endif %}" />{% endif %}
+<strong>{{ object.handle|e }}</strong> {% if object.is_deceased %}<img src="{{ STATIC_URL }}deceased.png" class="countryflag" alt="Deceased {% if object.deceased_date %}[On {{ display.date(object.deceased_date) }}]{% endif %}" />{% endif %}
 <br />
 
 {% if object.link_to_user %}
@@ -52,11 +52,11 @@
 {{ gettext("Location") }}: {{ dv.flag(object.home_country) }} {% if object.home_location %}{{ object.home_location|e }}{% endif %}<br />
 
 {% if object.dob %}
- {{ gettext("Date Of Birth") }} : {{ object.dob|date("F j, Y") }}<br />
+ {{ gettext("Date Of Birth") }} : {{ display.date(object.dob) }}<br />
 {% endif %}
 
 {% if object.is_deceased %}
-Date Of Death: {{ object.deceased_date|date("F j, Y") }}<br />
+Date Of Death: {{ display.date(object.deceased_date) }}<br />
 {% endif %}
 
 {% if object.labels.count() != 0 %}
@@ -78,7 +78,7 @@ Date Of Death: {{ object.deceased_date|date("F j, Y") }}<br />
  <strong>{{ gettext("Artist Locked For Uploading!") }}</strong><br />
 {% endif %}
 <br />
-{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ display.date(object.last_updated) }}<br />{% endif %}
 {% if object.created_by %}{{ gettext("Added By") }}: {{ display.user(object.created_by) }}<br />{% endif %}
 </td>
 </tr>

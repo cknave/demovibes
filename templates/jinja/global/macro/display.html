@@ -12,6 +12,18 @@
 </div>
 {% endmacro %}
 
+{% macro time(dt) %}
+ <span class="tzinfo">{{ dt|time("H:i") }}</span>
+{% endmacro %}
+
+{% macro date(dt) %}
+ {{ dt|date("j N Y") }}
+{% endmacro %}
+
+{% macro datetime(dt) %}
+ {{ date(dt) }} {{ time(dt) }}
+{% endmacro %}
+
 {% macro favorite(song, user, addfavtext="", removefavtext="") %}
     <div id="formvote">
     {% if user.is_authenticated() %}

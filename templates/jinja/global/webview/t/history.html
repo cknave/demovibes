@@ -10,10 +10,10 @@
   {{ req.song.length() }}
  </td>
  <td>
-  <span class="tzinfo">{{ req.requested|time("H:i") }}</span>
+  {{ display.time(req.requested) }}
  </td>
  <td>
-  <span class="tzinfo">{{ req.time_played|time("H:i") }}</span>
+  {{ display.time(req.time_played) }}
  </td>
  <td>
   {{ display.user(req.requested_by) }}

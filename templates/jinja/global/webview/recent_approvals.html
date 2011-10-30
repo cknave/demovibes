@@ -26,7 +26,7 @@
                 {% for group in songr.song.get_metadata().groups.all() %} {{ display.group(group) }} {% if loop.last %} {% else %}, {% endif %}{% endfor %}
             </td>
             <td>
-                {{ songr.approved|date("d M Y") }}
+                {{ display.date(songr.approved) }}
             </td>
             <td>
                 {{ songr.song.length() }}

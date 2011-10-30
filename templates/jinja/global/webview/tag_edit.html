@@ -43,7 +43,7 @@ Tags : <input type="text" name="tags" value="{{ tags|e }}"  id="tagfield" />
 {% for change in changes %}
 <tr>
     <td>{{ display.user(change.user) }}</td>
-    <td>{{ change.added }}</td>
+    <td>{{ display.datetime(change.added) }}</td>
     <td>{{ change.tags|e }}</td>
 </tr>
 {% endfor %}

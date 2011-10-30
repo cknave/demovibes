@@ -11,11 +11,11 @@
 <tr>
 <td class="group_summary">
 {% if object.group_logo %}<img class="group_logo" src="{{ object.group_logo.url }}">{% else %}<img class="group_logo" src="{{ STATIC_URL }}no_picture.png" />{% endif %}
-<br /><strong>{{ object.name|e }}</strong><br />{% if object.found_date %}(Founded On: {{object.found_date|date("F j, Y") }}){% endif %}<br />
+<br /><strong>{{ object.name|e }}</strong><br />{% if object.found_date %}(Founded On: {{ display.date(object.found_date) }}){% endif %}<br />
 
 {% if object.webpage %}<a href="{{ object.webpage|e }}" target="_blank">{{ gettext("Visit Group's Website") }}</a><br />{% endif %}
 {% if object.pouetid %}<a href="http://www.pouet.net/groups.php?which={{ object.pouetid }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
-{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ display.date(object.last_updated) }}<br />{% endif %}
 {% if object.created_by %}{{ gettext("Added By") }}: {{ display.user(object.created_by) }}<br />{% endif %}
 {{ display.links(object) }}
 </td>
