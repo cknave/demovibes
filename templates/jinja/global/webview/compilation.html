@@ -25,7 +25,7 @@
 <b><i>{{ gettext("Compilation Summary") }}:</i></b><br />
 Name: {{ comp.name|e }}<br />
 {% if comp.label %}{{ gettext("Label") }}: {{ comp.label|e }}<br />{% endif %}
-{% if comp.rel_date %}{{ gettext("Release Date") }}: {{ comp.rel_date|date("F j, Y") }}<br />{% endif %}
+{% if comp.rel_date %}{{ gettext("Release Date") }}: {{ display.date(comp.rel_date) }}<br />{% endif %}
 {% if comp.running_time %}{{ gettext("Running Time") }}: {{ comp.length() }}<br />{% endif %}
 {% if comp.num_discs %}{{ gettext("Num. Disks") }}: {{ comp.num_discs }}<br />{% endif %}
 {% if comp.youtube_link %}{{ gettext("Video Clip") }}: <a href="{{ comp.youtube_link|e }}" target="_blank">{{ gettext("Video Link") }}</a><br />{% endif %}
@@ -35,7 +35,7 @@ Name: {{ comp.name|e }}<br />
 {% if comp.download_link %}{{ gettext("Download Link") }}: <a href="{{ comp.download_link|e }}" target="_blank">{{ gettext("Download Info") }}</a><br />{% endif %}
 {% if comp.bar_code %}{{ gettext("UPC") }}: {{ comp.bar_code|e }}<br />{% endif %}
 {% if comp.pouet %}{{ gettext("Pouet Info") }}: <a href="http://www.pouet.net/prod.php?which={{ comp.pouet }}" target="_blank">{{ gettext("Pouet Link") }}</a><br />{% endif %}
-{% if comp.date_added %}<br />{{ gettext("Added On") }}: {{ comp.date_added|date("F j, Y") }} <br />{{ gettext("By") }}: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
+{% if comp.date_added %}<br />{{ gettext("Added On") }}: {{ display.date(comp.date_added) }} <br />{{ gettext("By") }}: {% if comp.created_by %} {{ display.user(comp.created_by) }}{% endif %}<br />{% endif %}
 <br /><a href="{{ url('dv-add_comp_screenshot', comp.id) }}">[Add Album Art]</a>
 </p><br />
 {% if sessionform %}

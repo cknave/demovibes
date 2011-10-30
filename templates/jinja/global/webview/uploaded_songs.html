@@ -30,7 +30,7 @@
   {{ display.user(song.uploader) }}
  </td>
  <td>
-  {{ song.added|timesince }}
+  {{ display.datetime(song.added) }}
  </td>
  <td>
   <a href="{{ url("dv-uploads") }}?song={{song.id}}&amp;status=A"><img src="{{ STATIC_URL }}thumb_up.png" title="Approve" alt="Approve" /></a>

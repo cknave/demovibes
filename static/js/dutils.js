@@ -8,6 +8,8 @@
 // IE5+, Mozilla 1.0+, and Netscape 6+
 //
 
+GMTDiff = 0;
+
 function requestsong(no) {
     $.get(ajaxurl+'song/'+no+'/queue/?'+ajaxeventid);
 }
@@ -284,6 +286,36 @@ function applyHooks() {
     updateOnelinerLinks();
     hookAjaxForms();
     hookStarHover();
+    changeTime();
+}
+
+function intToStr(val) {
+    var val2 = "00" + val.toString();
+    return val2.substr(-2);
+}
+
+function changeTime() {
+    var d = new Date()
+    var gmtHours = -d.getTimezoneOffset()/60;
+    $(".tzinfo").each(function (i, elem) {
+        var E = $(elem);
+        var Eo = E.text();
+        var split = Eo.split(":");
+        var len = split.length;
+        var hr = parseInt(split[0], 10);
+        var min = parseInt(split[1], 10);
+
+        // Modulo js bug workaround
+        hr = (((hr - GMTDiff + gmtHours) % 24) + 24 ) % 24;
+        var str = intToStr(hr) + ":" + intToStr(min)
+        if ( len == 3 ) {
+            var sec = parseInt(split[2], 10);
+            str = str + ":" + intToStr(sec)
+        }
+        E.text(str);
+        E.attr("title", "Original value: " + Eo + " GMT " + GMTDiff);
+        E.removeClass("tzinfo");
+    });
 }
 
 $(document).ready( function() {

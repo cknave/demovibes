@@ -10,7 +10,7 @@
 <div id="songinfo-title">Image information</div>
 {% if object.status %}{{ gettext("Current Status") }}: {{ object.get_status_display() }}<br />{% endif %}
 {% if not object.thumbnail %}<font color="red">This Image Is Missing A Thumbnail!</font><br>{% endif %}
-{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ object.last_updated|date("F j, Y") }}<br />{% endif %}
+{% if object.last_updated %}{{ gettext("Last Updated") }}: {{ display.date(object.last_updated) }}<br />{% endif %}
 {% if object.added_by %}{{ gettext("Added By") }}: {% set U = object.added_by %}{% include "webview/t/user.html" %}<br />{% endif %}
 <div id="screenshot-connected">Connected to :
     <ul>

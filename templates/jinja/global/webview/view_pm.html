@@ -1,13 +1,13 @@
 {% extends "base/base.html" %}
-
+{% import "macro/display.html" as display -%}
 {% block title %}{{ gettext("Read Private Message") }}{% endblock %}
 
 {% block main %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}newspaper.png" alt="" />{{ gettext("Read Private Message") }}</h2>
 
     <div class="pm_content">
-    <span>{{ gettext("Message From") }}: {% set U = pm.sender %}{% include "webview/t/user.html" %}<br/></span>
-    <span>{{ gettext("Sent On") }}: {{ pm.sent }}</span>
+    <span>{{ gettext("Message From") }}: {{ display.user(pm.sender) }}<br/></span>
+    <span>{{ gettext("Sent On") }}: {{ display.datetime(pm.sent) }}</span>
     <p class="pmtitle">{{ pm.subject|e }}</p>
     <div class="pmview">
     {{ pm.message|mksafe|linebreaks|bbcode|smileys }}
