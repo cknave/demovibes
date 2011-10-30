@@ -8,7 +8,7 @@
 // IE5+, Mozilla 1.0+, and Netscape 6+
 //
 
-GMTDiff = 1;
+GMTDiff = 0;
 
 function requestsong(no) {
     $.get(ajaxurl+'song/'+no+'/queue/?'+ajaxeventid);
