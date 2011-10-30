@@ -144,6 +144,7 @@ class LicenseAdmin(admin.ModelAdmin):
 class ObjLogAdmin(admin.ModelAdmin):
     list_display = ['obj', 'user', "content_type", "added", "text"]
     search_fields = ['user__username', "text", "extra"]
+    list_filter = ['user__is_staff']
     date_hierarchy = 'added'
 
 admin.site.register(Group, GroupAdmin)
