@@ -300,20 +300,26 @@ function changeTime() {
     $(".tzinfo").each(function (i, elem) {
         var E = $(elem);
         var Eo = E.text();
+
         var split = Eo.split(":");
-        var len = split.length;
         var hr = parseInt(split[0], 10);
         var min = parseInt(split[1], 10);
 
         // Modulo js bug workaround
         hr = (((hr - GMTDiff + gmtHours) % 24) + 24 ) % 24;
+
         var str = intToStr(hr) + ":" + intToStr(min)
-        if ( len == 3 ) {
+        if ( split.length == 3 ) {
             var sec = parseInt(split[2], 10);
             str = str + ":" + intToStr(sec)
         }
         E.text(str);
-        E.attr("title", "Original value: " + Eo + " GMT " + GMTDiff);
+        var GMTmod = "";        
+        if (GMTDiff > 0) {
+             GMTmod = "+";
+        }
+        E.attr("title", "Server time: " + Eo + " GMT " + GMTmod + GMTDiff);
+
         E.removeClass("tzinfo");
     });
 }
