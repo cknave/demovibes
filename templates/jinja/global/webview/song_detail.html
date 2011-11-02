@@ -181,11 +181,11 @@ Author:
 {% endif %}
 </p>
 
-<h2><img class="icon_header" src="{{ STATIC_URL }}comment.png" alt="" />{{ gettext("User Comments") }}</h2>
+<h2><img class="icon_header" src="{{ STATIC_URL }}comment.png" alt="" /><a name="comments">{{ gettext("User Comments") }}</a></h2>
 
 <p>
 
-{% set objs, paging = dv.paginate(object.songcomment_set.all(), 5) %}
+{% set objs, paging = dv.paginate(object.songcomment_set.all(), 5, anchor = "comments") %}
 
 <table id="djangoForumThreadPosts">
  <tr>
@@ -197,7 +197,7 @@ Author:
  {% endfor %}
 </table>
 
-{{ paging }}
+{{ paging }}
 
 {% if user.is_authenticated() %}
  <p>{{ gettext("Add New Song Comment") }}:</p>

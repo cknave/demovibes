@@ -102,7 +102,7 @@ class BetterPaginator(Paginator):
         return context
 
 @contextfunction
-def paginate(context, obj, limit=None, maxpages=None):
+def paginate(context, obj, limit=None, maxpages=None, anchor=None):
     """
     Paginate object, return (paginated_objectlist, paging_html_code)
 
@@ -133,6 +133,7 @@ def paginate(context, obj, limit=None, maxpages=None):
     cntxt = {
         'query_string': query_dict.urlencode(),
         'paginator': pag,
+        'anchor': anchor,
     }
 
     paging = js.r2s('webview/t/paginate.html', cntxt)
