@@ -155,7 +155,9 @@ function updateOnelinerElement(linkelement, data) {
     $(linkelement).find("img.ajaxload").remove();
     var desc = "<img class='popupscreen' src='"+data.data.thumbnail.sqDefault+"' style='float: right; padding:5px;'/>";
     desc = desc + data.data.title + " by " + data.data.uploader;
-    desc = desc + "<div class='ytpopupdata'>Rating : "+ data.data.rating.toPrecision(2)+"<br/> Duration : " + format_time(data.data.duration);
+    desc = desc + "<div class='ytpopupdata'>";
+    if (data.data.rating) {desc = desc + "Rating : "+ data.data.rating.toPrecision(2)+"<br/>";}
+    desc = desc + "Duration : " + format_time(data.data.duration);
     $(linkelement).qtip({
         "content": {
             "text": desc
