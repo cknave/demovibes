@@ -1669,6 +1669,9 @@ class News(models.Model):
     def __unicode__(self):
         return self.title
 
+    def is_new(self, hours=24):
+        return (datetime.datetime.now() - datetime.timedelta(hours=hours)) < self.added
+
     def save(self, *args, **kwargs):
         self.last_updated = datetime.datetime.now()
         return super(News, self).save(*args, **kwargs)
