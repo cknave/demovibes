@@ -41,8 +41,8 @@ function createField(element) {
         });
         button.click(function (i) {
             var editval = editarea.val();
-            var selstart = editarea.attr("selectionStart");
-            var sellen = editarea.attr("selectionEnd") - selstart;
+            var selstart = editarea[0].selectionStart;
+            var sellen = editarea[0].selectionEnd - selstart;
             var selected = editval.substr(selstart, sellen);
             if (!selected) {
                 var inp2 = prompt("Value for "+ b.name + " tag");
@@ -50,11 +50,13 @@ function createField(element) {
                     selected = inp2;
                 }
             }
-            var input = b.content.replace("%s", selected);
-            editval = editval.substr(0, selstart) + input + editval.substr(selstart + sellen);
-            editarea.val(editval);
-            editarea.attr("selectionStart", selstart);
-            editarea.attr("selectionEnd", selstart + input.length);
+            if (selected) {
+             var input = b.content.replace("%s", selected);
+             editval = editval.substr(0, selstart) + input + editval.substr(selstart + sellen);
+             editarea.val(editval);
+             editarea[0].selectionStart = selstart;
+             editarea[0].selectionEnd = selstart + input.length;
+            }
         });
         editbar.append(button);
     });
