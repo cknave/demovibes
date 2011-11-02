@@ -292,8 +292,9 @@ function applyHooks() {
 }
 
 function intToStr(val) {
-    var val2 = "00" + val.toString();
-    return val2.substr(-2);
+    var val2 = val.toString();
+    if (val2.length < 2) { val2 = "0" + val2 }
+    return val2;
 }
 
 function changeTime() {
