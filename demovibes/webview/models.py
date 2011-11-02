@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.template.defaultfilters import striptags
 from django.contrib.sites.models import Site
 from django.template import Context, loader
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.contenttypes.models import ContentType
@@ -320,9 +320,18 @@ class Theme(models.Model):
     description = models.TextField(blank=True)
     preview = models.ImageField(upload_to='media/theme_preview', blank = True, null = True)
     css = models.CharField(max_length=120)
+    default = models.BooleanField(default=False)
 
     def __unicode__(self):
+        if self.default:
+            return self.title + " (Default)"
         return self.title
+
+def saveTheme(sender, **kwargs):
+    instance = kwargs.get("instance")
+    if instance.default:
+        Theme.objects.all().update(default=False)
+pre_save.connect(saveTheme, sender=Theme)
 
 class Userprofile(models.Model):
     VISIBLE_TO = (
@@ -438,13 +447,12 @@ class Userprofile(models.Model):
 
     def get_css(self):
         """
-        Return custom user CSS url or site default CSS url
+        Return custom user CSS url or None
         """
         if self.custom_css:
             return self.custom_css
         if self.theme:
             return self.theme.css
-        return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % settings.MEDIA_URL)
 
     def get_stat(self):
         """

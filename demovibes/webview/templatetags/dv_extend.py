@@ -355,11 +355,22 @@ def get_post_count(parser, token):
         raise template.TemplateSyntaxError, "%r tag requires one argument" % token.contents.split()[0]
     return GetPostCount(user)
 
-def user_css(user):
+def get_css_for_user(user):
     try:
-        return user.get_profile().get_css()
+        css = user.get_profile().get_css()
     except:
-        return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % STATIC)
+        css = None
+    if not css:
+        th = Theme.objects.all().order_by("-default")
+        if th:
+            css = th[0].css
+        else:
+            css = getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % STATIC)
+    return css
+
+
+def user_css(user):
+    return get_css_for_user(user)
 
 @register.tag
 def css(parser, token):
@@ -680,11 +691,8 @@ class GetCss(template.Node):
         self.user = user
 
     def render(self, context):
-        try:
-            user = template.resolve_variable(self.user, context)
-            return user.get_profile().get_css()
-        except:
-            return getattr(settings, 'DEFAULT_CSS', "%sthemes/default/style.css" % STATIC)
+        user = template.resolve_variable(self.user, context)
+        return get_css_for_user(user)
 
 def j_get_post_count(user):
     return Post.objects.filter(author=user).count()
