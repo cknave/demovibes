@@ -7,7 +7,7 @@
     <div id="sidebar">
         <h3>Welcome, {% if user.is_authenticated %}{{ user }}{% else %}Visitor{% endif %}!</h3>
         {% block sidebar %}
-        <ul>
+        <ul class="menulist">
             <li id="home"><a href="{% url dv-root %}">Home</a></li>
             <li id="forum"><a href="{% url forum_index %}">Forum</a></li>
             <li id="songs"><a href="{% url dv-songs %}">Songs</a></li>

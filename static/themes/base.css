@@ -313,3 +313,7 @@ padding: 2px;
     margin: auto;
     text-align: right;
 }
+
+#mainlogo {
+    overflow:hidden;
+}
