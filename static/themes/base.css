@@ -216,8 +216,8 @@ padding: 2px;
     left:0;
 }
 .messagetime,.messagecat {
- padding-right: 1em;
- font-size:70%;
+    padding-right: 1em;
+    font-size:70%;
 }
 .messagefadeborder {
     float: right;
@@ -285,7 +285,7 @@ cursor: pointer;
     display:inline;
 }
 .starview {
-height: 28px;
+    height: 28px;
 }
 .starbutton {
     border: 0;
@@ -304,4 +304,11 @@ height: 28px;
 }
 .ajax-working {
     opacity:0.4;
+}
+
+.onelinertime {
+    color: #777;
+    float: right;
+    margin: auto;
+    text-align: right;
 }

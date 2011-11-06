@@ -1,5 +1,8 @@
 {% extends "base/base.html" %}
 {% import "macro/display.html" as display %}
+
+{% block maindiv %} class="newspage"{% endblock %}
+
 {% block main %}
 <div id="newslist">
 {% if object_list %}
