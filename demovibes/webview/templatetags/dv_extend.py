@@ -1457,7 +1457,7 @@ bbdata_full = [
         (r'\[code\](.+?)\[/code\]', r'<tt class="bbcode">\1</tt>'),
         (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
         (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
-        (r'\[size=(.+?)\](.+?)\[/size\]', bb_size),
+        (r'\[size=(\d+)\](.+?)\[/size\]', bb_size),
         (r'\[pre\](.+?)\[/pre\]', r'<pre class="bbpre">\1</pre>'),
 
         (r'\[red\](.+?)\[/red\]', r'<span style="color: red">\1</span>'),
