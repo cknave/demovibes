@@ -187,7 +187,7 @@ padding: 2px;
     margin-right: 5px;
 }
 .messageholder {
-    opacity: .6;
+    opacity: .9;
     padding: 0.2em;
     font-size:14px;
     background-color: #D1EFC3;
@@ -195,6 +195,7 @@ padding: 2px;
 }
 .messageholder:hover {
     opacity: 1;
+    background-color: #E1FFD3;
 }
 .messagetitle {
     background-color: #8FC7FF;
@@ -253,11 +254,11 @@ padding: 2px;
 }
 
 .messagesetting-save,.messagesetting-cancel {
-padding: 1em;
-border: 1px solid #000;
-margin: 1em;
-float:left;
-cursor: pointer;
+    padding: 1em;
+    border: 1px solid #000;
+    margin: 1em;
+    float:left;
+    cursor: pointer;
 }
 
 .message_toggle {
