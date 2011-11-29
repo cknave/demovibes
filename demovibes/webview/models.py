@@ -32,6 +32,11 @@ import time, hashlib
 
 import random
 
+class TimeDelta(datetime.timedelta):
+    def total_seconds(self):
+        return (self.seconds + self.days * 24 * 3600)
+
+
 log = logging.getLogger("webview.models")
 
 CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
@@ -941,14 +946,14 @@ class Song(models.Model):
 
         random_extra = getattr(settings, "SONG_LOCK_TIME_RANDOM", None)
         if random_extra:
-            rnd = datetime.timedelta(**random_extra)
-            time = time + datetime.timedelta(seconds = random.randint(0, rnd.seconds))
+            rnd = TimeDelta(**random_extra)
+            time = time + datetime.timedelta(seconds = random.randint(0, rnd.total_seconds()))
 
         vote_extra = getattr(settings, "SONG_LOCK_TIME_VOTE", None)
         if vote_extra and self.rating:
-            vote = datetime.timedelta(**vote_extra)
+            vote = TimeDelta(**vote_extra)
             vote_val = 5 - self.rating
-            time = time + datetime.timedelta(seconds = int((vote.seconds / 4) * vote_val))
+            time = time + datetime.timedelta(seconds = int((vote.total_seconds() / 4) * vote_val))
         return time
 
     def is_connected_to(self, user):
