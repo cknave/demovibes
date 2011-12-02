@@ -238,6 +238,8 @@ class Post(models.Model):
         f.save()
 
         super(Post, self).delete()
+        if t.posts == 0:
+            t.delete()
 
     class Meta:
         ordering = ('-time',)
