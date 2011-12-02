@@ -52,6 +52,9 @@ function ajaxmonitorupdate(req) {
                 if (id.substr(0,4)=='msg:') {
                     newMessage(id.substr(4,id.length));
                 }
+                else if (id.substr(0,5)=='vote:') {
+                    updateVotes(id.substr(5,id.length));
+                }
                 else if (id.substr(0,5)=='eval:') {
                     eval(id.substr(5,id.length)); // evaluate the expression
                 } else if (id.substr(0,1)=='!') {
@@ -64,4 +67,10 @@ function ajaxmonitorupdate(req) {
         ajaxmonitorrequest=false;
         applyHooks()
         setTimeout('ajaxmonitorspawn()',100); // we get a nice return ask again right away
+}
+
+function updateVotes(data) {
+    var votedata = data.split("|");
+    $("#songrating").text(votedata[0]);
+    $("#songrating_votes").text(votedata[1]);
 }

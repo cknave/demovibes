@@ -1,4 +1,5 @@
 from webview import models
+from webview.models import get_now_playing_song
 from django.conf import settings
 from django.core.cache import cache
 from django.conf import settings
@@ -121,20 +122,6 @@ def queue_song(song, user, event = True, force = False):
         models.add_event(eventlist=EVS, metadata = event_metadata)
         return Q
 
-
-def get_now_playing_song(create_new=False):
-    queueobj = cache.get("nowplaysong")
-    if not queueobj or create_new:
-        try:
-            timelimit = datetime.datetime.now() - datetime.timedelta(hours=6)
-
-            queueobj = models.Queue.objects.select_related(depth=3).filter(played=True).filter(time_played__gt = timelimit).order_by('-time_played')[0]
-            logging.debug("Checking now playing song : Time limit is %s", timelimit)
-        except:
-            logging.info("Could not find now_playing")
-            return False
-        cache.set("nowplaysong", queueobj, 300)
-    return queueobj
 
 def get_now_playing(create_new=False):
     logging.debug("Getting now playing")

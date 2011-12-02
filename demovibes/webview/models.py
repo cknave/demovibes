@@ -47,6 +47,21 @@ CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
 
+
+def get_now_playing_song(create_new=False):
+    queueobj = cache.get("nowplaysong")
+    if not queueobj or create_new:
+        try:
+            timelimit = datetime.datetime.now() - datetime.timedelta(hours=6)
+
+            queueobj = Queue.objects.select_related(depth=3).filter(played=True).filter(time_played__gt = timelimit).order_by('-time_played')[0]
+            logging.debug("Checking now playing song : Time limit is %s", timelimit)
+        except:
+            logging.info("Could not find now_playing")
+            return False
+        cache.set("nowplaysong", queueobj, 300)
+    return queueobj
+
 def download_limit_reached(user):
     limits = get_cherokee_limit(user)
     if limits:
@@ -1329,6 +1344,10 @@ class Song(models.Model):
             obj.save()
 
         self.save()
+
+        if self == get_now_playing_song().song:
+            add_event("vote:%.2f|%d" % (self.rating, self.rating_votes))
+            cache.delete("nowplaysong")
         return True
 
     def get_vote(self, user):
