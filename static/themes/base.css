@@ -333,6 +333,8 @@ padding: 2px;
     background-color: #BFBFBF;
     position: fixed;
     top: 30%;
+    max-height: 60%;
+    overflow: auto;
     left: 50%;
     padding: 1em;
     width: 500px;
