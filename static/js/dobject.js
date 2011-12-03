@@ -98,7 +98,7 @@ function add_smileys(div, input) {
     });
 }
 
-$(document).ready( function () {
+$(window).load( function () {
     var mydiv = $("<div/>").addClass("smileys-clicker").text("Smileys list");
     var inputbox = $("#blah");
     mydiv.click(function () {
