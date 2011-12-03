@@ -17,4 +17,4 @@
 </tr>
 </table>
 {% endif %}
-Rating: <span id="songrating">{{ song.rating|floatformat:2|default("No votes", true) }}</span> (<span id="songrating_votes">{{ song.rating_votes }}</span> Votes)<br />
+Rating: <span id="songrating">{{ song.rating|floatformat(2)|default("No votes", true) }}</span> (<span id="songrating_votes">{{ song.rating_votes }}</span> Votes)<br />
