@@ -332,11 +332,11 @@ padding: 2px;
     border: 1px solid #000;
     background-color: #BFBFBF;
     position: fixed;
-    top: 45%;
+    top: 30%;
     left: 50%;
     padding: 1em;
-    width: 350px;
-    margin-left: -175px;
+    width: 500px;
+    margin-left: -250px;
 }
 .smileybox-smiley {
     float: left;
