@@ -4,8 +4,6 @@ from django import forms
 from webview import common
 from webview import forms as webforms
 from piston.utils import validate, rc
-#Re-used fields:
-fUSER = ("user", ("username",))
 
 #Re-used fields:
 fUSER = ("user", ("username",))
