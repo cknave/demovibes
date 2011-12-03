@@ -74,3 +74,43 @@ function updateVotes(data) {
     $("#songrating").text(votedata[0]);
     $("#songrating_votes").text(votedata[1]);
 }
+
+function add_smileys(div, input) {
+    div.empty();
+    div.html("<div class='smileys_loading'>Loading..</div>");
+    $.get("/demovibes/ajax/smileys/",function (data) {
+        div.empty();
+        $(data).each(function (i, elem) {
+            var sign = elem[0];
+            var icon = elem[1];
+            var boxdiv = $("<div/>").addClass("smileybox-smiley");
+            var boximg = $("<img/>").attr("src", STATIC_URL + icon);
+            boxdiv.append(boximg);
+            boxdiv.attr("title", sign);
+            boxdiv.click(function () {
+                var inpval = input.val() + " " + sign + " ";
+                input.val(inpval);
+                div.remove();
+                input.focus();
+            });
+            div.append(boxdiv);
+        });
+    });
+}
+
+$(document).ready( function () {
+    var mydiv = $("<div/>").addClass("smileys-clicker").text("Smileys list");
+    var inputbox = $("#blah");
+    mydiv.click(function () {
+        inputbox.focus();
+        var smileys_holder = $("<div/>").addClass("smileybox-holder");
+        var smileys_div = $("<div/>").addClass("smileybox");
+        smileys_holder.append(smileys_div);
+        $("body").prepend(smileys_holder);
+        add_smileys(smileys_div, inputbox);
+        smileys_holder.click(function () {
+            smileys_holder.remove();
+        });
+    });
+    $("#makeitso").after(mydiv);
+});

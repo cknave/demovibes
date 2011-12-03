@@ -3,6 +3,7 @@ from demovibes.webview.common import *
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_page
 from django.shortcuts import render_to_response
 
 from mybaseview import MyBaseView
@@ -28,6 +29,12 @@ UWSGI_ID_SECRET = getattr(settings, 'UWSGI_ID_SECRET', False)
 
 class AjaxView(MyBaseView):
     basetemplate = "webview/js/"
+
+@cache_page(60*60*24)
+@cache_control(max_age=3600*24)
+def smileys(request):
+    s = simplejson.dumps(settings.SMILEYS)
+    return HttpResponse(s, "application/json")
 
 class LicenseView(AjaxView):
     template = "license.html"
