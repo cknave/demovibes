@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-
+{% import "macro/display.html" as display -%}
 {% block main %}
 <h2>{{ gettext("Song Search") }}</h2>
  <div id="searchform"><form method="get" action=".">
@@ -15,10 +15,12 @@
   {% set objs, paging = dv.paginate(sqs) %}
     {% include "webview/t/songheader.html" %}
     {% for song in objs %}
-     <tr class="{{ loop.cycle('row1', 'row2') }}">
      {% set song = song.object %}
+     {% if song %}
+     <tr class="{{ loop.cycle('row1', 'row2') }}">
      {% include "webview/t/songlist.html" %}
      </tr>
+     {% endif %}
     {% endfor %}
 </table>
 
