@@ -7,6 +7,8 @@ from django.http import HttpResponseForbidden
 from functools import wraps
 from django.utils.decorators import available_attrs
 
+from django.db.models import Sum
+
 from django.utils.html import escape
 
 import logging
@@ -15,10 +17,15 @@ import datetime
 import j2shim
 import time
 
+MIN_QUEUE_SONGS_LIMIT = getattr(settings, "MIN_QUEUE_SONGS_LIMIT", 0)
+QUEUE_TIME_LIMIT = getattr(settings, "QUEUE_TIME_LIMIT", False)
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
 LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
 
 def atomic(key, timeout=30, wait=60):
+    """
+    Lock a function so it can not be run in parallell
+    """
     lockkey = "lock-" + key
     def func1(func):
         def func2(*args, **kwargs):
@@ -55,16 +62,44 @@ def ratelimit(limit=10,length=86400):
         return wraps(func, assigned=available_attrs(func))(inner)
     return decorator
 
-def play_queued(queue):
-    queue.song.times_played = queue.song.times_played + 1
-    queue.song.save()
-    queue.time_played=datetime.datetime.now()
-    queue.played = True
-    queue.save()
+def play_queued(queue_item):
+    queue_item.song.times_played = queue.song.times_played + 1
+    queue_item.song.save()
+    queue_item.time_played=datetime.datetime.now()
+    queue_item.played = True
+    queue_item.save()
     temp = get_now_playing(True)
     temp = get_history(True)
     temp = get_queue(True)
     models.add_event(eventlist=("queue", "history", "nowplaying"))
+
+
+def find_queue_time_limit(user, song):
+    """
+    Return seconds left of limit
+    """
+    next = False
+    if QUEUE_TIME_LIMIT:
+        limit = models.TimeDelta(**QUEUE_TIME_LIMIT[0])
+        duration = models.TimeDelta(**QUEUE_TIME_LIMIT[1])
+        start = datetime.datetime.now() - duration
+
+        #Fetch all queued objects by that user in given time period
+        Q = models.Queue.objects.filter(requested__gt = start, requested_by = user).order_by("id")
+
+        total_seconds = limit.total_seconds() - song.song_length
+
+        if Q.count():
+            queued_seconds = Q.aggregate(Sum("song__song_length"))["song__song_length__sum"] #Length of all songs queued
+            seconds_left = total_seconds - queued_seconds
+            earliest = Q[0].requested
+            next = earliest + duration
+            if seconds_left <= 0:
+                seconds_left = seconds_left + song.song_length
+                return (True, seconds_left, next)
+            return (False, seconds_left, next)
+        return (False, total_seconds, next)
+    return (False, False, next)
 
 @atomic("queue-song")
 def queue_song(song, user, event = True, force = False):
@@ -81,7 +116,19 @@ def queue_song(song, user, event = True, force = False):
     time = song.create_lock_time()
     result = True
 
+    if models.Queue.objects.filter(played=False).count() < MIN_QUEUE_SONGS_LIMIT:
+        force = True
+
+    time_full, time_left, time_next = find_queue_time_limit(user, song)
+    time_left_delta = models.TimeDelta(seconds=time_left)
+
     if not force:
+
+        if time_full:
+            result = False
+            models.send_notification("Song is too long. Remaining timeslot : %s. Next timeslot change: <span class='tzinfo'>%s</span>" %
+                        (time_left_delta.to_string(), time_next.strftime("%H:%M")), user)
+
         requests = cache.get(key, None)
         Q = models.Queue.objects.filter(played=False, requested_by = user)
         if requests == None:
@@ -89,15 +136,15 @@ def queue_song(song, user, event = True, force = False):
         else:
             requests = num(requests)
 
-        if requests >= settings.SONGS_IN_QUEUE:
-            models.send_notification("You have reached your queue limit! Please wait for your requests to play.", user)
+        if result and requests >= settings.SONGS_IN_QUEUE:
+
+            models.send_notification("You have reached your unplayed queue entry limit! Please wait for your requests to play.", user)
             result = False
 
         if result and song.is_locked():
             # In a case, this should not append since user (from view) can't reqs song locked
             models.send_notification("Song is already locked", user)
             result = False
-
 
         if result and LOWRATE and song.rating and song.rating <= LOWRATE['lowvote']:
             if Q.filter(song__rating__lte = LOWRATE['lowvote']).count() >= LOWRATE['limit']:
@@ -118,7 +165,11 @@ def queue_song(song, user, event = True, force = False):
         if event:
             bla = get_queue(True) # generate new queue cached object
             EVS.append('queue')
-            models.send_notification("%s has been queued. It is expected to play at <span class='tzinfo'>%s</span>" % (escape(song.title), Q.eta.strftime("%H:%M")), user)
+            msg = "%s has been queued." % escape(song.title)
+            msg += " It is expected to play at <span class='tzinfo'>%s</span>." % Q.eta.strftime("%H:%M")
+            if time_left != False:
+                msg += " Remaining timeslot : %s." % time_left_delta.to_string()
+            models.send_notification(msg, user)
         models.add_event(eventlist=EVS, metadata = event_metadata)
         return Q
 

@@ -56,7 +56,36 @@
 	<td>asdas dasd asd asd:Asdadada</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>click</td>
+	<td>css=div.smileys-clicker</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//img[contains(@src,'nectawall.gif')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[contains(@src,'/emoticons/pony.gif')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=makeitso</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Home</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>css=img[title=&quot;:mypony:&quot;]</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

@@ -93,7 +93,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>//table[@id='fd-table-1']/tbody/tr[7]/td[1]/a</td>
+	<td>link=retrorespect</td>
 	<td></td>
 </tr>
 <tr>

@@ -7,11 +7,18 @@ UWSGI_EVENT_SERVER = None
 
 DISABLE_AJAX = True
 
-MEDIA_URL = 'http://demovibes.thelazy.net/static/'
+MEDIA_URL = 'http://demovibes/static/'
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 
 KEY_PREFIX = "TT"
+
+CACHES = {
+        'default': {
+                    'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                            'LOCATION': 'unique-snowflake'
+                                }
+}
 #CACHES = {
 #    'default': {
 #        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',

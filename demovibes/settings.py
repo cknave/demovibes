@@ -280,11 +280,19 @@ JINJA2_TEMPLATE_DIRS = (
 
 JINJA2_EXTENSIONS = ["jinja2.ext.i18n"]
 
+# The minimum number of songs in queue before limits are considered
+#MIN_QUEUE_SONGS_LIMIT = 1
+
 # Maximum number of songs a user can have in the queue at the same time.
 SONGS_IN_QUEUE = 5
 
 # Optional filter for how many songs of "lowvote" or lower user can have in queue
 #SONGS_IN_QUEUE_LOWRATING = {'limit': 1, 'lowvote':2}
+
+#QUEUE_TIME_LIMIT = (
+#   { 'days' : 0, 'hours' : 0, 'minutes' : 5 }, # Max combined song time
+#   { 'days' : 0, 'hours' : 0, 'minutes' : 5 }  # Over this period of time
+#)
 
 # Time to lock a song until it can be requested again.
 SONG_LOCK_TIME = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }

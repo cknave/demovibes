@@ -35,7 +35,18 @@ import random
 class TimeDelta(datetime.timedelta):
     def total_seconds(self):
         return (self.seconds + self.days * 24 * 3600)
-
+    def to_string(self):
+        s = self.total_seconds()
+        padding = ""
+        if s < 0:
+            s = s * -1
+            padding = "-"
+        hours, remainder = divmod(s, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        time1 = "%02d:%02d" % (minutes, seconds)
+        if hours:
+            return padding + "%s:" % hours + time1
+        return padding + time1
 
 log = logging.getLogger("webview.models")
 
@@ -1348,7 +1359,7 @@ class Song(models.Model):
         if self == get_now_playing_song().song:
             add_event("vote:%.2f|%d" % (self.rating, self.rating_votes))
             cache.delete("nowplaysong")
-        return True
+        return obj
 
     def get_vote(self, user):
         """
@@ -1670,6 +1681,7 @@ class Oneliner(models.Model):
     message = models.CharField(max_length=256)
     user = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True, db_index=True)
+
     class Meta:
         ordering = ['-added']
         permissions = (
