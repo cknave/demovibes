@@ -1342,8 +1342,8 @@ def dv_urlize(text):
     Simplified replacement of the urlize filter in Django, which at present offers no option
     To allow a link to open in a new tab/window. AAK.
     """
-    part1 = re.compile(r"(^|[\n ])(((news|telnet|nttp|irc|http|ftp|https)://[\w\#$%&~.\-;:=,?@\[\]+]*)(/[\w\#$%&~/.\-;:=,?@\[\]+]*)?)", re.IGNORECASE | re.DOTALL)
-    part2 = re.compile(r"(^|[\n ])(((www|ftp)\.[\w\#$%&~.\-;:=,?@\[\]+]*)(/[\w\#$%&~/.\-;:=,?@\[\]+]*)?)", re.IGNORECASE | re.DOTALL)
+    part1 = re.compile(r"(^|[\n ])(((news|telnet|nttp|irc|http|ftp|https)://[\w\#$%&~.\-;:=,?@\[\]+]*)(/[\w\#$%&~/.\-;:=,?@\(\)\[\]+]*)?)", re.IGNORECASE | re.DOTALL)
+    part2 = re.compile(r"(^|[\n ])(((www|ftp)\.[\w\#$%&~.\-;:=,?@\[\]+]*)(/[\w\#$%&~/.\-;:=,\(\)?@\[\]+]*)?)", re.IGNORECASE | re.DOTALL)
 
     # Make a quick copy of our variable to work with
     link = text
