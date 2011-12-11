@@ -25,6 +25,8 @@ LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
 def atomic(key, timeout=30, wait=60):
     """
     Lock a function so it can not be run in parallell
+
+    Key value identifies function to lock
     """
     lockkey = "lock-" + key
     def func1(func):
@@ -44,7 +46,11 @@ def atomic(key, timeout=30, wait=60):
     return func1
 
 def ratelimit(limit=10,length=86400):
-    """ The length is in seconds and defaults to a day"""
+    """
+    Limit function to <limit> runs per ip address, over <length> seconds.
+
+    Expects first function parameter to be a request object.
+    """
     def decorator(func):
         def inner(request, *args, **kwargs):
             ip_hash = str(hash(request.META['REMOTE_ADDR']))
@@ -116,7 +122,7 @@ def queue_song(song, user, event = True, force = False):
     time = song.create_lock_time()
     result = True
 
-    if models.Queue.objects.filter(played=False).count() < MIN_QUEUE_SONGS_LIMIT:
+    if models.Queue.objects.filter(played=False).count() < MIN_QUEUE_SONGS_LIMIT and not song.is_locked():
         force = True
 
     time_full, time_left, time_next = find_queue_time_limit(user, song)
