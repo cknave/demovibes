@@ -126,6 +126,21 @@
 	<td>A total of 0 users have this song on their favourites list.</td>
 	<td></td>
 </tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=terra</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Favourites List</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>link=Symphony 1 part 3</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

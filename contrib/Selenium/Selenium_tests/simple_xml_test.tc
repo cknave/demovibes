@@ -93,7 +93,7 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/demovibes/xml/user/terra/</td>
+	<td>/demovibes/xml/user/test/</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,7 +103,7 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/demovibes/xml/user/terra/favorites/</td>
+	<td>/demovibes/xml/user/test/favorites/</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,7 +113,7 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/demovibes/xml/user/test/</td>
+	<td>/demovibes/xml/user/terra/</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,7 +128,7 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/demovibes/xml/user/test/favorites/</td>
+	<td>/demovibes/xml/user/terra/favorites/</td>
 	<td></td>
 </tr>
 <tr>

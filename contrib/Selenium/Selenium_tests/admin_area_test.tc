@@ -86,6 +86,51 @@
 	<td>_save</td>
 	<td></td>
 </tr>
+<tr>
+	<td>open</td>
+	<td>/admin/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Generic base links</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Add generic base link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_name</td>
+	<td>YouTuber</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_link</td>
+	<td>http://www.youtube.com/user/terrasque</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_link</td>
+	<td>http://www.youtube.com/user/%linkval%</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=id_regex</td>
+	<td>\w+</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=id_linktype</td>
+	<td>label=Users</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>name=_save</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

@@ -60,21 +60,6 @@ class BetterPaginator(Paginator):
         a.sort()
         return a
 
-    def old_pagerange(self, num_pages, page, range_gap=5):
-        """
-        Return current page +/- range_gap pages
-        """
-        if page > 5:
-            start = page-range_gap
-        else:
-            start = 1
-
-        if page < num_pages-range_gap:
-            end = page+range_gap+1
-        else:
-            end = num_pages+1
-        return range(start, end)
-
     def get_context(self, page, range_gap=3):
         try:
             page = int(page)

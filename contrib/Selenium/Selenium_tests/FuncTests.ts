@@ -13,6 +13,7 @@
 <tr><td><a href="messages.tc">Messages</a></td></tr>
 <tr><td><a href="tags.tc">Tags</a></td></tr>
 <tr><td><a href="profile.tc">Profile</a></td></tr>
+<tr><td><a href="UserArtistLink.tc">UserArtistLink</a></td></tr>
 <tr><td><a href="new_artist.tc">NewArtist</a></td></tr>
 <tr><td><a href="new_group.tc">NewGroup</a></td></tr>
 <tr><td><a href="partial_newsong.tc">PartialSongUpload</a></td></tr>
@@ -31,9 +32,11 @@
 <tr><td><a href="activate_group.tc">Activate Group</a></td></tr>
 <tr><td><a href="activate_songdata.tc">Activate Songdata</a></td></tr>
 <tr><td><a href="admin_area_test.tc">AdminAreaTest</a></td></tr>
+<tr><td><a href="profile_admin.tc">ProfileAdmin</a></td></tr>
 <tr><td><a href="simple_xml_test.tc">SimpleXmlTest</a></td></tr>
 <tr><td><a href="bbcode_simple.tc">Simple BBcode</a></td></tr>
 <tr><td><a href="now_playing_display.tc">NowPlayingDisplay</a></td></tr>
+<tr><td><a href="misc_smallstuff.tc">Misc small stuff</a></td></tr>
 <tr><td><a href="logout_songinfo.tc">Logged out songinfo</a></td></tr>
 </tbody></table>
 </body>
