@@ -93,7 +93,7 @@ def find_queue_time_limit(user, song):
         #Fetch all queued objects by that user in given time period
         Q = models.Queue.objects.filter(requested__gt = start, requested_by = user).order_by("id")
 
-        total_seconds = limit.total_seconds() - song.song_length
+        total_seconds = limit.total_seconds() - song.get_songlength()
 
         if Q.count():
             queued_seconds = Q.aggregate(Sum("song__song_length"))["song__song_length__sum"] #Length of all songs queued
@@ -101,7 +101,7 @@ def find_queue_time_limit(user, song):
             earliest = Q[0].requested
             next = earliest + duration
             if seconds_left <= 0:
-                seconds_left = seconds_left + song.song_length
+                seconds_left = seconds_left + song.get_songlength()
                 return (True, seconds_left, next)
             return (False, seconds_left, next)
         return (False, total_seconds, next)

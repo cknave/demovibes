@@ -7,7 +7,7 @@
  <samplerate>{{ song.samplerate }}</samplerate>
  <rating votes="{{ song.rating_votes }}">{{ song.rating }}</rating>
  {% if meta.info %}<info>{{ meta.info|e }}</info>{% endif %}
- <songlength>{{ song.song_length }}</songlength>
+ <songlength>{{ song.get_songlength() }}</songlength>
  <locked>{{ song.is_locked() }}</locked>
  <locked_until>{{ song.locked_until }}</locked_until>
  <lastplayed>{{ song.last_queued() }}</lastplayed>

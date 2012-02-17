@@ -1053,12 +1053,16 @@ class Song(models.Model):
             r['length'] = self.loopfade_time
         return r
 
+    def get_songlength(self):
+        return self.loopfade_time or self.song_length
+
     def length(self):
         """
         Returns song length in minutes:seconds format
         """
-        if self.song_length:
-            return "%d:%02d" % ( self.song_length/60, self.song_length % 60 )
+        r = self.get_songlength()
+        if r:
+            return "%d:%02d" % ( r/60, r % 60 )
         return "Not set"
 
     def log(self, user, message):
@@ -1580,7 +1584,7 @@ class Queue(models.Model):
         left = self.timeleft()
         if left < 1:
             return -1
-        offset = self.song.song_length + self.song.get_metadata().ytvidoffset - left
+        offset = self.song.get_songlength() + self.song.get_metadata().ytvidoffset - left
         return offset
 
     def timeleft(self):
@@ -1590,7 +1594,7 @@ class Queue(models.Model):
         if self.song.song_length == None or not self.played or not self.time_played:
             return 0
         delta = datetime.datetime.now() - self.time_played
-        return self.song.song_length - delta.seconds
+        return self.song.get_songlength() - delta.seconds
 
     def get_eta(self):
         """
@@ -1609,7 +1613,7 @@ class Queue(models.Model):
         if self.priority:
             if not self.playtime:
                 for q in baseq_lt.filter(priority = True):
-                    playtime = playtime + q.song.song_length
+                    playtime = playtime + q.song.get_songlength()
                 return datetime.datetime.now() + datetime.timedelta(seconds=playtime)
 
             else:
@@ -1622,14 +1626,14 @@ class Queue(models.Model):
                 q.song.set_song_data()
                 q.song.save()
             try:
-                playtime = playtime + q.song.song_length
+                playtime = playtime + q.song.get_songlength()
             except:
                 pass
         for q in baseq.filter(priority = True):
-            playtime = playtime + q.song.song_length
+            playtime = playtime + q.song.get_songlength()
         eta = datetime.datetime.now() + datetime.timedelta(seconds=playtime)
         for q in baseq.filter(playtime__lt = eta):
-            playtime = playtime + q.song.song_length
+            playtime = playtime + q.song.get_songlength()
         eta = datetime.datetime.now() + datetime.timedelta(seconds=playtime)
         if self.playtime and self.playtime > eta:
             return self.playtime

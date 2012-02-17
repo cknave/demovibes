@@ -152,7 +152,7 @@ class SongAjax(AjaxSearch):
         return r
 
     def make_info(self, song):
-        return {"title": song.title, "artists": self.make_artists(song), "id": song.id, "url": song.get_absolute_url(), "songlength": song.song_length}
+        return {"title": song.title, "artists": self.make_artists(song), "id": song.id, "url": song.get_absolute_url(), "songlength": song.get_songlength()}
 
     def get_songs_from_list(self, songs):
         return [self.make_info(wm.Song.objects.get(id=s)) for s in songs]

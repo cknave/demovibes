@@ -7,7 +7,7 @@
  <samplerate>{{ object.samplerate }}</samplerate>
  <rating votes="{{ object.rating_votes }}">{{ object.rating }}</rating>
  {% if meta.info %}<info>{{ meta.info }}</info>{% endif %}
- <songlength>{{ object.song_length }}</songlength>
+ <songlength>{{ object.get_songlength }}</songlength>
  <locked>{{ object.is_locked }}</locked>
  <locked_until>{{ object.locked_until }}</locked_until>
  <lastplayed>{{ object.last_queued }}</lastplayed>

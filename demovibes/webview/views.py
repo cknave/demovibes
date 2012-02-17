@@ -171,7 +171,7 @@ class AddCompilation(WebView):
         newcf.reset_songs()
         for index, S in enumerate(songs):
             newcf.add_song(S, index)
-            playtime = playtime + S.song_length
+            playtime = playtime + S.get_songlength()
             for a in S.get_metadata().artists.all():
                 if a not in artists:
                     artists.append(a)

@@ -46,7 +46,7 @@ class LicenseView(AjaxView):
 
 def songinfo(request):
     def makeinfo(song):
-        return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.song_length}
+        return {"title": song.title, "artists": song.artist(), "id": song.id, "url": song.get_absolute_url(), "slength": song.get_songlength()}
     songid = request.REQUEST.get("q", "").strip()
     if not songid:
         return HttpResponse('{"error": "Empty input"}')

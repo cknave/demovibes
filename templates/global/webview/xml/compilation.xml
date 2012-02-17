@@ -28,11 +28,11 @@
          <title>{{ song.title }}</title>
          <status v="{{ song.status }}">{{ song.get_status_display }}</status>
          <rating votes="{{ song.rating_votes }}">{{ song.rating }}</rating>
-         <songlength>{{ song.song_length }}</songlength>
+         <songlength>{{ song.get_songlength }}</songlength>
          {% if song.platform %}<platform id="{{ song.platform.id }}">{{ song.platform }}</platform>{% endif %}
          {% if song.type %}<type id="{{ song.type.id }}">{{ song.type }}</type>{% endif %}
          {% if song.pouetid %}<pouetid>{{ song.pouetid }}</pouetid>{% endif %}
-         
+
           <artists>
           {% for artist in song.artists.all %}<artist id="{{ artist.id }}" flag="{{ artist.home_country }}|safe }}">{{ artist.handle }}</artist>{% endfor %}
          </artists>
