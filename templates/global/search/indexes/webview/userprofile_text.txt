@@ -1,4 +1,6 @@
 {{ object.user.username }}
+{{ object.user.username }}
+{{ object.user.username }}
 {{ object.infoline }}
 {{ object.location }}
 {{ object.info }}

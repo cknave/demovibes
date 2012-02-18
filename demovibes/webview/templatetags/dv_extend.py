@@ -1200,6 +1200,14 @@ def oneliner_mediaparse(value):
 
     return value
 
+REMSM = re.compile(r':\w+:', re.I)
+
+@register.filter
+def removesmileys(value):
+    value = REMSM.sub("", value)
+    return value
+
+
 @register.filter
 def bbcode(value):
     """

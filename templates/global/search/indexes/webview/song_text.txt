@@ -1,17 +1,37 @@
 {{ object.title }}
 {{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+{{ object.title }}
+
 {% for artist in object.get_metadata.artists.all %}
  {{ artist.handle }}
+ {{ artist.handle }}
+ {{ artist.handle }}
+ {{ artist.handle }}
+
+ {{ artist.name }}
  {{ artist.name }}
 {% endfor %}
 
 {% for group in object.get_metadata.groups.all %}
  {{ group.name }}
+ {{ group.name }}
 {% endfor %}
 
 {% for label in labels %}
-{{ label.name }}
-{{ label.pouetid }}
+    {{ label.name }}
+    {{ label.name }}
+    {{ label.pouetid }}
 {% endfor %}
 
 {% for tag in object.tags %}
@@ -29,8 +49,18 @@
  {{ link.value }}
 {% endfor %}
 
+{% load dv_extend %}
+
 {% for comment in object.songcomment_set.all %}
-{% if not comment.staff_comment %}
-{{ comment.comment }}
-{% endif %}
+    {% if not comment.staff_comment %}
+        {{ comment.comment|removesmileys }}
+    {% endif %}
+{% endfor %}
+
+{% for compilation in object.compilation_set.all %}
+    {{ compilation.name }}
+    {{ compilation.name }}
+    {{ compilation.hol_id }}
+    {{ compilation.info }}
+    {{ compilation.prod_notes }}
 {% endfor %}

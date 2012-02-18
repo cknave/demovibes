@@ -1,10 +1,12 @@
 from haystack.indexes import *
 from haystack import site
+from django.conf import settings
 import webview.models as M
 
 class ArtistIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
     render = CharField(indexed=False, use_template=True)
+    country = CharField(model_attr="home_country")
 
     def get_queryset(self):
         return M.Artist.objects.all()
@@ -26,11 +28,12 @@ class SongIndex(SearchIndex):
         return "last_changed"
 
     # Need haystack 1.2 for this
-    #def prepare(self, obj):
-    #    data = super(SongIndex, self).prepare(obj)
-    #    if obj.status == "A":
-    #        data['boost'] = 5.0
-    #    return data
+    def prepare(self, obj):
+        data = super(SongIndex, self).prepare(obj)
+        # Boost is not working on whoosh
+        if obj.status == "A" and settings.HAYSTACK_SEARCH_ENGINE != "whoosh":
+            data['boost'] = 5.0
+        return data
 
 class GroupIndex(SearchIndex):
     text = CharField(document=True, use_template=True)
