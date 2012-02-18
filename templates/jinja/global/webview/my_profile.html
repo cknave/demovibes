@@ -4,7 +4,9 @@
 
 {% block main %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}user.png" alt="" />{{ gettext("My Profile Settings") }}</h2>
-<a href="/accounts/password/change/">{{ gettext("Change My Password") }}</a><br /><a href="{{ url ("dv-profile", profile.user) }}">{{ gettext("View My Live Profile") }}</a>
+<div class="profile-theme"><a href="{{ url("dv-themelist") }}">Change theme</a></div>
+<a href="/accounts/password/change/">{{ gettext("Change My Password") }}</a><br />
+<a href="{{ url ("dv-profile", profile.user) }}">{{ gettext("View My Live Profile") }}</a><br />
 
 <h2>{{ gettext("OpenID") }}</h2>
 <span>{{ gettext("Your") }} <a href="http://openidexplained.com/" target="_blank">OpenID</a> {{ gettext("key") }}:</span>
@@ -22,17 +24,6 @@
 {% endfor %}
 </ul>
 
-<h2><img class="icon_header" src="{{ STATIC_URL }}page_white_edit.png" alt="" />{{ gettext("Profile Settings") }}</h2>
-<form action="." method="post" enctype="multipart/form-data">
-<table id="profileform">
-{{ form.as_table() }}
-</table>
-
-{{ links }}
-
-<input type="submit" value="{{ gettext("Update") }}" />
-</form>
-
 {% if user.get_profile().have_artist() %}
 <h2>Song settings</h2>
 Change license on ALL my songs :
@@ -44,6 +35,17 @@ Change license on ALL my songs :
 <input type="submit" value="Change them all!" name="artistdata"/>
 </form>
 {% endif %}
+
+<h2><img class="icon_header" src="{{ STATIC_URL }}page_white_edit.png" alt="" />{{ gettext("Profile Settings") }}</h2>
+<form action="." method="post" enctype="multipart/form-data">
+<table id="profileform">
+{{ form.as_table() }}
+</table>
+
+{{ links }}
+
+<input type="submit" value="{{ gettext("Update") }}" />
+</form>
 
 {% endblock %}
 

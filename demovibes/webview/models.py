@@ -348,15 +348,46 @@ class GroupVote(models.Model):
 
 class Theme(models.Model):
     title = models.CharField(max_length = 20)
+    active = models.BooleanField(default=True)
     description = models.TextField(blank=True)
-    preview = models.ImageField(upload_to='media/theme_preview', blank = True, null = True)
     css = models.CharField(max_length=120)
     default = models.BooleanField(default=False)
+    creator = models.ForeignKey(User, blank=True, null=True)
+
+    screenshots = generic.GenericRelation("ScreenshotObjectLink")
+
+    def is_active_for(self, user):
+        if user:
+            t = user.get_profile().theme
+            if t:
+                return t == self
+        return self.default
+
+    def get_main_screenshot(self):
+        r = self.get_screenshots().order_by("-id")
+        if r:
+            return r[0]
+
+    class Meta:
+        ordering = ["-default", 'title']
+
+    def is_local(self):
+        return not self.css.lower().startswith("http")
+
+    def get_screenshots(self):
+        """
+        Return all active screenshots
+        """
+        return self.screenshots.filter(image__status='A').order_by("-is_main")
 
     def __unicode__(self):
         if self.default:
             return self.title + " (Default)"
         return self.title
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('dv-themeinfo', [str(self.id)])
 
 def saveTheme(sender, **kwargs):
     instance = kwargs.get("instance")
@@ -775,6 +806,11 @@ class Screenshot(models.Model):
         self.last_updated = datetime.datetime.now()
         return super(Screenshot, self).save(*args, **kwargs)
 
+    def get_thumb_url(self):
+        if not self.thumbnail:
+            self.create_thumbnail()
+        return self.thumbnail and self.thumbnail.url or ""
+
     def get_objects(self):
         return self.screenshotobjectlink_set.all()
 
@@ -814,6 +850,7 @@ class Screenshot(models.Model):
 class ScreenshotObjectLink(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
+    is_main = models.BooleanField(default=False)
     obj = generic.GenericForeignKey('content_type', 'object_id')
 
     image = models.ForeignKey(Screenshot)
@@ -1014,7 +1051,7 @@ class Song(models.Model):
         """
         Return all active download links
         """
-        return self.screenshots.filter(image__status='A')
+        return self.screenshots.filter(image__status='A').order_by("-is_main")
 
     def get_active_links(self):
         """
@@ -1450,7 +1487,7 @@ class Compilation(models.Model):
         """
         Return all active screenshots
         """
-        return self.screenshots.filter(image__status='A')
+        return self.screenshots.filter(image__status='A').order_by("-is_main")
 
     def get_master_screenshot(self):
         """

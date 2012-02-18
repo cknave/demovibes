@@ -44,7 +44,6 @@ class SongView(WebView):
         self.context['song'] = self.song = get_object_or_404(m.Song, id=songid)
 
 class SongAddScreenshot(SongView):
-
     def GET(self):
         return create_screenshot(self.request, self.song)
 
@@ -463,6 +462,51 @@ class ListScreenshots(ListByLetter):
 
     def get_objects(self):
         return self.model.objects.filter(status="A")
+
+class ThemeClass(WebView):
+    def initialize(self):
+        themeid = self.kwargs['theme_id']
+        self.context['theme'] = self.theme = get_object_or_404(m.Theme, id=themeid)
+
+class ThemeInfo(ThemeClass):
+    template = "theme_details.html"
+
+class ThemeEdit(ThemeClass):
+    template = "theme_edit.html"
+    forms = [(f.ThemeForm, "form")]
+    login_required = True
+
+    def form_form_init(self):
+        return {'instance': self.theme}
+
+    def POST(self):
+        if self.forms_valid and self.request.user == self.theme.creator:
+            self.context['form'].save()
+            self.redirect(self.context['theme'])
+
+class ThemeAddImage(ThemeClass):
+    def GET(self):
+        if self.request.user == self.theme.creator:
+            return create_screenshot(self.request, self.theme)
+        self.redirect("/")
+
+class ThemeList(WebView):
+    template = "themes_list.html"
+
+    def get_objects(self):
+        return m.Theme.objects.filter(active=True)
+
+    def POST(self):
+        id = int(self.request.POST.get("theme_id"))
+        theme = m.Theme.objects.get(id=id)
+        if self.request.user:
+            p = self.request.user.get_profile()
+            p.theme = theme
+            p.save()
+        self.redirect("dv-themelist")
+
+    def set_context(self):
+        return {"themes": self.get_objects() }
 
 @login_required
 def log_out(request):

@@ -150,6 +150,11 @@ class CreateGroupForm(forms.ModelForm):
 
         return self.cleaned_data['group_logo']
 
+class ThemeForm(forms.ModelForm):
+    class Meta:
+        model = M.Theme
+        fields = ["title", "active", "css", "description"]
+
 class ProfileForm(forms.ModelForm):
     def clean_avatar(self):
         avatar = self.cleaned_data['avatar']
@@ -171,7 +176,11 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = M.Userprofile
-        fields = ['infoline', 'visible_to', 'web_page', 'aol_id', 'yahoo_id', 'icq_id', 'twitter_id', 'hol_id', 'country', 'location', 'avatar', 'fave_id', 'email_on_pm', 'email_on_group_add', 'email_on_artist_add', 'pm_accepted_upload', 'paginate_favorites', 'theme', 'custom_css', 'use_tags', 'show_screenshots', 'show_youtube', 'info']
+        fields = ['infoline', 'visible_to', 'web_page', 'aol_id', 'yahoo_id',
+            'icq_id', 'twitter_id', 'hol_id', 'country', 'location', 'avatar',
+            'fave_id', 'email_on_pm', 'email_on_group_add', 'email_on_artist_add',
+            'pm_accepted_upload', 'paginate_favorites', 'custom_css', 'use_tags',
+            'show_screenshots', 'show_youtube', 'info']
 
 class PmForm(forms.ModelForm):
     to = forms.CharField()

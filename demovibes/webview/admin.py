@@ -136,6 +136,10 @@ class GBLAdmin(admin.ModelAdmin):
     list_filter = ['linktype']
     search_fields = ['name', 'link']
 
+class ThemeAdmin(admin.ModelAdmin):
+    list_display = ['title', 'creator', "active"]
+    list_filter = ['active', "default"]
+
 class LicenseAdmin(admin.ModelAdmin):
     list_display = ['name', 'downloadable']
     list_filter = ['downloadable']
@@ -152,7 +156,7 @@ admin.site.register(Song, SongAdmin)
 admin.site.register(SongLicense, LicenseAdmin)
 admin.site.register(SongType)
 admin.site.register(ObjectLog, ObjLogAdmin)
-admin.site.register(Theme)
+admin.site.register(Theme, ThemeAdmin)
 admin.site.register(RadioStream, RadioStreamAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(Artist, ArtistAdmin)

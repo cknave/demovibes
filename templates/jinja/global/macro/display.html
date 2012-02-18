@@ -20,6 +20,10 @@
  {{ dt|date("j N Y") }}
 {% endmacro %}
 
+{% macro text(s) %}
+    {{ s|urlize|linebreaksbr|bbcode }}
+{% endmacro %}
+
 {% macro datetime(dt) %}
  {{ date(dt) }} {{ time(dt) }}
 {% endmacro %}

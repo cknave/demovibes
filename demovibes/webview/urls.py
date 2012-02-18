@@ -161,9 +161,16 @@ urlpatterns = patterns('',
     url(r'^song/(?P<song_id>\d+)/screenshot/$',    views.SongAddScreenshot(), name = "dv-add_screenshot"),
     url(r'^song/(?P<song_id>\d+)/play/$',          views.PlaySong(), name = "dv-play_song"),
     url(r'^comment/add/(?P<song_id>\d+)/$',        views.addComment(), name = "dv-addcomment"),
+
     url(r'^tags/$',                                views.tagCloud(), name = "dv-tagcloud"),
     url(r'^tags/(?P<tag>[^/]+)/$',                 views.tagDetail(), name = "dv-tagdetail"),
     url(r'^song/(?P<song_id>\d+)/tags/$',          views.tagEdit(), name = "dv-songtags"),
+
+    url(r'^themes/$',                                views.ThemeList(), name = "dv-themelist"),
+    url(r'^theme/(?P<theme_id>\d+)/$',               views.ThemeInfo(), name = "dv-themeinfo"),
+    url(r'^theme/(?P<theme_id>\d+)/add_image/$',     views.ThemeAddImage(), name = "dv-themeaddimage"),
+    url(r'^theme/(?P<theme_id>\d+)/edit/$',         views.ThemeEdit(), name = "dv-themeedit"),
+
     url(r'^favorites/change/$',                     views.ChangeFavorite(), name = "dv-change_fav"),
     #url(r'^favorites/add/(?P<id>\d+)/$',           'demovibes.webview.views.add_favorite', name = "dv-add_fav"),
     url(r'^favorites/$',                           'demovibes.webview.views.list_favorites', name = "dv-favorites"),
