@@ -60,8 +60,7 @@ def ratelimit(limit=10,length=86400):
                 if result == limit:
                     return HttpResponseForbidden("Ooops, too many requests!")
                 else:
-                    result +=1
-                    cache.set(ip_hash,result,length)
+                    cache.incr(ip_hash)
                     return func(request,*args,**kwargs)
             cache.add(ip_hash,1,length)
             return func(request, *args, **kwargs)
