@@ -1142,6 +1142,8 @@ def bb_faq(hit):
     faqq = hit.group(1)
     try:
         F = Faq.objects.get(id=faqq)
+        return js.r2s('webview/t/faq_question.html', {'F' : F})
+
         T = loader.get_template('webview/t/faq_question.html')
         Q = Context({'F' : F})
         return T.render(Q)
