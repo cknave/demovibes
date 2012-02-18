@@ -23,6 +23,11 @@
 </tr>
 <tr>
 	<td>type</td>
+	<td>id=id_fave_id</td>
+	<td>3</td>
+</tr>
+<tr>
+	<td>type</td>
 	<td>id_info</td>
 	<td>IamATestContentFillerTextString</td>
 </tr>
@@ -49,6 +54,11 @@
 <tr>
 	<td>assertTextPresent</td>
 	<td>IamATestContentFillerTextString</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Symphony 1 part 1 (&quot;loon&quot;)</td>
 	<td></td>
 </tr>
 <tr>

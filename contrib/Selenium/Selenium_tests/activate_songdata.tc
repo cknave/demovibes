@@ -53,6 +53,11 @@
 </tr>
 <tr>
 	<td>assertTextPresent</td>
+	<td>Monday monday test</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
 	<td>artists, groups, labels, info</td>
 	<td></td>
 </tr>
@@ -69,6 +74,16 @@
 <tr>
 	<td>clickAndWait</td>
 	<td>link=retrorespect</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>This song is a remix of</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Monday monday test</td>
 	<td></td>
 </tr>
 <tr>

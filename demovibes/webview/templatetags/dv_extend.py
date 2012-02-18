@@ -771,15 +771,7 @@ def get_song_queue_tag_j(origsong):
 def get_song_queue_tag(song_id):
     try:
         song_obj = Song.objects.get(id = song_id)
-        artists = song_obj.get_metadata().artists
-
-        T = loader.get_template('webview/queue_tag.html')
-        C = Context({ 'song' : song_obj, 'artists' : artists })
-        mu = T.render(C)
-
-        mu = js.r2s('webview/queue_tag.html', { 'song' : song_obj, 'artists' : artists })
-
-        return mu
+        return get_song_queue_tag_j(song_obj)
     except:
         return unicode(song_id)
 
