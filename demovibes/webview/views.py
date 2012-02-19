@@ -499,7 +499,7 @@ class ThemeList(WebView):
     def POST(self):
         id = int(self.request.POST.get("theme_id"))
         theme = m.Theme.objects.get(id=id)
-        if self.request.user:
+        if self.request.user.is_authenticated():
             p = self.request.user.get_profile()
             p.theme = theme
             p.save()
