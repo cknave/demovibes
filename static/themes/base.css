@@ -333,12 +333,14 @@ padding: 2px;
 .theme {
     float: left;
     padding: 1em;
+    height:220px;
 }
 .theme_shot {
     float: left;
 }
 .activetheme {
     border: 1px solid #000;
+    height:218px;
 }
 .themeimage_large {
     float: right;
