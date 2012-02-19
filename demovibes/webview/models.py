@@ -357,7 +357,7 @@ class Theme(models.Model):
     screenshots = generic.GenericRelation("ScreenshotObjectLink")
 
     def is_active_for(self, user):
-        if user:
+        if user and user.is_authenticated():
             t = user.get_profile().theme
             if t:
                 return t == self
