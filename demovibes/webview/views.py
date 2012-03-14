@@ -652,6 +652,7 @@ class ChangeFavorite(AjaxifyView):
 class VoteSong(AjaxifyView):
     redirect_to = "dv-root"
 
+    @common.atomic("vote")
     def handle_form(self, form):
         self.int_vote = int(form.get("vote", form.get("ajaxvote")))
         if self.int_vote <= 5 and self.int_vote > 0:
