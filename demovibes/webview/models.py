@@ -973,8 +973,13 @@ class Song(models.Model):
     locked_until = models.DateTimeField(blank = True, null = True)
     loopfade_time = models.PositiveIntegerField(default = 0, verbose_name = "Forced play time", help_text = "In seconds, 0 = disabled")
     playback_fadeout = models.BooleanField(default=True, verbose_name = "Fadeout at end", help_text = "Only active if Forced play time is set")
-    playback_bass_mode = models.CharField(max_length=3, choices=(("pt1", "ProTracker 1"), ("ft2", "FastTracker2")), blank = True, verbose_name = "Playback mode")
+    playback_bass_mode = models.CharField(max_length=3, choices=(
+            ("pt1", "ProTracker 1"),
+            ("ft2", "FastTracker2"),
+            ("bass", "Bass"),
+        ), blank = True, verbose_name = "Playback mode")
     playback_bass_inter = models.CharField(max_length=6, choices=(("off", "Off"), ("linear", "Linear"), ("sinc", "Sinc")), blank = True, verbose_name = "Playback interpolation")
+    playback_bass_mix = models.CharField(max_length=4, choices=(("Auto", "auto"), ("0.0", "Off"), ("0.3", "Mix"), ("0.5", "Mono")), blank = True, verbose_name = "Playback Mix")
     playback_bass_ramp = models.CharField(max_length=3, choices=(("off", "Off"), ("normal", "Normal"), ("sensitive", "Sensitive")), blank = True, verbose_name = "Playback RAMPAGE!")
     num_favorited = models.IntegerField(default = 0)
     rating = models.FloatField(blank = True, null = True)
@@ -1084,6 +1089,7 @@ class Song(models.Model):
         r['bass_inter'] = self.playback_bass_inter or "auto"
         r['bass_mode'] = self.playback_bass_mode or "auto"
         r['bass_ramp'] = self.playback_bass_ramp or "auto"
+        r['mix'] = self.playback_bass_mix or "auto"
 
         if self.loopfade_time:
             r['fade_out'] = self.playback_fadeout
