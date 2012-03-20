@@ -56,7 +56,7 @@ class SongAdmin(admin.ModelAdmin):
     fieldsets = [
         ("General"        ,{ 'fields' : ['title', 'file', 'explicit', 'status', 'license']}),
         ("Technical Stuff"    ,{ 'fields' : ['song_length', 'bitrate','samplerate','replay_gain']}),
-        ("Playback"    ,{ 'fields' : ['loopfade_time', "playback_fadeout", "playback_bass_mode", "playback_bass_inter", "playback_bass_ramp",]}),
+        ("Playback"    ,{ 'fields' : ['loopfade_time', "playback_fadeout", "playback_bass_mode", "playback_bass_inter", "playback_bass_ramp", "playback_bass_mix",]}),
     ]
     inlines = [DownloadInline, SongLinkInline]
     date_hierarchy = 'added'
