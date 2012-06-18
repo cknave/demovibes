@@ -114,6 +114,9 @@ def queue_song(song, user, event = True, force = False):
         models.send_notification("You can't request your own songs!", user)
         return False
 
+    #To update lock time and other stats
+    song = models.Song.objects.get(id=song.id)
+
     key = "songqueuenum-" + str(user.id)
 
     EVS = []
