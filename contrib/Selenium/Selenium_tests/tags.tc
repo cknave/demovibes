@@ -101,7 +101,16 @@
 	<td>Monday monday test</td>
 	<td></td>
 </tr>
-
+<tr>
+	<td>open</td>
+	<td>/demovibes/tags/testtag_124/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Info for tag(s) &quot;testtag_124&quot;</td>
+	<td></td>
+</tr>
 </tbody></table>
 </body>
 </html>

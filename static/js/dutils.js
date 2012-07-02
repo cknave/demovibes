@@ -212,8 +212,13 @@ function get_yt_info(video_id, callback, errorcallback) {
     if (!content) {
         $.getJSON(datagrab.replace("!YTID!", video_id), function(data) {
             if ((data) && (data.data)) {
-                localStorage.setItem(cachekey + video_id, JSON.stringify(data));
                 callback(data);
+                try {
+                    localStorage.setItem(cachekey + video_id, JSON.stringify(data));
+                } catch (err) {
+                    // Hack.. Shouldn't happen that often, but will clobber some other settings..
+                    localStorage.clear();
+                }
             } else {
                 if (errorcallback) {
                     errorcallback();
@@ -317,7 +322,7 @@ function changeTime() {
             str = str + ":" + intToStr(sec)
         }
         E.text(str);
-        var GMTmod = "";        
+        var GMTmod = "";
         if (GMTDiff > 0) {
              GMTmod = "+";
         }

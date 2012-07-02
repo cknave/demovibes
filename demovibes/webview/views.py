@@ -6,6 +6,8 @@ from openid_provider.models import TrustedRoot
 
 from mybaseview import MyBaseView
 
+from django.db import DatabaseError
+
 from tagging.models import TaggedItem
 import tagging.utils
 from django.template import Context, loader
@@ -1091,8 +1093,11 @@ class tagDetail(WebView):
     def set_cached_context(self):
         tag = self.kwargs.get("tag", "")
         songs = TaggedItem.objects.get_by_model(m.Song, tag)
-        related = m.Song.tags.related(tag, counts=True)
-        related = tagging.utils.calculate_cloud(related)
+        try:
+            related = m.Song.tags.related(tag, counts=True)
+            related = tagging.utils.calculate_cloud(related)
+        except DatabaseError:
+            related = []
         c = {'songs': songs, 'related': related, 'tag':tag}
         return c
 
