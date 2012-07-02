@@ -96,7 +96,7 @@ def ping(request, event_id):
     return HttpResponseRedirect("/demovibes/ajax/monitor/%s/%s" % (event_id, GET_UID))
 
 def monitor(request, event_id):
-    for x in range(120):
+    for x in range(30):
         R = AjaxEvent.objects.filter(id__gt=event_id).order_by('id')
         if R:
             entries = list()
@@ -107,7 +107,7 @@ def monitor(request, event_id):
             ajaxid = R.order_by('-id')[0].id + 1
             return render_to_response('webview/js/manager.html', \
                 { 'events' : entries, 'id' : ajaxid },  context_instance=RequestContext(request))
-        time.sleep(2)
+        time.sleep(1)
     return HttpResponse("")
 
 

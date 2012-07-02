@@ -35,6 +35,7 @@ import random
 class TimeDelta(datetime.timedelta):
     def total_seconds(self):
         return (self.seconds + self.days * 24 * 3600)
+
     def to_string(self):
         s = self.total_seconds()
         padding = ""
@@ -50,14 +51,8 @@ class TimeDelta(datetime.timedelta):
 
 log = logging.getLogger("webview.models")
 
-CHEROKEE_SECRET = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
-CHEROKEE_PATH = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_PATH", "")
-CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
-CHEROKEE_LIMIT = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", "")
-CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
-
+DOWNLOAD_LIMITS = getattr(settings, "SONG_DOWNLOAD_LIMIT", {})
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
-
 
 def get_now_playing_song(create_new=False):
     queueobj = cache.get("nowplaysong")
@@ -74,57 +69,71 @@ def get_now_playing_song(create_new=False):
     return queueobj
 
 def download_limit_reached(user):
-    limits = get_cherokee_limit(user)
+    limits = get_download_limit(user)
     if limits:
         key = "urlgenlimit_%s" % user.id
         k = cache.get(key, 0)
         if k > limits.get("number"):
             return True
 
-def get_cherokee_limit(user):
+def get_download_limit(user):
     r = {}
-    if CHEROKEE_LIMIT and user and user.is_authenticated():
-        if CHEROKEE_LIMIT.get("default"):
-            L = CHEROKEE_LIMIT.get("default")
-        else:
-            L = CHEROKEE_LIMIT
-        if user.is_superuser and CHEROKEE_LIMIT.get("admin"):
-            L = CHEROKEE_LIMIT.get("admin")
-        elif user.is_staff and CHEROKEE_LIMIT.get("staff"):
-            L = CHEROKEE_LIMIT.get("staff")
+    L = None
+
+    limit = DOWNLOAD_LIMITS.get("LIMITS", {})
+
+    if limit and user and user.is_authenticated():
+        L = limit.get("default")
+
+        if user.is_superuser and limit.get("admin"):
+            L = limit.get("admin")
+        elif user.is_staff and limit.get("staff"):
+            L = limit.get("staff")
         for group in user.groups.all():
-            gn = CHEROKEE_LIMIT.get(group.name)
+            gn = limit.get(group.name)
             if gn:
                 if gn.get("seconds") >= L.get("seconds") and gn.get("number") >= L.get("number"):
                     L = gn
+    if L:
         r['seconds'] = L.get("seconds", 60*60*24)
         r['number'] = L.get("number", 0)
     return r
 
-def secure_download (url, user=None):
-    if CHEROKEE_SECRET:
+def verify_download_limit(user):
+    limits = get_download_limit(user)
+    if limits:
+        key = "urlgenlimit_%s" % user.id
+        try:
+            k = cache.incr(key)
+        except:
+            k = 1
+            cache.set(key, k, limits.get("seconds"))
+        if k > limits.get("number"):
+            return None
+    return True
+
+def cherokee_secure_download (url, user=None):
+    cherokee_data = DOWNLOAD_LIMITS.get("CHEROKEE", {})
+    if cherokee_data.get("KEY"):
         url = urllib.unquote(url)
-        limits = get_cherokee_limit(user)
-        if limits:
-            key = "urlgenlimit_%s" % user.id
-            try:
-                k = cache.incr(key)
-            except:
-                k = 1
-                cache.set(key, k, limits.get("seconds"))
-            if k > limits.get("number"):
-                return CHEROKEE_LIMIT_URL or " Limit reached"
         t = '%08x' % (time.time())
-        if CHEROKEE_REGEX:
+        if cherokee_data.get("REGEX"):
             try:
                 url = str(url)
             except:
                 url = url.encode("utf8")
-            url = re.sub(*CHEROKEE_REGEX + (url,))
-        mu = CHEROKEE_PATH + "/%s/%s/%s" % (hashlib.md5(CHEROKEE_SECRET + "/" + url + t).hexdigest(), t, url)
+            url = re.sub(*cherokee_data.get("REGEX") + (url,))
+        mu = cherokee_data.get("PATH") + "/%s/%s/%s" % (hashlib.md5(cherokee_data.get("KEY") + "/" + url + t).hexdigest(), t, url)
         return mu.decode("utf8")
-        #return mu
     return url
+
+def get_secure_download_url(url, user=None):
+    limit_reached = DOWNLOAD_LIMITS.get("LIMIT_REACHED_URL") or "Limit reached"
+    if not verify_download_limit(user):
+        return None
+    if DOWNLOAD_LIMITS.get("CHEROKEE"):
+        r = cherokee_secure_download(url, user)
+    return r or limit_reached
 
 if getattr(settings, "LOOKUP_COUNTRY", True):
     from demovibes.ip2cc import ip2cc
@@ -1041,7 +1050,7 @@ class Song(models.Model):
         return False
 
     def get_file_url(self, user=None):
-        return secure_download(self.file.url, user)
+        return get_secure_download_url(self.file.url, user)
 
     def has_video(self):
         return self.get_metadata().ytvidid

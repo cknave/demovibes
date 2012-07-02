@@ -1715,6 +1715,22 @@ class Login(MyBaseView):
             self.add_to_limit((key1, key2))
             self.context['error'] = _(u"I'm sorry, the username or password seem to be wrong.")
 
+@login_required
+def nginx_download_song(request, songid):
+    """
+    Use X-Accel-Redirect function of web server to serve song files.
+    """
+    data = m.DOWNLOAD_LIMITS.get("NGINX")
+    if not data:
+        return HttpResponse("Fatal Error, NGINX data not configured")
+    song = m.Song.objects.get(id=int(songid))
+    url = song.file.url
+    if data.get("REGEX"):
+        url = re.sub(*data.get("REGEX") + (url,))
+    response = HttpResponse()
+    response['X-Accel-Redirect'] = data["URL"] + url
+    return response
+
 def play_stream(request):
     streamurl = getattr(settings, "FLASH_STREAM_URL", False)
     if not streamurl:

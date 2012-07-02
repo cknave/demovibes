@@ -85,6 +85,11 @@ SITE_ID = 1
 
 ACCOUNT_ACTIVATION_DAYS = 7
 
+## NGINX specific settings
+
+NGINX = {
+    # "memcached" : True,
+}
 
 ## Notifications
 
@@ -113,25 +118,32 @@ NOTIFY_NEW_SONG_COMMENT = False
 
 # END SMTP Configuration
 
-# Cherokee secure url shared key
-# If empty, disable
-# The secure url root should point to static folder.
-# See http://www.cherokee-project.com/doc/modules_handlers_secdownload.html for more info
-CHEROKEE_SECRET_DOWNLOAD_KEY=""
-CHEROKEE_SECRET_DOWNLOAD_PATH=""
-# IF defined, will alter default file url with re.sub(r1, r2, url)
-#CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'', r'')
-# If defined, will limit number of generated links per user to X links per Y seconds
-#CHEROKEE_SECRET_DOWNLOAD_LIMIT={'number': X, 'seconds': Y}
-# Or, more specified:
-#CHEROKEE_SECRET_DOWNLOAD_LIMIT={
-#    'admin': {'number': 30, 'seconds': 60*60*24},
-#    'Group name': {'number': 15, 'seconds': 60*60*24},
-#    'default': {'number': 0, 'seconds': 60*60*24},
-#    'staff': {'number': 3, 'seconds': 60*60*24},
-#}
-# URL to redirect to if limit is reached
-#CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL="/static/badman.html"
+SONG_DOWNLOAD_LIMIT = {
+    "CHEROKEE": {
+    #    # Cherokee secure url shared key
+    #    # The secure url root should point to static folder.
+    #    # See http://www.cherokee-project.com/doc/modules_handlers_secdownload.html for more info
+    #    "KEY": "",
+    #    "PATH": "",
+    #    # IF defined, will alter default file url with re.sub(r1, r2, url)
+    #    "REGEX": ("", ""),
+    },
+    "NGINX": {
+        ## Use X-Accel option for secure download - base URL to use
+        # "URL" : "",
+        # "RATELIMIT": 2048,
+
+        ## IF defined, will alter default file url with re.sub(r1, r2, url)
+        # "REGEX": ("", ""),
+    },
+    "LIMITS": {
+        #'admin': {'number': 30, 'seconds': 60*60*24},
+        #'Group name': {'number': 15, 'seconds': 60*60*24},
+        #'default': {'number': 0, 'seconds': 60*60*24},
+        #'staff': {'number': 3, 'seconds': 60*60*24},
+    },
+    "LIMIT_REACHED_URL": "/static/badman.html",
+}
 
 # maximum time a song will be played in seconds
 # only used when demosauce streamer is used

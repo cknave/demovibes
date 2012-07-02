@@ -1,11 +1,12 @@
 from webview import models
 from webview.models import get_now_playing_song
-from django.conf import settings
 from django.core.cache import cache
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from functools import wraps
 from django.utils.decorators import available_attrs
+
+from django.core.urlresolvers import reverse
 
 from django.db.models import Sum
 
@@ -21,6 +22,24 @@ MIN_QUEUE_SONGS_LIMIT = getattr(settings, "MIN_QUEUE_SONGS_LIMIT", 0)
 QUEUE_TIME_LIMIT = getattr(settings, "QUEUE_TIME_LIMIT", False)
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
 LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
+
+NGINX_MEMCACHE = getattr(settings, 'NGINX', {}).get("memcached")
+
+def nginx_memcache_it(key):
+    def func1(func):
+        def func2(*args, **kwargs):
+            r = func(*args, **kwargs)
+            url = reverse(key)
+            cachekey = url + "?event=" + get_latest_event()
+            logging.debug("Setting cache for key %s", cachekey)
+            cache.set(cachekey, r, 30)
+            return r
+
+        if not NGINX_MEMCACHE:
+            return func
+        return func2
+    return func1
+
 
 def atomic(key, timeout=30, wait=60):
     """
@@ -142,7 +161,7 @@ def queue_song(song, user, event = True, force = False):
         if requests == None:
             requests = Q.count()
         else:
-            requests = num(requests)
+            requests = len(requests)
 
         if result and requests >= settings.SONGS_IN_QUEUE:
 
@@ -171,7 +190,7 @@ def queue_song(song, user, event = True, force = False):
         #cache.set(key, requests + 1, 600)
 
         if event:
-            bla = get_queue(True) # generate new queue cached object
+            get_queue(True) # generate new queue cached object
             EVS.append('queue')
             msg = "%s has been queued." % escape(song.title)
             msg += " It is expected to play at <span class='tzinfo'>%s</span>." % Q.eta.strftime("%H:%M")
@@ -182,6 +201,7 @@ def queue_song(song, user, event = True, force = False):
         return Q
 
 
+@nginx_memcache_it("dv-ax-nowplaying")
 def get_now_playing(create_new=False):
     logging.debug("Getting now playing")
     key = "nnowplaying"
@@ -201,6 +221,7 @@ def get_now_playing(create_new=False):
     R = R.replace("((%timeleft%))", str(songtype.timeleft()))
     return R
 
+@nginx_memcache_it("dv-ax-history")
 def get_history(create_new=False):
     key = "nhistory"
     logging.debug("Getting history cache")
@@ -215,6 +236,7 @@ def get_history(create_new=False):
         logging.debug("Cache generated")
     return R
 
+@nginx_memcache_it("dv-ax-oneliner")
 def get_oneliner(create_new=False):
     key = "noneliner"
     logging.debug("Getting oneliner cache")
@@ -240,6 +262,7 @@ def get_roneliner(create_new=False):
         logging.debug("Cache generated")
     return R
 
+@nginx_memcache_it("dv-ax-queue")
 def get_queue(create_new=False):
     key = "nqueue"
     logging.debug("Getting cache for queue")
@@ -297,7 +320,7 @@ def add_oneliner(user, message):
     can_post = user.is_superuser or not user.has_perm('webview.mute_oneliner')
     if message and can_post:
         models.Oneliner.objects.create(user = user, message = message)
-        f = get_oneliner(True)
+        get_oneliner(True)
         models.add_event(event='oneliner')
 
 def get_event_key(key):
