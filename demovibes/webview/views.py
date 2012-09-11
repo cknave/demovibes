@@ -34,7 +34,7 @@ import re
 import random
 # Create your views here.
 
-L = logging.getLogger('webview.views')
+L = logging.getLogger('dv.webview.views')
 
 class WebView(MyBaseView):
     basetemplate = "webview/"

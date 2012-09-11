@@ -4,7 +4,7 @@ import subprocess
 import re, sys
 import logging
 
-L = logging.getLogger('dscan')
+L = logging.getLogger('dv.webview.dscan')
 fsenc = sys.getfilesystemencoding()
 program = getattr(settings, 'DEMOSAUCE_SCAN', False)
 
@@ -24,7 +24,7 @@ class ScanFile(object):
     loopiness = 0
     readable = False
     __replaygain = None
-    
+
     def __init__(self, file):
         #some checks to catch bad configuration/wrong handling
         try:
@@ -34,26 +34,26 @@ class ScanFile(object):
             if not os.path.isfile(program):
                 L.error("ScanFile can't find scan tool at %s. check your config" % program)
                 return
-            if not file: 
+            if not file:
                 L.error("ScanFile got called with no file which indicates a bug in our code")
                 return
             if not os.path.isfile(file):
-                L.error("ScanFile can't find %s. this is likely our fault" % str(file)) 
+                L.error("ScanFile can't find %s. this is likely our fault" % str(file))
                 return
-                
+
             self.file = file.encode(fsenc)
             path = os.path.dirname(program)
             p = subprocess.Popen([program, '--no-replaygain', self.file], stdout = subprocess.PIPE, cwd = path)
             output = p.communicate()[0]
             if p.returncode != 0:
                 L.warn("scan doesn't like %s" % self.file)
-                return 
-            
+                return
+
             bitrate = re.compile(r'bitrate:(\d*\.?\d+)')
             length = re.compile(r'length:(\d*\.?\d+)')
             samplerate = re.compile(r'samplerate:(\d*\.?\d+)')
             loopiness = re.compile(r'loopiness:(\d*\.?\d+)')
-            
+
             self.length = float(length.search(output).group(1))
 
             samplerate_match = samplerate.search(output)
@@ -67,13 +67,13 @@ class ScanFile(object):
             loop_match = loopiness.search(output)
             if loop_match:
                 self.loopiness = float(loop_match.group(1))
-                
+
             self.readable = True
         except:
             import traceback
             trace = traceback.format_exc()
             L.error("Error occurred. Printing traceback.\n%s" % trace)
-        
+
     def replaygain(self):
         if not self.readable:
             return 0
@@ -89,6 +89,6 @@ class ScanFile(object):
                 import traceback
                 trace = traceback.format_exc()
                 L.error("Error occurred. Printing traceback.\n%s" % trace)
-        
+
         return self.__replaygain
-        
+

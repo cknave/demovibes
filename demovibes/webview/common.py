@@ -18,6 +18,8 @@ import datetime
 import j2shim
 import time
 
+logger = logging.getLogger("dv.webview.common")
+
 MIN_QUEUE_SONGS_LIMIT = getattr(settings, "MIN_QUEUE_SONGS_LIMIT", 0)
 QUEUE_TIME_LIMIT = getattr(settings, "QUEUE_TIME_LIMIT", False)
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
@@ -31,7 +33,7 @@ def nginx_memcache_it(key):
             r = func(*args, **kwargs)
             url = reverse(key)
             cachekey = url + "?event=" + get_latest_event()
-            logging.debug("Setting cache for key %s", cachekey)
+            logger.debug("NGINX: Setting cache for key %s", cachekey)
             cache.set(cachekey, r, 30)
             return r
 
@@ -203,7 +205,7 @@ def queue_song(song, user, event = True, force = False):
 
 @nginx_memcache_it("dv-ax-nowplaying")
 def get_now_playing(create_new=False):
-    logging.debug("Getting now playing")
+    logger.debug("Getting now playing")
     key = "nnowplaying"
 
     try:
@@ -217,62 +219,62 @@ def get_now_playing(create_new=False):
         comps = models.Compilation.objects.filter(songs__id = song.id)
         R = j2shim.r2s('webview/t/now_playing_song.html', { 'now_playing' : songtype, 'comps' : comps })
         cache.set(key, R, 300)
-        logging.debug("Now playing generated")
+        logger.debug("Now playing generated")
     R = R.replace("((%timeleft%))", str(songtype.timeleft()))
     return R
 
 @nginx_memcache_it("dv-ax-history")
 def get_history(create_new=False):
     key = "nhistory"
-    logging.debug("Getting history cache")
+    logger.debug("Getting history cache")
     R = cache.get(key)
     if not R or create_new:
         nowplaying = get_now_playing_song()
         limit = nowplaying and (nowplaying.id - 50) or 0
-        logging.info("No existing cache for history, making new one")
+        logger.info("No existing cache for history, making new one")
         history = models.Queue.objects.select_related(depth=3).filter(played=True).filter(id__gt=limit).order_by('-time_played')[1:21]
         R = j2shim.r2s('webview/js/history.html', { 'history' : history })
         cache.set(key, R, 300)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 @nginx_memcache_it("dv-ax-oneliner")
 def get_oneliner(create_new=False):
     key = "noneliner"
-    logging.debug("Getting oneliner cache")
+    logger.debug("Getting oneliner cache")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for oneliner, making new one")
+        logger.info("No existing cache for oneliner, making new one")
         lines = getattr(settings, 'ONELINER', 10)
         oneliner = models.Oneliner.objects.select_related(depth=2).order_by('-id')[:lines]
         R = j2shim.r2s('webview/js/oneliner.html', { 'oneliner' : oneliner })
         cache.set(key, R, 600)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 def get_roneliner(create_new=False):
     key = "rnoneliner"
-    logging.debug("Getting reverse oneliner cache")
+    logger.debug("Getting reverse oneliner cache")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for reverse oneliner, making new one")
+        logger.info("No existing cache for reverse oneliner, making new one")
         oneliner = models.Oneliner.objects.select_related(depth=2).order_by('id')[:15]
         R = j2shim.r2s('webview/js/roneliner.html', { 'oneliner' : oneliner })
         cache.set(key, R, 600)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 @nginx_memcache_it("dv-ax-queue")
 def get_queue(create_new=False):
     key = "nqueue"
-    logging.debug("Getting cache for queue")
+    logger.debug("Getting cache for queue")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for queue, making new one")
+        logger.info("No existing cache for queue, making new one")
         queue = models.Queue.objects.select_related(depth=2).filter(played=False).order_by('id')
         R = j2shim.r2s("webview/js/queue.html", { 'queue' : queue })
         cache.set(key, R, 300)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 def get_profile(user):

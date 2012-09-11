@@ -6,6 +6,8 @@ from PIL import Image
 import dscan
 import logging
 
+log = logging.getLogger("dv.webview.forms")
+
 class UploadForm(forms.ModelForm):
     class Meta:
         model = M.Song
@@ -15,7 +17,7 @@ class UploadForm(forms.ModelForm):
         data = self.cleaned_data['file']
 
         if not hasattr(data, 'temporary_file_path'):
-            logging.error("uploaded file was kept in memory")
+            log.error("uploaded file was kept in memory")
 
         if dscan.is_configured() and hasattr(data, 'temporary_file_path'):
             file = data.temporary_file_path()

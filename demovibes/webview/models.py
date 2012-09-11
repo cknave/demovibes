@@ -49,7 +49,7 @@ class TimeDelta(datetime.timedelta):
             return padding + "%s:" % hours + time1
         return padding + time1
 
-log = logging.getLogger("webview.models")
+log = logging.getLogger("dv.webview.models")
 
 DOWNLOAD_LIMITS = getattr(settings, "SONG_DOWNLOAD_LIMIT", {})
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
@@ -61,9 +61,9 @@ def get_now_playing_song(create_new=False):
             timelimit = datetime.datetime.now() - datetime.timedelta(hours=6)
 
             queueobj = Queue.objects.select_related(depth=3).filter(played=True).filter(time_played__gt = timelimit).order_by('-time_played')[0]
-            logging.debug("Checking now playing song : Time limit is %s", timelimit)
+            log.debug("Checking now playing song : Time limit is %s", timelimit)
         except:
-            logging.info("Could not find now_playing")
+            log.info("Could not find now_playing")
             return False
         cache.set("nowplaysong", queueobj, 300)
     return queueobj
@@ -219,7 +219,7 @@ def add_event(event = None, user = None, eventlist = [], metadata = {}):
             if uwsgi_event_server == "HTTP":
                 data = {'data': pickle.dumps(data)}
                 data = urllib.urlencode(data)
-                logging.debug("Event data via http: %s" % data)
+                log.debug("Event data via http: %s" % data)
                 url = uwsgi_event_server_http or "http://127.0.0.1/demovibes/ajax/monitor/new/"
                 try:
                     r = urllib.urlopen(url, data)
@@ -1166,7 +1166,7 @@ class Song(models.Model):
             self.samplerate = samplerate
             result = True
         except:
-            logging.warning("Missing pyMAD, and scan not configured")
+            log.warning("Missing pyMAD, and scan not configured")
             result = False
         return result
 
@@ -1341,11 +1341,11 @@ class Song(models.Model):
 
         Note: This works on when it was queued, not played.
         """
-        logging.debug("Getting last queued time for song %s" % self.id)
+        log.debug("Getting last queued time for song %s" % self.id)
         key = "songlastplayed_%s" % self.id
         c = cache.get(key)
         if not c:
-            logging.debug("No cache for last queued, finding")
+            log.debug("No cache for last queued, finding")
             Q = Queue.objects.filter(song=self).order_by('-id')[:1]
             if not Q:
                 c = "Never"

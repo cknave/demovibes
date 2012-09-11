@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import time
 import bitly
 from os import popen
-import logging, logging.config
 from django.core.management import setup_environ
 import settings
 setup_environ(settings)
@@ -11,6 +10,8 @@ from webview.models import Queue, Song
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from webview import common
+
+import logging, logging.config
 
 class song_finder(object):
     songweight = {
@@ -30,7 +31,7 @@ class song_finder(object):
         self.timestamp = None
         self.song = None
 
-        self.log = logging.getLogger("pyAdder")
+        self.log = logging.getLogger("dv.queuefetcher")
 
         if not djuser:
             djuser = getattr(settings, 'DJ_USERNAME', "djrandom")
