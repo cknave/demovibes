@@ -20,24 +20,33 @@ import time
 
 logger = logging.getLogger("dv.webview.common")
 
+try:
+    import memcache
+    # Temp test code FIXME
+    mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+except:
+    logger.debug("Could not load memcache module")
+    memcache = None
+
 MIN_QUEUE_SONGS_LIMIT = getattr(settings, "MIN_QUEUE_SONGS_LIMIT", 0)
 QUEUE_TIME_LIMIT = getattr(settings, "QUEUE_TIME_LIMIT", False)
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
 LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
 
-NGINX_MEMCACHE = getattr(settings, 'NGINX', {}).get("memcached")
+NGINX_MEMCACHE = memcache and getattr(settings, 'NGINX', {}).get("memcached")
 
 def nginx_memcache_it(key):
     def func1(func):
         def func2(*args, **kwargs):
             r = func(*args, **kwargs)
             url = reverse(key)
-            cachekey = url + "?event=" + get_latest_event()
+            cachekey = url + "?event=%s" % get_latest_event()
             logger.debug("NGINX: Setting cache for key %s", cachekey)
-            cache.set(cachekey, r, 30)
+            mc.set(cachekey, r.encode("utf8"), 30)
             return r
 
         if not NGINX_MEMCACHE:
+            logger.debug("NGINX: Memcache settings not configured")
             return func
         return func2
     return func1
@@ -79,6 +88,7 @@ def ratelimit(limit=10,length=86400):
             if result:
                 result = int(result)
                 if result == limit:
+                    logger.warning("Rate limited : %s", request.META['REMOTE_ADDR'])
                     return HttpResponseForbidden("Ooops, too many requests!")
                 else:
                     cache.incr(ip_hash)

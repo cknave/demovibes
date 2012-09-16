@@ -132,7 +132,7 @@ SONG_DOWNLOAD_LIMIT = {
         ## Use X-Accel option for secure download - base URL to use
         # "URL" : "",
         # "RATELIMIT": 2048,
-
+        # "DOWNLOADWINDOW": 10*60
         ## IF defined, will alter default file url with re.sub(r1, r2, url)
         # "REGEX": ("", ""),
     },

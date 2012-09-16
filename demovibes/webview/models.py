@@ -68,15 +68,37 @@ def get_now_playing_song(create_new=False):
         cache.set("nowplaysong", queueobj, 300)
     return queueobj
 
-def download_limit_reached(user):
+
+def get_current_download_limit_for(user):
+    """
+    Get current number of downloads left for user
+    """
     limits = get_download_limit(user)
-    if limits:
-        key = "urlgenlimit_%s" % user.id
-        k = cache.get(key, 0)
-        if k > limits.get("number"):
-            return True
+    if not limits:
+        return -1
+
+    key = "urlgenlimit_%s" % user.id
+    k = cache.get(key, 0)
+
+    return max(k+1 - limits.get("number", 0), 0)
+
+def download_limit_reached(user):
+    """
+    Check if a user's download limit is reached
+
+    Return bool
+    """
+    l = get_current_download_limit_for(user)
+    if l == 0:
+        return True
+    return False
 
 def get_download_limit(user):
+    """
+    Get download limits for given user, and time window
+
+    Returns {'seconds': int, 'number': int}
+    """
     r = {}
     L = None
 
@@ -100,6 +122,9 @@ def get_download_limit(user):
     return r
 
 def verify_download_limit(user):
+    """
+    Check if user limit is reached, and increases counter for user by 1
+    """
     limits = get_download_limit(user)
     if limits:
         key = "urlgenlimit_%s" % user.id
@@ -113,6 +138,9 @@ def verify_download_limit(user):
     return True
 
 def cherokee_secure_download (url, user=None):
+    """
+    Generate link for Cherokee secure download
+    """
     cherokee_data = DOWNLOAD_LIMITS.get("CHEROKEE", {})
     if cherokee_data.get("KEY"):
         url = urllib.unquote(url)
@@ -128,6 +156,9 @@ def cherokee_secure_download (url, user=None):
     return url
 
 def get_secure_download_url(url, user=None):
+    """
+    Check if user have reached limit, return secure url or "limit reached" url or text
+    """
     limit_reached = DOWNLOAD_LIMITS.get("LIMIT_REACHED_URL") or "Limit reached"
     if not verify_download_limit(user):
         return None
@@ -1048,6 +1079,9 @@ class Song(models.Model):
             if self.license and self.license.downloadable:
                 return True
         return False
+
+    def get_download_url(self, user):
+        x = get_secure_download_url(self.file.url, user)
 
     def get_file_url(self, user=None):
         return get_secure_download_url(self.file.url, user)

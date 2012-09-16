@@ -131,6 +131,15 @@ class ListSmileys(WebView):
     def set_context(self):
         return {'smileys': settings.SMILEYS}
 
+
+class DownloadSong(SongView):
+    def check_permissions(self):
+        return self.song.downloadable_by(self.request.user) and m.verify_download_limit(self.request.user)
+
+    def GET(self):
+        response = HttpResponse("")
+        response['X-Accel-Redirect'] = self.song.file.url
+
 class PlaySong(SongView):
     template="playsong.html"
 

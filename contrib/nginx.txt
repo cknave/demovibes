@@ -1,0 +1,55 @@
+#Sample config for NGINX
+# Expects uwsgi main to be at port 3031,
+# and uwsgi events at port 3032
+
+server {
+    listen       80;
+    server_name  localhost;
+
+    gzip on;
+    gzip_types       text/plain application/xml text/css application/x-javascript text/javascript application/json;
+    gzip_min_length 100;
+
+    client_max_body_size 20M;
+
+
+    # For NGINX memcache caching support
+    location / {
+        set $memcached_key "$uri?$args";
+        memcached_pass 127.0.0.1:11211;
+        default_type text/html;
+        error_page 404 405 = @fallback;
+    }
+
+    location @fallback {
+        uwsgi_pass   127.0.0.1:3031;
+        include uwsgi_params;
+        expires epoch;
+    }
+
+    location ~ /demovibes/ajax/monitor/(\d+)/ {
+        uwsgi_pass   127.0.0.1:3032;
+        include uwsgi_params;
+        uwsgi_read_timeout 240;
+        expires epoch;
+    }
+
+    location /static {
+        alias /path/to/demovibes/static ;
+        expires 1d;
+        location /static/media/music {
+                internal;
+        }
+
+        location ~* \.(?:ico|gif|jpe?g|png)$ {
+            expires 60d;
+            add_header Pragma public;
+            add_header Cache-Control "public";
+        }
+    }
+
+    location /media {
+        alias /path/to/site-packages/django/contrib/admin/media ;
+        expires 1d;
+    }
+}
