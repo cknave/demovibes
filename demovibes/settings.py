@@ -143,6 +143,7 @@ SONG_DOWNLOAD_LIMIT = {
         #'staff': {'number': 3, 'seconds': 60*60*24},
     },
     "LIMIT_REACHED_URL": "/static/badman.html",
+    "TYPE": None, #"NGINX",
 }
 
 # maximum time a song will be played in seconds

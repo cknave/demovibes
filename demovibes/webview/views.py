@@ -134,11 +134,13 @@ class ListSmileys(WebView):
 
 class DownloadSong(SongView):
     def check_permissions(self):
-        return self.song.downloadable_by(self.request.user) and m.verify_download_limit(self.request.user)
+        return self.song.downloadable_by(self.request.user)
 
     def GET(self):
         response = HttpResponse("")
+        m.protected_downloads.increase_downloads_for(self.request.user)
         response['X-Accel-Redirect'] = self.song.file.url
+        return response
 
 class PlaySong(SongView):
     template="playsong.html"
@@ -147,13 +149,9 @@ class PlaySong(SongView):
         return self.song.downloadable_by(self.request.user)
 
     def set_context(self):
-        limit = None
-        if m.CHEROKEE_SECRET:
-            key = "urlgenlimit_%s" % self.request.user.id
-            number = m.get_cherokee_limit(self.request.user).get("number",0)
-            limit = number - cache.get(key, 0)
+        limit, total = m.protected_downloads.get_current_download_limits_for(self.request.user)
         self.song.log(self.request.user, "Song preview / download")
-        return {'song': self.song, 'limit': limit}
+        return {'song': self.song, 'limit': limit, 'total': total}
 
 class AddCompilation(WebView):
     template = "add_compilation.html"

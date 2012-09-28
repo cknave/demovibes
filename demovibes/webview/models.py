@@ -27,6 +27,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import cStringIO
 from PIL import Image
 
+import protected_downloads
+
 import tagging
 import time, hashlib
 
@@ -51,7 +53,6 @@ class TimeDelta(datetime.timedelta):
 
 log = logging.getLogger("dv.webview.models")
 
-DOWNLOAD_LIMITS = getattr(settings, "SONG_DOWNLOAD_LIMIT", {})
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
 
 def get_now_playing_song(create_new=False):
@@ -67,104 +68,6 @@ def get_now_playing_song(create_new=False):
             return False
         cache.set("nowplaysong", queueobj, 300)
     return queueobj
-
-
-def get_current_download_limit_for(user):
-    """
-    Get current number of downloads left for user
-    """
-    limits = get_download_limit(user)
-    if not limits:
-        return -1
-
-    key = "urlgenlimit_%s" % user.id
-    k = cache.get(key, 0)
-
-    return max(k+1 - limits.get("number", 0), 0)
-
-def download_limit_reached(user):
-    """
-    Check if a user's download limit is reached
-
-    Return bool
-    """
-    l = get_current_download_limit_for(user)
-    if l == 0:
-        return True
-    return False
-
-def get_download_limit(user):
-    """
-    Get download limits for given user, and time window
-
-    Returns {'seconds': int, 'number': int}
-    """
-    r = {}
-    L = None
-
-    limit = DOWNLOAD_LIMITS.get("LIMITS", {})
-
-    if limit and user and user.is_authenticated():
-        L = limit.get("default")
-
-        if user.is_superuser and limit.get("admin"):
-            L = limit.get("admin")
-        elif user.is_staff and limit.get("staff"):
-            L = limit.get("staff")
-        for group in user.groups.all():
-            gn = limit.get(group.name)
-            if gn:
-                if gn.get("seconds") >= L.get("seconds") and gn.get("number") >= L.get("number"):
-                    L = gn
-    if L:
-        r['seconds'] = L.get("seconds", 60*60*24)
-        r['number'] = L.get("number", 0)
-    return r
-
-def verify_download_limit(user):
-    """
-    Check if user limit is reached, and increases counter for user by 1
-    """
-    limits = get_download_limit(user)
-    if limits:
-        key = "urlgenlimit_%s" % user.id
-        try:
-            k = cache.incr(key)
-        except:
-            k = 1
-            cache.set(key, k, limits.get("seconds"))
-        if k > limits.get("number"):
-            return None
-    return True
-
-def cherokee_secure_download (url, user=None):
-    """
-    Generate link for Cherokee secure download
-    """
-    cherokee_data = DOWNLOAD_LIMITS.get("CHEROKEE", {})
-    if cherokee_data.get("KEY"):
-        url = urllib.unquote(url)
-        t = '%08x' % (time.time())
-        if cherokee_data.get("REGEX"):
-            try:
-                url = str(url)
-            except:
-                url = url.encode("utf8")
-            url = re.sub(*cherokee_data.get("REGEX") + (url,))
-        mu = cherokee_data.get("PATH") + "/%s/%s/%s" % (hashlib.md5(cherokee_data.get("KEY") + "/" + url + t).hexdigest(), t, url)
-        return mu.decode("utf8")
-    return url
-
-def get_secure_download_url(url, user=None):
-    """
-    Check if user have reached limit, return secure url or "limit reached" url or text
-    """
-    limit_reached = DOWNLOAD_LIMITS.get("LIMIT_REACHED_URL") or "Limit reached"
-    if not verify_download_limit(user):
-        return None
-    if DOWNLOAD_LIMITS.get("CHEROKEE"):
-        r = cherokee_secure_download(url, user)
-    return r or limit_reached
 
 if getattr(settings, "LOOKUP_COUNTRY", True):
     from demovibes.ip2cc import ip2cc
@@ -1073,7 +976,7 @@ class Song(models.Model):
         return False
 
     def downloadable_by(self, user):
-        if user.is_authenticated() and not download_limit_reached(user):
+        if user.is_authenticated() and not protected_downloads.download_limit_reached(user):
             if user.is_staff:
                 return True
             if self.license and self.license.downloadable:
@@ -1081,10 +984,9 @@ class Song(models.Model):
         return False
 
     def get_download_url(self, user):
-        x = get_secure_download_url(self.file.url, user)
-
-    def get_file_url(self, user=None):
-        return get_secure_download_url(self.file.url, user)
+        if self.downloadable_by(user):
+           return protected_downloads.get_song_url(self, user)
+        return False
 
     def has_video(self):
         return self.get_metadata().ytvidid
@@ -1122,6 +1024,10 @@ class Song(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("dv-song", [str(self.id)])
+
+    @models.permalink
+    def get_nginx_url(self):
+        return ("dv-dl-song", [str(self.id)])
 
     def get_playoptions(self):
         """
@@ -2003,7 +1909,6 @@ class SongLicense(models.Model):
 
     def __unicode__(self):
         return self.name
-
 
 def create_profile(sender, **kwargs):
     """
