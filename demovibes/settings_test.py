@@ -7,7 +7,7 @@ UWSGI_EVENT_SERVER = None
 
 DISABLE_AJAX = True
 
-MEDIA_URL = 'http://demovibes:81/static/'
+MEDIA_URL = 'http://demovibes:80/static/'
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 

@@ -1,6 +1,40 @@
+"""
+Module for protected download links for songs
+Handles nginx and cherokee systems
+"""
 from django.conf import settings
 
+
+## Old data structure ##
+#
+#CHEROKEE_SECRET_DOWNLOAD_KEY="quack"
+#CHEROKEE_SECRET_DOWNLOAD_PATH="/musicdownload"
+#CHEROKEE_SECRET_DOWNLOAD_REGEX=(r'/static/media/music/', r'')
+#CHEROKEE_SECRET_DOWNLOAD_LIMIT={'number': 50, 'seconds': 60*60*24}
+
+#CHEROKEE_SECRET_DOWNLOAD_LIMIT={
+    #'admin': {'number': 100, 'seconds': 60*60*24},
+    #'default': {'number': 3, 'seconds': 60*60*24},
+    #'staff': {'number': 50, 'seconds': 60*60*24},
+#}
+
 DOWNLOAD_LIMITS = getattr(settings, "SONG_DOWNLOAD_LIMIT", {})
+
+if not DOWNLOAD_LIMITS:
+    DOWNLOAD_LIMITS = read_old_configuration()
+
+def read_old_configuration():
+    r = {}
+    c = {}
+    c["KEY"] = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_KEY", "")
+    c["PATH"] = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_PATH", None)
+    c["REGEX"] = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
+    r["LIMITS"] = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", {})
+    r["CHEROKEE"] = c
+    if c["KEY"]:
+        r["TYPE"] = "CHEROKEE"
+    return r
+
 
 def get_song_url(song, user):
     dltype = DOWNLOAD_LIMITS.get("TYPE")
@@ -106,3 +140,4 @@ def get_secure_download_url(url, user=None):
     if DOWNLOAD_LIMITS.get("CHEROKEE"):
         r = cherokee_secure_download(url, user)
     return r or limit_reached
+
