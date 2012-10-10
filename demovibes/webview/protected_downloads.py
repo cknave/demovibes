@@ -3,7 +3,7 @@ Module for protected download links for songs
 Handles nginx and cherokee systems
 """
 from django.conf import settings
-
+from django.core.cache import cache
 
 ## Old data structure ##
 #
