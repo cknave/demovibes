@@ -18,7 +18,7 @@ server {
         set $memcached_key "$uri?$args";
         memcached_pass 127.0.0.1:11211;
         default_type text/html;
-        error_page 404 405 = @fallback;
+        error_page 404 405 502 = @fallback;
     }
 
     location @fallback {
@@ -27,7 +27,7 @@ server {
         expires epoch;
     }
 
-    location ~ /demovibes/ajax/monitor/(\d+)/ {
+    location ~ /demovibes/ajax/monitor/(\d+|new)/ {
         uwsgi_pass   127.0.0.1:3032;
         include uwsgi_params;
         uwsgi_read_timeout 240;

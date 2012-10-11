@@ -13,7 +13,7 @@ LOGGING = {
             'level': "DEBUG",
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'demovibes.log',
-            'maxBytes': 5 * 1024 ** 3,
+            'maxBytes': 5 * 1024 ** 2,
             'backupCount': 4,
             'encoding': "utf8",
             'formatter': 'verbose'
@@ -36,7 +36,7 @@ LOGGING = {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
-            'propagate': False,
+            'propagate': True,
         },
         'dv': {
             'handlers': ["file"],
