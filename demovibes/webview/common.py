@@ -220,7 +220,7 @@ def queue_song(song, user, event = True, force = False):
         models.add_event(eventlist=EVS, metadata = event_metadata)
         return Q
 
-@nginx_memcache_it("dv-ax-nowplaying")
+#@nginx_memcache_it("dv-ax-nowplaying")
 def get_now_playing(create_new=False):
     logger.debug("Getting now playing")
     key = "nnowplaying"
