@@ -32,6 +32,7 @@ import j2shim
 import hashlib
 import re
 import random
+import urllib2
 # Create your views here.
 
 L = logging.getLogger('dv.webview.views')
@@ -137,9 +138,12 @@ class DownloadSong(SongView):
         return self.song.downloadable_by(self.request.user)
 
     def GET(self):
-        response = HttpResponse("")
+        response = HttpResponse()
         m.protected_downloads.increase_downloads_for(self.request.user)
-        response['X-Accel-Redirect'] = self.song.file.url
+        response['Content-Type'] = ''
+        theurl = urllib2.unquote(self.song.file.url).encode("utf8")
+        L.debug("Download for song %s - url is %s", self.song, theurl)
+        response['X-Accel-Redirect'] = theurl
         return response
 
 class PlaySong(SongView):
