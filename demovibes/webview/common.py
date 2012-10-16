@@ -40,13 +40,21 @@ def nginx_memcache_it(key):
         def func2(*args, **kwargs):
             r = func(*args, **kwargs)
             url = reverse(key)
-            cachekey = url + "?event=%s" % get_latest_event()
-            logger.debug("NGINX: Setting cache for key %s", cachekey)
-            mc.set(cachekey, r.encode("utf8"), 30)
+            latest_event = get_latest_event()
+
+            logger.debug("NGINX: Latest event is %s", latest_event)
+
+            #Clients often connect with older id's, for various reasons
+            #This should make it far more likely that they get current data
+            #and hit the cache in the first place
+            for x in range(latest_event - 6, latest_event + 1, 1):
+                cachekey = url + "?event=%s" % x
+                logger.debug("NGINX: Setting cache for key %s", cachekey)
+                mc.set(cachekey, r.encode("utf8"), 30)
             return r
 
         if not NGINX_MEMCACHE:
-            logger.debug("NGINX: Memcache settings not configured")
+            logger.info("NGINX: Memcache settings not configured")
             return func
         return func2
     return func1
@@ -212,7 +220,6 @@ def queue_song(song, user, event = True, force = False):
         models.add_event(eventlist=EVS, metadata = event_metadata)
         return Q
 
-#Seems to not work properly for some reason
 #@nginx_memcache_it("dv-ax-nowplaying")
 def get_now_playing(create_new=False):
     logger.debug("Getting now playing")
