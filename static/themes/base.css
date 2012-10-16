@@ -371,3 +371,21 @@ padding: 2px;
 .smileys-clicker {
     cursor: pointer;
 }
+
+span.silly1 {
+    display:inline-block;
+    transform: rotate(-180deg);
+    -webkit-transform: rotate(-180deg);
+    -moz-transform: rotate(-180deg);
+    -o-transform: rotate(-180deg);
+    -ms-transform: rotate(-180deg);
+}
+
+span.silly2 {
+   display: inline-block;
+   transform: rotateY(180deg);
+   -webkit-transform: rotateY(180deg);
+   -moz-transform: rotateY(180deg);
+   -o-transform: rotateY(180deg);
+   -ms-transform: rotateY(180deg);
+}

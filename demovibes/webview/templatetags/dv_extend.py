@@ -1377,6 +1377,14 @@ bbdata_oneliner = [
         (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
         (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
 
+
+        #Rather silly stuff, really
+        (r'\[silly1\](.+?)\[/silly1\]', r'<span class="silly1">\1</span>'),
+        (r'\[silly2\](.+?)\[/silly2\]', r'<span class="silly2">\1</span>'),
+        (r'\[silly3\](.+?)\[/silly3\]', r'<span class="silly3">\1</span>'),
+        (r'\[silly4\](.+?)\[/silly4\]', r'<span class="silly4">\1</span>'),
+        (r'\[silly5\](.+?)\[/silly5\]', r'<span class="silly5">\1</span>'),
+
         # Standard colour tags for use in the oneliner. Most basic colours are pre-made
         # For ease of use. Feel free to add new colours.
         (r'\[red\](.+?)\[/red\]', r'<span style="color: red">\1</span>'),
