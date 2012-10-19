@@ -35,7 +35,7 @@ LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
 
 NGINX_MEMCACHE = memcache and getattr(settings, 'NGINX', {}).get("memcached")
 
-def nginx_memcache_it(key):
+def nginx_memcache_it(key, use_eventkey = True):
     def func1(func):
         def func2(*args, **kwargs):
             r = func(*args, **kwargs)
@@ -44,13 +44,16 @@ def nginx_memcache_it(key):
 
             logger.debug("NGINX: Latest event is %s", latest_event)
 
-            #Clients often connect with older id's, for various reasons
-            #This should make it far more likely that they get current data
-            #and hit the cache in the first place
-            for x in range(latest_event - 6, latest_event + 1, 1):
-                cachekey = url + "?event=%s" % x
-                logger.debug("NGINX: Setting cache for key %s", cachekey)
-                mc.set(cachekey, r.encode("utf8"), 30)
+            if use_eventkey:
+                # Clients often connect with older id's, for various reasons
+                # This should make it far more likely that they get current data
+                # and actually hit the cache in the first place
+                for x in range(latest_event - 6, latest_event + 1, 1):
+                    cachekey = url + "?event=%s" % x
+                    logger.debug("NGINX: Setting cache for key %s", cachekey)
+                    mc.set(cachekey, r.encode("utf8"), 30)
+            else:
+                mc.set(url, r.encode("utf8"), 30)
             return r
 
         if not NGINX_MEMCACHE:
@@ -340,6 +343,7 @@ def add_oneliner(user, message):
     if message and can_post:
         models.Oneliner.objects.create(user = user, message = message)
         get_oneliner(True)
+        mc.delete(reverse("xml-oneliner"))
         models.add_event(event='oneliner')
 
 def get_event_key(key):
