@@ -66,7 +66,8 @@ function ajaxmonitorupdate(req) {
         }
         ajaxmonitorrequest=false;
         applyHooks()
-        setTimeout('ajaxmonitorspawn()',100); // we get a nice return ask again right away
+        var randInt = Math.floor((Math.random()*1000));
+        setTimeout('ajaxmonitorspawn()',100 + randInt); // we get a nice return ask again right away
 }
 
 function updateVotes(data) {

@@ -2,6 +2,7 @@ import uwsgi
 import bottle
 #from bottle import route, default_app, request, post, get
 import pickle
+import random
 
 import threading
 LOCK = threading.Lock()
@@ -51,7 +52,7 @@ def handler(id):
             userid = None
     id = int(id)
     if not event or event[1] <= id:
-        uwsgi.green_pause(60)
+        uwsgi.green_pause(50 + random.randint(0,20) ) #Try to stop all from being "done" and re-request at the same time
     myevent = event
     eventid = myevent[1]
     levent = [x[1] for x in myevent[0] if x[0] > id and (x[2] == "N" or (userid and x[2] == int(userid)))]
