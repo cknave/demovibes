@@ -21,7 +21,7 @@ except:
 
 bottle.debug(debug)
 
-event = None
+event = []
 
 @bottle.post('/demovibes/ajax/monitor/new/')
 def http_event_receiver():
