@@ -1,17 +1,60 @@
 var ajaxurl="/demovibes/ajax/";
 var ajaxeventid=0; // updated later
-var debug;
 var ajaxmonitorrequest=false;
+var userIdleTime = 0;
+var updateThrottled = true;
+var updateTimer;
+var randBoost = 1000;
+var successDelay = defaultSuccessDelay = 100;
+var throttledSuccessDelay = 240000;
+var userIdleLimit = 600;
+
+$(window).bind("mousemove click mouseup keydown keypress keyup scroll resize", function () {
+    userIdleTime = 0;
+    if (updateThrottled) {
+        updateThrottled = false;
+        successDelay = defaultSuccessDelay;
+        if (!ajaxmonitorrequest) {
+            if (updateTimer) {
+                clearTimeout(updateTimer);
+            }
+            updateTimer = setTimeout('ajaxmonitorspawn()',1);
+        }
+        updateStatus(false);
+    }
+});
+
+function idleTicker () {
+    userIdleTime += 1;
+    if (userIdleTime > userIdleLimit && !updateThrottled) {
+        updateThrottled = true;
+        successDelay = throttledSuccessDelay;
+        updateStatus(false);
+    }
+}
 
 function apf(url, form) {
     $.post(url, $(form).serialize());
     return false;
 }
 
+function updateStatus(error) {
+    $("#menuoneliner").removeClass("updatesIdle updatesActive updatesError");
+    if (error) {
+        $("#menuoneliner").addClass("updatesError");
+    } else {
+        if (updateThrottled) {
+            $("#menuoneliner").addClass("updatesIdle");
+        } else {
+            $("#menuoneliner").addClass("updatesActive");
+        }
+    }
+}
+
 function ajaxmonitorspawn() {
     // resceive monitor events for objects on the page
+    updateStatus(false);
     var url=ajaxurl+'ping/'+ajaxeventid+'/';
-    debug=url;
     // alert('Monitor for '+url);
     // old version: http://code.google.com/p/demovibes/issues/detail?id=47
     // ajaxmonitorrequest=$.get(url,ajaxmonitorupdate);
@@ -25,7 +68,9 @@ function ajaxmonitorspawn() {
         },
         error: function(xhr, textStatus, errorThrown){
             //newMessage("[Updater] Problem with server connection. Retrying in 15 seconds", 15);
-            setTimeout('ajaxmonitorspawn()',15000); // wait a bit on fail
+            updateStatus(true);
+            ajaxmonitorrequest=false;
+            updateTimer = setTimeout('ajaxmonitorspawn()',15000); // wait a bit on fail
         }
      });
 }
@@ -65,9 +110,10 @@ function ajaxmonitorupdate(req) {
             }
         }
         ajaxmonitorrequest=false;
-        applyHooks()
-        var randInt = Math.floor((Math.random()*1000));
-        setTimeout('ajaxmonitorspawn()',100 + randInt); // we get a nice return ask again right away
+        applyHooks();
+        var randInt = Math.floor((Math.random()*randBoost));
+        updateStatus(false);
+        updateTimer = setTimeout('ajaxmonitorspawn()', successDelay + randInt); // we get a nice return ask again right away
 }
 
 function updateVotes(data) {
@@ -113,5 +159,6 @@ $(window).load( function () {
             smileys_holder.remove();
         });
     });
+    setInterval('idleTicker()',1000);
     $("#makeitso").after(mydiv);
 });
