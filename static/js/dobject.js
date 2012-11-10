@@ -2,7 +2,7 @@ var ajaxurl="/demovibes/ajax/";
 var ajaxeventid=0; // updated later
 var ajaxmonitorrequest=false;
 var userIdleTime = 0;
-var updateThrottled = true;
+var updateThrottled = false;
 var updateTimer;
 var randBoost = 1000;
 var successDelay = defaultSuccessDelay = 100;
@@ -14,12 +14,7 @@ $(window).bind("mousemove click mouseup keydown keypress keyup scroll resize", f
     if (updateThrottled) {
         updateThrottled = false;
         successDelay = defaultSuccessDelay;
-        if (!ajaxmonitorrequest) {
-            if (updateTimer) {
-                clearTimeout(updateTimer);
-            }
-            updateTimer = setTimeout('ajaxmonitorspawn()',1);
-        }
+        startAjax(1);
         updateStatus(false);
     }
 });
@@ -70,7 +65,7 @@ function ajaxmonitorspawn() {
             //newMessage("[Updater] Problem with server connection. Retrying in 15 seconds", 15);
             updateStatus(true);
             ajaxmonitorrequest=false;
-            updateTimer = setTimeout('ajaxmonitorspawn()',15000); // wait a bit on fail
+            startAjax(15000);
         }
      });
 }
@@ -82,8 +77,17 @@ function ajaxmonitorabort() {
 
 function ajaxmonitor(eventid) {
     ajaxeventid=eventid;
-    setTimeout('ajaxmonitorspawn()',1);
+    startAjax(1);
     setInterval('counter()',1000);
+}
+
+function startAjax(time) {
+    if (!ajaxmonitorrequest) {
+        if (updateTimer) {
+            clearTimeout(updateTimer);
+        }
+        updateTimer = setTimeout('ajaxmonitorspawn()',time);
+    }
 }
 
 function ajaxmonitorupdate(req) {
@@ -113,7 +117,7 @@ function ajaxmonitorupdate(req) {
         applyHooks();
         var randInt = Math.floor((Math.random()*randBoost));
         updateStatus(false);
-        updateTimer = setTimeout('ajaxmonitorspawn()', successDelay + randInt); // we get a nice return ask again right away
+        startAjax(successDelay + randInt); // we get a nice return ask again right away
 }
 
 function updateVotes(data) {
