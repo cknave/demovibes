@@ -14,31 +14,36 @@ from openid.extensions import sreg
 from models import *
 from openid.server.server import Server
 
+import logging
+
+L = logging.getLogger("openid.views")
+
 def get_base_uri(req):
 
     url = getattr(settings, 'OPENID_BASE_URI', False)
-    if url:
-        return url
+    if not url:
 
-    name = req.META['HTTP_HOST']
-    try: name = name[:name.index(':')]
-    except: pass
+        name = req.META['HTTP_HOST']
+        try: name = name[:name.index(':')]
+        except: pass
 
-    try: port = int(req.META['SERVER_PORT'])
-    except: port = 80
+        try: port = int(req.META['SERVER_PORT'])
+        except: port = 80
 
-    proto = req.META['SERVER_PROTOCOL']
-    if 'HTTPS' in proto:
-        proto = 'https'
-    else:
-        proto = 'http'
+        proto = req.META['SERVER_PROTOCOL']
+        if 'HTTPS' in proto:
+            proto = 'https'
+        else:
+            proto = 'http'
 
-    if port in [80, 443] or not port:
-        port = ''
-    else:
-        port = ':%s' % port
+        if port in [80, 443] or not port:
+            port = ''
+        else:
+            port = ':%s' % port
 
-    return '%s://%s%s' % (proto, name, port)
+        url =  '%s://%s%s' % (proto, name, port)
+    L.debug("base openid url : %s", url)
+    return url
 
 def django_response(webresponse):
     "Convert a webresponse from the OpenID library in to a Django HttpResponse"
@@ -75,6 +80,7 @@ def openid_server(req):
     try:
         orequest = server.decodeRequest(querydict)
     except:
+        L.exception("Request decode failed")
         orequest = None
     if not orequest:
         orequest = req.session.get('OPENID_REQUEST', None)
