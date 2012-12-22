@@ -8,6 +8,9 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.template import Context
 
+import logging
+L = logging.getLogger("dv.webview.extend")
+
 from forum.models import Forum, Thread, Post
 import os.path, random
 
@@ -880,6 +883,14 @@ def get_flag_path(flag):
     DEFAULT_FLAG = getattr(settings, "DEFAULT_FLAG", "nectaflag")
     return u"<img src='%sflags/%s.png' class='countryflag' title='flag' />" % (STATIC, DEFAULT_FLAG)
 
+def bb_theme(hit):
+    try:
+        t = Theme.objects.get(id=int(hit))
+        return u"<a href='%s'>%s</a>" % (t.get_absolute_url(), t.title)
+    except:
+        L.exception("Theme select failed")
+        return u"[]"
+
 def bb_flag(hit):
     """
     Allow forum post to return a flag code. Uses standard 2-digit flag code
@@ -1353,37 +1364,17 @@ def dv_urlize(text):
     # Return the results of the conversion
     return link
 
-bbdata_oneliner = [
-        (r'\[url\]((http|https|ftp|/):.+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
+
+bbdata_shared = [
+        (r'\[url\]((http|https|ftp|/).+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
         (r'\[url=((http|https|ftp|/).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
         (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
         (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
-
-        # img test is a little modified for oneliner. Using a baseheight of 20
-        # Pixels, we scale the image proportionally. The outcome of the tag is a
-        # Clickable thiumbnail, which opens in a new tab.
-
-        # This can be abused too much right now, commenting out
-        #(r'\[img\](.+?)\[/img\]', r'<a href="\1" target="_blank"><img src="\1" height="20" alt="" \></a>'),
-        #(r'\[img=(.+?)\](.+?)\[/img\]', r'<a href="\1" target="_blank"><b>\2</b> <img src="\1" alt="" height="20" \></a>'),
-
-        # Standard text display tags for bold, underline etc.
+                # Standard text display tags for bold, underline etc.
         (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
         (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),
         (r'\[u\](.+?)\[/u\]', r'<u>\1</u>'),
         (r'\[s\](.+?)\[/s\]', r'<s>\1</s>'),
-
-        # Big and Small might be taken out of oneliner, we'll see how they are used.
-        (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
-        (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
-
-
-        #Rather silly stuff, really
-        (r'\[silly1\](.+?)\[/silly1\]', r'<span class="silly1">\1</span>'),
-        (r'\[silly2\](.+?)\[/silly2\]', r'<span class="silly2">\1</span>'),
-        (r'\[silly3\](.+?)\[/silly3\]', r'<span class="silly3">\1</span>'),
-        (r'\[silly4\](.+?)\[/silly4\]', r'<span class="silly4">\1</span>'),
-        (r'\[silly5\](.+?)\[/silly5\]', r'<span class="silly5">\1</span>'),
 
         # Standard colour tags for use in the oneliner. Most basic colours are pre-made
         # For ease of use. Feel free to add new colours.
@@ -1407,45 +1398,54 @@ bbdata_oneliner = [
         # Colour code in the form of #00FF00 to be used. Handy for text effects.
         (r'\[color=#([0-9A-Fa-f]{6})\](.+?)\[/color\]', r'<span style="color:"\1;">\2</span>'),
 
+        # Demovibes specific BB tags
+        (r'\[user\](.+?)\[/user\]', bb_user), #1
+        (r'\[song\](\d+?)\[/song\]', bb_song), #1
+        (r'\[artist\](\d+?)\[/artist\]', bb_artist), #1
+        (r'\[artist\](.+?)\[/artist\]', bb_artistname), #1
+        (r'\[flag\](.+?)\[/flag\]', bb_flag),
+        (r'\[thread\](\d+?)\[/thread\]', bb_thread), #1
+        (r'\[forum\](.+?)\[/forum\]', bb_forum), #1
+        (r'\[group\](\d+?)\[/group\]', bb_group), #1
+        (r'\[group\](.+?)\[/group\]', bb_groupname), #1
+        (r'\[album\](\d+?)\[/album\]', bb_compilation), #1
+        (r'\[compilation\](\d+?)\[/compilation\]', bb_compilation), #1
+        (r'\[album\](.+?)\[/album\]', bb_compilation_name), #1
+        (r'\[compilation\](.+?)\[/compilation\]', bb_compilation_name),#1
+        (r'\[label\](\d+?)\[/label\]', bb_label), #1
+        (r'\[label\](.+?)\[/label\]', bb_labelname), #1
+        (r'\[platform\](\d+?)\[/platform\]', bb_platform), #1
+        (r'\[platform\](.+?)\[/platform\]', bb_platformname), #1
+        (r'\[faq\](\d+?)\[/faq\]', bb_faq), #1
+        (r'\[theme\](\d+?)\[/theme\]', bb_theme), #1
+]
+
+bbdata_oneliner = bbdata_shared + [
+        # Big and Small might be taken out of oneliner, we'll see how they are used.
+        (r'\[big\](.+?)\[/big\]', r'<big>\1</big>'),
+        (r'\[small\](.+?)\[/small\]', r'<small>\1</small>'),
+
+
+        #Rather silly stuff, really
+        (r'\[silly1\](.+?)\[/silly1\]', r'<span class="silly1">\1</span>'),
+        (r'\[silly2\](.+?)\[/silly2\]', r'<span class="silly2">\1</span>'),
+        (r'\[silly3\](.+?)\[/silly3\]', r'<span class="silly3">\1</span>'),
+        (r'\[silly4\](.+?)\[/silly4\]', r'<span class="silly4">\1</span>'),
+        (r'\[silly5\](.+?)\[/silly5\]', r'<span class="silly5">\1</span>'),
+
         # Video Linking Tags
         (r'\[yt\](.+?)\[/yt\]', bb_youtube_ol),
         (r'\[yt=(.+?)\](.+?)\[/yt\]', bb_youtube_name_ol),
         (r'\[gv\](.+?)\[/gv\]', bb_googlevideo_ol),
 
-        # Demovibes specific tags
-        (r'\[user\](.+?)\[/user\]', bb_user),
-        (r'\[song\](\d+?)\[/song\]', bb_song),
-        (r'\[artist\](\d+?)\[/artist\]', bb_artist),
-        (r'\[artist\](.+?)\[/artist\]', bb_artistname),
-        #(r'\[queue\](\d+?)\[/queue\]', bb_queue), # Looks annoying in OneLiner
-        (r'\[flag\](.+?)\[/flag\]', bb_flag),
-        (r'\[thread\](\d+?)\[/thread\]', bb_thread),
-        (r'\[forum\](.+?)\[/forum\]', bb_forum),
-        (r'\[group\](\d+?)\[/group\]', bb_group),
-        (r'\[group\](.+?)\[/group\]', bb_groupname),
-        (r'\[album\](\d+?)\[/album\]', bb_compilation),
-        (r'\[compilation\](\d+?)\[/compilation\]', bb_compilation),
-        (r'\[album\](.+?)\[/album\]', bb_compilation_name),
-        (r'\[compilation\](.+?)\[/compilation\]', bb_compilation_name),
-        (r'\[label\](\d+?)\[/label\]', bb_label),
-        (r'\[label\](.+?)\[/label\]', bb_labelname),
-        (r'\[platform\](\d+?)\[/platform\]', bb_platform),
-        (r'\[platform\](.+?)\[/platform\]', bb_platformname),
-    (r'\[faq\](\d+?)\[/faq\]', bb_faq),
       ]
 
-bbdata_full = [
-        (r'\[url\]((http|https|ftp|/).+?)\[/url\]', r'<a href="\1" target="_blank">\1</a>'),
-        (r'\[url=((http|https|ftp|/).+?)\](.+?)\[/url\]', r'<a href="\1" target="_blank">\3</a>'),
-        (r'\[email\](.+?)\[/email\]', r'<a href="mailto:\1">\1</a>'),
-        (r'\[email=(.+?)\](.+?)\[/email\]', r'<a href="mailto:\1">\2</a>'),
+bbdata_full = bbdata_shared + [
+
         (r'\[img\](.+?\.(jpg|jpeg|png|gif|bmp))\[/img\]', r'<img src="\1" alt="" />'),
         (r'\[img=(.+?\.(jpg|jpeg|png|gif|bmp))\](.+?)\[/img\]', r'<a href="\1" target="_blank"><b>\3</b><br /><img src="\1" alt="" /></a>'),
 
-        (r'\[b\](.+?)\[/b\]', r'<strong>\1</strong>'),
-        (r'\[i\](.+?)\[/i\]', r'<i>\1</i>'),
-        (r'\[u\](.+?)\[/u\]', r'<u>\1</u>'),
-        (r'\[s\](.+?)\[/s\]', r'<s>\1</s>'),
+
         (r'\[quote=(.+?)\](.+?)\[/quote\]', r'<div class="bbquote"><b>\1 said:</b> "\2"</div>'),
         (r'\[quote\](.+?)\[/quote\]', r'<div class="bbquote"><b>Quote:</b> "\1"</div>'),
         (r'\[center\](.+?)\[/center\]', r'<div>\1</div>'),
@@ -1455,48 +1455,12 @@ bbdata_full = [
         (r'\[size=(\d+)\](.+?)\[/size\]', bb_size),
         (r'\[pre\](.+?)\[/pre\]', r'<pre class="bbpre">\1</pre>'),
 
-        (r'\[red\](.+?)\[/red\]', r'<span style="color: red">\1</span>'),
-        (r'\[green\](.+?)\[/green\]', r'<span style="color: green">\1</span>'),
-        (r'\[blue\](.+?)\[/blue\]', r'<span style="color: blue">\1</span>'),
-        (r'\[black\](.+?)\[/black\]', r'<span style="color: black">\1</span>'),
-        (r'\[brown\](.+?)\[/brown\]', r'<span style="color: brown">\1</span>'),
-        (r'\[cyan\](.+?)\[/cyan\]', r'<span style="color: cyan">\1</span>'),
-        (r'\[darkblue\](.+?)\[/darkblue\]', r'<span style="color: darkblue">\1</span>'),
-        (r'\[gold\](.+?)\[/gold\]', r'<span style="color: gold">\1</span>'),
-        (r'\[grey\](.+?)\[/grey\]', r'<span style="color: gray">\1</span>'),
-        (r'\[magenta\](.+?)\[/magenta\]', r'<span style="color: magenta">\1</span>'),
-        (r'\[orange\](.+?)\[/orange\]', r'<span style="color: orange">\1</span>'),
-        (r'\[pink\](.+?)\[/pink\]', r'<span style="color: pink">\1</span>'),
-        (r'\[purple\](.+?)\[/purple\]', r'<span style="color: purple">\1</span>'),
-        (r'\[white\](.+?)\[/white\]', r'<span style="color: white">\1</span>'),
-        (r'\[yellow\](.+?)\[/yellow\]', r'<span style="color: yellow">\1</span>'),
-        (r'\[color=#(.+?)\](.+?)\[/color\]', r'<span style="color: #\1">\2</span>'),
-
         (r'\[table\](.+?)\[/table\]', r'<table class="bbtable">\1</table>'),
         (r'\[th\](.+?)\[/th\]', r'<th>\1</th>'),
         (r'\[td\](.+?)\[/td\]', r'<td>\1</td>'),
         (r'\[tr\](.+?)\[/tr\]', r'<tr>\1</tr>'),
 
-        # Demovibes specific BB tags
-        (r'\[user\](.+?)\[/user\]', bb_user),
-        (r'\[song\](\d+?)\[/song\]', bb_song),
-        (r'\[artist\](\d+?)\[/artist\]', bb_artist),
-        (r'\[artist\](.+?)\[/artist\]', bb_artistname),
         (r'\[queue\](\d+?)\[/queue\]', bb_queue),
-        (r'\[flag\](.+?)\[/flag\]', bb_flag),
-        (r'\[thread\](\d+?)\[/thread\]', bb_thread),
-        (r'\[forum\](.+?)\[/forum\]', bb_forum),
-        (r'\[group\](\d+?)\[/group\]', bb_group),
-        (r'\[group\](.+?)\[/group\]', bb_groupname),
-        (r'\[album\](\d+?)\[/album\]', bb_compilation),
-        (r'\[compilation\](\d+?)\[/compilation\]', bb_compilation),
-        (r'\[album\](.+?)\[/album\]', bb_compilation_name),
-        (r'\[compilation\](.+?)\[/compilation\]', bb_compilation_name),
-        (r'\[label\](\d+?)\[/label\]', bb_label),
-        (r'\[label\](.+?)\[/label\]', bb_labelname),
-        (r'\[platform\](\d+?)\[/platform\]', bb_platform),
-        (r'\[platform\](.+?)\[/platform\]', bb_platformname),
-    (r'\[faq\](\d+?)\[/faq\]', bb_faq),
 
         # Experimental BBCode tags
         (r'\[youtube\](.+?)\[/youtube\]', bb_youtube),

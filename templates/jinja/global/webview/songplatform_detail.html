@@ -1,4 +1,4 @@
-{% extends "base/base.html" %}
+{% extends "base/base.html" %} {% import "macro/display.html" as display -%}
 
 {% block title %}{{ gettext("Platform") }} {{ object.title }}{% endblock %}
 
@@ -7,6 +7,7 @@
 {% if object.image %}<img src="{{ object.image.url }}" title="Screenshot For {{ object.title|e }}" alt="Screenshot For {{ object.title|e }}" />{% endif %}
 {{object.description|urlize|linebreaks}}
 
+{{ display.onelinerlink("platform", object.id, user) }}
 
 <h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Songs") }}</h2>
 

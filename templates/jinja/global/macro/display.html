@@ -12,6 +12,20 @@
 </div>
 {% endmacro %}
 
+{% macro onelinerlink(tag, value, user) %}
+  {% if user.is_authenticated() %}
+    <script>add_pagelink("[{{tag}}]{{value}}[/{{tag}}]");</script>
+  {% endif %}
+{% endmacro %}
+
+{% macro onelinerlinko(tag, value, user) %}
+  {% if user.is_authenticated() %}
+    <span id="onelinerlinkholder">
+        <span class="onelinerlink" data-tag="[{{tag}}]{{value}}[/{{tag}}]">Link this in oneliner</span>
+    </span>
+  {% endif %}
+{% endmacro %}
+
 {% macro time(dt) %}
  <span class="tzinfo">{{ dt|time("H:i") }}</span>
 {% endmacro %}

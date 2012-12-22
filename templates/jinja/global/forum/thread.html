@@ -1,4 +1,4 @@
-{% extends "forum_base.html" %}
+{% extends "forum_base.html" %} {% import "macro/display.html" as display %}
 {% block title %}{{ thread.title|escape }} ({{ forum.title|e }}){% endblock %}
 
 {% block pagetitle %}{{ forum.title|e }} &raquo; {{ thread.title|escape }}{% endblock %}
@@ -7,6 +7,8 @@
 {% block breadcrumbs %}{% for title, url in thread.forum.get_url_name() %} &raquo; <a href='{{ url }}'>{{ title|e }}</a>{% endfor %} &raquo; <a href='{{ thread.get_absolute_url() }}'>{{ thread.title|escape }}</a> ({{ thread.posts }} post{{ thread.posts|pluralize }}){% endblock %}
 
 {% block forumcontent %}
+
+{{ display.onelinerlink("thread", thread.id, user) }}
 
 <div class="pages">Pages: {% for p in page_range %}
 {% if page == p %}<b>{{ p }}</b>{% else %}<a href="/forum/thread/{{ thread.id }}/?page={{ p }}">{{ p }}</a> {% endif %}

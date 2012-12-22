@@ -5,6 +5,8 @@
 {% block main %}
 <h2><img class="icon_header" {% if object.label_icon %}src="{{ object.label_icon.url }}"{% else %}src="{{ STATIC_URL }}transmit_blue.png"{% endif %} alt="" />{{ gettext("Label / Production Information For") }} {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/label/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]{% endif %}</h2>
 
+{{ display.onelinerlink("label", object.id, user) }}
+
 <table>
 <tr>
 <td class="label_summary">

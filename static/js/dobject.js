@@ -149,8 +149,20 @@ function add_smileys(div, input) {
     });
 }
 
+function add_pagelink(link) {
+    var mydiv = $("<span/>").addClass("pagelink clicker").text("Page");
+    var text = link;
+    mydiv.click(function () {
+        var inputbox = $("#blah");
+        inputbox.focus();
+        var inpval = inputbox.val() + " " + text + " ";
+        inputbox.val(inpval);
+    });
+    $(".onelinertools").append(mydiv);
+}
+
 $(window).load( function () {
-    var mydiv = $("<div/>").addClass("smileys-clicker").text("Smileys list");
+    var mydiv = $("<span/>").addClass("smileyslink clicker").text("Smileys");
     var inputbox = $("#blah");
     mydiv.click(function () {
         inputbox.focus();
@@ -164,5 +176,5 @@ $(window).load( function () {
         });
     });
     setInterval('idleTicker()',1000);
-    $("#makeitso").after(mydiv);
+    $(".onelinertools").append(mydiv);
 });

@@ -6,6 +6,7 @@
 
 {% block main %}
 <h2><img class="icon_header" {% if object.group_icon %}src="{{ object.group_icon.url }}"{% else %}src="{{ STATIC_URL }}group.png"{% endif %} alt="" />{{ gettext("Group Information For") }} {{ object.name|e }} {% if user.is_staff %} [<a href="/admin/webview/group/{{ object.id }}/">{{ gettext("Edit Info") }}</a>]{% endif %}</h2>
+{{ display.onelinerlink("group", object.id, user) }}
 
 <table>
 <tr>

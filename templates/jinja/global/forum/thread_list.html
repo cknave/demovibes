@@ -1,4 +1,4 @@
-{% extends "forum_base.html" %}
+{% extends "forum_base.html" %} {% import "macro/display.html" as display -%}
 
 {% block title %}{{ forum.title|e }}{% endblock %}
 
@@ -11,8 +11,9 @@
 
 {% block breadcrumbs %} {% for title, url in forum.get_url_name() %} &raquo; <a href='{{ url }}'>{{ title|e }}</a> {% endfor %} ({{ forum.threads }} thread{{ forum.threads|pluralize }}, {{ forum.posts }} post{{ forum.posts|pluralize }}){% endblock %}
 
-
 {% block forumcontent %}
+
+{{ display.onelinerlink("forum", forum.slug, user) }}
 
 {% if forum.child.all() %}
 <table id='djangoForumList'>
@@ -44,11 +45,11 @@
 
 {% for t in threads %}
 <tr>
-	<td class='djangoForumThreadListName'>{% if t.sticky %}Sticky {% endif %}
-		<a class="threadName" href='{{ t.get_absolute_url() }}'>{{ t.title|escape }}</a>{% if t.closed %} (Closed){% endif %}
-	</td>
-	<td>{{ t.posts }}</td>
-	<td>{{ t.views }}</td>
+    <td class='djangoForumThreadListName'>{% if t.sticky %}Sticky {% endif %}
+        <a class="threadName" href='{{ t.get_absolute_url() }}'>{{ t.title|escape }}</a>{% if t.closed %} (Closed){% endif %}
+    </td>
+    <td>{{ t.posts }}</td>
+    <td>{{ t.views }}</td>
 {% set latest_post = t.thread_latest_post %}
 {% if latest_post %}<td class='djangoForumThreadLastPost'>{{ latest_post.time|timesince }} ago by {% set U = latest_post.author %}{% include "webview/t/user.html" %} (<a href='{{ latest_post.get_absolute_url() }}'>View Thread</a>)</td>{% endif %}
 
@@ -63,40 +64,40 @@ Pages : {% for p in page_range %}
 <h2><img class="icon_header" src="{{ STATIC_URL }}page_white_edit.png" alt="" />Start A New Forum Topic</h2>
 {% if user.is_authenticated() %}
 <form method='post' action='.'>
-	<table id="newThread">
-		<tr>
-			<td class="label">
-				{{ thread_form.title.label_tag() }}
-			</td>
-			<td>
-				{{ thread_form.title }}
+    <table id="newThread">
+        <tr>
+            <td class="label">
+                {{ thread_form.title.label_tag() }}
+            </td>
+            <td>
+                {{ thread_form.title }}
                 {{ thread_form.title.errors }}
-			</td>
-		</tr>
-		<tr>
-			<td class="label">
-				{{ thread_form.body.label_tag() }}
-			</td>
-			<td>
-				{{ thread_form.body }}
+            </td>
+        </tr>
+        <tr>
+            <td class="label">
+                {{ thread_form.body.label_tag() }}
+            </td>
+            <td>
+                {{ thread_form.body }}
                 {{ thread_form.body.errors }}
-			</td class="label">
-		</tr>
-		<tr>
-			<td class="label">
-				{{ thread_form.subscribe.label_tag() }}
-			</td>
-			<td>
-				{{ thread_form.subscribe }}
+            </td class="label">
+        </tr>
+        <tr>
+            <td class="label">
+                {{ thread_form.subscribe.label_tag() }}
+            </td>
+            <td>
+                {{ thread_form.subscribe }}
                 {{ thread_form.subscribe.errors }}
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" id="postThread">
-				<input type='submit' value='Post' />
-			</td>
-		</tr>
-	</table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" id="postThread">
+                <input type='submit' value='Post' />
+            </td>
+        </tr>
+    </table>
 </form>
 {% else %}
 <p>Please log in to create a new thread.</p>

@@ -10,6 +10,7 @@
   {{ gettext("Artist Info") }}{% if user.is_staff %} [<a href="/admin/webview/artist/{{ object.id }}/">{{ gettext("Edit Artist Info") }}</a>]{% endif %}
  </span>
 </h2>
+{{ display.onelinerlink("artist", object.id, user) }}
 <table>
 <tr>
 <td class="artist_details">

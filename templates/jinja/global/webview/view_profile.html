@@ -21,6 +21,10 @@
  {{ dv.flag(profile.user.get_profile().country) }} {% if profile.infoline %}<strong>{{ profile.infoline|e }}</strong>{% else %}<em>[No Info Line]</em>{% endif %}<br />
 {% endif %}
 {% set U = profile.user %}{% include "webview/t/user-icons.html" %}<br />
+
+{{ display.onelinerlink("user", profile.user.username, user) }}
+
+
 <br />{% cache 86400 mkstr(profile.user.id, profile.user.last_changed, "userprofilestats") %}
 Member Since: {{ profile.user.date_joined|date("F j, Y") }}<br />
 {{ profile.get_uploadcount() }} Uploads, {{ profile.get_votecount() }} Votes, Spoken {{ profile.get_onelinercount() }} Times.<br />

@@ -349,13 +349,16 @@ padding: 2px;
     border: 1px solid #000;
     background-color: #BFBFBF;
     position: fixed;
-    top: 30%;
-    max-height: 60%;
+    top: 15%;
+    max-height: 70%;
     overflow: auto;
-    left: 50%;
     padding: 1em;
-    width: 500px;
-    margin-left: -250px;
+    /*width: 700px;
+     * left: 50%;
+    margin-left: -350px;*/
+    left: 20%;
+    width: 60%;
+
 }
 .smileybox-smiley {
     float: left;
@@ -368,7 +371,19 @@ padding: 2px;
     background-color: #ddd;
 }
 
-.smileys-clicker {
+.onelinertools > span {
+    margin-right: 4px;
+}
+
+.onelinertools:before {
+    content:"Link: ";
+}
+
+.onelinertools {
+    height: 1.2em;
+}
+
+.clicker {
     cursor: pointer;
 }
 
