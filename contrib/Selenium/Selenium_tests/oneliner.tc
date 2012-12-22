@@ -58,7 +58,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=div.smileys-clicker</td>
+	<td>css=span.smileyslink</td>
 	<td></td>
 </tr>
 <tr>
