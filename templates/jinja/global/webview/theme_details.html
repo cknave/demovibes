@@ -4,6 +4,7 @@
 
 {% block main %}
 <h2>Theme {{ theme.title }}</h2>
+{{ display.onelinerlink("theme", theme.id, user) }}
 <div class="themedetail">
     <a href="{{ url ("dv-themelist") }}">Show full theme list</a>
     {% set shot = theme.get_main_screenshot() %}

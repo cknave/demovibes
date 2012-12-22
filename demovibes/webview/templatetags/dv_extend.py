@@ -885,8 +885,8 @@ def get_flag_path(flag):
 
 def bb_theme(hit):
     try:
-        t = Theme.objects.get(id=int(hit))
-        return u"<a href='%s'>%s</a>" % (t.get_absolute_url(), t.title)
+        t = Theme.objects.get(id=int(hit.group(1)))
+        return u"<a href='%s' title='Theme'>%s</a>" % (t.get_absolute_url(), t.title)
     except:
         L.exception("Theme select failed")
         return u"[]"
