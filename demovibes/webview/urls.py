@@ -97,6 +97,9 @@ urlpatterns = patterns('',
     url(r'^streams/$',                             'django.views.generic.list_detail.object_list',     streams_dict, name = "dv-streams"),
     url(r'^oneliner/$',                            'django.views.generic.list_detail.object_list', \
                 dict(oneliner_dict, paginate_by=settings.PAGINATE), name = "dv-oneliner"),
+
+    url(r'^oneliner/mute/$',                       views.MuteOneliner(), name = "dv-muteoneliner"),
+
     #url(r'^search/$',                              'demovibes.webview.views.search', name = "dv-search"),
     url(r'^recent/$',                              'demovibes.webview.views.show_approvals', name = "dv-recent"),
     url(r'^platform/(?P<object_id>\d+)/$',         'django.views.generic.list_detail.object_detail', platforms, name = "dv-platform"),

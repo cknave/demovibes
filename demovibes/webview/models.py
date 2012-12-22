@@ -58,7 +58,6 @@ CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
 
-
 def get_now_playing_song(create_new=False):
     queueobj = cache.get("nowplaysong")
     if not queueobj or create_new:
@@ -1723,6 +1722,24 @@ class Favorite(models.Model):
         self.song.num_favorited -= 1
         self.song.save()
         return super(Favorite, self).delete()
+
+class OnelinerMuted(models.Model):
+    reason = models.CharField(max_length=20)
+    user = models.ForeignKey(User)
+    added = models.DateTimeField(auto_now_add=True)
+    added_by = models.ForeignKey(User, related_name="mutes")
+    details = models.TextField(blank=True)
+
+    muted_to = models.DateTimeField(db_index=True)
+
+    def __unicode__(self):
+        return u"Mute: %s" % user.username
+
+    class Meta:
+        ordering = ['-id']
+        permissions = (
+            ("add_mute_oneliner", "Can mute people in oneliner"),
+        )
 
 class Oneliner(models.Model):
     message = models.CharField(max_length=256)

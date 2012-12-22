@@ -220,6 +220,13 @@ class CreateLinkForm(forms.ModelForm):
 
         return self.cleaned_data['link_image']
 
+class MuteOnelinerForm(forms.ModelForm):
+    username = forms.CharField(max_length=60)
+    mute_minutes = forms.IntegerField(max_value=60, min_value=5)
+
+    class Meta:
+        model = M.OnelinerMuted
+        fields = ["reason", "details"]
 
 class CreateCompilationForm(forms.ModelForm):
     class Meta:

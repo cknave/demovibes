@@ -1081,6 +1081,36 @@ class tagCloud(WebView):
         tags = m.Song.tags.cloud(min_count=min_count)
         return {'tags': tags}
 
+class MuteOneliner(WebView):
+    template = "oneliner_mute.html"
+    forms = [
+        (f.MuteOnelinerForm, "banform"),
+    ]
+
+    def check_permissions(self):
+        return self.request.user.has_perm("webview.add_mute_oneliner")
+
+    def POST(self):
+        if self.forms_valid:
+            data = self.context["banform"].cleaned_data
+            user = m.User.objects.get(username=data["username"])
+            endtime = datetime.datetime.now() + datetime.timedelta(minutes=data["mute_minutes"])
+            entry = m.OnelinerMuted(
+                user=user,
+                muted_to=endtime,
+                reason=data["reason"],
+                added_by=self.request.user,
+                details=data["details"],
+            )
+            entry.save()
+            user.get_profile().log(self.request.user, "Silenced for %s minutes. Reason: %s" % (data["mute_minutes"], data["reason"]))
+            self.redirect("dv-muteoneliner")
+
+    def set_context(self):
+        active = m.OnelinerMuted.objects.filter(muted_to__gt=datetime.datetime.now())
+        return {"active": active}
+
+
 class tagDetail(WebView):
     template = "tag_detail.html"
     cache_duration = 24*60*60
