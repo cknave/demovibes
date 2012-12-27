@@ -402,6 +402,7 @@ class Userprofile(models.Model):
         ('R', 'Registrered users'),
         ('N', 'No one')
     )
+    last_ip = models.IPAddressField(blank=True)
     aol_id = models.CharField(blank = True, max_length = 40, verbose_name = "AOL IM", help_text="AOL IM ID, for people to contact you (optional)")
     avatar = models.ImageField(upload_to = 'media/avatars', blank = True, null = True)
     country = models.CharField(blank = True, max_length = 10, verbose_name = "Country code")

@@ -89,6 +89,7 @@ def ping(request, event_id):
         get = cache.get(key)
         if not get:
             P = get_profile(request.user)
+            P.last_ip = request.META["REMOTE_ADDR"]
             P.last_activity = datetime.datetime.now()
             P.set_flag_from_ip(request.META.get('REMOTE_ADDR'))
             P.save()
