@@ -364,6 +364,10 @@ except:
 #OTHER_PER_SMILEY_LIMIT = 0
 #OTHER_TOTAL_SMILEY_LIMIT = None
 
+# Time to mute new users. To limit oneliner spam accounts
+#
+#import datetime
+#NEW_USER_MUTE_TIME = datetime.timedelta(minutes=5)
 
 # demosauce scan requires this. terra said there were problems...
 # but when I tested it I didn't see any

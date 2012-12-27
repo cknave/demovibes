@@ -56,6 +56,8 @@ CHEROKEE_REGEX = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_REGEX", "")
 CHEROKEE_LIMIT = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT", "")
 CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 
+NEWUSER_MUTE_TIME = getattr(settings, "NEW_USER_MUTE_TIME", None)
+
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
 
 def get_now_playing_song(create_new=False):
@@ -400,7 +402,6 @@ class Userprofile(models.Model):
         ('R', 'Registrered users'),
         ('N', 'No one')
     )
-
     aol_id = models.CharField(blank = True, max_length = 40, verbose_name = "AOL IM", help_text="AOL IM ID, for people to contact you (optional)")
     avatar = models.ImageField(upload_to = 'media/avatars', blank = True, null = True)
     country = models.CharField(blank = True, max_length = 10, verbose_name = "Country code")
@@ -434,6 +435,24 @@ class Userprofile(models.Model):
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
 
     links = generic.GenericRelation(GenericLink)
+
+    def is_muted(self):
+        r = OnelinerMuted.objects.filter(user=self.user, muted_to__gt=datetime.datetime.now())
+        if r:
+            d = {
+                "reason": r[0].reason,
+                "time": r[0].muted_to,
+            }
+            return d
+        if NEWUSER_MUTE_TIME:
+            r =self.user.date_joined + NEWUSER_MUTE_TIME
+            if r > datetime.datetime.now():
+                d = {
+                    "reason": "New account",
+                    "time": r,
+                }
+                return d
+        return False
 
     def log(self, user, message):
         return ObjectLog.objects.create(obj=self, user=user, text=message)
@@ -1733,7 +1752,7 @@ class OnelinerMuted(models.Model):
     muted_to = models.DateTimeField(db_index=True)
 
     def __unicode__(self):
-        return u"Mute: %s" % user.username
+        return u"Mute: %s" % self.user.username
 
     class Meta:
         ordering = ['-id']

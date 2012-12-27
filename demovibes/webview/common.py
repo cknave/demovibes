@@ -296,11 +296,10 @@ def add_oneliner(user, message):
     message = message.strip()
     can_post = user.is_superuser or not user.has_perm('webview.mute_oneliner')
 
-    r = models.OnelinerMuted.objects.filter(user=user, muted_to__gt=datetime.datetime.now())
+    r = user.get_profile().is_muted()
     if can_post and r:
-        r = r[0]
         can_post = False
-        models.send_notification('You have been muted until <span class="tzinfo">%s</span>. Reason: %s' % (r.muted_to.strftime("%H:%M"), r.reason), user)
+        models.send_notification('You can not post until <span class="tzinfo">%s</span>. Reason: %s' % (r["time"].strftime("%H:%M"), r["reason"]), user)
 
     if message and can_post:
         models.Oneliner.objects.create(user = user, message = message)
