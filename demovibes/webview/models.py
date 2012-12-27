@@ -402,7 +402,7 @@ class Userprofile(models.Model):
         ('R', 'Registrered users'),
         ('N', 'No one')
     )
-    last_ip = models.IPAddressField(blank=True)
+    last_ip = models.IPAddressField(blank=True, default="")
     aol_id = models.CharField(blank = True, max_length = 40, verbose_name = "AOL IM", help_text="AOL IM ID, for people to contact you (optional)")
     avatar = models.ImageField(upload_to = 'media/avatars', blank = True, null = True)
     country = models.CharField(blank = True, max_length = 10, verbose_name = "Country code")
@@ -438,7 +438,10 @@ class Userprofile(models.Model):
     links = generic.GenericRelation(GenericLink)
 
     def is_muted(self):
-        r = OnelinerMuted.objects.filter(user=self.user, muted_to__gt=datetime.datetime.now())
+        f = models.Q(user=self.user)
+        if self.last_ip:
+            f = f | models.Q(ip_ban=self.last_ip)
+        r = OnelinerMuted.objects.filter(f, muted_to__gt=datetime.datetime.now())
         if r:
             d = {
                 "reason": r[0].reason,
@@ -1749,6 +1752,8 @@ class OnelinerMuted(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey(User, related_name="mutes")
     details = models.TextField(blank=True)
+
+    ip_ban = models.IPAddressField(blank = True, default="")
 
     muted_to = models.DateTimeField(db_index=True)
 

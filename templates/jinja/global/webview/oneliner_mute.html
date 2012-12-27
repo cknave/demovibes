@@ -13,6 +13,7 @@
         <th>Until</th>
         <th>By</th>
         <th>Time added</th>
+        <th>IP Ban</th>
     </tr>
     {% for ban in active %}
     <tr>
@@ -21,6 +22,7 @@
         <td>{{ display.time(ban.muted_to) }}</td>
         <td>{{ display.user(ban.added_by) }}</td>
         <td>{{ display.time(ban.added) }}</td>
+        <td>{% if ban.ip_ban %}Yes{% else %}No{% endif %}</td>
     </tr>
     {% endfor %}
 </table>

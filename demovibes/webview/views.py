@@ -1102,6 +1102,10 @@ class MuteOneliner(WebView):
                 added_by=self.request.user,
                 details=data["details"],
             )
+            if data["ban_ip"]:
+                profile = user.get_profile()
+                if profile.last_ip:
+                    entry.ip_ban = profile.last_ip
             entry.save()
             user.get_profile().log(self.request.user, "Silenced for %s minutes. Reason: %s" % (data["mute_minutes"], data["reason"]))
             self.redirect("dv-muteoneliner")

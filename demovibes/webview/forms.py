@@ -223,6 +223,7 @@ class CreateLinkForm(forms.ModelForm):
 class MuteOnelinerForm(forms.ModelForm):
     username = forms.CharField(max_length=60)
     mute_minutes = forms.IntegerField(max_value=60, min_value=5)
+    ban_ip = forms.BooleanField(required=False)
 
     class Meta:
         model = M.OnelinerMuted
