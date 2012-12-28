@@ -387,6 +387,10 @@ padding: 2px;
     cursor: pointer;
 }
 
+.onelinertext {
+    -webkit-perspective: 200px;
+}
+
 span.silly1 {
     display:inline-block;
     transform: rotate(-180deg);
@@ -403,4 +407,90 @@ span.silly2 {
    -moz-transform: rotateY(180deg);
    -o-transform: rotateY(180deg);
    -ms-transform: rotateY(180deg);
+}
+
+span.silly3 {
+    display: inline-block;
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation-name: x-spin;
+    -webkit-animation-duration: 5s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: linear;
+
+    -moz-transform-style: preserve-3d;
+    -moz-animation-name: xspin;
+    -moz-animation-duration: 5s;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-timing-function: linear;
+}
+
+span.silly4 {
+    display: inline-block;
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation-name: y-spin;
+    -webkit-animation-duration: 6s;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-timing-function: linear;
+
+    -moz-transform-style: preserve-3d;
+    -moz-animation-name: yspin;
+    -moz-animation-duration: 6s;
+    -moz-animation-iteration-count: 1;
+    -moz-animation-timing-function: linear;
+}
+
+span.silly5 {
+    display: inline-block;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-transform-style: preserve-3d;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-duration: 3s;
+
+    -moz-animation-iteration-count: infinite;
+    -moz-transform-style: preserve-3d;
+    -moz-animation-timing-function: linear;
+    -moz-animation-duration: 3s;
+}
+
+span.silly5:hover{
+    -webkit-animation-name: lolspin;
+    -moz-animation-name: lolspin;
+}
+
+@-moz-keyframes lolspin {
+    0%    { -moz-transform: rotateX(0deg) rotateY(0deg); }
+    30%   { -moz-transform: rotateX(180deg rotateY(10deg)); }
+    70%  { -moz-transform: rotateX(160deg) rotateY(200deg); }
+    100%  { -moz-transform: rotateX(360deg) rotateY(360deg); }
+}
+
+@-webkit-keyframes lolspin {
+    0%    { -webkit-transform: rotateX(0deg) rotateY(0deg); }
+    30%   { -webkit-transform: rotateX(180deg rotateY(10deg)); }
+    70%  { -webkit-transform: rotateX(160deg) rotateY(200deg); }
+    100%  { -webkit-transform: rotateX(360deg) rotateY(360deg); }
+}
+
+@-webkit-keyframes x-spin {
+    0%    { -webkit-transform: rotateX(0deg); }
+    50%   { -webkit-transform: rotateX(180deg); }
+    100%  { -webkit-transform: rotateX(360deg); }
+}
+
+@-moz-keyframes xspin {
+    0%    { -moz-transform: rotateX(0deg); }
+    50%   { -moz-transform: rotateX(180deg); }
+    100%  { -moz-transform: rotateX(360deg); }
+}
+
+@-webkit-keyframes y-spin {
+    0%    { -webkit-transform: rotateY(0deg); }
+    50%   { -webkit-transform: rotateY(180deg); }
+    100%  { -webkit-transform: rotateY(360deg); }
+}
+
+@-moz-keyframes yspin {
+    0%    { -moz-transform: rotateY(0deg); }
+    50%   { -moz-transform: rotateY(180deg); }
+    100%  { -moz-transform: rotateY(360deg); }
 }
