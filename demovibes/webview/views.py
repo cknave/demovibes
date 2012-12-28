@@ -124,6 +124,13 @@ class AjaxifyView(WebView):
 
         self.redirect(self.request.META.get('HTTP_REFERER') or self.redirect_to)
 
+
+def check_muted(request):
+    profile = request.user.get_profile()
+    muted = profile.is_muted()
+    if muted:
+        return j2shim.r2r('webview/muted.html', {'muted' : muted}, request)
+
 #-------------------------------------------------------
 
 class ListSmileys(WebView):
@@ -251,6 +258,9 @@ def read_pm(request, pm_id):
 
 @login_required
 def send_pm(request):
+    r = check_muted(request)
+    if r: return r
+
     if request.method == 'POST':
         form = f.PmForm(request.POST)
         if form.is_valid():
@@ -279,6 +289,9 @@ class addComment(SongView):
         self.redirect(self.song)
 
     def POST(self):
+        r = check_muted(self.request)
+        if r: return r
+
         comment = self.request.POST.get("Comment", "").strip()
         if comment:
             m.SongComment.objects.create(comment = comment, song = self.song, user = self.request.user)

@@ -7,6 +7,7 @@ from forum.models import Forum,Thread,Post,Subscription
 from forum.forms import ThreadForm, ReplyForm, EditForm
 from datetime import datetime
 from webview import models as wm
+from webview.views import check_muted
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseForbidden
 from django.template import Context, loader
@@ -79,6 +80,10 @@ def forum(request, slug):
         if not request.user.is_authenticated():
             return HttpResponseServerError()
         thread_form = ThreadForm(request.POST)
+
+        r = check_muted(request)
+        if r: return r
+
         if thread_form.is_valid():
             new_thread = thread_form.save(commit = False)
             new_thread.forum = f
@@ -141,6 +146,10 @@ def thread(request, thread):
     if (request.method == 'POST'):
         if not request.user.is_authenticated() or t.closed:
             return HttpResponseServerError()
+
+        r = check_muted(request)
+        if r: return r
+
         reply_form = ReplyForm(request.POST)
         if reply_form.is_valid():
             new_post = reply_form.save(commit = False)
