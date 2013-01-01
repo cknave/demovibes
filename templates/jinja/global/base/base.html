@@ -66,6 +66,9 @@
             {% if perms.webview.change_song %}
                 <li id="menuqueue"><a href="{{ url ("dv-uploads") }}">{{ gettext("Unapproved Uploads") }}</a> {{ dv.pending("songs")}}</li>
             {% endif %}
+            {% if perms.webview.add_mute_oneliner %}
+                <li id="menumute"><a href="{{ url ("dv-muteoneliner") }}">{{ gettext("Mute account") }}</a></li>
+            {% endif %}
             {% if user.is_staff %}
                 <li></li>
                 {% if perms.webview.change_artist %}
