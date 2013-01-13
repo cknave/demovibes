@@ -88,8 +88,9 @@ ACCOUNT_ACTIVATION_DAYS = 7
 ## Ban / Mute settings
 #
 # BAN_ANNOUNCE = True
-# BAN_MIN = 5
-# BAN_MAX = 60
+# BANTIME_MIN = 5
+# BANTIME_MAX = 60
+# BANTIME_INITIAL = 15
 
 ## Notifications
 

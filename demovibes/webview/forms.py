@@ -8,6 +8,7 @@ import logging
 
 BAN_MIN = getattr(settings, "BANTIME_MIN", 5)
 BAN_MAX = getattr(settings, "BANTIME_MAX", 60)
+BAN_DEF = getattr(settings, "BANTIME_INITIAL", 15)
 
 class UploadForm(forms.ModelForm):
     class Meta:
@@ -229,7 +230,8 @@ class CreateLinkForm(forms.ModelForm):
 
 class MuteOnelinerForm(forms.ModelForm):
     username = forms.CharField(max_length=60)
-    mute_minutes = forms.IntegerField(max_value=BAN_MAX, min_value=BAN_MIN, help_text="Value between %s and %s" % (BAN_MIN, BAN_MAX))
+    mute_minutes = forms.IntegerField(max_value=BAN_MAX, min_value=BAN_MIN,
+        initial=BAN_DEF, help_text="Value between %s and %s" % (BAN_MIN, BAN_MAX))
     ban_ip = forms.BooleanField(required=False)
 
     def clean_username(self):
