@@ -1106,7 +1106,7 @@ class MuteOneliner(WebView):
     def POST(self):
         if self.forms_valid:
             data = self.context["banform"].cleaned_data
-            user = m.User.objects.get(username=data["username"])
+            user = data["username"]
             endtime = datetime.datetime.now() + datetime.timedelta(minutes=data["mute_minutes"])
             entry = m.OnelinerMuted(
                 user=user,
@@ -1120,12 +1120,15 @@ class MuteOneliner(WebView):
                 if profile.last_ip:
                     entry.ip_ban = profile.last_ip
             entry.save()
+            if getattr(m.settings, "BAN_ANNOUNCE", False):
+                m.send_notification("User '%s' have been silenced for %s minutes. Reason: %s" % (user.username,data["mute_minutes"], data["reason"]), None)
             user.get_profile().log(self.request.user, "Silenced for %s minutes. Reason: %s" % (data["mute_minutes"], data["reason"]))
             self.redirect("dv-muteoneliner")
 
     def set_context(self):
         active = m.OnelinerMuted.objects.filter(muted_to__gt=datetime.datetime.now())
-        return {"active": active}
+        history = m.OnelinerMuted.objects.filter(muted_to__lt=datetime.datetime.now())[:10]
+        return {"active": active, "history": history}
 
 
 class tagDetail(WebView):

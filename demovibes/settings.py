@@ -85,6 +85,11 @@ SITE_ID = 1
 
 ACCOUNT_ACTIVATION_DAYS = 7
 
+## Ban / Mute settings
+#
+# BAN_ANNOUNCE = True
+# BAN_MIN = 5
+# BAN_MAX = 60
 
 ## Notifications
 

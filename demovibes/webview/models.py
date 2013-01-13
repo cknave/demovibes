@@ -447,6 +447,8 @@ class Userprofile(models.Model):
                 "reason": r[0].reason,
                 "time": r[0].muted_to,
             }
+            r[0].hits = r[0].hits + 1
+            r[0].save()
             return d
         if NEWUSER_MUTE_TIME:
             r =self.user.date_joined + NEWUSER_MUTE_TIME
@@ -1753,6 +1755,8 @@ class OnelinerMuted(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     added_by = models.ForeignKey(User, related_name="mutes")
     details = models.TextField(blank=True)
+
+    hits = models.PositiveIntegerField(default=0)
 
     ip_ban = models.IPAddressField(blank = True, default="")
 

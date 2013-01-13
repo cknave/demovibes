@@ -6,6 +6,9 @@ from PIL import Image
 import dscan
 import logging
 
+BAN_MIN = getattr(settings, "BANTIME_MIN", 5)
+BAN_MAX = getattr(settings, "BANTIME_MAX", 60)
+
 class UploadForm(forms.ModelForm):
     class Meta:
         model = M.Song
@@ -226,8 +229,16 @@ class CreateLinkForm(forms.ModelForm):
 
 class MuteOnelinerForm(forms.ModelForm):
     username = forms.CharField(max_length=60)
-    mute_minutes = forms.IntegerField(max_value=60, min_value=5)
+    mute_minutes = forms.IntegerField(max_value=BAN_MAX, min_value=BAN_MIN, help_text="Value between %s and %s" % (BAN_MIN, BAN_MAX))
     ban_ip = forms.BooleanField(required=False)
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            user = M.User.objects.get(username=username)
+        except:
+            raise forms.ValidationError('User does not exist')
+        return user
 
     class Meta:
         model = M.OnelinerMuted
