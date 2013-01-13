@@ -22,6 +22,8 @@
 
     {% if artist.info %}<p><i>{{ artist.info|urlize|bbcode|linebreaks }}</i></p>{% endif %}
 
+    {% if artist.scene_relevance %}<p>Scene relevance:<br/><i>{{ artist.scene_relevance|linebreaksbr }}</i></p>{% endif %}
+
     <a href="{{ url("dv-newartists") }}?artist={{ artist.id }}&amp;status=A"><img src="{{ STATIC_URL }}thumb_up.png" title="Approve" alt="Approve" /> {{ gettext("Approve") }}</a> {{ gettext("or") }} <a href="{{ url("dv-newartists") }}?artist={{ artist.id }}&amp;status=R"><img src="{{ STATIC_URL }}thumb_down.png" title="reject" alt="Reject" /> {{ gettext("Reject") }}</a>
     </td>
     </tr>

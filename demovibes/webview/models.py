@@ -681,6 +681,7 @@ class Artist(models.Model):
     twitter_id = models.CharField(blank = True, max_length = 32, verbose_name = "Twitter ID", help_text="Enter the Twitter account name of the artist, if known (without the Twitter URL)")
     webpage = models.URLField(blank=True, verbose_name="Website", help_text="Website for this artist. Must exist on the web.")
     wiki_link = models.URLField(blank=True, help_text="URL to Wikipedia entry (if available)")
+    scene_relevance = models.TextField(blank=True, help_text="The artist's demoscene relevance. So the mods can approve it faster")
 
     links = generic.GenericRelation(GenericLink)
 
