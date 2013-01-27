@@ -84,6 +84,9 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 
 ACCOUNT_ACTIVATION_DAYS = 7
+## List of domains to not accept email registration from
+#BAD_EMAIL_DOMAINS = []
+
 
 ## Ban / Mute settings
 #
