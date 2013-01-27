@@ -57,6 +57,7 @@ def handler(id):
     eventid = myevent[1]
     levent = [x[1] for x in myevent[0] if x[0] > id and (x[2] == "N" or (userid and x[2] == int(userid)))]
     levent = set(levent)
-    yield "\n".join(levent) + "\n!%s" % eventid
+    #yield "eval://Error no id : %s\n" % str(myevent) + "\n".join(levent) + "\n!%s" % eventid
+    yield "\n" + "\n".join(levent) + "\n!%s" % eventid
 
 application = bottle.default_app()
