@@ -1776,6 +1776,9 @@ class Oneliner(models.Model):
     user = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True, db_index=True)
 
+    def __unicode__(self):
+        return u"<%s> %s" % (self.user, self.message)
+
     class Meta:
         ordering = ['-added']
         permissions = (
