@@ -986,24 +986,34 @@ class Song(models.Model):
     #    return "song"
 
     def create_lock_time(self):
+        log.debug("Starting locktime calculation for %s", self)
         sl = settings.SONG_LOCK_TIME
         time = datetime.timedelta(**sl)
+        log.debug("Base locktime is %s", time)
+
 
         random_extra = getattr(settings, "SONG_LOCK_TIME_RANDOM", None)
         if random_extra:
             rnd = TimeDelta(**random_extra)
-            time = time + datetime.timedelta(seconds = random.randint(0, rnd.total_seconds()))
+            randomextra = datetime.timedelta(seconds = random.randint(0, rnd.total_seconds()))
+            time = time + randomextra
+            log.debug("Added random locktime: %s", randomextra)
 
         vote_extra = getattr(settings, "SONG_LOCK_TIME_VOTE", None)
         if vote_extra and self.rating:
+            log.debug("Adding extra locktime based on vote. Rating %.2f over %s votes", self.rating, self.rating_votes)
             vote = TimeDelta(**vote_extra)
             if SONG_LOCKTIME_FUNCTION:
+                log.debug("Running external function to determine vote lock..")
                 num = SONG_LOCKTIME_FUNCTION(self)
             else:
                 vote_val = 5 - self.rating
                 num = vote_val / 4.0
             secs = vote.total_seconds() * num
-            time = time + datetime.timedelta(seconds = int(vote.total_seconds() * num))
+            muhu = datetime.timedelta(seconds = int(vote.total_seconds() * num))
+            log.debug("Vote penalty number is %s, and added time is: %s", num, muhu)
+            time = time + muhu
+        log.debug("Lock time calculated to: %s", time)
         return time
 
     def is_connected_to(self, user):

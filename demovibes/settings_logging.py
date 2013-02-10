@@ -1,3 +1,7 @@
+import os
+
+LOG_ROOT = os.path.dirname(os.path.realpath(__file__))
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -12,9 +16,9 @@ LOGGING = {
         'file': {
             'level': "DEBUG",
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'demovibes.log',
+            'filename': os.path.join(LOG_ROOT, 'demovibes.log'),
             'maxBytes': 5 * 1024 ** 2,
-            'backupCount': 4,
+            'backupCount': 0,
             'encoding': "utf8",
             'formatter': 'verbose'
         },

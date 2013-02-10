@@ -68,7 +68,7 @@ class TestSong(object):
         return self.name
 
 def calc_songlock(song):
-    L.debug("Calc called with %s", song)
+    L.debug("Calc called for song : %s", song)
 
     r = song.rating and song.rating or unvoted_songs_value
 
