@@ -33,8 +33,10 @@ import time, hashlib
 import random
 
 class TimeDelta(datetime.timedelta):
+
     def total_seconds(self):
         return (self.seconds + self.days * 24 * 3600)
+
     def to_string(self):
         s = self.total_seconds()
         padding = ""
@@ -59,6 +61,8 @@ CHEROKEE_LIMIT_URL = getattr(settings, "CHEROKEE_SECRET_DOWNLOAD_LIMIT_URL", "")
 NEWUSER_MUTE_TIME = getattr(settings, "NEW_USER_MUTE_TIME", None)
 
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
+SONG_LOCKTIME_FUNCTION = getattr(settings, "SONG_LOCKTIME_FUNCTION", None)
+
 
 def get_now_playing_song(create_new=False):
     queueobj = cache.get("nowplaysong")
@@ -1045,8 +1049,13 @@ class Song(models.Model):
         vote_extra = getattr(settings, "SONG_LOCK_TIME_VOTE", None)
         if vote_extra and self.rating:
             vote = TimeDelta(**vote_extra)
-            vote_val = 5 - self.rating
-            time = time + datetime.timedelta(seconds = int((vote.total_seconds() / 4) * vote_val))
+            if SONG_LOCKTIME_FUNCTION:
+                num = SONG_LOCKTIME_FUNCTION(self)
+            else:
+                vote_val = 5 - self.rating
+                num = vote_val / 4.0
+            secs = vote.total_seconds() * num
+            time = time + datetime.timedelta(seconds = int(vote.total_seconds() * num))
         return time
 
     def is_connected_to(self, user):
@@ -1428,7 +1437,9 @@ class Song(models.Model):
 
         self.save()
 
-        if self == get_now_playing_song().song:
+
+        currently_playing = get_now_playing_song()
+        if currently_playing and self == currently_playing.song:
             add_event("vote:%.2f|%d" % (self.rating, self.rating_votes))
             cache.delete("nowplaysong")
         return obj

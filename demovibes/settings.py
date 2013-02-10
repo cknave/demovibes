@@ -308,6 +308,12 @@ SONG_LOCK_TIME = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
 #SONG_LOCK_TIME_VOTE = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
 #SONG_LOCK_TIME_RANDOM = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
 
+# Define a function to return extra locktime for vote
+# Song is first and only parameter, a number between 0 and 1 should be
+# retuned from that function
+# SONG_LOCKTIME_FUNCTION = None
+
+
 # Need to have at least one song marked as jingle for this to work
 # Will play one every 30 minutes or 10 songs, but not more often than every 20 minutes.
 PLAY_JINGLES = False
