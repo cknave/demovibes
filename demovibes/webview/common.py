@@ -1,11 +1,12 @@
 from webview import models
 from webview.models import get_now_playing_song
-from django.conf import settings
 from django.core.cache import cache
 from django.conf import settings
 from django.http import HttpResponseForbidden
 from functools import wraps
 from django.utils.decorators import available_attrs
+
+from django.core.urlresolvers import reverse
 
 from django.db.models import Sum
 
@@ -17,10 +18,50 @@ import datetime
 import j2shim
 import time
 
+logger = logging.getLogger("dv.webview.common")
+
+try:
+    import memcache
+    # Temp test code FIXME
+    mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+except:
+    logger.debug("Could not load memcache module")
+    memcache = None
+
 MIN_QUEUE_SONGS_LIMIT = getattr(settings, "MIN_QUEUE_SONGS_LIMIT", 0)
 QUEUE_TIME_LIMIT = getattr(settings, "QUEUE_TIME_LIMIT", False)
 SELFQUEUE_DISABLED = getattr(settings, "SONG_SELFQUEUE_DISABLED", False)
 LOWRATE = getattr(settings, 'SONGS_IN_QUEUE_LOWRATING', False)
+
+NGINX_MEMCACHE = memcache and getattr(settings, 'NGINX', {}).get("memcached")
+
+def nginx_memcache_it(key, use_eventkey = True):
+    def func1(func):
+        def func2(*args, **kwargs):
+            r = func(*args, **kwargs)
+            url = reverse(key)
+            latest_event = get_latest_event()
+
+            logger.debug("NGINX: Latest event is %s", latest_event)
+
+            if use_eventkey:
+                # Clients often connect with older id's, for various reasons
+                # This should make it far more likely that they get current data
+                # and actually hit the cache in the first place
+                for x in range(latest_event - 6, latest_event + 1, 1):
+                    cachekey = url + "?event=%s" % x
+                    logger.debug("NGINX: Setting cache for key %s", cachekey)
+                    mc.set(cachekey, r.encode("utf8"), 30)
+            else:
+                mc.set(url, r.encode("utf8"), 30)
+            return r
+
+        if not NGINX_MEMCACHE:
+            logger.info("NGINX: Memcache settings not configured")
+            return func
+        return func2
+    return func1
+
 
 def atomic(key, timeout=30, wait=60):
     """
@@ -58,6 +99,7 @@ def ratelimit(limit=10,length=86400):
             if result:
                 result = int(result)
                 if result == limit:
+                    logger.warning("Rate limited : %s", request.META['REMOTE_ADDR'])
                     return HttpResponseForbidden("Ooops, too many requests!")
                 else:
                     cache.incr(ip_hash)
@@ -142,7 +184,7 @@ def queue_song(song, user, event = True, force = False):
         if requests == None:
             requests = Q.count()
         else:
-            requests = num(requests)
+            requests = len(requests)
 
         if result and requests >= settings.SONGS_IN_QUEUE:
 
@@ -171,7 +213,7 @@ def queue_song(song, user, event = True, force = False):
         #cache.set(key, requests + 1, 600)
 
         if event:
-            bla = get_queue(True) # generate new queue cached object
+            get_queue(True) # generate new queue cached object
             EVS.append('queue')
             msg = "%s has been queued." % escape(song.title)
             msg += " It is expected to play at <span class='tzinfo'>%s</span>." % Q.eta.strftime("%H:%M")
@@ -181,9 +223,9 @@ def queue_song(song, user, event = True, force = False):
         models.add_event(eventlist=EVS, metadata = event_metadata)
         return Q
 
-
+#@nginx_memcache_it("dv-ax-nowplaying")
 def get_now_playing(create_new=False):
-    logging.debug("Getting now playing")
+    logger.debug("Getting now playing")
     key = "nnowplaying"
 
     try:
@@ -197,59 +239,62 @@ def get_now_playing(create_new=False):
         comps = models.Compilation.objects.filter(songs__id = song.id)
         R = j2shim.r2s('webview/t/now_playing_song.html', { 'now_playing' : songtype, 'comps' : comps })
         cache.set(key, R, 300)
-        logging.debug("Now playing generated")
+        logger.debug("Now playing generated")
     R = R.replace("((%timeleft%))", str(songtype.timeleft()))
     return R
 
+@nginx_memcache_it("dv-ax-history")
 def get_history(create_new=False):
     key = "nhistory"
-    logging.debug("Getting history cache")
+    logger.debug("Getting history cache")
     R = cache.get(key)
     if not R or create_new:
         nowplaying = get_now_playing_song()
         limit = nowplaying and (nowplaying.id - 50) or 0
-        logging.info("No existing cache for history, making new one")
+        logger.info("No existing cache for history, making new one")
         history = models.Queue.objects.select_related(depth=3).filter(played=True).filter(id__gt=limit).order_by('-time_played')[1:21]
         R = j2shim.r2s('webview/js/history.html', { 'history' : history })
         cache.set(key, R, 300)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
+@nginx_memcache_it("dv-ax-oneliner")
 def get_oneliner(create_new=False):
     key = "noneliner"
-    logging.debug("Getting oneliner cache")
+    logger.debug("Getting oneliner cache")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for oneliner, making new one")
+        logger.info("No existing cache for oneliner, making new one")
         lines = getattr(settings, 'ONELINER', 10)
         oneliner = models.Oneliner.objects.select_related(depth=2).order_by('-id')[:lines]
         R = j2shim.r2s('webview/js/oneliner.html', { 'oneliner' : oneliner })
         cache.set(key, R, 600)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 def get_roneliner(create_new=False):
     key = "rnoneliner"
-    logging.debug("Getting reverse oneliner cache")
+    logger.debug("Getting reverse oneliner cache")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for reverse oneliner, making new one")
+        logger.info("No existing cache for reverse oneliner, making new one")
         oneliner = models.Oneliner.objects.select_related(depth=2).order_by('id')[:15]
         R = j2shim.r2s('webview/js/roneliner.html', { 'oneliner' : oneliner })
         cache.set(key, R, 600)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
+@nginx_memcache_it("dv-ax-queue")
 def get_queue(create_new=False):
     key = "nqueue"
-    logging.debug("Getting cache for queue")
+    logger.debug("Getting cache for queue")
     R = cache.get(key)
     if not R or create_new:
-        logging.info("No existing cache for queue, making new one")
+        logger.info("No existing cache for queue, making new one")
         queue = models.Queue.objects.select_related(depth=2).filter(played=False).order_by('id')
         R = j2shim.r2s("webview/js/queue.html", { 'queue' : queue })
         cache.set(key, R, 300)
-        logging.debug("Cache generated")
+        logger.debug("Cache generated")
     return R
 
 def get_profile(user):
@@ -303,7 +348,8 @@ def add_oneliner(user, message):
 
     if message and can_post:
         models.Oneliner.objects.create(user = user, message = message)
-        f = get_oneliner(True)
+        get_oneliner(True)
+        mc.delete(reverse("xml-oneliner"))
         models.add_event(event='oneliner')
 
 def get_event_key(key):

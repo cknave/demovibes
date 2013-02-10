@@ -32,9 +32,10 @@ import j2shim
 import hashlib
 import re
 import random
+import urllib2
 # Create your views here.
 
-L = logging.getLogger('webview.views')
+L = logging.getLogger('dv.webview.views')
 
 class WebView(MyBaseView):
     basetemplate = "webview/"
@@ -138,6 +139,20 @@ class ListSmileys(WebView):
     def set_context(self):
         return {'smileys': settings.SMILEYS}
 
+
+class DownloadSong(SongView):
+    def check_permissions(self):
+        return self.song.downloadable_by(self.request.user)
+
+    def GET(self):
+        response = HttpResponse()
+        m.protected_downloads.increase_downloads_for(self.request.user)
+        response['Content-Type'] = ''
+        theurl = urllib2.unquote(self.song.file.url).encode("utf8")
+        L.debug("Download for song %s - url is %s", self.song, theurl)
+        response['X-Accel-Redirect'] = theurl
+        return response
+
 class PlaySong(SongView):
     template="playsong.html"
 
@@ -145,13 +160,9 @@ class PlaySong(SongView):
         return self.song.downloadable_by(self.request.user)
 
     def set_context(self):
-        limit = None
-        if m.CHEROKEE_SECRET:
-            key = "urlgenlimit_%s" % self.request.user.id
-            number = m.get_cherokee_limit(self.request.user).get("number",0)
-            limit = number - cache.get(key, 0)
+        limit, total = m.protected_downloads.get_current_download_limits_for(self.request.user)
         self.song.log(self.request.user, "Song preview / download")
-        return {'song': self.song, 'limit': limit}
+        return {'song': self.song, 'limit': limit, 'total': total}
 
 class AddCompilation(WebView):
     template = "add_compilation.html"
@@ -1764,6 +1775,22 @@ class Login(MyBaseView):
         else:
             self.add_to_limit((key1, key2))
             self.context['error'] = _(u"I'm sorry, the username or password seem to be wrong.")
+
+@login_required
+def nginx_download_song(request, songid):
+    """
+    Use X-Accel-Redirect function of web server to serve song files.
+    """
+    data = m.DOWNLOAD_LIMITS.get("NGINX")
+    if not data:
+        return HttpResponse("Fatal Error, NGINX data not configured")
+    song = m.Song.objects.get(id=int(songid))
+    url = song.file.url
+    if data.get("REGEX"):
+        url = re.sub(*data.get("REGEX") + (url,))
+    response = HttpResponse()
+    response['X-Accel-Redirect'] = data["URL"] + url
+    return response
 
 def play_stream(request):
     streamurl = getattr(settings, "FLASH_STREAM_URL", False)

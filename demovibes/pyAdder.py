@@ -15,11 +15,11 @@ from string import *
 
 #Only set up logging if called directly
 if __name__ == '__main__':
-	if os.path.exists("logging.conf"):
-    		logging.config.fileConfig("logging.conf")
-	else:
-    		logging.basicConfig(level=logging.WARNING, format="[%(asctime)s] %(name)-8s %(levelname)-8s %(message)s")
-Log = logging.getLogger("pyAdder")
+    if os.path.exists("logging.conf"):
+            logging.config.fileConfig("logging.conf")
+    else:
+            logging.basicConfig(level=logging.WARNING, format="[%(asctime)s] %(name)-8s %(levelname)-8s %(message)s")
+Log = logging.getLogger("dv.pyAdder")
 
 enc = sys.getdefaultencoding()
 fsenc = sys.getfilesystemencoding()

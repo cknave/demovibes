@@ -27,6 +27,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import cStringIO
 from PIL import Image
 
+import protected_downloads
+
 import tagging
 import time, hashlib
 
@@ -63,7 +65,6 @@ NEWUSER_MUTE_TIME = getattr(settings, "NEW_USER_MUTE_TIME", None)
 SELFVOTE_DISABLED = getattr(settings, "SONG_SELFVOTE_DISABLED", False)
 SONG_LOCKTIME_FUNCTION = getattr(settings, "SONG_LOCKTIME_FUNCTION", None)
 
-
 def get_now_playing_song(create_new=False):
     queueobj = cache.get("nowplaysong")
     if not queueobj or create_new:
@@ -77,59 +78,6 @@ def get_now_playing_song(create_new=False):
             return False
         cache.set("nowplaysong", queueobj, 300)
     return queueobj
-
-def download_limit_reached(user):
-    limits = get_cherokee_limit(user)
-    if limits:
-        key = "urlgenlimit_%s" % user.id
-        k = cache.get(key, 0)
-        if k > limits.get("number"):
-            return True
-
-def get_cherokee_limit(user):
-    r = {}
-    if CHEROKEE_LIMIT and user and user.is_authenticated():
-        if CHEROKEE_LIMIT.get("default"):
-            L = CHEROKEE_LIMIT.get("default")
-        else:
-            L = CHEROKEE_LIMIT
-        if user.is_superuser and CHEROKEE_LIMIT.get("admin"):
-            L = CHEROKEE_LIMIT.get("admin")
-        elif user.is_staff and CHEROKEE_LIMIT.get("staff"):
-            L = CHEROKEE_LIMIT.get("staff")
-        for group in user.groups.all():
-            gn = CHEROKEE_LIMIT.get(group.name)
-            if gn:
-                if gn.get("seconds") >= L.get("seconds") and gn.get("number") >= L.get("number"):
-                    L = gn
-        r['seconds'] = L.get("seconds", 60*60*24)
-        r['number'] = L.get("number", 0)
-    return r
-
-def secure_download (url, user=None):
-    if CHEROKEE_SECRET:
-        url = urllib.unquote(url)
-        limits = get_cherokee_limit(user)
-        if limits:
-            key = "urlgenlimit_%s" % user.id
-            try:
-                k = cache.incr(key)
-            except:
-                k = 1
-                cache.set(key, k, limits.get("seconds"))
-            if k > limits.get("number"):
-                return CHEROKEE_LIMIT_URL or " Limit reached"
-        t = '%08x' % (time.time())
-        if CHEROKEE_REGEX:
-            try:
-                url = str(url)
-            except:
-                url = url.encode("utf8")
-            url = re.sub(*CHEROKEE_REGEX + (url,))
-        mu = CHEROKEE_PATH + "/%s/%s/%s" % (hashlib.md5(CHEROKEE_SECRET + "/" + url + t).hexdigest(), t, url)
-        return mu.decode("utf8")
-        #return mu
-    return url
 
 if getattr(settings, "LOOKUP_COUNTRY", True):
     from demovibes.ip2cc import ip2cc
@@ -1067,15 +1015,17 @@ class Song(models.Model):
         return False
 
     def downloadable_by(self, user):
-        if user.is_authenticated() and not download_limit_reached(user):
+        if user.is_authenticated() and not protected_downloads.download_limit_reached(user):
             if user.is_staff:
                 return True
             if self.license and self.license.downloadable:
                 return True
         return False
 
-    def get_file_url(self, user=None):
-        return secure_download(self.file.url, user)
+    def get_download_url(self, user):
+        if self.downloadable_by(user):
+           return protected_downloads.get_song_url(self, user)
+        return False
 
     def has_video(self):
         return self.get_metadata().ytvidid
@@ -1113,6 +1063,10 @@ class Song(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ("dv-song", [str(self.id)])
+
+    @models.permalink
+    def get_nginx_url(self):
+        return ("dv-dl-song", [str(self.id)])
 
     def get_playoptions(self):
         """
@@ -2021,7 +1975,6 @@ class SongLicense(models.Model):
 
     def __unicode__(self):
         return self.name
-
 
 def create_profile(sender, **kwargs):
     """
