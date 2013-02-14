@@ -72,7 +72,8 @@ def calc_songlock(song):
 
     r = song.rating and song.rating or unvoted_songs_value
 
-    hBiasLength = max(song.get_songlength() - length_bias_minmins * 60, 0) * length_bias
+    songLength = song.get_songlength() or 0
+    hBiasLength = max(songLength - length_bias_minmins * 60, 0) * length_bias
     L.debug("Length bias is %s", hBiasLength)
 
     voteCount = song.rating_votes

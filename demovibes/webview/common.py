@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import HttpResponseForbidden
 from functools import wraps
 from django.utils.decorators import available_attrs
+from django.template.loader import render_to_string
 
 from django.core.urlresolvers import reverse
 
@@ -39,7 +40,7 @@ def nginx_memcache_it(key, use_eventkey = True):
     def func1(func):
         def func2(*args, **kwargs):
             r = func(*args, **kwargs)
-            url = reverse(key)
+            url = reverse(key) + "?"
             latest_event = get_latest_event()
 
             logger.debug("NGINX: Latest event is %s", latest_event)
@@ -49,10 +50,11 @@ def nginx_memcache_it(key, use_eventkey = True):
                 # This should make it far more likely that they get current data
                 # and actually hit the cache in the first place
                 for x in range(latest_event - 6, latest_event + 1, 1):
-                    cachekey = url + "?event=%s" % x
+                    cachekey = url + "event=%s" % x
                     logger.debug("NGINX: Setting cache for key %s", cachekey)
                     mc.set(cachekey, r.encode("utf8"), 30)
             else:
+                logger.debug("NGINX: Setting cache for key %s", url)
                 mc.set(url, r.encode("utf8"), 30)
             return r
 
@@ -349,9 +351,18 @@ def add_oneliner(user, message):
     if message and can_post:
         models.Oneliner.objects.create(user = user, message = message)
         get_oneliner(True)
-        mc.delete(reverse("xml-oneliner"))
+        make_oneliner_xml(True)
         models.add_event(event='oneliner')
 
 def get_event_key(key):
     event = get_latest_event()
     return "%sevent%s" % (key, event)
+
+@nginx_memcache_it("xml-oneliner-cache", False)
+def make_oneliner_xml(force=False):
+    data = cache.get("oneliner_xml")
+    if force or data == None:
+        oneliner_data = models.Oneliner.objects.select_related(depth=1).order_by('-id')[:20]
+        data = render_to_string('webview/xml/oneliner.xml', {'oneliner_data' : oneliner_data})
+        cache.set("oneliner_xml", data, 60)
+    return data
