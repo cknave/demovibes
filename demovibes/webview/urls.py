@@ -99,6 +99,7 @@ urlpatterns = patterns('',
                 dict(oneliner_dict, paginate_by=settings.PAGINATE), name = "dv-oneliner"),
 
     url(r'^oneliner/mute/$',                       views.MuteOneliner(), name = "dv-muteoneliner"),
+    url(r'^oneliner/lookie/$',                       views.OnelinerHistorySearch(), name = "dv-onelinerhsearch"),
 
     #url(r'^search/$',                              'demovibes.webview.views.search', name = "dv-search"),
     url(r'^recent/$',                              'demovibes.webview.views.show_approvals', name = "dv-recent"),

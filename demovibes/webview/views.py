@@ -592,6 +592,27 @@ def view_compilation(request, comp_id):
         { 'comp' : comp, 'user' : request.user , 'sessionform': sessionform},
         request=request)
 
+class OnelinerHistorySearch(WebView):
+    template = "oneliner_search.html"
+    forms = [(f.OnelinerHistory, "form")]
+    results = []
+    staff_required = True
+
+    def POST(self):
+        if self.forms_valid:
+            r = m.Oneliner.objects.all()
+            data = self.context["form"].cleaned_data
+            user = data["username"]
+            if user:
+                user = m.User.objects.get(username=user)
+                r = r.filter(user=user)
+            start = data["start"]
+            num = data["results"]
+            self.results = r[start:num+start]
+
+    def set_context(self):
+        return {"results": self.results}
+
 def oneliner(request):
     oneliner = m.Oneliner.objects.select_related(depth=1).order_by('-id')[:20]
     return j2shim.r2r('webview/oneliner.html', {'oneliner' : oneliner}, \

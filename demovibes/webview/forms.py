@@ -12,6 +12,11 @@ BAN_DEF = getattr(settings, "BANTIME_INITIAL", 15)
 
 log = logging.getLogger("dv.webview.forms")
 
+class OnelinerHistory(forms.Form):
+    username = forms.CharField(max_length=40)
+    start = forms.IntegerField(min_value=0, max_value=200,initial=0)
+    results = forms.IntegerField(min_value=10, max_value=100,initial=10)
+
 class UploadForm(forms.ModelForm):
     class Meta:
         model = M.Song
