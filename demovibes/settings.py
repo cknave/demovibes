@@ -392,6 +392,12 @@ except:
 #OTHER_PER_SMILEY_LIMIT = 0
 #OTHER_TOTAL_SMILEY_LIMIT = None
 
+# List of smileys to be restricted to certain users
+#RESTRICTED_SMILEYS = [("trigger", "smiley image")]
+#
+# List of usernames allowed to use the restricted smileys
+#RESTRICTED_SMILEYS_USERS = ["username"]
+
 # Time to mute new users. To limit oneliner spam accounts
 #
 #import datetime

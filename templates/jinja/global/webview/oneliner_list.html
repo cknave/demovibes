@@ -15,7 +15,7 @@
 </div>
 
 <div class="olh_message">
-    <p>{{ line.message|mksafe|bbcode_oneliner|smileys_oneliner|oneliner_mediaparse|bbcode_oneliner|dv_urlize }}</p>
+    <p>{{ display.format_oneliner(line.message, line.user) }}</p>
 </div>
 </div>{% endcache %}
 {% endfor %}

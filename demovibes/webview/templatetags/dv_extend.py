@@ -21,6 +21,15 @@ STATIC = settings.MEDIA_URL
 
 register = template.Library()
 
+def user_based_filter(userlist):
+    def func1(function):
+        def func2(data, user):
+            if user == None or user.username in userlist:
+                return function(data)
+            return data
+        return func2
+    return func1
+
 class BetterPaginator(Paginator):
     """
     An enhanced version of the QuerySetPaginator.
@@ -1261,17 +1270,9 @@ def wordwrap(value, arg=80):
     """
     return "\n".join(textwrap.wrap(value, int(arg)))
 
-@register.filter
-def smileys_oneliner(value):
-    """
-    Replaces smiley text with images. First, do secret smileys so we can replace
-    Smileys pre-converted with others later.
-    """
-
+def smiley_general(value, smileys, PER_SMILEY=0, TOTAL_SMILEY=None):
     num_smileys = 0
-    PER_SMILEY = getattr(settings, "ONELINER_PER_SMILEY_LIMIT", 0)
-    TOTAL_SMILEY = getattr(settings, "ONELINER_TOTAL_SMILEY_LIMIT", None)
-    for bbset in SMILEYS:
+    for bbset in smileys:
         p = bbset[0]
         (value, nr) = p.subn(bbset[1], value, PER_SMILEY)
         num_smileys = num_smileys + nr
@@ -1280,22 +1281,29 @@ def smileys_oneliner(value):
     return value
 
 @register.filter
+def smileys_oneliner(value):
+    """
+    Replaces smiley text with images. First, do secret smileys so we can replace
+    Smileys pre-converted with others later.
+    """
+    PER_SMILEY = getattr(settings, "ONELINER_PER_SMILEY_LIMIT", 0)
+    TOTAL_SMILEY = getattr(settings, "ONELINER_TOTAL_SMILEY_LIMIT", None)
+    return smiley_general(value, SMILEYS, PER_SMILEY, TOTAL_SMILEY)
+
+
+@user_based_filter(getattr(settings,'RESTRICTED_SMILEYS_USERS', []))
+def smileys_restricted(value):
+    return smiley_general(value, RESTRICTED_SMILEYS)
+
+@register.filter
 def smileys(value):
     """
     Replaces smiley text with images. First, do secret smileys so we can replace
     Smileys pre-converted with others later.
     """
-
-    num_smileys = 0
     PER_SMILEY = getattr(settings, "OTHER_PER_SMILEY_LIMIT", 0)
     TOTAL_SMILEY = getattr(settings, "OTHER_TOTAL_SMILEY_LIMIT", None)
-    for bbset in SMILEYS:
-        p = bbset[0]
-        (value, nr) = p.subn(bbset[1], value, PER_SMILEY)
-        num_smileys = num_smileys + nr
-        if TOTAL_SMILEY and TOTAL_SMILEYS <= num_smileys:
-            return value
-    return value
+    return smiley_general(value, SMILEYS, PER_SMILEY, TOTAL_SMILEY)
 
 @register.filter
 def flag(value):
@@ -1468,25 +1476,26 @@ bbdata_full = bbdata_shared + [
         (r'\[gvideo\](.+?)\[/gvideo\]', bb_gvideo),
     ]
 
-def make_smileys():
+def make_smileys(smiley_list):
 
     def make_re(thesmiley):
         return re.compile(r'(?:^|(?<=\s|<|>|:))%s(?=$|\s|<|>|:)' % re.escape(thesmiley), re.IGNORECASE)
 
     r = []
-    secretsmileys = getattr(settings,'SECRETSMILEYS', [])
-    smileys = settings.SMILEYS
-    for smiley in secretsmileys:
+    #secretsmileys = getattr(settings,'SECRETSMILEYS', [])
+    smileys = smiley_list
+    for smiley in smiley_list:
         sm = make_re(smiley[0])
-        v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[2])
-        r.append((sm, v))
-    for smiley in smileys:
-        sm = make_re(smiley[0])
-        v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[0])
+        if len(smiley) == 3:
+            v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[2])
+        else:
+            v = r'<img src="%s" title="%s" />' % (STATIC + smiley[1], smiley[0])
         r.append((sm, v))
     return r
 
-SMILEYS = make_smileys()
+SMILEYS = make_smileys(settings.SMILEYS) + make_smileys(getattr(settings,'SECRETSMILEYS', []))
+
+RESTRICTED_SMILEYS = make_smileys(getattr(settings,'RESTRICTED_SMILEYS', []))
 
 def reify(bblist):
     templist = []
