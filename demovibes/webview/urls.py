@@ -116,6 +116,7 @@ urlpatterns = patterns('',
     url(r'^screenshots/(?P<letter>.)/$',         views.ListScreenshots(), name = "dv-screenshots_letter"),
     url(r'^screenshot/(?P<screenshot_id>\d+)/$', 'demovibes.webview.views.list_screenshot',   name = "dv-screenshot"),
     url(r'^screenshot/create/$',                    'demovibes.webview.views.create_screenshot', name = "dv-createscreenshot"),
+    url(r'^screenshot/(?P<screenshot_id>\d+)/rethumb/$', 'demovibes.webview.views.rebuild_thumb',   name = "dv-screenshot-rethumb"),
     url(r'^new_screenshots/$',                      'demovibes.webview.views.activate_screenshots', name = "dv-newscreenshots"),
 
     #Song views

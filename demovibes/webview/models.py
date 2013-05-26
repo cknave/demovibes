@@ -801,28 +801,39 @@ class Screenshot(models.Model):
           return None
 
         # Some variables used for scaling
-        thumbwidth = getattr(settings, 'SCREEN_DISPLAY_WIDTH', 100)
-        thumbheight = getattr(settings, 'SCREEN_DISPLAY_HEIGHT', 100)
-        quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 70)
-        format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'jpeg')
+        thumbwidth = getattr(settings, 'THUMB_DISPLAY_WIDTH', 100)
+        thumbheight = getattr(settings, 'THUMB_DISPLAY_HEIGHT', 100)
+        quality = getattr(settings, 'SCREEN_SCALE_QUALITY', 80)
+        format = getattr(settings, 'SCREEN_SCALE_FORMAT', 'png') # jpeg is not always readily available in PIL
 
         res = cStringIO.StringIO()
-        size=(thumbwidth, thumbheight)
+        size = (thumbwidth, thumbheight)
+        outfile = os.path.splitext(self.image.path)[0] + "." + format # Generate a saved file, with extension change
 
         img = Image.open(self.image.path)
-        img.thumbnail(size, Image.ANTIALIAS)
 
         if img.mode != "RGB":
             img = img.convert("RGB")
 
-        img.save(res, format, quality=quality) # Dump the scaled image to a buffer
+        img.thumbnail (size, Image.ANTIALIAS)
+
+        if format == 'png':
+            img.save(res, 'PNG', quality=quality, optimize=True, progressive=True) # Dump the scaled image to a PNG buffer
+        elif format == 'jpg' or format == 'jpg':
+            img.save(res, 'JPEG', quality=quality, optimize=True, progressive=True) # Dump the scaled image to a JPEG buffer
+        else:
+            img.save(res, format, quality=quality) # Dump the scaled image to a buffer designated by default
+
         res.seek(0) # Move pointer back to the beginning of the buffer
-        thumb = SimpleUploadedFile(os.path.basename(self.image.path), res.read()) # Save it somewhere on the disk
-        self.thumbnail.save(os.path.basename(self.image.path), thumb, save=True) # Save it in the model
+        thumb = SimpleUploadedFile(os.path.basename(outfile), res.read()) # Save it somewhere on the disk
+        self.thumbnail.save (os.path.basename(outfile), thumb, save=True) # Save it in the model
 
     @models.permalink
     def get_absolute_url(self):
         return ('dv-screenshot', [str(self.id)])
+
+    def is_active(self):
+        return self.status == 'A'
 
 class ScreenshotObjectLink(models.Model):
     content_type = models.ForeignKey(ContentType)

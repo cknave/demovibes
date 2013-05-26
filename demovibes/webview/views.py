@@ -1566,6 +1566,13 @@ def activate_screenshots(request):
     screenshots = m.Screenshot.objects.filter(status = "U").order_by('last_updated')
     return j2shim.r2r('webview/pending_screenshots.html', { 'screenshots': screenshots }, request=request)
 
+@permission_required('webview.change_screenshot')
+def rebuild_thumb(request, screenshot_id):
+    screenshot = get_object_or_404(m.Screenshot, id=screenshot_id) #m.Screenshot.objects.get(id=screenshot_id)  #get_object_or_404(m.Screenshot, id=screenshot_id)
+    screenshot.create_thumbnail()
+    screenshot.save()
+    return j2shim.r2r('webview/screenshot_detail.html', { 'object' : screenshot }, request)
+
 def users_online(request):
     timefrom = datetime.datetime.now() - datetime.timedelta(minutes=5)
     userlist = m.Userprofile.objects.filter(last_activity__gt=timefrom).order_by('user__username')

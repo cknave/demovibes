@@ -27,5 +27,10 @@
 <h2><img class="icon_header" src="{{ STATIC_URL }}music.png" alt="" />{{ gettext("Songs Related To This Image") }}</h2>
 {% endcache %}
 
+{% if user.is_staff %}<h2><img class="icon_header" src="{{ STATIC_URL }}icon_screenshot.png" alt="" />{{ gettext("Thumbnail Administration") }} [<a href="/demovibes/screenshot/{{ object.id }}/rethumb/">{{ gettext("Rebuild Thumbnail") }}</a>]</h2>
+Current Thumbnail:<br />
+{{ display.screenshot(object) }}
+{% endif %}
+
 {{ paging }}
 {% endblock %}
