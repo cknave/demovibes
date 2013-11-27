@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from demovibes.webview.views import about_pages
+from django.conf import settings
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -27,3 +28,5 @@ urlpatterns = patterns('',
     #(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^about/(\w+)/$', about_pages),
 )
+if settings.DEBUG:
+    urlpatterns += patterns('', (r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}))
