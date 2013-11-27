@@ -101,20 +101,25 @@ class CountryByIPTree(IPTree):
     def fetch(self):
         for name, source in self.sources.items():
             logger.info('Fetching from %r', source)
-            fp = urlopen(source)
-            for line in iter(fp.readline, ''):
-                parts = line.strip().split('|')
-                if len(parts)==7 and parts[2]=='ipv4' and \
-                        parts[6] in ('allocated', 'assigned') and \
-                        name==parts[0]:
-                    first = parts[3]
-                    first_int = struct.unpack('!I', inet_aton(first))[0]
-                    last_int = first_int+int(parts[4])-1
-                    last = inet_ntoa(struct.pack('!I', last_int))
-                    try:
-                        self.add(first, last, parts[1].upper())
-                    except ValueError:
-                        pass
+            try:
+                fp = urlopen(source)
+            except:
+                fp = None
+                print "Could not fetch %s" % name
+            if fp:
+                for line in iter(fp.readline, ''):
+                    parts = line.strip().split('|')
+                    if len(parts)==7 and parts[2]=='ipv4' and \
+                            parts[6] in ('allocated', 'assigned') and \
+                            name==parts[0]:
+                        first = parts[3]
+                        first_int = struct.unpack('!I', inet_aton(first))[0]
+                        last_int = first_int+int(parts[4])-1
+                        last = inet_ntoa(struct.pack('!I', last_int))
+                        try:
+                            self.add(first, last, parts[1].upper())
+                        except ValueError:
+                            pass
 
     def add(self, start, end, cc):
         if not cc in cc2name:
