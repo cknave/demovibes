@@ -56,6 +56,8 @@ function msg_change_settings() {
         return;
     }
     var div = $("<div/>").addClass("messagesettingsbox");
+    var div_holder = $("<div/>").addClass("messagesettingsbox-holder");
+    div_holder.append(div);
     var sdiv = $("<div/>").addClass("messagesettings");
     var cdiv = $("<div/>").addClass("message-categories");
     div.append($("<h2/>").text("Notification Settings"));
@@ -77,8 +79,10 @@ function msg_change_settings() {
     div.append(sdiv);
     div.append(cdiv);
     var close = function () {
-        div.remove();
+        div_holder.remove();
     }
+    div_holder.click(close);
+
     var add_setting = function (name, key, attrs) {
         var ss = $("<div/>").addClass("messagesettingholder");
         var s1 = $("<input/>");
@@ -124,7 +128,7 @@ function msg_change_settings() {
     });
     div.append(save);
     div.append(cancel);
-    $("body").append(div);
+    $("body").append(div_holder);
 }
 
 function msg_toggle_notifications() {
