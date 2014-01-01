@@ -9,7 +9,7 @@
 
 {% set objs, paging = dv.paginate(mails) %}
 
-<table class="songlist">
+<table class="songlist mailbox">
 
 <tr><th>{{ gettext("Subject") }}</th><th>{{ gettext("From") }}</th><th>{{ gettext("To") }}</th><th>{{ gettext("Sent Date") }}</th></tr>
 {% for mail in objs %}
