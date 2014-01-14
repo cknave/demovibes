@@ -56,6 +56,7 @@ function msg_change_settings() {
         return;
     }
     var div = $("<div/>").addClass("messagesettingsbox");
+    div.click(function (e) {e.stopPropagation()});
     var div_holder = $("<div/>").addClass("messagesettingsbox-holder");
     div_holder.append(div);
     var sdiv = $("<div/>").addClass("messagesettings");
