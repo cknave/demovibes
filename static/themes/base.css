@@ -363,12 +363,15 @@ padding: 2px;
 .smileybox-smiley {
     float: left;
     padding: 5px;
-
 }
 .smileybox-smiley:hover {
     border: 2px solid #000;
     padding: 3px;
     background-color: #ddd;
+}
+
+.smileybox-searchdiv{
+clear: both;
 }
 
 .onelinertools > span {

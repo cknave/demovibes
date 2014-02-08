@@ -131,6 +131,22 @@ function add_smileys(div, input) {
     div.html("<div class='smileys_loading'>Loading..</div>");
     $.get("/demovibes/ajax/smileys/",function (data) {
         div.empty();
+        var searchdiv = $("<div/>").addClass("smileybox-searchdiv");
+        var search = $("<input/>").prop("placeholder", "Filter smileys");
+        searchdiv.append(search);
+        searchdiv.click(function (e) {
+            e.stopImmediatePropagation();
+        });
+        search.keyup(function () {
+            var t = search.val();
+            div.find(".smileybox-smiley").each(function () {
+                if (this.title.indexOf(t) < 0) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+        });
         $(data).each(function (i, elem) {
             var sign = elem[0];
             var icon = elem[1];
@@ -146,6 +162,8 @@ function add_smileys(div, input) {
             });
             div.append(boxdiv);
         });
+        div.append(searchdiv);
+        search.focus();
     });
 }
 
