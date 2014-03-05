@@ -13,7 +13,7 @@
 {% endmacro %}
 
 {% macro format_oneliner(text, user) %}
-{{ text|mksafe|bbcode_oneliner|smileys_oneliner|restricted_smileys(user)|oneliner_mediaparse|bbcode_oneliner|dv_urlize }}
+{{ text|mksafe|bbcode_oneliner|smileys_oneliner|restricted_smileys(user)|custom_filters(user)|oneliner_mediaparse|bbcode_oneliner|dv_urlize }}
 {% endmacro %}
 
 {% macro onelinerlink(tag, value, user) %}

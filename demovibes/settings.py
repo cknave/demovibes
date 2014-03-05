@@ -24,6 +24,14 @@ TEMPLATE_DEBUG = False
 LOOKUP_COUNTRY = True
 DEFAULT_FLAG = "nectaflag"
 
+## Run custom oneliner filters if user is in specific group
+# Gets the oneliner text. "*" gid applies to all users
+# CUSTOM_ONELINER_FILTERS = [(groupid, function)] 
+
+## List of functions to run when new user is created
+# Gets : data = {"user": user, "groupmodel": UserGroup}
+# NEWUSER_FUNCTIONS = []
+
 # URL to use for Flash streaming.
 #FLASH_STREAM_URL = "http://server:port/stream"
 
@@ -325,7 +333,6 @@ SONG_LOCK_TIME = { 'days' : 0, 'hours' : 0, 'minutes' : 5 }
 # Song is first and only parameter, a number between 0 and 1 should be
 # retuned from that function
 # SONG_LOCKTIME_FUNCTION = None
-
 
 # Need to have at least one song marked as jingle for this to work
 # Will play one every 30 minutes or 10 songs, but not more often than every 20 minutes.

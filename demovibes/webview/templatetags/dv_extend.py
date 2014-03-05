@@ -1290,10 +1290,16 @@ def smileys_oneliner(value):
     TOTAL_SMILEY = getattr(settings, "ONELINER_TOTAL_SMILEY_LIMIT", None)
     return smiley_general(value, SMILEYS, PER_SMILEY, TOTAL_SMILEY)
 
-
 @user_based_filter(getattr(settings,'RESTRICTED_SMILEYS_USERS', []))
 def smileys_restricted(value):
     return smiley_general(value, RESTRICTED_SMILEYS)
+
+def custom_filters(value, user):
+    r = getattr(settings, "CUSTOM_ONELINER_FILTERS", [])
+    for gid, func in r:
+        if gid == "*" or user.groups.filter(id=gid).exists():
+            value = func(value)
+    return value
 
 @register.filter
 def smileys(value):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group as UserGroup
 import datetime
 
 import re
@@ -2010,6 +2011,15 @@ def create_profile(sender, **kwargs):
         except:
             pass
 post_save.connect(create_profile, sender=User)
+
+def post_process_profile(sender, **kwargs):
+    if kwargs["created"]:
+        user = kwargs["instance"]
+        data = {"user": user, "groupmodel": UserGroup}
+        funcs = getattr(settings, "NEWUSER_FUNCTIONS", [])
+        for x in funcs:
+            x(data)
+post_save.connect(post_process_profile, sender=User)
 
 def set_song_values(sender, **kwargs):
     song = kwargs["instance"]
