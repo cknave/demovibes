@@ -1298,7 +1298,10 @@ def custom_filters(value, user):
     r = getattr(settings, "CUSTOM_ONELINER_FILTERS", [])
     for gid, func in r:
         if gid == "*" or user.groups.filter(id=gid).exists():
-            value = func(value)
+            try:
+                value = func(value)
+            except:
+                L.exception("Failed filtering user %s message: %s", user, value)
     return value
 
 @register.filter

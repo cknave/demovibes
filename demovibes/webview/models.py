@@ -2018,7 +2018,11 @@ def post_process_profile(sender, **kwargs):
         data = {"user": user, "groupmodel": UserGroup}
         funcs = getattr(settings, "NEWUSER_FUNCTIONS", [])
         for x in funcs:
-            x(data)
+            try:
+                x(data)
+            except:
+                log.exception("Could not run post_process on new user %s", user)
+                
 post_save.connect(post_process_profile, sender=User)
 
 def set_song_values(sender, **kwargs):
