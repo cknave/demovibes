@@ -1294,14 +1294,14 @@ def smileys_oneliner(value):
 def smileys_restricted(value):
     return smiley_general(value, RESTRICTED_SMILEYS)
 
-def custom_filters(value, user):
+def custom_filters(value, line):
     r = getattr(settings, "CUSTOM_ONELINER_FILTERS", [])
     for gid, func in r:
-        if gid == "*" or user.groups.filter(id=gid).exists():
+        if gid == "*" or line.user.groups.filter(id=gid).exists():
             try:
-                value = func(value)
+                value = func(value, line)
             except:
-                L.exception("Failed filtering user %s message: %s", user, value)
+                L.exception("Failed filtering user %s message: %s", line.user, value)
     return value
 
 @register.filter

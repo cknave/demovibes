@@ -6,6 +6,6 @@
         <span class="onelinertime">(<span class="tzinfo">{{ line.added|time("H:i:s") }}</span>)</span>
     </span>
     <br />
-    <span class="onelinertext">{{ display.format_oneliner(line.message, line.user) }}</span>
+    <span class="onelinertext">{{ display.format_oneliner(line) }}</span>
 </p>
 {%- endfor -%}
