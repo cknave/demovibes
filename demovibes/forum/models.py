@@ -153,7 +153,10 @@ class Thread(models.Model):
     posts = models.IntegerField(_("Posts"), default=0)
     views = models.IntegerField(_("Views"), default=0)
     latest_post_time = models.DateTimeField(_("Latest Post Time"), blank=True, null=True)
-
+    
+    def is_visible(self, user):
+        return Post.objects.filter(thread=self)[0].is_visible(user)
+    
     def _get_thread_latest_post(self):
         """This gets the latest post for the thread"""
         if not hasattr(self, '__thread_latest_post'):
@@ -202,6 +205,9 @@ class Post(models.Model):
     body = models.TextField(_("Body"))
     time = models.DateTimeField(_("Time"), blank=True, null=True)
     edited = models.DateTimeField(blank = True, null = True)
+
+    def is_visible(self, user):
+        return (not self.author.get_profile().is_hellbanned()) or user == self.author
 
     def save(self, *args, **kwargs):
         if not self.id:

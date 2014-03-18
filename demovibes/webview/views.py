@@ -276,7 +276,9 @@ def send_pm(request):
         form = f.PmForm(request.POST)
         if form.is_valid():
             F = form.save(commit=False)
-            F.sender=request.user
+            F.sender = request.user
+            if request.user.get_profile().is_hellbanned():
+                F.visible = False
             F.save()
             m.send_notification("%s sent you a <a href='%s'>message</a> with title '%s'" % (escape(F.sender.username), F.get_absolute_url(), escape(F.subject)), F.to)
             return HttpResponseRedirect(reverse('dv-inbox'))
@@ -615,6 +617,7 @@ class OnelinerHistorySearch(WebView):
 
 def oneliner(request):
     oneliner = m.Oneliner.objects.select_related(depth=1).order_by('-id')[:20]
+    
     return j2shim.r2r('webview/oneliner.html', {'oneliner' : oneliner}, \
         request=request)
 
@@ -1161,7 +1164,6 @@ class MuteOneliner(WebView):
         active = m.OnelinerMuted.objects.filter(muted_to__gt=datetime.datetime.now())
         history = m.OnelinerMuted.objects.filter(muted_to__lt=datetime.datetime.now())[:10]
         return {"active": active, "history": history}
-
 
 class tagDetail(WebView):
     template = "tag_detail.html"

@@ -88,16 +88,20 @@ def forum(request, slug):
             new_thread = thread_form.save(commit = False)
             new_thread.forum = f
             new_thread.save()
-            if NOTIFY_THREAD and not f.is_private:
-                wm.send_notification("%s created a new thread \"<a href='%s'>%s</a>\" in forum \"%s\"" % (
-                    escape(request.user.username),
-                    new_thread.get_absolute_url(),
-                    escape(new_thread.title),
-                    escape(new_thread.forum.title),
-                ), None, 1)
+            
             Post.objects.create(thread=new_thread, author=request.user,
                 body=thread_form.cleaned_data['body'],
                 time=datetime.now())
+            
+            if new_thread.is_visible(None):
+                if NOTIFY_THREAD and not f.is_private:
+                    wm.send_notification("%s created a new thread \"<a href='%s'>%s</a>\" in forum \"%s\"" % (
+                        escape(request.user.username),
+                        new_thread.get_absolute_url(),
+                        escape(new_thread.title),
+                        escape(new_thread.forum.title),
+                    ), None, 1)
+            
             if (thread_form.cleaned_data['subscribe'] == True):
                 Subscription.objects.create(author=request.user,
                     thread=new_thread)
@@ -164,15 +168,17 @@ def thread(request, thread):
             else:
                 Subscription.objects.filter(thread=t, author=request.user).delete()
             # Send email
-            forum_email_notification(new_post)
-            if NOTIFY_POST and not t.forum.is_private:
-                wm.send_notification("%s posted a reply to \"<a href='%s#post%s'>%s</a>\" in forum \"%s\"" % (
-                    escape(request.user.username),
-                    new_post.thread.get_absolute_url(),
-                    new_post.id,
-                    escape(new_post.thread.title),
-                    escape(new_post.thread.forum.title),
-                ), None, 1)
+            
+            if new_post.is_visible(None):
+                forum_email_notification(new_post)
+                if NOTIFY_POST and not t.forum.is_private:
+                    wm.send_notification("%s posted a reply to \"<a href='%s#post%s'>%s</a>\" in forum \"%s\"" % (
+                        escape(request.user.username),
+                        new_post.thread.get_absolute_url(),
+                        new_post.id,
+                        escape(new_post.thread.title),
+                        escape(new_post.thread.forum.title),
+                    ), None, 1)
             return HttpResponseRedirect(new_post.get_absolute_url())
     else:
         reply_form = ReplyForm(initial={'subscribe': s})

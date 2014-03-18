@@ -44,6 +44,7 @@
 </tr>
 
 {% for t in threads %}
+{% if t.is_visible(user) %}
 <tr>
     <td class='djangoForumThreadListName'>{% if t.sticky %}Sticky {% endif %}
         <a class="threadName" href='{{ t.get_absolute_url() }}'>{{ t.title|escape }}</a>{% if t.closed %} (Closed){% endif %}
@@ -54,6 +55,7 @@
 {% if latest_post %}<td class='djangoForumThreadLastPost'>{{ latest_post.time|timesince }} ago by {% set U = latest_post.author %}{% include "webview/t/user.html" %} (<a href='{{ latest_post.get_absolute_url() }}'>View Thread</a>)</td>{% endif %}
 
 </tr>
+{% endif %}
 {% endfor %}
 </table>
 

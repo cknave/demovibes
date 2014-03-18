@@ -387,8 +387,13 @@ class Userprofile(models.Model):
     visible_to = models.CharField(max_length=1, default = "A", choices = VISIBLE_TO)
     web_page = models.URLField(blank = True, verbose_name="Website", help_text="Your personal website address. Must be a valid URL")
     yahoo_id = models.CharField(blank = True, max_length = 40, verbose_name = "Yahoo! ID", help_text="Yahoo! IM ID, for people to contact you (optional)")
-
+    
+    hellbanned = models.BooleanField(default=False)
+    
     links = generic.GenericRelation(GenericLink)
+
+    def is_hellbanned(self):
+        return self.hellbanned
 
     def is_muted(self):
         f = models.Q(user=self.user)
@@ -1706,9 +1711,13 @@ class SongComment(models.Model):
     comment = models.TextField()
     staff_comment = models.BooleanField(default=False, verbose_name = "Staff only")
     added = models.DateTimeField(auto_now_add=True)
-
+    
+    def is_visible(self):
+        return True
+    
     def __unicode__(self):
         return self.comment
+        
     class Meta:
         ordering = ['-added']
 
@@ -1762,7 +1771,7 @@ class Oneliner(models.Model):
     message = models.CharField(max_length=256)
     user = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True, db_index=True)
-
+    
     def __unicode__(self):
         return u"<%s> %s" % (self.user, self.message)
 
@@ -1860,7 +1869,8 @@ class PrivateMessage(models.Model):
 
         #Check if user have send pm on, and if its a new message
         profile = self.to.get_profile()
-        if self.pk == None and profile.email_on_pm:
+        
+        if self.pk == None and profile.email_on_pm and self.visible:
             mail_from = settings.DEFAULT_FROM_EMAIL
             mail_tpl = loader.get_template('webview/email/new_pm.txt')
             me = Site.objects.get_current()
