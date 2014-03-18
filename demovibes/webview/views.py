@@ -280,7 +280,8 @@ def send_pm(request):
             if request.user.get_profile().is_hellbanned():
                 F.visible = False
             F.save()
-            m.send_notification("%s sent you a <a href='%s'>message</a> with title '%s'" % (escape(F.sender.username), F.get_absolute_url(), escape(F.subject)), F.to)
+            if F.visible:
+                m.send_notification("%s sent you a <a href='%s'>message</a> with title '%s'" % (escape(F.sender.username), F.get_absolute_url(), escape(F.subject)), F.to)
             return HttpResponseRedirect(reverse('dv-inbox'))
     else:
         title = request.GET.get('title', "")
