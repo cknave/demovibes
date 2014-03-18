@@ -155,7 +155,10 @@ class Thread(models.Model):
     latest_post_time = models.DateTimeField(_("Latest Post Time"), blank=True, null=True)
     
     def is_visible(self, user):
-        return Post.objects.filter(thread=self)[0].is_visible(user)
+        try:
+            return Post.objects.filter(thread=self)[0].is_visible(user)
+        except:
+            return True
     
     def _get_thread_latest_post(self):
         """This gets the latest post for the thread"""
