@@ -1773,7 +1773,7 @@ class Oneliner(models.Model):
     added = models.DateTimeField(auto_now_add=True, db_index=True)
     
     def __unicode__(self):
-        return u"<%s> %s" % (self.user, self.message)
+        return u"[%s] <%s> %s" % (self.added.strftime("%X"), self.user, self.message)
 
     class Meta:
         ordering = ['-added']
@@ -1850,7 +1850,12 @@ class PrivateMessage(models.Model):
         ordering = ['-sent']
 
     def __unicode__(self):
-        return self.subject
+        r = u" [To %s] %s" % (self.to, self.subject)
+        if not self.visible:
+            r = u"H" + r
+        if not self.unread:
+            r = u"R" + r
+        return r
 
     @models.permalink
     def get_absolute_url(self):
