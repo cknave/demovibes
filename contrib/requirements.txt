@@ -7,7 +7,7 @@ Whoosh==2.3
 django-extensions==0.5
 django-haystack==1.2.6
 #django-tagging==0.3.1
--e git+http://git.gitorious.org/demovibes/django-tagging-fork.git#egg=django_tagging_fork
+-e git+https://github.com/cknave/django-tagging-fork.git#egg=django_tagging_fork
 python-memcached==1.47
 python-openid==2.2.5
 wsgiref==0.1.2
